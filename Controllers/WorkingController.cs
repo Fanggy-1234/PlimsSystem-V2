@@ -1541,11 +1541,6 @@ namespace Plims.Controllers
 
 
 
-
-
-
-
-
         [HttpGet]
         public ActionResult WorkingFunctionWithPackage(TbProductionTransaction obj)
         {
