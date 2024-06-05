@@ -1,0 +1,182 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@{
+    ViewBag.Title = "Product Qty Piece Function";
+}
+
+
+@*Include Area*@
+<link href="~/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/css/bootstrap.css" rel="stylesheet" />
+<script src="~/js/bootstrap/bootstrap.js"></script>
+<script src="~/js/bootstrap/bootstrap.min.js"></script>
+<script src="~/js/bootstrap.bundle.min.js"></script>
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inIncentive-block;
+        border: 0.1px solid #808080;
+        border-radius: 2px;
+        box-sizing: border-box;
+    }
+
+    .Qty-button {
+        background-color: #A4ADB3;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        color: white;
+        width: 100%;
+        height: 100%;
+    }
+
+    .Defect-button {
+        border: 0.4px solid black;
+        background-color: white;
+        border-radius: 2px;
+        cursor: pointer;
+        color: black;
+        width: 100%;
+        height: 100%;
+    }
+
+</style>
+
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Product Qty Piece Function</h2>
+<div class="row" style="height:20px"> </div>
+
+<form method="get" asp-controller="Working">
+    <div class="row" style="height:300px">
+        <div class="col-2">
+        </div>
+        <div class="col">
+
+            @* Employee *@
+            <div class="row">
+                <div class="col-2"> QR Code : </div>
+                <div class="col-6">
+                    <input class="form-control" name="EmployeeID" id="EmployeeID" placeholder="Scan QR Code">
+                </div>
+
+            </div>
+            <div class="row" style="height:10px"> </div>
+
+            @* Get Product from plant and line *@
+            <div class="row">
+                <div class="col-2"><label class="FillterLabel">Product ID:</label></div>
+                <div class="col-6">
+                    <select class="selectfillter form-control" style="width:100%" list="ProductID" name="productId" id="ProductID">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbProduct)
+                        {
+
+                            <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row" style="height:10px"> </div>
+
+
+            @*  Get Section from EmployeeClock-In *@
+            <div class="row">
+                <div class="col-2"><label class="FillterLabel">Section ID:</label></div>
+                <div class="col-6">
+                    <input class="form-control" name="SectionName" id="SectionName" style="background-color:gainsboro" readonly>
+                </div>
+            </div>
+            <div class="row" style="height:10px"> </div>
+
+          @*   Qty Input manual *@
+            <div class="row">
+                <div class="col-2"> QR Code : </div>
+                <div class="col-6">
+                    <input class="form-control" name="Qty" id="Qty" placeholder="Please Input Qty">
+                </div>
+
+            </div>
+            <div class="row" style="height:10px"> </div>
+
+            @*   unit  *@
+            <div class="row">
+                <div class="col-2"> QR Code : </div>
+                <div class="col-6">
+                    <input class="form-control" name="Unit" id="Unit" >
+                </div>
+
+            </div>
+
+
+
+        </div>
+        <div class="col-2">
+        </div>
+    </div>
+</form>
+
+<div class="row" style="height:50px">
+    <div class="col-4"></div>
+    <div class="col">
+
+        <div class="row" style="height:50px">
+            <div class="col-4">
+                <button class="clear-button" type="submit" action="DefectInput">
+                    Can
+                </button>
+
+            </div>
+            <div class="col-4">
+
+                <button class="search-button" type="submit" action="ProductQtyInput">
+                    Product Qty
+                </button>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="col-2"></div>
+
+</div>
+
+
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#EmployeeID').on('input', function () {
+            var employeeId = $(this).val();
+            var productId = $('#ProductID').val();
+            if (employeeId.trim() !== '') {
+                // AJAX request to the controller
+                $.ajax({
+                    url: '/Working/WorkingFunctionCreate', // Update the URL with your controller and action method
+                    type: 'GET',
+                    data: { employeeId: employeeId, productId: productId },
+                    success: function (section) {
+                        $('#SectionName').val(section); // Update the SectionName input with the returned section
+                        $('#EmployeeID').val('');
+                    },
+                    error: function () {
+                        console.log('Error occurred while fetching section.');
+                    }
+                });
+            }
+        });
+    });
+</script>

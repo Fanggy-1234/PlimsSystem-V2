@@ -1,0 +1,597 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@{
+
+    // ViewBag.Title = "UserManagement";
+    //  TbUser user = Utilities.GetCurrentUser();
+
+}
+
+
+
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+    #table_id {
+        border: 0.1px solid #A9A9A9; /* Set border style */
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #table_id th {
+            background-color: #C5C5C5; /* Set your desired header background color */
+            font-weight: bold;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            padding: 15px 0px;
+            border-collapse: collapse;
+        }
+
+        #table_id td {
+            text-align: left;
+            font-size: 14px;
+        }
+
+        #table_id tr {
+            text-align: left;
+            padding: initial;
+        }
+
+        #table_id th,
+        #table_id td {
+            border: 0.1px solid #A9A9A9; /* Set border style */
+            border-collapse: collapse;
+        }
+
+</style>
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            ordering: false,
+            searching: false,
+            scrollX: true,
+            scrollY: true,
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 20, // Default page length
+            paging: true, // Enable paging
+        });
+
+    });
+
+</script>
+<script type="text/javascript" charset="utf8">
+
+
+  
+
+    //Edit to modal
+    function EditFn(id) {
+        $.ajax({
+            url: '/Home/UserEdit/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response == null || response == undefined) {
+
+                    alert("This data can't read1!")
+                }
+                else if (response.length == 0) {
+
+                    alert("This data can't id!" + id)
+                }
+                else {
+                    console.log('AJAX request successful:', response);
+                    $('#ModalUserEmpID').val(response.userEmpID);
+                    $('#ModalUserName').val(response.userName);
+                    $('#ModalLastName').val(response.userLastName);
+                    $('#ModalRoleName').val(response.roleName).trigger('change');
+                    $('#ModalUserEmail').val(response.userEmail);
+                    $('#ModalPassword').val(response.userPassword);
+                    $('#ModalStatus').prop('checked', response.status == 1)
+                    $('#EditModal').modal('show');
+
+
+                }
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+
+        });
+    }
+
+
+
+    //Function Inactive
+    function InactiveFn(id) {
+        $.ajax({
+            url: '/Home/UserInactive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                alert("Inactive Finish");
+                location.reload();
+                $("body").html(result);
+
+            },
+            error: function (response) {
+                alert("Inactive something went wrong.");
+            }
+
+        });
+    }
+
+
+
+    //Function Inactive
+    function ActiveFn(id) {
+        $.ajax({
+            url: '/Home/UserActive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                alert("Active Finish");
+                location.reload();
+                $("body").html(result);
+            },
+            error: function (response) {
+                alert("Inactive something went wrong.");
+            }
+
+        });
+    }
+
+</script>
+@* <script>
+    $(document).ready(function () {
+        $('.selectfillter').select2({
+            closeOnSelect: false,
+            theme: 'bootstrap-5'
+        });
+
+    });
+</script>
+ *@
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name"> User Management </h2>
+<div id="demo_info" class="box"></div>
+
+<form method="GET" asp-controller="Home" asp-action="UserManagement">
+    @* <div style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;"> *@
+    <div class="row">
+        <div class="col-2">   <label class="FillterLabel">User ID:</label></div>
+        <div class="col-3">
+
+            <select class="selectfillter form-control" style="width:100%" name="UserEmpID" id="UserEmpID">
+                <option value="" default selected></option>
+                @foreach (var item in Model.view_User.GroupBy(x => x.UserEmpID))
+                {
+                    var dataitem = item.First(); // Take the first item in the group
+                    <option value="@dataitem.UserEmpID" selected="@(dataitem.UserEmpID == ViewBag.SelectedUserEmpID ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => dataitem.UserEmpID) 
+                    </option>
+               
+                }
+            </select>
+
+
+
+        </div>
+        <div class="col-1"></div>
+        <div class="col-2"><label class="FillterLabel"> Role:</label></div>
+        <div class="col-3">
+
+            <select class="selectfillter form-control" style="width:100%" name="RoleName" id="RoleName">
+                <option value="" default selected></option>
+                @foreach (var item in Model.view_User.GroupBy(x => x.RoleName))
+                {
+                    var dataitem = item.First(); // Take the first item in the group
+                    <option value="@dataitem.RoleName" selected="@(dataitem.RoleName == ViewBag.SelectedRoleName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => dataitem.RoleName)
+                    </option>
+
+                }
+            </select>
+
+        </div>
+
+    </div>
+    <div class="row" style="height:10px"></div>
+    <div class="row">
+        <div class="col-2">   <label class="FillterLabel"> First Name:</label></div>
+        <div class="col-3">
+
+            <select class="selectfillter form-control" style="width:100%" name="UserName" id="UserName">
+                <option value="" default selected></option>
+                @foreach (var item in Model.view_User.GroupBy(x => x.UserName))
+                {
+                    var dataitem = item.First(); // Take the first item in the group
+                    <option value="@dataitem.UserName" selected="@(dataitem.UserName == ViewBag.SelectedUserName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => dataitem.UserName)
+                    </option>
+
+                }
+
+
+            </select>
+
+
+        </div>
+        <div class="col-1"></div>
+        <div class="col-2">   <label class="FillterLabel"> Last Name :</label></div>
+        <div class="col-3">
+            <select class="selectfillter form-control" style="width:100%" name="UserLastName">
+                <option value="" default selected></option>
+                @foreach (var item in Model.view_User.GroupBy(x => x.UserLastName))
+                {
+                    var dataitem = item.First(); // Take the first item in the group
+                    <option value="@dataitem.UserLastName" selected="@(dataitem.UserLastName == ViewBag.SelectedUserLastName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => dataitem.UserLastName)
+                    </option>
+
+                }
+
+
+
+
+            </select>
+        </div>
+
+    </div>
+
+    <div class="row" style="height:20px"></div>
+
+
+    @* //Inactive Checkbox *@
+    <div class="row ">
+        <div class="col-2" style=" padding-top:0.5em"></div>
+        <div class="col-3">
+            @{
+                // Determine if the checkbox should be checked based on ViewBag.InactiveStatus
+                string checkedAttribute = (ViewBag.InactiveStatus ?? false) ? "checked" : "";
+            }
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="inactivestatus" name="inactivestatus" @checkedAttribute>
+                <label class="form-check-label" for="inactivestatus">Inactive Status</label>
+                <input type="hidden" id="inactivestatus-hidden" name="inactivestatus" value="@((ViewBag.InactiveStatus ?? false).ToString().ToLower())">
+            </div>
+        </div>
+        <div class="col-6"></div>
+    </div>
+
+
+    <div class="row" style="height:20px"></div>
+
+    <div class="row" style="height:35px">
+
+        <div class="col" style="width:15% ">
+            <button id="Clear" type="submit" asp-action="UserClear" class="clear-button">
+                Clear
+            </button>
+        </div>
+        <div class="col-3" style="width:55% ">
+        </div>
+        <div class="col" style="width:15% ">
+            <button id="Search" type="submit" asp-action="UserManagement" class="search-button">
+                Search
+            </button>
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleUserManagement == "Full")
+            {
+                <button type="button" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal" style=" justify-content: flex-end ">Create</button>
+
+            }
+            else
+            {
+                <button type="button" class="create-button" style=" justify-content: flex-end ">Create</button>
+
+            }
+        </div>
+    </div>
+</form>
+
+<br />
+
+
+@*Diaplay data*@
+<table id="table_id" class="table table-hover" style="width:100%">
+    <thead style="background-color:gainsboro ;color:black">
+        <tr>
+            @*<th><input type="checkbox" id="checkall" /></th>*@
+            <th>
+                User ID
+            </th>
+            <th >
+                User Name
+            </th>
+            <th >
+                Permission
+            </th>
+
+            <th>
+                Email
+            </th>
+            <th >
+                Status
+            </th>
+            <th>
+                Edit
+            </th>
+            <th>
+                Active/Inactive
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.view_User)
+        {
+            <tr>
+                @Html.HiddenFor(modelItem => item.ID)
+                @*<td><input type="checkbox" class="checkthis" /></td>*@
+                <td >
+                    @Html.DisplayFor(modelItem => item.UserEmpID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName) @Html.DisplayFor(modelItem => item.UserLastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoleName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserEmail)
+                </td>
+                @if (item.Status == 1)
+                {
+                    <td id="Status" > <span id="open">Active</span> </td>
+                    <td >
+                        @if (ViewBag.VBRoleUserManagement == "Full")
+                        {
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" onclick="EditFn(@item.ID)">Edit</a>
+
+                        }
+                        else
+                        {
+                            <a href="#" id="btnEdit">Edit</a>
+
+                        }
+                    </td>
+
+                    <td>
+                        @if (ViewBag.VBRoleUserManagement == "Full")
+                        {
+                            <a href="#" id="Inactive" onclick="InactiveFn(@item.ID)">Inactive</a>
+                        }
+                        else
+                        {
+                            <a href="#" id="Inactive">Inactive</a>
+
+                        }
+
+                    </td>
+
+                }
+                @if (item.Status == 0)
+                {
+                    <td id="Status" ><span id="closed" style="color:red">Inactive</span></td>
+                    <td >
+                        <span id="closed">Edit</span>
+                    </td>
+                    <td>
+                        @if (ViewBag.VBRoleUserManagement == "Full")
+                        {
+                            <a href="#" id="Active" onclick="ActiveFn(@item.ID)">Active</a>
+                        }
+                        else
+                        {
+                            <a href="#" id="Active">Active</a>
+                        }
+
+                    </td>
+                }
+
+
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="row" style="height:10px">
+    @if (TempData.ContainsKey("AlertMessage"))
+    {
+        <script>
+            alert('@TempData["AlertMessage"]');
+        </script>
+    }
+</div>
+
+
+
+@*Modal Create*@
+<div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post" action="UserCreate" controller="Home">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">User Create</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                     <div class="mb-3">
+                        <label for="UserEmpID" class="col-form-label">User ID:</label>
+                        <input type="text" class="form-control" name="UserEmpID" id="UserEmpIDCreate" style="background-color:gainsboro"  readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="UserName" class="col-form-label">First Name:</label>
+                        <input type="text" class="form-control" name="UserName" id="UserNameCreate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="UserLastName" class="col-form-label">Last Name:</label>
+                        <input type="text" class="form-control" name="UserLastName" id="LastNameCreate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="RoleName" class="col-form-label">Role:</label>
+
+                        <select class="selectfillter form-control" style="width:100%" name="RoleID" id="RoleNamecreate">
+                        <option value="" default selected></option>
+                            @foreach (var item in Model.tbRole.Where(x=>x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
+                         {
+                            var dataitem = item.First(); // Take the first item in the group
+                                <option value="@dataitem.RoleID" selected="@(dataitem.RoleName == ViewBag.SelectedRoleName ? "selected" : null)">
+                              @Html.DisplayFor(modelItem => dataitem.RoleName)
+                            </option>
+
+                            }
+
+
+            </select>
+
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="UserEmail" class="col-form-label">Email:</label>
+                        <input type="text" class="form-control" name="UserEmail" id="UserEmailCreate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="UserPassword" class="col-form-label">Password:</label>
+                        <input type="password" class="form-control" name="UserPassword" id="UserPasswordCreate">
+                    </div>
+                    <div class="form-check form-switch">
+                   @*      <input class="form-check-input" type="checkbox" Name="Status" id="StatusCreate" checked>
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label> *@
+                        <input class="form-check-input" rel="active" type="checkbox" id="StatusCreate" name="Status" value="1" checked>
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="Submit" class="btn btn-primary" id="save">Submit</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@*Modal Edit*@
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post" action="UserUpdate" controller="Home">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">User Edit</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="UserEmpID" class="col-form-label">User ID:</label>
+                        <input type="text" class="form-control" style="background-color:gainsboro" name="UserEmpID" id="ModalUserEmpID" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="UserName" class="col-form-label">First Name:</label>
+                        <input type="text" class="form-control" name="UserName" id="ModalUserName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="UserLastName" class="col-form-label">Last Name:</label>
+                        <input type="text" class="form-control" name="UserLastName" id="ModalLastName">
+                    </div>
+                   <div class="mb-3">
+                        <label class="col-form-label">Role:</label>
+                   @*      <select class="selectfillter form-control" style="width:100%" name="UserPermission" id="RoleName">
+                            @foreach (var item in Model.tbRole.Where(x => x.RoleStatus.Equals(1)))
+                            {
+
+                                <option value="@item.RoleID">@Html.DisplayFor(modelItem => item.RoleName) </option>
+                            }
+                        </select> *@
+
+
+                        <select class="selectfillter form-control" style="width:100%" name="UserPermission" id="ModalRoleName">
+                        <option value="" default selected></option>
+                            @foreach (var item in Model.tbRole.Where(x=>x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
+                         {
+                            var dataitem = item.First(); // Take the first item in the group
+                                <option value="@dataitem.RoleID" selected="@(dataitem.RoleName == ViewBag.SelectedRoleName ? "selected" : null)">
+                              @Html.DisplayFor(modelItem => dataitem.RoleName)
+                            </option>
+
+                            }
+
+
+            </select>
+
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="UserEmail" class="col-form-label">Email:</label>
+                        <input type="text" class="form-control" name="UserEmail" id="ModalUserEmail">
+                    </div>
+                   <div class="mb-3">
+                        <label for="UserPassword" class="col-form-label">Password:</label>
+                        <input type="password" class="form-control" name="UserPassword" id="ModalUserPassword">
+                    </div> 
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" rel="active" type="checkbox" id="ModalStatus" name="Status" value="1">
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    @* <button type="button" class="btn btn-primary" id="save">Reset Password</button> *@
+                    <button type="Submit" class="btn btn-primary" id="save">Submit</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    // Ensure that the checkbox state is included in the form submission
+    document.getElementById("inactivestatus").addEventListener("change", function () {
+        if (this.checked) {
+            // Set the value of the hidden input field to "true" when checked
+            document.getElementById("inactivestatus-hidden").value = "true";
+        } else {
+            // Set the value of the hidden input field to "false" when unchecked
+            document.getElementById("inactivestatus-hidden").value = "false";
+        }
+    });
+
+</script>

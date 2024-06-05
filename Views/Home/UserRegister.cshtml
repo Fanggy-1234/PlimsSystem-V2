@@ -1,0 +1,66 @@
+﻿@model Plims.Models.TbUser
+@{
+    ViewBag.Title = "UserRegister";
+}
+
+<h2>UserRegister</h2>
+
+<form method="post">
+    @Html.AntiForgeryToken();
+    <div class="mb-3 row">
+        <label for="inputPassword" class="col-sm-2 col-form-label">Employee ID</label>
+        <div class="col-sm-10">
+            @Html.TextBoxFor(Model => Model.UserEmpID, new { @class = "form-control" })
+            @*<input type="text" class="form-control" id="inputPassword">*@
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputPassword" class="col-sm-2 col-form-label">FirstName</label>
+        <div class="col-sm-10">
+            @Html.TextBoxFor(Model => Model.UserName, new { @class = "form-control" })
+            @* <input type="text" class="form-control" id="inputPassword">*@
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputPassword" class="col-sm-2 col-form-label">LastName</label>
+        <div class="col-sm-10">
+            @Html.TextBoxFor(Model => Model.UserLastName, new { @class = "form-control" })
+            @* <input type="text" class="form-control" id="inputPassword">*@
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputPassword" class="col-sm-2 col-form-label">Role</label>
+        <div class="col-sm-10">
+            @Html.DropDownListFor(model => Model.UserPermission,
+                     new List<SelectListItem>
+            {
+            new SelectListItem { Value = "1" , Text = "Admin" },
+            new SelectListItem { Value = "2" , Text = "Super User" },
+            new SelectListItem { Value = "3" , Text = "User" }
+            },
+                     new { @class = "form-select" })
+
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputPassword" class="col-sm-2 col-form-label">Email</label>
+        <div class="col-sm-10">
+            @Html.TextBoxFor(Model => Model.UserEmail, new { @class = "form-control" })
+
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+        <div class="col-sm-10">
+            @Html.TextBoxFor(Model => Model.UserPassword, new { @class = "form-control", @type = "password" })
+            @*<input type="password" class="form-control" id="inputPassword">*@
+        </div>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    <div>
+        <span class="text-danger"> @ViewBag.Message</span>
+    </div>
+
+</form>

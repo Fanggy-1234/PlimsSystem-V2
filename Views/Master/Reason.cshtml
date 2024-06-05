@@ -1,0 +1,680 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@{
+    ViewBag.Title = "Reason";
+    //TbUser user = Utilities.GetCurrentUser();
+}
+
+
+
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+    #table_id {
+        border: 0.1px solid #A9A9A9; /* Set border style */
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #table_id th {
+            background-color: #C5C5C5; /* Set your desired header background color */
+            font-weight: bold;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            padding: 15px 0px;
+            border-collapse: collapse;
+        }
+
+        #table_id td {
+            text-align: left;
+            font-size: 14px;
+        }
+
+        #table_id tr {
+            text-align: left;
+            padding: initial;
+        }
+
+        #table_id th,
+        #table_id td {
+            border: 0.1px solid #A9A9A9; /* Set border style */
+            border-collapse: collapse;
+        }
+
+</style>
+
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            ordering: false,
+            searching: false,
+            scrollX: true,
+            scrollY: true,
+            // order: [[1, 'asc']],
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 20, // Default page length
+            paging: true, // Enable paging
+        });
+
+    });
+</script>
+
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name"> Defect Management</h2>
+@* Textbox for search *@
+<form method="get" asp-controller="Master">
+
+    @* <div style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;"> *@
+        <div class="row">
+        <div class="col-2"><label class="FillterLabel">Line Name:</label></div>
+            <div class="col-3">
+       @*      <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
+                <option value="" default selected></option>
+                @foreach (var item in Model.tbLine)
+                {
+
+                    <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName) </option>
+                }
+            </select>
+ *@
+            <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
+                <option value="" default selected></option>
+                @foreach (var dataGroup in Model.view_Reason.GroupBy(x => x.LineID))
+                {
+                    var dataFrist = dataGroup.First(); // Take the first item in the group
+                    <option value="@dataFrist.LineName" selected="@(dataFrist.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => dataFrist.LineID) : @Html.DisplayFor(modelItem => dataFrist.LineName)
+                    </option>
+
+                }
+            </select>
+
+            </div>
+            <div class="col-1"></div>
+        <div class="col-2"><label class="FillterLabel"> Product Name :</label></div>
+            <div class="col-3">
+        @*     <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductName">
+                <option value="" default selected></option>
+                @foreach (var item in Model.tbProduct)
+                {
+
+                    <option value="@item.ProductName" selected="@(item.ProductName == ViewBag.SelectedProductName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName) </option>
+                }
+            </select> *@
+
+
+            <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductName">
+                <option value="" default selected></option>
+                @foreach (var dataGroup in Model.view_Reason.GroupBy(x => x.ProductID))
+                {
+                    var dataFrist = dataGroup.First(); // Take the first item in the group
+                    <option value="@dataFrist.ProductName" selected="@(dataFrist.ProductName == ViewBag.SelectedProductName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => dataFrist.ProductName) : @Html.DisplayFor(modelItem => dataFrist.ProductName)
+                    </option>
+
+                }
+            </select>
+
+
+            </div>
+
+        </div>
+        <div class="row" style="height:10px"></div>
+        <div class="row">
+        <div class="col-2"><label class="FillterLabel">Section Name:</label></div>
+            <div class="col-3">
+         @*    <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
+                <option value="" default selected></option>
+                @foreach (var item in Model.tbSection)
+                {
+
+                    <option value="@item.SectionName" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName) </option>
+                }
+            </select> *@
+
+            <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_Reason.GroupBy(x => x.SectionID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                    <option value="@dataFrist.SectionName" selected="@(dataFrist.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                                    @Html.DisplayFor(modelItem => dataFrist.SectionID) : @Html.DisplayFor(modelItem => dataFrist.SectionName)
+                                </option>
+
+                            }
+                        </select>
+
+
+
+
+            </div>
+        <div class="col-1"></div>
+            <div class="col-2"></div>
+            <div class="col-3">
+
+            
+            </div>
+
+        </div>
+
+
+    <div class="row" style="height:20px"></div>
+
+
+    @* //Inactive Checkbox *@
+    <div class="row ">
+        <div class="col-2" style=" padding-top:0.5em"></div>
+        <div class="col-3">
+            @{
+                // Determine if the checkbox should be checked based on ViewBag.InactiveStatus
+                string checkedAttribute = (ViewBag.InactiveStatus ?? false) ? "checked" : "";
+            }
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="inactivestatus" name="inactivestatus" @checkedAttribute>
+                <label class="form-check-label" for="inactivestatus">Inactive Status</label>
+                <input type="hidden" id="inactivestatus-hidden" name="inactivestatus" value="@((ViewBag.InactiveStatus ?? false).ToString().ToLower())">
+            </div>
+        </div>
+        <div class="col-6"></div>
+    </div>
+
+
+    <div class="row" style="height:20px"></div>
+    <div class="row" style="height:35px">
+
+        <div class="col" style="width:15% ">
+            <button id="Clear" type="submit" asp-action="ReasonClear" class="clear-button">
+                Clear
+            </button>
+        </div>
+        <div class="col-3" style="width:55% ">
+        </div>
+        <div class="col" style="width:15% ">
+            <button id="Search" type="submit" asp-action="Reason" class="search-button">
+                Search
+            </button>
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleReason == "Full")
+            {
+                <button type="button" action="CreatePlant" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal">Create</button>
+
+            }
+            else
+            {
+                <button type="button"  class="create-button" >Create</button>
+
+            }
+           
+        </div>
+    </div>
+</form>
+
+
+<br />
+<div class="row" style="height:10px">
+    @if (TempData.ContainsKey("AlertMessage"))
+    {
+        <script>
+            alert('@TempData["AlertMessage"]');
+        </script>
+    }
+</div>
+
+<div id="table_info" class="box"></div>
+
+@*Diaplay data*@
+<table id="table_id" class="table table-hover" style="width:100%">
+    <thead style="background-color:lightgrey;width:100%">
+        <tr>
+
+            <th>
+                Defect ID
+            </th>
+            <th>
+                Defect Name
+            </th>
+           
+
+            <th>
+                Line Name
+            </th>
+            <th>
+                Product Name
+            </th>
+            <th>
+                Section Name
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Edit
+            </th>
+            <th>
+                Active/Inactive
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.view_Reason)
+        {
+            <tr>
+                @Html.HiddenFor(modelItem => item.ReasonID)
+
+                <td id="ReasonID">
+                    @Html.DisplayFor(modelItem => item.ReasonID)
+                </td>
+                <td id="ReasonName">
+                    @Html.DisplayFor(modelItem => item.ReasonName)
+                </td>
+               
+                <td id="ReasonName">
+                    @Html.DisplayFor(modelItem => item.LineName)
+                </td>
+                <td id="ReasonName">
+                    @Html.DisplayFor(modelItem => item.ProductName)
+                </td>
+                <td id="ReasonName">
+                    @Html.DisplayFor(modelItem => item.SectionName)
+                </td>
+
+
+                @if (item.Status == 1)
+                {
+                    <td id="Status"> <span id="open">Active</span> </td>
+                    <td>
+                        @if (ViewBag.VBRoleReason == "Full")
+                            {
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ReasonID" onclick="EditFn('@item.ReasonID')">Edit</a>
+
+                        }
+                        else
+                        {
+                            <a href="#"  id="btnEdit">Edit</a>
+
+                        }
+                         </td>
+
+                    <td>
+                        @if (ViewBag.VBRoleReason == "Full")
+                        {
+                            <a href="#" id="Inactive" onclick="InactiveFn('@item.ReasonID')">Inactive</a>
+                        }
+                        else
+                        {
+                            <a href="#" id="Inactive" >Inactive</a>
+                        }
+                     
+                    </td>
+
+                }
+                @if (item.Status == 0)
+                {
+                    <td id="Status"><span id="closed" style="color:red">Inactive</span></td>
+                    <td>
+                        <span id="closed">Edit</span>
+                    </td>
+                    <td>
+                        @if (ViewBag.VBRoleReason == "Full")
+                        {
+                             <a href="#" id="Active" onclick="ActiveFn('@item.ReasonID')">Active</a>                            
+                        }
+                        else
+                        {
+                            <a href="#" id="Active" >Active</a>
+                        }
+                       
+                    </td>
+                }
+
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+
+<div style="height:20px">
+</div>
+
+
+
+@*Modal Create*@
+<div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-controller="Master" asp-action="ReasonCreate">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Defect Create</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label class="col-form-label">Defect ID:</label>
+                        @{
+                            // int value = @Model.tbReason.Count() + 1;
+                            // string formattedValue = value.ToString("00000");
+                            // value = "@formattedValue"
+                            <input type="text" class="form-control" style="background-color:gainsboro" name="ReasonID" id="ReasonIDCreate" readonly >
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <label class="col-form-label">Defect Name:</label>
+                        <input type="text" class="form-control" name="ReasonName" id="ReasonNameCreate" required>
+                    </div>
+                  
+                    <div class="mb-3">
+                        <label class="col-form-label">Line Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="LineNameCreate" onchange="filterProductsByLine()" required>
+                            <option value="" default selected>Please Select ..</option>
+                            @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
+                            {
+
+                                <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineName) </option>
+                            }
+                        </select>
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Product Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ProductNameCreate" onchange="filterSectionsByProduct()" required>
+                            <option value="" default selected>Please Select ..</option>
+                            @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
+                            {
+
+                                <option value="@item.ProductID">@Html.DisplayFor(modelItem => item.ProductName) </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Section Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="SectionID" id="SectionNameCreate" required>
+                            <option value="" default selected>Please Select ..</option>
+                            @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
+                            {
+
+                                <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionName) </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" rel="active" type="checkbox" id="StatusCreate" name="Status" value="1" checked>
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="Submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+@*Modal Edit*@
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post" asp-action="ReasonUpdate" asp-controller="Master">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Defect Edit</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label class="col-form-label">Defect ID:</label>
+                        <input type="text" class="form-control" style="background-color:gainsboro" name="ReasonID" id="ModalReasonID" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="col-form-label">Defect Name:</label>
+                        <input type="text" class="form-control" name="ReasonName" id="ModalReasonName" required>
+                    </div>
+                  
+                    <div class="mb-3">
+                        <label  class="col-form-label">Line Name:</label>
+                        <select class="form-control selectfillter" style="width:100%" name="LineID" id="ModalLineName" onchange="filterProductsByLineEdit()" required>
+                            @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
+                            {
+
+                                <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineName) </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label  class="col-form-label">Product Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductName" onchange="filterSectionsByProductEdit()" required>
+                            @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
+                            {
+
+                                <option value="@item.ProductID" >@Html.DisplayFor(modelItem => item.ProductName) </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Section Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName" required>
+                            @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
+                            {
+
+                                <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionName) </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" rel="active" type="checkbox" name="Status" id="ModalStatus" value="1">
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="Submit" class="btn btn-primary" id="save">Submit</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+
+    // Ensure that the checkbox state is included in the form submission
+    document.getElementById("inactivestatus").addEventListener("change", function () {
+        if (this.checked) {
+            // Set the value of the hidden input field to "true" when checked
+            document.getElementById("inactivestatus-hidden").value = "true";
+        } else {
+            // Set the value of the hidden input field to "false" when unchecked
+            document.getElementById("inactivestatus-hidden").value = "false";
+        }
+    });
+
+
+</script>
+<script type="text/javascript" charset="utf8">
+
+    /// Fillter Create
+    function filterProductsByLine() {
+        // Clear previous options
+        $("#ProductNameCreate").empty();;
+        // Add a default option
+        $("#ProductNameCreate").append("<option value='' default selected>Please Select ..</option>");
+        // Get the selected Line ID
+
+        var selectedLineID = $("#LineNameCreate").val().toString();
+        // Check if a line is selected
+        if (selectedLineID !== "") {
+            // Use AJAX to filter products based on the selected Line ID
+            $.ajax({
+                type: "GET",
+                url: "/Master/FilterProductsByLine", // Update the URL to your controller action
+                data: { lineId: selectedLineID },
+                success: function (filteredProducts) {
+                    console.log(filteredProducts)
+                    // Add filtered products to the dropdown
+                    filteredProducts.forEach(function (product) {
+                        $("#ProductNameCreate").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering products: " + error);
+                }
+            });
+        }
+    }
+
+
+    function filterSectionsByProduct() {
+        // Clear previous options
+        $("#SectionNameCreate").empty();
+        // Add a default option
+        $("#SectionNameCreate").append("<option value='' default selected>Please Select ..</option>");
+
+
+        // Get the selected Product ID
+        var selectedProductID = $("#ProductNameCreate").val().toString();
+        var selectedLineID = $("#LineNameCreate").val().toString();
+
+
+
+        // Check if a product is selected
+        if (selectedProductID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Master/FilterSectionsByProduct", // Update the URL to your controller action
+                data: { productId: selectedProductID, lineId: selectedLineID },
+                success: function (filteredSections) {
+                    console.log(filteredSections)
+                    // Add filtered sections to the dropdown
+                    filteredSections.forEach(function (section) {
+                        $("#SectionNameCreate").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering sections: " + error);
+                }
+            });
+        }
+    }
+
+
+
+
+    //Edit to modal
+    function EditFn(id) {
+        $.ajax({
+            url: '/Master/ReasonEdit/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response == null || response == undefined) {
+
+                    alert("This data can't read1!")
+                }
+                else if (response.length == 0) {
+
+                    alert("This data can't id!" + id)
+                }
+                else {
+
+                    //  console.log('AJAX request successful:', response);
+                    $('#ModalReasonID').val(response.reasonID);
+                    $('#ModalReasonName').val(response.reasonName);
+
+                    //  $('#ModalPlantName').append('<option value="' + response.plantID + '">' + response.plantName + '</option>');
+                    // $('#ModalPlantName').val(response.plantID).trigger('change');
+
+                    //$('#ModalLineName').append('<option value="' + response.lineID + '">' + response.lineName + '</option>');
+                    $('#ModalLineName').val(response.lineID).trigger('change');
+
+                    //$('#ModalProductName').append('<option value="' + response.productID + '">' + response.productName + '</option>');
+                    $('#ModalProductName').val(response.productID).trigger('change');
+
+                    // $('#ModalSectionName').append('<option value="' + response.sectionID + '">' + response.sectionName + '</option>');
+                    $('#ModalSectionName').val(response.sectionID).trigger('change');
+                    $('#ModalStatus').prop('checked', response.status == 1)
+                    $('#EditModal').modal('show');
+                }
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+
+        });
+
+    }
+    //Function Inactive
+    function InactiveFn(id) {
+        $.ajax({
+            url: '/Master/ReasonInactive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                location.reload();
+                alert("Inactive Finish");
+            },
+            error: function (response) {
+                alert("Inactive something went wrong.");
+            }
+
+        });
+    }
+
+
+    //Function Inactive
+    function ActiveFn(id) {
+        $.ajax({
+            url: '/Master/ReasonActive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                location.reload();
+                alert("Active Finish");
+            },
+            error: function (response) {
+                alert("Active something went wrong.");
+            }
+
+        });
+    }
+
+
+</script>

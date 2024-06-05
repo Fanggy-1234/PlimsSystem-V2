@@ -1,0 +1,432 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@{
+    ViewBag.Title = "Plant";
+   
+}
+
+
+@* <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/css/bootstrap.css" rel="stylesheet" />
+<script src="~/js/bootstrap/bootstrap.js"></script>
+<script src="~/js/bootstrap/bootstrap.min.js"></script>
+<script src="~/js/bootstrap.bundle.min.js"></script>
+   
+ *@
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+    #table_id {
+        border: 0.1px solid #A9A9A9; /* Set border style */
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #table_id th {
+            background-color: #C5C5C5; /* Set your desired header background color */
+            font-weight: bold;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            padding: 15px 0px;
+            border-collapse: collapse;
+        }
+
+        #table_id td {
+            text-align: left;
+            font-size: 14px;
+        }
+
+        #table_id tr {
+            text-align: left;
+            padding: initial;
+        }
+
+        #table_id th,
+        #table_id td {
+            border: 0.1px solid #A9A9A9; /* Set border style */
+            border-collapse: collapse;
+        }
+
+</style>
+
+
+<script>
+    $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            ordering: false,
+            searching: false,
+            scrollX: true,
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 20, // Default page length
+            paging: true, // Enable paging
+        });
+
+    });
+</script>
+
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Plant Management</h2>
+<div class="row" style="height:10px"> </div>
+
+ <form method="get" asp-controller="Master">
+    @* <div style="background-color: #fcfcfc; border-radius: 2px"> *@
+        <div class="row" >
+            <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> PlantID:</label></div>
+            <div class="col-3">
+                    <select class="selectfillter form-control" style="width:100%" name="PlantID" id="PlantID">
+                    <option value="" default selected></option>
+                    @foreach (var item in Model.tbPlants)
+                    {
+
+                        <option>@Html.DisplayFor(modelItem => item.PlantID) </option>
+                    }
+                </select>
+
+            </div>
+        <div class="col-1"></div>
+            <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> PlantName:</label></div>
+            <div class="col-3">
+                <select class="selectfillter form-control" style="width:100%" name="PlantName" id="PlantName">
+                    <option value="" default selected ></option>
+                    @foreach (var item in Model.tbPlants)
+                    {
+                    <option value="@item.PlantName" selected="@(item.PlantName == ViewBag.SelectedPlant ? "selected" : null)">
+                            @Html.DisplayFor(modelItem => item.PlantName)
+                        </option>
+                    }
+                </select>
+
+            </div>
+
+        </div>
+
+        <br />
+
+        <div class="row" style="height:10px">
+            @if (TempData.ContainsKey("AlertMessage"))
+            {
+                <script>
+                    alert('@TempData["AlertMessage"]');
+                </script>
+            }
+        </div>
+        @* </div> *@
+
+
+    <div class="row" style="height:40px">
+
+        <div class="col" style="width:15% ">
+            <button id="Clear" type="submit" asp-action="PlantClear" class="clear-button">
+                Clear
+            </button>
+        </div>
+        <div class="col-3" style="width:55% ">
+        </div>
+        <div class="col" style="width:15% ">
+            <button id="Search" type="submit" asp-action="Plant" class="search-button">
+                Search
+            </button>
+        </div>
+        <div class="col" style="width:15% ">
+
+            @if(ViewBag.VBRolePlant == "Full")
+        {
+            <button type="button" asp-action="PlantCreate" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal">Create</button>
+        }
+        else
+        {
+                <button type="button" class="create-button">Create</button>
+        }
+
+           @*  <button type="button" asp-action="PlantCreate" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal">Create</button>
+ *@
+        </div>
+    </div> 
+</form>
+
+
+<br />
+
+<div class="row" style="height:10px"></div>
+
+@* <div id="table_info" class="page-table"></div> *@
+@*Display data*@
+
+    <table id="table_id" class="table table-hover" style="width:100%">
+    <thead style="background-color:gainsboro;">
+        <tr>
+            <th  style="text-align:center">
+                Plant ID
+            </th>
+            <th  style="text-align:center">
+                Plant Name
+            </th>
+            <th style="text-align:center">
+                Status
+            </th>
+            <th>
+                Edit
+            </th>
+            <th>
+                Active/Inactive
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.tbPlants)
+        {
+            <tr>
+                @Html.HiddenFor(modelItem => item.PlantID)
+
+                <td id="PlantID"  style="text-align:center">
+                    @Html.DisplayFor(modelItem => item.PlantID)
+                </td>
+                <td id="PlantName" >
+                    @Html.DisplayFor(modelItem => item.PlantName)
+                </td>
+
+                @if (item.Status == 1)
+                {
+                    <td id="Status" > <span id="open">Active</span> </td>
+                    <td>
+                        @if (ViewBag.VBRolePlant == "Full")
+                        {
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.PlantID" onclick="EditFn(@item.PlantID)">Edit</a>
+                        }
+                        else
+                        {
+                            <a href="#" id="btnEdit">Edit</a>
+
+                        }
+                    </td>
+
+                    <td >
+                        @if (ViewBag.VBRolePlant == "Full")
+                        {
+                            <a href="#" id="Inactive" onclick="InactiveFn(@item.PlantID)">Inactive</a>
+                        }
+                        else
+                        {
+
+                            <a href="#" id="Inactive">Inactive</a>
+                        }
+                        
+                    </td>
+
+                }
+                @if (item.Status == 0)
+                {
+                    <td id="Status" ><span id="closed" style="color:red">Inactive</span></td>
+                    <td>
+                        <span id="closed">Edit</span>
+                    </td>
+                    <td >
+                        @if (ViewBag.VBRolePlant == "Full")
+                        {
+                             <a href="#" id="Active" onclick="ActiveFn(@item.PlantID)">Active</a>
+                        }
+                        else
+                        {
+                            <a href="#" id="Active">Active</a>
+                        }
+                       
+                    </td>
+                }
+
+            </tr>
+        }
+    </tbody>
+    </table>
+
+
+@*Modal Create*@
+<div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-controller="Master" asp-action="PlantCreate">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Plant Create</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Plant ID:</label>
+                        @{
+                            int value = @Model.tbPlants.Count() + 1;
+
+                                <input type="text" class="form-control" style="background-color:gainsboro" name="PlantID" id="PlantIDCreate" readonly value="@value">
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Plant Name:</label>
+                        <input type="text" class="form-control" name="PlantName" id="PlantNameCreate" >
+
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" rel="active" type="checkbox" id="StatusCreate" name="Status" value="1" checked>
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="Submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@*Modal Edit*@
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post" asp-action="PlantUpdate" asp-controller="Master">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Plant Edit</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Plant ID:</label>
+                        <input type="text" class="form-control" style="background-color:gainsboro" name="PlantID" id="ModalPlantID" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Plant Name:</label>
+                        <input type="text" class="form-control" name="PlantName" id="ModalPlantName">
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" rel="active" type="checkbox" id="ModalStatus" name="Status" value="1">
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="Submit" class="btn btn-primary" id="save">Submit</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript" charset="utf8">
+
+    // new DataTable('#table_id', {
+    //     pagingType: 'simple_numbers'
+    // });
+
+
+    //Edit to modal
+    function EditFn(ID) {
+        $.ajax({
+            url: '/Master/PlantEdit/' + ID,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                
+                if (response == null || response == undefined) {
+
+                    alert("This data can't read1!")
+                }
+                else if (response.length == 0) {
+
+                    alert("This data can't id!" + id)
+                }
+                else {
+
+                    console.log('AJAX request successful:', response);
+                    $('#ModalPlantID').val(response.plantID);
+                    $('#ModalPlantName').val(response.plantName);
+                    $('#ModalStatus').prop('checked', response.status == 1)
+                    $('#EditModal').modal('show');
+
+                }
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+
+        });
+    }
+
+
+    //Function Inactive
+    function InactiveFn(ID) {
+        $.ajax({
+            url: '/Master/PlantInactive/' + ID,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                location.reload();
+                alert("Inactive Finish");
+            },
+            error: function (response) {
+                alert("Inactive something went wrong.");
+            }
+
+        });
+    }
+
+
+      //Function Inactive
+    function ActiveFn(ID) {
+        $.ajax({
+            url: '/Master/PlantActive/' + ID,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                location.reload();
+                alert("Inactive Finish");
+            },
+            error: function (response) {
+                alert("Inactive something went wrong.");
+            }
+
+        });
+    }
+
+
+
+</script>
+
+@* <script>
+    $(document).ready(function () {
+        $('.selectfillter').select2({
+            placeholder: "Select a Static Value",
+            theme: "bootstrap-5",
+            allowClear: true
+        });
+
+    });
+</script>
+ *@

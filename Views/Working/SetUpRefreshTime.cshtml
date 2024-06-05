@@ -1,0 +1,102 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@{
+    ViewBag.Title = "SetUp Refresh Time";
+    string userEmpID = Context.Session.GetString("UserEmpID");
+    int PlantID = Convert.ToInt32(Context.Session.GetString("PlantID"));
+}
+
+
+
+
+@*Include Area*@
+<link href="~/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/css/bootstrap.css" rel="stylesheet" />
+<script src="~/js/bootstrap/bootstrap.js"></script>
+<script src="~/js/bootstrap/bootstrap.min.js"></script>
+<script src="~/js/bootstrap.bundle.min.js"></script>
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inIncentive-block;
+        border: 0.1px solid #808080;
+        border-radius: 2px;
+        box-sizing: border-box;
+    }
+
+    .Qty-button {
+        background-color: #A4ADB3;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        color: white;
+        width: 100%;
+        height: 100%;
+    }
+
+    .Defect-button {
+        border: 0.4px solid black;
+        background-color: white;
+        border-radius: 2px;
+        cursor: pointer;
+        color: black;
+        width: 100%;
+        height: 100%;
+    }
+
+</style>
+
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">SetUp Refresh-Time Function</h2>
+<div class="row" style="height:20px"> </div>
+
+<form method="get" asp-controller="Working">
+    <div class="row" style="height:50px"> </div>
+    <div class="row" style="height:80px">
+        <div class="col-2">
+        </div>
+        <div class="col-6">
+
+
+            <div class="row" style="align-items:center">
+                <div class="col-2" style="text-align:center;"><label class="FillterLabel">Refresh Time:</label></div>
+                <div class="col-8">
+                    @{
+                        var x = @Model.tbSetup.Select(x => x.Valuesetup).SingleOrDefault();
+                        <input class="form-control" name="Valuesetup" id="RefreshTime" style="width:100%" value="@x">
+                    }
+                </div>
+                <div class="col-2">
+                    <label class="FillterLabel">Min.</label>
+                </div>
+            </div>
+        </div>
+
+       
+    </div>
+
+
+<div class="row" style="height:50px">
+    <div class="col-6"></div>
+    <div class="col">
+                <button class="clear-button" type="Submit" asp-action="SetUpRefreshTimeSubmit">
+                    Submit
+                </button>
+    </div>
+    <div class="col-5"></div>
+
+</div>
+</form>
+
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}

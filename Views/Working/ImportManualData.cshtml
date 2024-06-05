@@ -1,0 +1,201 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@{
+    ViewBag.Title = "Import Manual Data";
+    string userEmpID = Context.Session.GetString("UserEmpID");
+    int PlantID = Convert.ToInt32(Context.Session.GetString("PlantID"));
+}
+
+
+
+
+@*Include Area*@
+<link href="~/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/css/bootstrap.css" rel="stylesheet" />
+<script src="~/js/bootstrap/bootstrap.js"></script>
+<script src="~/js/bootstrap/bootstrap.min.js"></script>
+<script src="~/js/bootstrap.bundle.min.js"></script>
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inIncentive-block;
+        border: 0.1px solid #808080;
+        border-radius: 2px;
+        box-sizing: border-box;
+    }
+
+    .Qty-button {
+        background-color: #A4ADB3;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        color: white;
+        width: 100%;
+        height: 100%;
+    }
+
+    .Defect-button {
+        border: 0.4px solid black;
+        background-color: white;
+        border-radius: 2px;
+        cursor: pointer;
+        color: black;
+        width: 100%;
+        height: 100%;
+    }
+
+</style>
+
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Import Manual Data</h2>
+<div class="row" style="height:20px"> </div>
+     
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+ @* 
+<script>
+    function bs_input_file() {
+        $(".input-file").before(
+            function () {
+                if (!$(this).prev().hasClass('input-ghost')) {
+                    var element = $("<input type='file' id='dataFile' name='upload' class='input-ghost' style='visibility:hidden; height:0'>");
+                    element.attr("name", $(this).attr("name"));
+                    element.change(function () {
+                        element.next(element).find('input').val((element.val()).split('\\').pop());
+                    });
+                    $(this).find("button.btn-choose").click(function () {
+                        element.click();
+                    });
+                    $(this).find("button.btn-reset").click(function () {
+                        element.val(null);
+                        $(this).parents(".input-file").find('input').val('');
+                    });
+                    $(this).find('input').css("cursor", "pointer");
+                    $(this).find('input').mousedown(function () {
+                        $(this).parents('.input-file').prev().click();
+                        return false;
+                    });
+                    return element;
+                }
+            }
+        );
+    }
+ 
+    function clear() {
+        var input = $("#dataFile").val('');
+    };
+    $(function () {
+        clear();
+        bs_input_file();
+    });
+</script> *@
+ 
+<form method="post" asp-controller="Working"  enctype="multipart/form-data">
+
+    <div class="row" style="height:50px"> </div>
+    <div class="row" style="height:80px">
+        <div class="col-10">
+
+
+            <div class="row" style="align-items:center ; height: 30px">
+                <div class="col-2" style="text-align:center;"><label class="FillterLabel">Path File:</label></div>
+                <div class="col-10">
+                    <input type="file" class="form-control" id="FileUpload" name="FileUpload" />
+                </div>
+
+
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+    @* /////////////////////////// Export / Import /////////////////////// *@
+
+    <div class="row" style="height:40px">
+
+        <div class="col-2" style="width:60% ">
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleManualImport == "Full")
+            {
+                <button class="search-button" id="btnExport" type="button" value="export" type="Submit" asp-action="ImportManualExport">Export</button>
+
+            }
+            else
+            {
+                <button type="button" class="search-button">Export</button>
+            }
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleManualImport == "Full")
+            {
+
+                <button type="submit" class="clear-button" id="btnSelectFile" asp-action="ImportManualUpload">Import</button>
+
+            }
+            else
+            {
+
+                <button type="button" class="clear-button">Imports</button>
+
+            }
+
+        </div>
+        <div class="col-2">
+        </div>
+    </div>
+</form>
+
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
+
+
+<script>
+
+
+    // $(document).ready(function () {
+    //     $('#btnSelectFile').on('click', function () {
+    //         $('#FileUpload').click();
+    //     });
+
+    //     $('#FileUpload').on('change', function () {
+    //         var selectedFile = this.files[0];
+
+    //         // Create FormData object
+    //         var formData = new FormData();
+    //         formData.append('FileUpload', selectedFile);  // Use the correct name
+
+    //         // Send the file to the controller using AJAX
+    //         $.ajax({
+    //             url: '/Working/ImportManualUpload',
+    //             type: 'POST',
+    //             processData: false,
+    //             contentType: false,  // Set this to false when using FormData
+    //             data: formData,
+    //             success: function (data, status, xhr) {
+    //                 // Handle success
+    //                 console.log(data);
+    //                 location.reload();
+    //                 // Trigger the download process or perform other actions
+    //             },
+    //             error: function (xhr, status, error) {
+    //                 // Handle error
+    //                 console.error('Error uploading file:', error);
+    //             }
+    //         });
+    //     });
+    // });
+
+  </script>

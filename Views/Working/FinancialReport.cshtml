@@ -1,0 +1,308 @@
+﻿@model Plims.ViewModel.ViewModelAll
+@using Microsoft.AspNetCore.Http
+@{
+    Layout = "_layout";
+    ViewBag.Title = "Daily Report";
+}
+
+@* ////////////////////////////////////  Reference lib //////////////////////////////////////////// *@
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<link href="~/css/main.css" rel="stylesheet" />
+
+<link href="~/css/bootstrap5.3.css" rel="stylesheet" />
+
+<!-- Ensure jQuery is included before DataTables -->
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
+
+<!-- Include DataTables and its Bootstrap 5 integration -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- Remove the duplicate CSS link -->
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+    #table_id th {
+        background-color: lightgrey;
+        font-weight: bold;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+
+    #table_id td {
+        text-align: left;
+    }
+
+    #table_id tr {
+        text-align: left;
+        padding: 0px; 
+        width: 100%;
+    }
+
+    #table_id th, #table_id td {
+        border: 0.5px solid #F5F5F5;
+        border-collapse: collapse;
+      
+    }
+
+    table.dataTable thead th, table.dataTable tbody td {
+       padding: 0px 10px; 
+        box-sizing: border-box;
+    }
+
+    .dataTables_scrollHeadInner,
+    .table {
+        width: 100% ;
+    }
+
+</style>
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            buttons: ['copy', 'excel', 'pdf'],
+            fixedHeader: true,
+            ordering: false,
+            searching: false,
+            scrollX: true,
+            scrollCollapse: true,
+            select: {
+                style: 'os',
+                selector: 'td:first-child'
+            },
+            order: [[1, 'asc']],
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 10,
+            paging: true,
+            fixedColumns: true
+        });
+
+        // Adjust column width calculations
+        table.columns.adjust().draw();
+    });
+
+//     $(document).ready(function () {
+//     $('#btnExport').click(function () {
+//         var $table = $('#table_id');
+//         var pageCount = $table.DataTable().page.info().pages; // Get total number of pages
+
+//         var $clonedTable = $('<table>').append($table.find('thead').clone()); // Clone the table header
+
+//         // Iterate through all pages
+//         for (var i = 0; i < pageCount; i++) {
+//             $table.DataTable().page(i).draw('page'); // Go to the specific page
+//             var $pageRows = $table.find('tbody tr').clone(); // Clone the rows of the current page
+//             $clonedTable.append($pageRows); // Append cloned rows to the cloned table
+//         }
+
+//         // Export the cloned table with all pages
+//         $clonedTable.table2excel({
+//             exclude: ".noExl", // Exclude elements with class "noExl"
+//             name: "Worksheet Name",
+//             filename: "Financial-Report"
+//         });
+
+//         // Reset DataTable to the initial page
+//         $table.DataTable().page(0).draw('page');
+//     });
+// });
+
+
+
+</script>
+
+
+
+                
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Financial Report</h2>
+<div class="row" style="height:10px"></div>
+<form method="GET" asp-controller="Working">
+    @* ///////////////////////////////////Textbox for search ///////////////////////////////////////////////*@
+      <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 5px;">
+                        <div class="col left" style="border: solid 1px #d5d5d5; margin-left:1em;">
+
+
+                    <div class="row" style="height:10px"></div>
+                    <div class="row">
+                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Start Date:</label></div>
+                        <div class="col-3">
+                    <input class="form-control StartDate" type="Date" name="StartDate" id="StartDate" value="@ViewBag.SelectedStartDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%">
+                        </div>
+          
+                        <div class="col-1"></div>
+                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  End Date:</label></div>
+                        <div class="col-3">
+                    <input class="form-control EndDate" type="Date" name="EndDate" id="EndDate" value="@ViewBag.SelectedEndDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%" >
+                        </div>
+
+                    </div>
+                    <div class="row" style="height:10px"></div>
+                    <div class="row">
+                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> Line :</label></div>
+                        <div class="col-3">
+                    <select class="selectfillter form-control" style="width:100%" name="LineID" id="LineName">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbLine)
+                        {
+                            <option value="@item.LineID" selected="@(ViewBag.SelectedLineID != null && ViewBag.SelectedLineID.Contains(item.LineID) ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.LineID) :    @Html.DisplayFor(modelItem => item.LineName)
+                            </option>
+                        }
+                    </select>
+                        </div>
+
+                        <div class="col-1"></div>
+                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> Employee ID  :</label></div>
+                        <div class="col-3">
+                 
+
+                                   <select class="selectfillter form-control" list="EmployeeID" style="width:100%" name="EmployeeID" id="EmployeeID">
+                                <option value="" default selected></option>
+                                @foreach (var item in Model.tbEmployeeMaster)
+                                {
+
+                            <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">
+                                        @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
+                                    </option>
+                                }
+                            </select>
+
+                        </div>
+
+                    </div>
+                 
+                    <div class="row" style="height:10px"></div>
+  </div>
+
+</div>
+    <div class="row" style="height:20px"></div>
+    <div class="row" style="height:40px">
+
+        <div class="col" style="width:15% ">
+            <button class="clear-button" type="submit" value="clear" asp-action="FinancialReportClear" name="submit">
+                Clear
+            </button>
+
+        </div>
+        <div class="col-8" style="width:55% ">
+        </div>
+        <div class="col" style="width:15% ">
+            <button class="search-button" type="submit" value="search" name="submit" asp-action="FinancialReport">
+                Search
+            </button>
+        </div>
+      
+    </div>
+
+
+
+    <div class="row" style="height:20px"></div>
+
+    @*//////////////////////////////////////Diaplay data tabel ////////////////////////////////////////*@
+    <table id="table_id" class="table table-hover">
+        <thead style="background-color:lightgrey">
+            <tr style="width:100%">
+                <th rowspan="2" style="width:150px">Employee ID</th>
+                <th rowspan="2" style="width:200px">Employee Name</th>
+
+                <!-- Set colspan for the date range -->
+                <th colspan="@((ViewBag.DateRange as List<DateTime>).Count)" style="text-align:center">สิทธิเงินพิเศษ</th>
+
+                <th rowspan="2" style="width:100px">จำนวนเงิน</th>
+                <th rowspan="2" style="width:150px">จุดงาน</th>
+            </tr>
+            <tr>
+      
+                    <!-- Render date range headers -->
+                    @foreach (var date in ViewBag.DateRange)
+                    {
+                    <th>@date.ToString("dd/MM/yy")</th>
+                    }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.groupedData != null && Model.groupedData.Any())
+            {
+                var groupedByEmployeeAndSection = Model.groupedData.GroupBy(x => new { x.QRCode , x.SectionName });
+
+                foreach (var group in groupedByEmployeeAndSection)
+                {
+                    <tr style="width:100%">
+                        <td>@group.Key.QRCode</td>
+                        <td >@group.Max(x => x.EmployeeName)</td>
+                        @{
+                            decimal totalIncentive = 0;
+                        }
+                        @foreach (var date in ViewBag.DateRange)
+                        {
+                            var matchingTransaction = group.FirstOrDefault(x => x.TransactionDate.Date == date.Date);
+                            @* <td>@(matchingTransaction != null ? matchingTransaction.TotalIncentive.ToString("0.00") : "")</td> *@
+                            <td>@(matchingTransaction != null ? matchingTransaction.TotalIncentive.ToString() : "")</td>
+                            totalIncentive += matchingTransaction != null ? matchingTransaction.TotalIncentive : 0;
+                        }
+                    
+                        <td id="TotalAmount">@string.Format("{0:0.00}", totalIncentive)</td>
+                  @*       <td id="TotalAmount">@totalIncentive</td> *@
+                        <td id="SectionName">@group.Key.SectionName</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr style="width:100%">
+                    <td >No data available.</td>
+                   @*  <td colspan="100%">No data available.</td> *@
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div style="height:20px">
+    </div>
+
+
+
+    @* /////////////////////////// Export / Import /////////////////////// *@
+    <div class="row" style="height:40px">
+
+        <div class="col-10">
+        </div>
+        <div class="col">
+            @if (ViewBag.VBRoleFinancial == "Full")
+            {
+                <button class="search-button" id="btnExportreport" type="submit" asp-action="FinanceReportExport" value="export" name="submit">Export</button>
+             
+            }
+            else
+            {
+                <button type="button" class="search-button">Export2</button>
+            }
+        </div>
+    </div>
+
+
+
+</form>
+
+<div style="height:30px"></div>

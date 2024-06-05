@@ -1,0 +1,701 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@{
+    ViewBag.Title = "Section";
+    //TbUser user = Utilities.GetCurrentUser();
+}
+
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+    #table_id {
+        border: 0.1px solid #A9A9A9; /* Set border style */
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #table_id th {
+            background-color: #C5C5C5; /* Set your desired header background color */
+            font-weight: bold;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            padding: 15px 0px;
+            border-collapse: collapse;
+        }
+
+        #table_id td {
+            text-align: left;
+            font-size: 14px;
+        }
+
+        #table_id tr {
+            text-align: left;
+            padding: initial;
+        }
+
+        #table_id th,
+        #table_id td {
+            border: 0.1px solid #A9A9A9; /* Set border style */
+            border-collapse: collapse;
+        }
+
+</style>
+
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            ordering: false,
+            searching: false,
+            scrollX: true,
+            scrollY: true,
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 20, // Default page length
+            paging: true, // Enable paging
+        });
+
+    });
+
+</script>
+
+
+
+<script type="text/javascript" charset="utf8">
+
+
+    // //trick data
+    // function eventFired(type) {
+    //     let n = document.querySelector('#table_info');
+    //     //n.innerHTML +=
+    //     //    '<div>' + type + ' event - ' + new Date().getTime() + '</div>';
+    //     //n.scrollTop = n.scrollHeight;
+    // }
+
+    // $(document).ready(function () {
+    //     $("#table_id #checkall").click(function () {
+    //         if ($("#table_id #checkall").is(':checked')) {
+    //             $("#table_id input[type=checkbox]").each(function () {
+    //                 $(this).prop("checked", true);
+    //             });
+
+    //         } else {
+    //             $("#table_id input[type=checkbox]").each(function () {
+    //                 $(this).prop("checked", false);
+    //             });
+    //         }
+    //     });
+
+    //     $("[data-toggle=tooltip]").tooltip();
+    // });
+
+    // new DataTable('#table_id')
+    //     .on('search.dt', () => eventFired('Search'))
+    //     .on('page.dt', () => eventFired('Page'));
+    // //.on('order.dt', () => eventFired('Order'))
+
+
+
+
+    //Edit to modal
+    function EditFn(id) {
+        $.ajax({
+            url: '/Master/SectionEdit/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response == null || response == undefined) {
+
+                    alert("This data can't read1!")
+                }
+                else if (response.length == 0) {
+
+                    alert("This data can't id!" + id)
+                }
+                else {
+                    console.log('AJAX request successful:', response); 
+                    $('#ModalSectionID').val(response.sectionID);
+                    $('#ModalSectionName').val(response.sectionName);
+                    //$('#ModalDelaytime').val(response.delaytime)
+                    // $('#ModalDelaytime').append('<option value="' + response.delaytime + '">' + response.delaytime + '</option>');
+                    $('#ModalDelaytime').val(response.delaytime).trigger('change');
+
+                    //$('#ModalDelaytime').prop('checked', response.delaytime == 'Y')
+                    $('#ModalStatus').prop('checked', response.status == 1)
+                    $('#EditModal').modal('show');
+
+
+                }
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+
+        });
+    }
+
+
+
+    //Function Inactive
+    function InactiveFn(id) {
+        $.ajax({
+            url: '/Master/SectionInactive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                location.reload();
+                alert("Inactive Finish");
+            },
+            error: function (response) {
+                alert("Inactive something went wrong.");
+            }
+
+        });
+    }
+
+    //Function Inactive
+    function ActiveFn(id) {
+        $.ajax({
+            url: '/Master/SectionActive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                location.reload();
+                alert("Active Finish");
+            },
+            error: function (response) {
+                alert("Active something went wrong.");
+            }
+
+        });
+    }
+
+</script>
+
+<script>
+    // $(document).ready(function () {
+    //     $('.selectfillter').select2({
+    //         closeOnSelect: false,
+    //         theme: 'bootstrap-5'
+    //     });
+
+    // });
+
+
+
+
+
+    $(document).ready(function () {
+        $('#btnSelectFile').on('click', function () {
+            $('#FileUpload').click();
+        });
+
+        $('#FileUpload').on('change', function () {
+            var selectedFile = this.files[0];
+
+            // Create FormData object
+            var formData = new FormData();
+            formData.append('FileUpload', selectedFile);  // Use the correct name
+            console.log(formData)
+            // Send the file to the controller using AJAX
+            $.ajax({
+                url: '/Master/SectionUpload',
+                type: 'POST',
+                processData: false,
+                contentType: false,  // Set this to false when using FormData
+                data: formData,
+                success: function (response) {  // Expecting JSON response
+                    if (response.success) {
+                        alert(response.message);  // Success message
+                        location.reload();  // Reload or do other success-related tasks
+                    } else {
+                        alert(response.message);  // Error message
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error uploading file:', error);
+                    alert('Error uploading file');
+                }
+            });
+        });
+    });
+
+
+
+    //     $(function () {
+    //     $("#btnExport").click(function () {
+    //         $("#table_id").table2excel({
+    //             filename: "Section-Master.xls"
+    //         });
+    //     });
+    // });
+
+
+         
+//         $(document).ready(function() {
+//         $('#btnExport').click(function () {
+//             var $table = $('#table_id');
+
+//         // Clone the table to preserve the original
+//         var $clonedTable = $table.clone();
+
+//         // Remove unwanted columns (in this case, remove second column)
+//         $clonedTable.find('tr').each(function() {
+//                 $(this).find('th:eq(5), td:eq(5)').remove();
+//                 $(this).find('th:eq(4), td:eq(4)').remove();
+//               //  $(this).find('td:eq(3)').remove();
+
+//         });
+
+//         // Export the modified table using table2excel
+//         $clonedTable.table2excel({
+//             exclude: ".noExl", // Exclude elements with class "noExl"
+//             name: "Worksheet Name",
+//                 filename: "Section-Master"
+//         });
+//     });
+// });
+
+
+
+    // $(document).ready(function () {
+    //     $('#btnExport').click(function () {
+    //         var tableData = [];
+    //         $('#table_id tbody tr').each(function (index, row) {
+    //             var rowData = {};
+    //             $(row).find('td').each(function (index, col) {
+    //                 var columnName = $('#table_id thead th').eq(index).text();
+    //                 rowData[columnName] = $(col).text();
+    //             });
+    //             tableData.push(rowData);
+    //         });
+
+    //         // Convert tableData to JSON
+    //         var jsonData = JSON.stringify(tableData);
+
+    //         // Send JSON data to controller
+    //         $.ajax({
+    //             url: '/Master/SectionProcessDataTable',
+    //             type: 'POST',
+    //             contentType: 'application/json',
+    //             data: jsonData,
+    //             success: function (response) {
+    //                 alert("Section Master Export Finished!");
+    //             },
+    //             error: function (xhr, status, error) {
+    //                 console.error('Error exporting data:', error);
+    //                 // Handle error response if needed
+    //             }
+    //         });
+    //     });
+    // });
+
+
+
+</script>
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Section Management</h2>
+
+@* Textbox for search *@
+<form method="GET" asp-controller="Master" asp-action="Section">
+
+        <div class="row">
+            <div class="col-2"><label class="FillterLabel">Section ID:</label></div>
+            <div class="col-3">
+            <select class="selectfillter form-control" style="width:100%" name="SectionID" id="SectionID">
+                <option value="" default selected></option>
+                    @foreach (var item in Model.tbSection)
+                    {
+                    <option value="@item.SectionID" selected="@(item.SectionID == ViewBag.SelectedSectionID ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => item.SectionID) </option>
+                    }
+                </select>
+            </div>
+        <div class="col-1"></div>
+            <div class="col-2"><label class="FillterLabel"> Section Name :</label></div>
+            <div class="col-3">
+            <select class="selectfillter form-control" style="width:100%"  name="SectionName" id="SectionName">
+                <option value="" default selected></option>
+                    @foreach (var item in Model.tbSection)
+                    {
+
+
+                    <option value="@item.SectionName" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => item.SectionName) </option>
+                    }
+                </select>
+            </div>
+
+        </div>
+
+    <div class="row" style="height:20px"></div>
+
+
+    @* //Inactive Checkbox *@
+    <div class="row ">
+        <div class="col-2" style=" padding-top:0.5em"></div>
+        <div class="col-3">
+            @{
+                // Determine if the checkbox should be checked based on ViewBag.InactiveStatus
+                string checkedAttribute = (ViewBag.InactiveStatus ?? false) ? "checked" : "";
+            }
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="inactivestatus" name="inactivestatus" @checkedAttribute>
+                <label class="form-check-label" for="inactivestatus">Inactive Status</label>
+                <input type="hidden" id="inactivestatus-hidden" name="inactivestatus" value="@((ViewBag.InactiveStatus ?? false).ToString().ToLower())">
+            </div>
+        </div>
+        <div class="col-6"></div>
+    </div>
+
+
+    <div class="row" style="height:20px"></div>
+
+    <div class="row" style="height:40px">
+
+        <div class="col" style="width:15% ">
+            <button id="Clear" type="submit" asp-action="SectionClear" class="clear-button">
+                Clear
+            </button>
+        </div>
+        <div class="col-3" style="width:55% ">
+        </div>
+        <div class="col" style="width:15% ">
+            <button id="Search" type="submit" asp-action="Section" class="search-button">
+                Search
+            </button>
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleSection == "Full")
+            {
+                <button type="button" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal" style="justify-content: flex-end ">Create</button>
+
+            }
+            else
+            {
+                <button type="button" class="create-button" style="justify-content: flex-end ">Create</button>
+
+            }
+            
+        </div>
+    </div>
+@* </form> *@
+
+
+<br />
+
+<div class="row" style="height:10px">
+    @if (TempData.ContainsKey("AlertMessage"))
+    {
+        <script>
+            alert('@TempData["AlertMessage"]');
+        </script>
+    }
+</div>
+
+@*}*@
+
+@* <form asp-controller="Master" method="post" id="dataTableForm"> *@
+<div id="table_info" class="box"></div>
+
+@*Diaplay data*@
+    <table id="table_id" class="table table-hover" style="width:100%">
+        <thead style="background-color:lightgrey;width:100%">
+        <tr>
+
+            <th >
+                Section ID
+            </th>
+            <th>
+                Section Name
+            </th>
+            <th >
+                Delay Status
+            </th>
+            <th >
+                Status
+            </th>
+                <th>
+                    Edit
+                </th>
+                <th>
+                    Active/Inactive
+                </th>
+
+        </tr>
+    </thead>
+        <tbody style="width:100%">
+        @foreach (var item in Model.tbSection)
+        {
+            <tr>
+                @Html.HiddenFor(modelItem => item.SectionID)
+
+                <td id="SectionId">
+                    @Html.DisplayFor(modelItem => item.SectionID)
+                </td>
+                <td id="SectionName" >
+                    @Html.DisplayFor(modelItem => item.SectionName)
+                </td>
+                <td id="Delaytime" >
+                    @Html.DisplayFor(modelItem => item.Delaytime)
+                </td>
+
+
+                @if (item.Status == 1)
+                {
+                    <td id="Status"> <span id="open">Active</span> </td>
+                    <td >
+                            @if (ViewBag.VBRoleSection == "Full")
+                            {
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.SectionID" onclick="EditFn(@item.SectionID)">Edit</a>
+                            }
+                            else
+                            {
+                            <a href="#" id="btnEdit">Edit</a>
+                            }
+                        </td>
+
+                    <td>
+                            @if (ViewBag.VBRoleSection == "Full")
+                            {
+                                <a href="#" id="Inactive" onclick="InactiveFn(@item.SectionID)">Inactive</a>
+                            }
+                            else
+                            {
+                                <a href="#" id="Inactive">Inactive</a>
+                            }
+                        
+                    </td>
+
+                }
+                @if (item.Status == 0)
+                {
+                    <td id="Status" ><span id="closed" style="color:red">Inactive</span></td>
+                    <td>
+                        <span id="closed">Edit</span>
+                    </td>
+                    <td>
+                            @if (ViewBag.VBRoleSection == "Full")
+                            {
+                                <a href="#" id="Active" onclick="ActiveFn(@item.SectionID)">Active</a>
+                            }
+                            else
+                            {
+                                <a href="#" id="Active">Active</a>
+                            }
+                           
+                    </td>
+                }
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+    <div style="height:20px">
+    </div>
+@* /////////////////////////// Export / Import /////////////////////// *@
+
+
+        <br>
+          <div class="row" style="height:40px">
+
+        <div class="col-3" style="width:70% ">
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleSection == "Full")
+            {
+                <button class="search-button" id="btnExport" type="Submit"  asp-action="SectionExport" value="export" name="submit">Export</button>
+            }
+            else
+            {
+                <button class="search-button" id="btnExportView">Export</button>
+            }
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleSection == "Full")
+            {
+
+                <button type="button" class="clear-button" id="btnSelectFile">Import</button>
+                <input type="file" id="FileUpload" name="FileUpload" class="hidden-file-input" style="display: none" />
+
+            }
+            else
+            {
+
+                <button type="button" id="btnSubmitView" class="clear-button">Import</button>
+
+            }
+           
+        </div>
+    </div>
+
+
+
+</form>
+
+<div class="row" style="height:10px">
+</div>
+
+
+
+@*Modal Create*@
+<div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" controller="Master" action="SectionCreate">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Section Create</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Section ID:</label>
+
+                        <input type="text" class="form-control" name="SectionID" id="SectionID" readonly style="background-color:gainsboro" value="">
+                  
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Section Name:</label>
+                        <input type="text" class="form-control" name="SectionName" id="SectionName" required>
+                    </div>
+
+                    <div class="mb-3">
+                        @* <input class="form-check-input" type="checkbox" id="DelayTime" name="DelayTime" checked> *@
+                        <label class="form-check-label" >Delay Time</label>
+                        <select class="selectfillter form-control" name="DelayTime" id="DelayTimeCreate" style="width:100%" required>
+                            <option value="0" default selected>0</option>
+                            <option value="5">5</option>
+                            <option value="10" >10</option>
+                            <option value="15" >15</option>
+                            <option value="20" >20</option>
+                            <option value="25">25</option>
+                            <option value="30">30</option>
+                            <option value="35">35</option>
+                             <option value="40">40</option>
+                              <option value="45">45</option>
+                               <option value="50">50</option>
+                                <option value="55">55</option>
+                                <option value="60">60</option>
+                         </select>
+
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" rel="active" type="checkbox" id="StatusCreate" name="Status" value="1" checked>
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="Submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@*Modal Edit*@
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" controller="Master" action="SectionUpdate">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Section Edit</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Section ID:</label>
+                        @{
+
+                            <input type="text" class="form-control" id="ModalSectionID" name="SectionID" readonly style="background-color:gainsboro" value="">
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Section Name:</label>
+                        <input type="text" class="form-control" id="ModalSectionName" name="SectionName" required>
+                    </div>
+                    <div class="mb-3">
+               
+                        <label class="form-check-label" >Delay Time</label>
+                        <select class="selectfillter form-control" name="Delaytime" id="ModalDelaytime" style="width:100%" required>
+                            <option value="0">0</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="25">25</option>
+                            <option value="30">30</option>
+                            <option value="35">35</option>
+                            <option value="40">40</option>
+                            <option value="45">45</option>
+                            <option value="50">50</option>
+                            <option value="55">55</option>
+                            <option value="60">60</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" rel="active" type="checkbox" id="ModalStatus" name="Status" value="1">
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="Submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    // Ensure that the checkbox state is included in the form submission
+    document.getElementById("inactivestatus").addEventListener("change", function () {
+        if (this.checked) {
+            // Set the value of the hidden input field to "true" when checked
+            document.getElementById("inactivestatus-hidden").value = "true";
+        } else {
+            // Set the value of the hidden input field to "false" when unchecked
+            document.getElementById("inactivestatus-hidden").value = "false";
+        }
+    });
+
+
+</script>
+
+
+

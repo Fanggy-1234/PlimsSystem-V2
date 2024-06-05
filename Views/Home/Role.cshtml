@@ -1,0 +1,487 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@*@using PLIMS.Models*@
+@{
+
+    ViewBag.Title = "Role ";
+    //TbUser user = Utilities.GetCurrentUser();
+
+}
+<script src="~/Scripts/jquery-3.7.1.js"></script>
+<script src="~/Scripts/jquery.dataTables.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- jQuery -->
+<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<link href="~/Content/datatables.min.css" rel="stylesheet" />
+<script src="~/Content/datatables.min.js"></script>
+
+<link href="~/Content/main.css" rel="stylesheet" />
+
+<style>
+    /*
+        .form-control {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #808080;
+            border-radius: 2px;
+            box-sizing: border-box;
+        } */
+
+    /*     div .dataTables_wrapper {
+            width: 800px;
+            margin: 0 auto;
+        }
+     */
+    table.dataTable {
+        border-collapse: collapse;
+        border: 1px solid grey; /* Replace 'yourColor' with your desired color code or name */
+    }
+
+        /* Change header border color */
+        table.dataTable thead th {
+            border: 1px solid grey; /* Replace 'yourColor' with your desired color code or name */
+        }
+
+        /* Change body border color */
+        table.dataTable tbody td {
+            border: 1px solid grey; /* Replace 'yourColor' with your desired color code or name */
+        }
+
+
+</style>
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Role Management</h2>
+<div class="row" style="height:10px"></div>
+
+<div class="row">
+    <div class="col-10" style="height:50px">
+        @*         Full  : Create / Update / Delete </br>
+        View :  See only </br>
+        No :  no access </br> *@
+    </div>
+
+    <div class="col-2">
+        <div class="row">
+        </div>
+        <div class="row" style="height:80% ;width:80%">
+            @if (ViewBag.VBRoleRole == "Full")
+            {
+                <button type="button" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal" style="justify-content: flex-end">Create</button>
+
+            }
+            else
+            {
+                <button type="button" class="create-button">Create</button>
+
+
+            }
+        </div>
+
+    </div>
+</div>
+<div class="row" style="height:30px"></div>
+
+@*Diaplay data*@
+<div class="row" style="width:100%">
+    <div id="table_info" class="page-table"></div>
+    <table id="table_id" class="display" style="height:100%">
+        <thead style="background-color:gainsboro; color:black;">
+            <tr>
+                <th>PageName</th>
+                @foreach (var role in Model.tbRole)
+                {
+                    <th>@role.RoleName</th>
+                }
+                <th>Edit</th> <!-- Moved the "Edit" column header here -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pages in Model.tbPage)
+            {
+                <tr>
+                    <td>@pages.PageName</td>
+                    @foreach (var role in Model.tbRole)
+                    {
+                        var permission = Model.view_PagePermission.FirstOrDefault(x => x.RoleName == role.RoleName && x.PageName == pages.PageName);
+                        <td>@(permission != null ? permission.RoleAction : "")</td>
+                    }
+                    <td>
+                        @if (ViewBag.VBRoleRole == "Full")
+                        {
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@pages.PageID" onclick="EditFn(@pages.PageID)">Edit</a>
+                        }
+                        else
+                        {
+                            <a href="#" id="btnEdit" style="visibility: hidden;">Edit</a> <!-- Hide edit link if user doesn't have full access -->
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+
+@*/////////////////////////////////// Modal Create ////////////////////////////////////////*@
+<div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-controller="Master" id="permissionsForm">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Role Create</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label class="col-form-label">Role ID:</label>
+                        @{
+
+                            int value = @Model.tbRole.Max(x => x.RoleID) + 1;
+
+                            <input type="text" class="form-control" style="background-color:gainsboro" name="RoleID" id="RoleIDCreate" readonly value="@value">
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Role Name:</label>
+                        <input type="text" class="form-control" name="RoleName" id="RoleNameCreate">
+                    </div>
+                    <div class="row" style="height:30px">
+                        <div class="col-4"></div>
+                        <div class="col-4"><button type="button" id="btncanclerole" class="create-button" data-bs-dismiss="modal">Cancel</button></div>
+                        <div class="col-4"><button type="button" id="btncreaterole" asp-action="RoleCreate" class="create-button">Create</button></div>
+                    </div>
+                    <div class="row" style="height:10px"></div>
+                    <div class="mb-3">
+
+                        @* //********************** Table Page **************************** *@
+
+                        <table id="table_id" class="display" width="100%">
+                            <thead style="background-color:gainsboro;color: grey ;">
+                                <tr>
+                                    <th>Process</th>
+                                    <th>Permission</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.tbPage)
+                                {
+                                    <tr style="height:8px;">
+                                        <td id="PageName" value="@item.PageID" width="30%">@item.PageName</td>
+                                        <td style=" width: 50%">
+                                            <select class="form-control permission-dropdown" style="width:80% ;padding: 2px 10px;" list="Permission" name="PermissionName" id="PermissionName">
+                                                <option value="No">No</option>
+                                                <option value="View">View</option>
+                                                <option value="Full">Full</option>
+
+
+                                            </select>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+
+
+                        @*  //***********************Table Page *************************** *@
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="submitButton" data-bs-toggle="modal" data-bs-target="#CreateModal" asp-action="RoleCreateSave">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@*/////////////////////////////////// Modal Edit ////////////////////////////////////////*@
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-controller="Master" id="permissionsForm">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Role Create</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label class="col-form-label">Role ID:</label><label Name="ID" id="ModalID" hidden></label>
+                        <input type="text" class="form-control" style="background-color:gainsboro" name="RoleID" id="ModalRoleID" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Role Name:</label>
+                        <input type="text" class="form-control" name="RoleName" id="ModalRoleName">
+                    </div>
+                    <div class="row" style="height:10px"></div>
+                    <div class="mb-3">
+
+                        @* //********************** Table Page **************************** *@
+
+                        <table id="tablesubedit_id" class="display" width="100%">
+                            <thead style="background-color:gainsboro;color: grey ;">
+                                <tr>
+                                    <th>Process</th>
+                                    <th>Permission</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+
+                        </table>
+
+
+
+                        @*  //***********************Table Page *************************** *@
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    @*  <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditModal"  id="submitButton" onclick="submitForm()" asp-action="RoleEditSave">Save</button>
+                    *@ <button type="button" class="btn btn-primary" id="submitButton" onclick="submitForm()">Save</button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+    new DataTable('#table_id', {
+        scrollX: true,
+        scrollY: true,
+        searching: false,
+        ordering: false,
+        paging: false,
+
+
+    });
+
+
+
+    $(document).ready(function () {
+
+
+        // Create Button
+        $("#btncreaterole").click(function () {
+            // AJAX call to the controller action
+            var RoleNames = $("#RoleNameCreate").val();
+            console.log(RoleNames);
+            $.ajax({
+                url: '@Url.Action("RoleCreate", "Home")',
+                type: 'POST',
+                data: { RoleNames: RoleNames }, // Add data if needed
+                success: function (data) {
+                    // Handle the response from the server
+                    alert("Role created please fill permission page ");
+                    // Hide the create button
+                    $("#btncreaterole").hide();
+                    $("#btncanclerole").hide();
+                    console.log(data);
+
+                    // You can update your UI or take other actions based on the response
+                },
+                error: function (error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+
+
+
+    $(document).ready(function () {
+
+        var RoleID = $("#RoleIDCreate").val();
+        var RoleName = $("#RoleNameCreate").val();
+        //console.log("RoleID:", RoleID);
+
+        $("#submitButton").click(function () {
+            var permissions = [];
+
+            // Loop through each permission dropdown and gather data
+            $(".permission-dropdown").each(function () {
+                var pageName = $(this).closest("tr").find("#PageName").text();
+                var permissionValue = $(this).val();
+
+                // Create an object representing the permission
+                var permission = {
+                    PageName: pageName,
+                    PermissionValue: permissionValue
+                };
+
+                // Add the permission object to the array
+                permissions.push(permission);
+            });
+
+            // Log the permissions array to the console (for testing)
+            //   console.log("test1" , permissions);
+
+
+            // AJAX call to the controller action
+            $.ajax({
+                url: '@Url.Action("RoleCreateSave", "Home")',
+                type: 'POST',
+                contentType: 'application/json', // Set content type to JSON
+                data: JSON.stringify({ permissions: permissions, RoleID: RoleID, RoleName: RoleName }), // Convert the array to a JSON string
+                success: function (response) {
+                    // Handle the response from the server
+                    location.reload();
+                    console.log(response);
+                    // You can update your UI or take other actions based on the response
+                },
+                error: function (error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+
+
+
+
+    //Edit to modal
+    function EditFn(ID) {
+        $.ajax({
+            url: '/Home/RoleEdit/' + ID,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+
+                if (response == null || response == undefined) {
+
+                    alert("This data can't read1!")
+                }
+                else if (response.length == 0) {
+
+                    alert("This data can't id!" + id)
+                }
+                else {
+                    console.log('AJAX request successful:', response);
+                    $('#ModalID').val(response[0].id);
+                    $('#ModalRoleID').val(response[0].roleID);
+                    $('#ModalRoleName').val(response[0].roleName);
+                    // Assuming you have a table body with id 'tablesub_id'
+                    var tableBody = $('#tablesubedit_id tbody');
+                    // Clear existing rows in the table
+                    tableBody.empty();
+                    // Add RoleID to the form data
+                    $('#permissionsForm').find('input[name="RoleID"]').remove(); // Remove existing input if any
+                    $('#permissionsForm').find('input[name="RoleName"]').remove();
+
+                    $('#permissionsForm').append('<input type="hidden" name="RoleID" value="' + response[0].roleID + '">');
+                    // $('#permissionsForm').append('<input type="hidden" name="RoleName" value="' + response[0].roleName + '">');
+
+                    $.each(response, function (index, item) {
+                        var row = $('<tr style="height:8px;">');
+                        row.append('<td width="30%" name="PageID" class="ModalpageName">' + item.pageName + '</td>');
+
+                        // Adding a dropdown to the table cell
+                        var dropdownCell = $('<td width="50%">');
+                        var dropdown = $('<select class="form-control permission-dropdown ModalRoleAction" name="RoleAction" id="ModalRoleAction" style="width:80% ;padding: 2px 10px;">');
+                        // Add the current role action as the default option
+                        dropdown.append($('<option>', {
+                            value: item.roleAction,
+                            text: item.roleAction
+                        }));
+
+                        // Dynamically add options based on the current role action
+                        if (item.roleAction === "Full") {
+                            dropdown.append($('<option>', {
+                                value: "View",
+                                text: "View"
+                            }));
+                            dropdown.append($('<option>', {
+                                value: "No",
+                                text: "No"
+                            }));
+                        } else if (item.roleAction === "View") {
+                            dropdown.append($('<option>', {
+                                value: "Full",
+                                text: "Full"
+                            }));
+                            dropdown.append($('<option>', {
+                                value: "No",
+                                text: "No"
+                            }));
+                        } else if (item.roleAction === "No") {
+                            dropdown.append($('<option>', {
+                                value: "Full",
+                                text: "Full"
+                            }));
+                            dropdown.append($('<option>', {
+                                value: "View",
+                                text: "View"
+                            }));
+                        }
+
+                        dropdownCell.append(dropdown);
+                        row.append(dropdownCell);
+                        tableBody.append(row);
+                    });
+
+                    $('#EditModal').modal('show');
+
+                }
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+
+        });
+    }
+
+    /////// Function submit button save edit
+    function submitForm() {
+        // Loop through each row in the table
+        $('#tablesubedit_id tbody tr').each(function () {
+            var pageName = $(this).find('.ModalpageName').text();
+            var roleAction = $(this).find('.ModalRoleAction').val();
+            var roleName = $(this).find('.ModalRoleName').val();
+
+            //  alert(roleName)
+            // Append values as hidden inputs to the form
+            $('#permissionsForm').append('<input type="hidden" name="PageNames[]" value="' + pageName + '">');
+            $('#permissionsForm').append('<input type="hidden" name="RoleActions[]" value="' + roleAction + '">');
+
+        });
+
+        // Prevent default form submission
+        event.preventDefault();
+
+        // Submit the form using AJAX
+        $.ajax({
+            url: '/Home/RoleEditSave', // Use the correct URL
+            type: 'POST',
+            data: $('#permissionsForm').serialize(), // Serialize the form data
+            success: function (response) {
+                // Handle success response
+
+                location.reload();
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+</script>

@@ -1,0 +1,683 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@{
+    ViewBag.Title = "Production Plan";
+}
+
+
+
+
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+    #table_id {
+        border: 0.1px solid #A9A9A9; /* Set border style */
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #table_id th {
+            background-color: #C5C5C5; /* Set your desired header background color */
+            font-weight: bold;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            padding: 15px 0px;
+            border-collapse: collapse;
+        }
+
+        #table_id td {
+            text-align: left;
+            font-size: 14px;
+        }
+
+        #table_id tr {
+            text-align: left;
+            padding: initial;
+        }
+
+        #table_id th,
+        #table_id td {
+            border: 0.1px solid #A9A9A9; /* Set border style */
+            border-collapse: collapse;
+        }
+
+</style>
+
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            ordering: false,
+            searching: false,
+            scrollX: true,
+            scrollY: true,
+            // order: [[1, 'asc']],
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 20, // Default page length
+            paging: true, // Enable paging
+        });
+
+    });
+</script>
+
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Production Plan </h2>
+
+
+<div class="row" style="height:10px"></div>
+<form method="get" asp-controller="Working">
+    <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;">
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-2"><label class="FillterLabel"> Production Date:</label></div>
+            <div class="col-3">
+                <input type="date" class="form-control" name="PlanDate" id="PlanDate" style="width:100%" value="@ViewBag.SelectedPlantDate.ToString("yyyy-MM-dd")">
+
+            </div>
+
+
+
+            <div class="col-1"></div>
+            <div class="col-2"><label class="FillterLabel">  Line Name:</label></div>
+            <div class="col-3">
+
+                <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
+                    <option value="" default selected></option>
+                    @foreach (var LineGroup in Model.view_ProductionPlan.GroupBy(x => x.LineID))
+                    {
+                        var Line = LineGroup.First(); // Take the first item in the group
+                        <option value="@Line.LineID" selected="@(Line.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                            @Html.DisplayFor(modelItem => Line.LineID) : @Html.DisplayFor(modelItem => Line.LineName)
+                        </option>
+
+                    }
+                </select>
+
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-2"><label class="FillterLabel"> Product Name:</label></div>
+            <div class="col-3">
+                <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductName">
+                    <option value="" default selected></option>
+                    @foreach (var productGroup in Model.view_ProductionPlan.GroupBy(x => x.ProductID))
+                    {
+                        var product = productGroup.First(); // Take the first item in the group
+                        <option value="@product.ProductID" selected="@(product.ProductName == ViewBag.SelectedProductName ? "selected" : null)">
+                            @Html.DisplayFor(modelItem => product.ProductID) : @Html.DisplayFor(modelItem => product.ProductName)
+                        </option>
+
+                    }
+                </select>
+
+            </div>
+
+
+
+            <div class="col-1"></div>
+            <div class="col-2"><label class="FillterLabel">  Section Name:</label></div>
+            <div class="col-3">
+
+                <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
+                    <option value="" default selected></option>
+                    @foreach (var sectionGroup in Model.view_ProductionPlan.GroupBy(x => x.SectionID))
+                    {
+                        var sectiond = sectionGroup.First(); // Take the first item in the group
+                        <option value="@sectiond.SectionName" selected="@(sectiond.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                            @Html.DisplayFor(modelItem => sectiond.SectionID) : @Html.DisplayFor(modelItem => sectiond.SectionName)
+                        </option>
+
+                    }
+                </select>
+
+
+            </div>
+
+        </div>
+
+
+
+</div>
+    <div class="row" style="height:35px">
+
+        <div class="col" style="width:15% ">
+            <button class="clear-button" type="submit" asp-action="ProductionPlanClear">
+                Clear
+            </button>
+        </div>
+         <div class="col" style="width:15% ">
+            <button class="search-button" type="submit" asp-action="ProductionPlan">
+                Search
+            </button>
+        </div>
+
+        <div class="col-3" style="width:55% ">
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleProductionPlan == "Full")
+            {
+                <button type="button" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal" style="justify-content: flex-end">Create</button>
+
+            }
+            else
+            {
+                <button type="button" class="create-button" style="justify-content: flex-end">Create</button>
+
+            }
+
+        </div>
+       
+    </div>
+    @* </form> *@
+
+    <div class="row" style="height:30px">
+    </div>
+
+    @*Diaplay data*@
+    <table id="table_id" class="table table-hover" style="width:100%">
+        <thead style="background-color:lightgrey;width:100%">
+            <tr>
+                
+                <th>
+                   Production Date
+                </th>
+                <th>
+                    ShiftName
+                </th>
+                <th>
+                    Line
+                </th>
+                <th>
+                    Product
+                </th>
+                <th>
+                    Section
+                </th>
+                <th>
+                    Size-Min
+                </th>
+                <th>
+                    Size-Max
+                </th>
+                <th>
+                    Piece per QRcode
+                </th>
+                <th>
+                    Total piece per day
+                </th>
+                <th>
+                    QTY
+                </th>
+                <th>
+                    Action
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.view_ProductionPlan)
+            {
+                <tr>
+                    @Html.HiddenFor(modelItem => item.TransactionID)
+                   
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlanDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Prefix) 
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SizeMin)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SizeMax)
+                    </td>
+            @*        
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Weight)
+                    </td> *@
+                       <td>
+                        @Html.DisplayFor(modelItem => item.QRcodeperday)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalPiecePerDay)
+                    </td>
+                    <td>
+                        @if (item.TotalPiecePerDay != 0)
+                        {
+                            @((decimal)item.TotalPiecePerDay / (decimal)item.QRcodeperday)
+                        }
+                        else
+                        {
+                            @:0
+                        }
+                    </td>
+                   
+                    <td>
+                        @if (ViewBag.VBRoleProductionPlan == "Full")
+                            {
+                                @*       <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.IncentiveID" onclick="EditFn(@item.IncentiveID)">Edit</a> *@
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.TransactionID" onclick="EditFn('@item.TransactionID')">Edit</a>
+
+                            }
+                            else
+                            {
+                                <a href="#" id="btnEdit">Edit</a>
+
+                            }
+
+                    </td>
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div style="height:20px">
+    </div>
+
+    @* /////////////////////////// Export / Import /////////////////////// *@
+
+
+    <br>
+    <div class="row" style="height:40px">
+
+        <div class="col-3" style="width:70% ">
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleProductionPlan == "Full")
+            {
+                <button class="search-button" id="btnExport" type="Submit" asp-action="ProductionPlanExport" value="export" name="submit">Export</button>
+            }
+            else
+            {
+
+                <button type="button" id="btnExportView" class="search-button">Export</button>
+            }
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleProductionPlan == "Full")
+            {
+
+                <button type="button" class="clear-button" id="btnSelectFile">Import</button>
+                <input type="file" id="FileUpload" name="FileUpload" class="hidden-file-input" style="display: none" />
+
+            }
+            else
+            {
+
+                <button type="button" id="btnSubmitView" class="clear-button">Import</button>
+
+            }
+
+        </div>
+    </div>
+
+
+</form>
+
+
+<div class="row" style="height:10px"></div>
+
+
+@*Modal Create*@
+<div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post" asp-action="ProductionPlanCreate" asp-controller="Working">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Production Plan Create</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Plan ID:</label>
+                        <input type="text" class="form-control" id="CreatePlanID" Name="PlanID" readonly style="background-color:gainsboro">
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="col-form-label">Plan Date:</label>
+                        <input class="form-control" type="date" name="PlanDate" id="CreatePlanDate" required>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="col-form-label">Shift prefix:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="Prefix" id="CreatePrefix" required>
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.tbShift.Where(x => x.Status.Equals(1)).GroupBy(x => x.Prefix))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.Prefix">@dataFrist.Prefix </option>
+                            }
+                        </select>
+                    </div>
+
+
+
+                    @* Product Name *@
+                    <div class="mb-3">
+                        <label class="col-form-label">Line Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="CreateLineID" required>
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.LineID">@dataFrist.LineName</option>
+                            }
+                        </select>
+                    </div>
+                      @* Section Name *@
+                    <div class="mb-3">
+                        <label class="col-form-label">Product Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="CreateProductID" required>
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.ProductID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.ProductID">@dataFrist.ProductName</option>
+                            }
+                        </select>
+                    </div>
+
+
+                    @* Section Name *@
+                    <div class="mb-3">
+                        <label class="col-form-label">Section Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="SectionID" id="CreateSectionName" required>
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.SectionID">@dataFrist.SectionName</option>
+                            }
+                        </select>
+                    </div>
+
+                   @*  <div class="mb-3">
+                        <label class="col-form-label">Weight:</label>
+                        <input type="text" class="form-control" id="CreateWeight" Name="Weight" required>
+                    </div> *@
+
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="col-form-label">MIN:</label>
+                                <input type="text" class="form-control" id="CreateSizeMIN" Name="SizeMIN" required>
+                            </div>
+                            <div class="col-6">
+                                <label  class="col-form-label">MAX:</label>
+                                <input type="text" class="form-control" Name="SizeMAX" id="CreateSizeMAX" required>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="mb-3">
+                        <label class="col-form-label">QRCodePerDay:</label>
+                        <input type="text" class="form-control" id="CreatQRcodeperday" Name="QRcodeperday" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="col-form-label">TotalPiecePerDay:</label>
+                        <input type="text" class="form-control" id="CreateTotalPiecePerDay" Name="TotalPiecePerDay" required>
+                    </div>
+                  @*   <div class="mb-3">
+                        <label class="col-form-label">Qty:</label>
+                        <input type="text" class="form-control" id="CreateQty" Name="Qty" required>
+                    </div> *@
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="Submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@*Modal Edit*@
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post" asp-action="ProductionPlanUpdate" asp-controller="Working">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Production Plan Edit</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Plan ID:</label>
+                        <input type="text" class="form-control" id="ModalPlanID" Name="PlanID" readonly style="background-color:gainsboro">
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="col-form-label">Plan Date:</label>
+                        <input class="form-control" type="date" name="PlanDate" id="ModalPlanDate" >
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="col-form-label">Shift Prefix:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="Prefix" id="ModalPrefix">
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.tbShift.Where(x => x.Status.Equals(1)).GroupBy(x => x.Prefix))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.Prefix">@dataFrist.Prefix </option>
+                            }
+                        </select>
+                    </div>
+
+
+
+                    @* Product Name *@
+                    <div class="mb-3">
+                        <label class="col-form-label">Line Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineID" >
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.LineID">@dataFrist.LineID : @dataFrist.LineName</option>
+                            }
+                        </select>
+                    </div>
+                      @* Section Name *@
+                    <div class="mb-3">
+                        <label class="col-form-label">Product Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductID" >
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.ProductID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.ProductID">@dataFrist.ProductID : @dataFrist.ProductName</option>
+                            }
+                        </select>
+                    </div>
+
+
+                    @* Section Name *@
+                    <div class="mb-3">
+                        <label class="col-form-label">Section Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName" >
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.SectionID">@dataFrist.SectionID :@dataFrist.SectionName</option>
+                            }
+                        </select>
+                    </div>
+
+                    @* <div class="mb-3">
+                        <label class="col-form-label">Weight:</label>
+                        <input type="text" class="form-control" id="ModalWeight" Name="Weight" required>
+                    </div> *@
+
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="col-form-label">MIN:</label>
+                                <input type="text" class="form-control" id="ModalSizeMIN" Name="SizeMIN" required>
+                            </div>
+                            <div class="col-6">
+                                <label  class="col-form-label">MAX:</label>
+                                <input type="text" class="form-control" Name="SizeMAX" id="ModalSizeMAX" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="col-form-label">QRcodeperday:</label>
+                        <input type="text" class="form-control" id="ModalQRcodeperday" Name="QRcodeperday" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="col-form-label">TotalPiecePerDay:</label>
+                        <input type="text" class="form-control" id="ModalTotalPiecePerDay" Name="TotalPiecePerDay" required>
+                    </div>
+                 @*    <div class="mb-3">
+                        <label class="col-form-label">Qty:</label>
+                        <input type="text" class="form-control" id="ModalQty" Name="Qty" required>
+                    </div> *@
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="Submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $('#btnSelectFile').on('click', function () {
+            $('#FileUpload').click();
+        });
+
+        $('#FileUpload').on('change', function () {
+            var selectedFile = this.files[0];
+
+            // Create FormData object
+            var formData = new FormData();
+            formData.append('FileUpload', selectedFile);  // Use the correct name
+
+            // Send the file to the controller using AJAX
+            $.ajax({
+                url: '/Working/ProductionPlanUpload',
+                type: 'POST',
+                processData: false,
+                contentType: false,  // Set this to false when using FormData
+                data: formData,
+                success: function (data, status, xhr) {
+                    // Handle success
+                   // console.log(data);
+                    alert(data.message);
+                    location.reload();
+                    // Trigger the download process or perform other actions
+                },
+                error: function (xhr, status, error) {
+                    // Handle error
+                    console.error('Error uploading file:', error);
+                }
+            });
+        });
+    });
+
+
+      //Edit to modal
+    function EditFn(id) {
+       // alert(" id!" + id)
+        $.ajax({
+            url: '/Working/ProductionPlanEdit/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response == null || response == undefined) {
+
+                    alert("This Production Plan can't read!")
+                }
+                else if (response.length == 0) {
+
+                    alert("This Production Plan can't id!" + id)
+                }
+                else {
+                    console.log('AJAX request successful:', response);
+
+                    var transactionDate = new Date(response.planDate);
+                    var year = transactionDate.getFullYear();
+                    var month = String(transactionDate.getMonth() + 1).padStart(2, '0');
+                    var day = String(transactionDate.getDate()).padStart(2, '0');
+                        var formattedDate = `${year}-${month}-${day}`;
+
+                    $('#ModalPlanID').val(response.plantID);
+                    $('#ModalPlanDate').val(formattedDate);
+                    $('#ModalPrefix').val(response.prefix).trigger('change');
+                    $('#ModalLineID').val(response.lineID).trigger('change'); 
+                    $('#ModalProductID').val(response.productID).trigger('change');
+                    $('#ModalSectionName').val(response.sectionID).trigger('change');
+                    $('#ModalSizeMAX').val(response.sizeMin);
+                    $('#ModalSizeMIN').val(response.sizeMax);
+                    // $('#ModalWeight').val(response.weight);
+                    $('#ModalQRcodeperday').val(response.qRcodeperday);
+                    $('#ModalTotalPiecePerDay').val(response.totalPiecePerDay);
+                    $('#ModalQty').val(response.qty);
+                    $('#EditModal').modal('show');
+
+
+                }
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+
+        });
+    }
+
+
+</script>

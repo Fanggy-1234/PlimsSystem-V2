@@ -1,0 +1,1006 @@
+﻿@model Plims.ViewModel.ViewModelAll
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+      ViewBag.Title = "Incentive";
+    //TbUser user = Utilities.GetCurrentUser();
+
+}
+
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
+
+
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+    #table_id {
+        border: 0.1px solid #A9A9A9; /* Set border style */
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #table_id th {
+            background-color: #C5C5C5; /* Set your desired header background color */
+            font-weight: bold;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            padding: 15px 0px;
+            border-collapse: collapse;
+        }
+
+        #table_id td {
+            text-align: left;
+            font-size: 14px;
+        }
+
+        #table_id tr {
+            text-align: left;
+            padding: initial;
+        }
+
+        #table_id th,
+        #table_id td {
+            border: 0.1px solid #A9A9A9; /* Set border style */
+            border-collapse: collapse;
+        }
+
+</style>
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            buttons: ['copy', 'excel', 'pdf'],
+            ordering: false,
+            searching: false,
+            scrollX: true,
+            scrollY: true,
+            select: {
+                style: 'os',
+                selector: 'td:first-child'
+            },
+            order: [[1, 'asc']],
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 20, // Default page length
+            paging: true, // Enable paging
+        });
+
+    });
+
+
+    /// Fillter Create
+    function filterProductsByLine() {
+        // Clear previous options
+        $("#ProductNameCreate").empty();;
+        // Add a default option
+        $("#ProductNameCreate").append("<option value='' default selected>Please Select ..</option>");
+        // Get the selected Line ID
+
+        var selectedLineID = $("#LineNameCreate").val().toString();
+        // Check if a line is selected
+        if (selectedLineID !== "") {
+            // Use AJAX to filter products based on the selected Line ID
+            $.ajax({
+                type: "GET",
+                url: "/Master/FilterProductsByLine", // Update the URL to your controller action
+                data: { lineId: selectedLineID },
+                success: function (filteredProducts) {
+                    console.log(filteredProducts)
+                    // Add filtered products to the dropdown
+                    filteredProducts.forEach(function (product) {
+                        $("#ProductNameCreate").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering products: " + error);
+                }
+            });
+        }
+    }
+
+
+    function filterSectionsByProduct() {
+        // Clear previous options
+        $("#SectionNameCreate").empty();
+        // Add a default option
+        $("#SectionNameCreate").append("<option value='' default selected>Please Select ..</option>");
+
+
+        // Get the selected Product ID
+        var selectedProductID = $("#ProductNameCreate").val().toString();
+        var selectedLineID = $("#LineNameCreate").val().toString();
+
+
+
+        // Check if a product is selected
+        if (selectedProductID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Master/FilterSectionsByProduct", // Update the URL to your controller action
+                data: { productId: selectedProductID, lineId: selectedLineID },
+                success: function (filteredSections) {
+                    console.log(filteredSections)
+                    // Add filtered sections to the dropdown
+                    filteredSections.forEach(function (section) {
+                        $("#SectionNameCreate").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering sections: " + error);
+                }
+            });
+        }
+    }
+
+
+    /// Fillter Edit
+    function filterProductsByLineEdit() {
+        // Clear previous options
+
+        $("#ModalProductName").empty();
+        // Add a default option
+
+        $("#ModalProductName").append("<option value='' default selected>Please Select ..</option>");
+
+
+        // Get the selected Line ID
+        var selectedLineID = $("#ModalLineName").val().toString();
+        // Check if a line is selected
+        if (selectedLineID !== "") {
+            // Use AJAX to filter products based on the selected Line ID
+            $.ajax({
+                type: "GET",
+                url: "/Master/FilterProductsByLine", // Update the URL to your controller action
+                data: { lineId: selectedLineID },
+                success: function (filteredProducts) {
+                    console.log(filteredProducts)
+                    // Add filtered products to the dropdown
+                    filteredProducts.forEach(function (product) {
+                        $("#ModalProductName").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering products: " + error);
+                }
+            });
+        }
+    }
+
+
+    function filterSectionsByProductEdit() {
+        // Clear previous options
+        $("#ModalSectionName").empty();
+        // Add a default option
+        $("#ModalSectionName").append("<option value='' default selected>Please Select ..</option>");
+
+        // Get the selected Product ID
+
+        var selectedProductID = $("#PModalroductName").val().toString();
+        var selectedLineID = $("#ModalLineName").val().toString();
+
+        // Check if a product is selected
+        if (selectedProductID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Master/FilterSectionsByProduct", // Update the URL to your controller action
+                data: { productId: selectedProductID, lineId: selectedLineID },
+                success: function (filteredSections) {
+                    console.log(filteredSections)
+                    // Add filtered sections to the dropdown
+                    filteredSections.forEach(function (section) {
+                        $("#ModalSectionName").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering sections: " + error);
+                }
+            });
+        }
+    }
+
+
+
+
+</script>
+@* <style>
+    .FillterLabel {
+        text-align: center
+    }
+</style>
+ *@
+
+
+<script type="text/javascript" charset="utf8">
+
+
+
+    // //trick data
+    // function eventFired(type) {
+    //     let n = document.querySelector('#table_info');
+    //     //n.innerHTML +=
+    //     //    '<div>' + type + ' event - ' + new Date().getTime() + '</div>';
+    //     //n.scrollTop = n.scrollHeight;
+    // }
+
+    // $(document).ready(function () {
+    //     $("#table_id #checkall").click(function () {
+    //         if ($("#table_id #checkall").is(':checked')) {
+    //             $("#table_id input[type=checkbox]").each(function () {
+    //                 $(this).prop("checked", true);
+    //             });
+
+    //         } else {
+    //             $("#table_id input[type=checkbox]").each(function () {
+    //                 $(this).prop("checked", false);
+    //             });
+    //         }
+    //     });
+
+    //     $("[data-toggle=tooltip]").tooltip();
+    // });
+
+    // new DataTable('#table_id')
+    //     .on('search.dt', () => eventFired('Search'))
+    //     .on('page.dt', () => eventFired('Page'));
+    // //.on('order.dt', () => eventFired('Order'))
+
+
+
+    //Edit to modal
+    function EditFn(id) {
+       // alert(" id!" + id)
+        $.ajax({
+            url: '/Master/IncentiveEdit/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response == null || response == undefined) {
+
+                    alert("This Incentive can't read!")
+                }
+                else if (response.length == 0) {
+
+                    alert("This Incentive can't id!" + id)
+                }
+                else {
+                    console.log('AJAX request successful:', response);
+                    $('#ModalIncentiveID').val(response.incentiveID);
+                    $('#ModalIncentiveName').val(response.incentiveName);
+   
+                 //   $('#ModalPlantName').append('<option value="' + response.plantID + '">' + response.plantName + '</option>');
+                   // $('#ModalPlantName').val(response.plantID).trigger('change');
+                    
+                  //  $('#ModalLineName').append('<option value="' + response.lineID + '">' + response.lineName + '</option>');
+                    $('#ModalLineName').val(response.lineID).trigger('change');
+
+                 //   $('#ModalProductName').append('<option value="' + response.productID + '">' + response.productName + '</option>');
+                    $('#ModalProductName').val(response.productID).trigger('change');
+
+                  //  $('#ModalSectionName').append('<option value="' + response.sectionID + '">' + response.sectionName + '</option>');
+                    $('#ModalSectionName').val(response.sectionID).trigger('change');
+                    $('#ModalSTD').val(response.std);
+                    $('#ModalMAX').val(response.max);
+                    $('#ModalMIN').val(response.min);
+                    $('#ModalRate').val(response.rate);
+                    $('#ModalGrade').val(response.grade);
+                    $('#ModalStatus').prop('checked', response.status == 1);
+                    $('#EditModal').modal('show');
+
+
+                }
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+
+        });
+    }
+
+    //Function Inactive
+    function InactiveFn(id) {
+        $.ajax({
+            url: '/Master/IncentiveInactive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                alert("Inactive Finish");
+                location.reload();
+                $("body").html(result);
+              
+            },
+            error: function (response) {
+                alert("Inactive something went wrong.");
+            }
+
+        });
+    }
+
+
+    //Function Inactive
+    function ActiveFn(id) {
+        $.ajax({
+            url: '/Master/IncentiveActive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                alert("Inactive Finish");
+   location.reload();
+                $("body").html(result);
+             
+            },
+            error: function (response) {
+                alert("Inactive something went wrong.");
+            }
+
+        });
+    }
+
+
+
+    $(document).ready(function () {
+        $('#btnSelectFile').on('click', function () {
+            $('#FileUpload').click();
+        });
+
+        $('#FileUpload').on('change', function () {
+            var selectedFile = this.files[0];
+
+            // Create FormData object
+            var formData = new FormData();
+            formData.append('FileUpload', selectedFile);  // Use the correct name
+
+            // Send the file to the controller using AJAX
+            $.ajax({
+                url: '/Master/IncentiveUpload',
+                type: 'POST',
+                processData: false,
+                contentType: false,  // Set this to false when using FormData
+                data: formData,
+                success: function (response) {  // Expecting JSON response
+                    if (response.success) {
+                        alert(response.message);  // Success message
+                        location.reload();  // Reload or do other success-related tasks
+                    } else {
+                        alert(response.message);  // Error message
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error uploading file:', error);
+                    alert('Error uploading file');
+                }
+            });
+        });
+    });
+
+
+
+
+
+
+</script>
+
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Incentive Management</h2>
+
+@* Textbox for search *@
+<form method="GET" asp-controller="Master" asp-action="Incentive">
+   
+    @* <div style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;"> *@
+        <div class="row">
+        <div class="col-2"><label class="FillterLabel">  Line Name :</label></div>
+            <div class="col-3">
+
+            <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
+                <option value="" default selected></option>
+                @foreach (var lineGroup in Model.view_Incentive.GroupBy(x => x.LineID))
+                {
+                    var line = lineGroup.First(); // Take the first item in the group
+                    <option value="@line.LineName" selected="@(line.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => line.LineID) : @Html.DisplayFor(modelItem => line.LineName)
+                    </option>
+               
+                }
+            </select>
+            </div>
+
+
+
+            <div class="col-1"></div>
+        <div class="col-2"><label class="FillterLabel">  Product Name:</label></div>
+            <div class="col-3">
+
+                <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductName">
+                <option value="" default selected></option>
+                @foreach (var productGroup in Model.view_Incentive.GroupBy(x => x.ProductID))
+                {
+                    var product = productGroup.First(); // Take the first item in the group
+                    <option value="@product.ProductID" selected="@(product.ProductName == ViewBag.SelectedProductName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => product.ProductID) : @Html.DisplayFor(modelItem => product.ProductName)
+                    </option>
+               
+                }
+            </select>
+
+            </div>
+
+         </div> 
+
+        <div class="row" style="height:10px"></div>
+        <div class="row">
+        <div class="col-2"><label class="FillterLabel"> Section Name:</label></div>
+            <div class="col-3">
+                 <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
+                <option value="" default selected></option>
+                @foreach (var sectionGroup in Model.view_Incentive.GroupBy(x => x.SectionID))
+                {
+                    var sectiond = sectionGroup.First(); // Take the first item in the group
+                    <option value="@sectiond.SectionID" selected="@(sectiond.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => sectiond.SectionID) : @Html.DisplayFor(modelItem => sectiond.SectionName)
+                    </option>
+               
+                }
+            </select>
+
+
+            </div>
+            <div class="col-1"></div>
+            <div class="col-2"></div>
+            <div class="col-3">
+
+            
+            </div>
+
+        </div>
+
+
+    <div class="row" style="height:20px"></div>
+
+
+    @* //Inactive Checkbox *@
+    <div class="row ">
+        <div class="col-2" style=" padding-top:0.5em"></div>
+        <div class="col-3">
+            @{
+                // Determine if the checkbox should be checked based on ViewBag.InactiveStatus
+                string checkedAttribute = (ViewBag.InactiveStatus != null && (bool)ViewBag.InactiveStatus) ? "checked" : "";
+            }
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="inactivestatus" name="inactivestatus" @checkedAttribute>
+                <label class="form-check-label" for="inactivestatus">Inactive Status</label>
+                <input type="hidden" id="inactivestatus-hidden" name="inactivestatus" value="@((ViewBag.InactiveStatus ?? false).ToString().ToLower())">
+            </div>
+        </div>
+        <div class="col-6"></div>
+    </div>
+
+    <div class="row" style="height:20px"></div>
+
+
+    <div class="row" style="height:35px">
+
+        <div class="col" style="width:15% ">
+            <button class="clear-button" type="submit" asp-action="IncentiveClear">
+                Clear
+            </button>
+        </div>
+        <div class="col-3" style="width:55% ">
+        </div>
+        <div class="col" style="width:15% ">
+            <button class="search-button" type="submit" asp-action="Incentive">
+                Search
+            </button>
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleIncentive == "Full")
+             {
+                  <button type="button" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal" style="justify-content: flex-end">Create</button>
+
+             }
+            else
+            {
+                <button type="button" class="create-button" style="justify-content: flex-end">Create</button>
+
+            }
+           
+        </div>
+    </div>
+@* </form> *@
+
+<div class="row" style="height:10px">
+
+</div>
+<div id="demo_info" class="box"></div>
+@*Diaplay data*@
+@* <form asp-controller="Master"  method="post" id="dataTableForm"> *@
+    <table id="table_id" class="table table-hover" style="width:100%">
+        <thead style ="background-color:lightgrey;width:100%">
+        <tr>
+         
+            <th >
+                Incentive ID
+            </th>
+            <th>
+                Incentive Name
+            </th>
+
+            <th>
+                Line Name
+            </th>
+            <th>
+                Product Name
+            </th>
+
+            <th>
+                Section Name
+            </th>
+               <th>
+                STD
+            </th>
+            <th>
+                Min
+            </th>
+            <th>
+                Max
+            </th>
+            <th>
+                Rate
+            </th>
+            <th>
+                Grade
+            </th>
+            <th>
+                Status
+            </th>
+                <th>
+                    Edit
+                </th>
+                <th>
+                    Active/Inactive
+                </th>
+
+        </tr>
+    </thead>
+        <tbody style="width:100%">
+        @foreach (var item in Model.view_Incentive)
+        {
+            <tr>
+                 @*  @Html.HiddenFor(modelItem => item.IncentiveID)
+                <td><input type="checkbox" class="checkthis" /></td> *@
+                <td id="IncentiveId">
+                        @Html.DisplayFor(modelItem => item.IncentiveID)
+                </td>
+                <td id="IncentiveName">
+                    @Html.DisplayFor(modelItem => item.IncentiveName)
+                </td>
+
+                <td id="LineName">
+                    @Html.DisplayFor(modelItem => item.LineName)
+                </td>
+                <td id="ProdcutName">
+                     @Html.DisplayFor(modelItem => item.ProductID) :  @Html.DisplayFor(modelItem => item.ProductName)
+                </td>
+                <td id="SectionName">
+                    @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
+                </td>
+                    <td id="STD" >
+                        @Html.DisplayFor(modelItem => item.STD)
+                    </td>
+                <td id="Max">
+                    @Html.DisplayFor(modelItem => item.Min)
+                </td>
+                <td id="SectionName">
+                    @Html.DisplayFor(modelItem => item.Max)
+                </td>
+                <td id="SectionName">
+                    @Html.DisplayFor(modelItem => item.Rate)
+                </td>
+                <td id="SectionName">
+                    @Html.DisplayFor(modelItem => item.Grade)
+                </td>
+
+                @if (item.Status == 1)
+                {
+                    <td id="Status"> <span id="open">Active</span> </td>
+                    <td>
+                         @if (ViewBag.VBRoleIncentive == "Full")
+                            {
+                          @*       <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.IncentiveID" onclick="EditFn(@item.IncentiveID)">Edit</a> *@
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.IncentiveID" onclick="EditFn('@item.IncentiveID')">Edit</a>
+
+                            }
+                            else
+                            {
+                                <a href="#"  id="btnEdit" >Edit</a>
+
+                            }
+                    </td>
+                    <td>
+                            @if (ViewBag.VBRoleIncentive == "Full")
+                            {
+                                <a href="#" id="Inactive" onclick="InactiveFn(@item.IncentiveID)">Inactive</a>
+                            }
+                            else
+                            {
+                                <a href="#">Inactive</a>
+                            }
+
+                    </td>
+
+                }
+                @if (item.Status == 0)
+                {
+                    <td id="Status"><span id="closed" style="color:red">Inactive</span></td>
+                    <td>
+                        <span id="closed">Edit</span>
+                    </td>
+                    <td>
+                         @if (ViewBag.VBRoleIncentive == "Full")
+                            {
+                                <a href="#" id="Active" onclick="ActiveFn(@item.IncentiveID)">Active</a>
+                            }
+                            else
+                            {
+                                <a href="#" >Active</a>
+                            }
+                            
+                    </td>
+                }
+               
+
+            </tr>
+        }
+    </tbody>
+</table>
+    
+
+<div style="height:20px">
+</div>
+
+    @* /////////////////////////// Export / Import /////////////////////// *@
+
+
+    <br>
+    <div class="row" style="height:40px">
+
+        <div class="col-3" style="width:70% ">
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleIncentive == "Full")
+            {
+                <button class="search-button" id="btnExport" type="Submit"  asp-action="IncentiveExport" value="export" name="submit">Export</button>
+            }
+            else
+            {
+             
+                <button type="button" id="btnExportView" class="search-button">Export</button>
+            }
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleIncentive == "Full")
+            {
+
+                <button type="button" class="clear-button" id="btnSelectFile">Import</button>
+                <input type="file" id="FileUpload" name="FileUpload" class="hidden-file-input" style="display: none" />
+
+            }
+            else
+            {
+
+                <button type="button" id="btnSubmitView" class="clear-button">Import</button>
+
+            }
+
+        </div>
+    </div>
+
+
+</form>
+
+<div class="row">  
+    <div class="col-md-12">  
+        <div class="form-group">  
+            @Html.Raw(@ViewBag.Alert)  
+        </div>  
+    </div>  
+</div>  
+
+<div class="row" style="height:10px"></div>
+
+
+
+@*Modal Create*@
+<div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post"asp-controller="Master">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Incentive Create</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @* Incentive ID *@
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Incentive ID:</label>
+                        @{
+                            // int value = Model.tbIncentiveMaster.Count() + 1;
+                            // string formattedValue = value.ToString("00000");
+                            // value = "@formattedValue"
+                                    <input type="text" class="form-control" id="IncentiveIDCreate" name="IncentiveID" readonly style="background-color:gainsboro" >
+                        }
+
+                    </div>
+
+                    @* Incentive Name*@
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Incentive Name:</label>
+                        <input class="form-control" name="IncentiveName" id="IncentiveNameCreate" required>
+                    </div>
+
+                  
+
+                    @* Line Name*@
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Line Name:</label>
+
+
+                        <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineNameCreate" onchange="filterProductsByLine()" required>
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.LineID">
+                                    @Html.DisplayFor(modelItem => dataFrist.LineID) : @Html.DisplayFor(modelItem => dataFrist.LineName)
+                                </option>
+
+                            }
+                        </select>
+                        
+                    </div>
+
+
+                    @* Product Name*@
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Product Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductNameCreate" onchange="filterSectionsByProduct()" required>
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.ProductID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.ProductID">
+                                    @Html.DisplayFor(modelItem => dataFrist.ProductID) : @Html.DisplayFor(modelItem => dataFrist.ProductName)
+                                </option>
+
+                            }
+                        </select>
+
+                    </div>
+
+
+                    @* Section Name*@
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Section Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionNameCreate" required>
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.SectionID">
+                                    @Html.DisplayFor(modelItem => dataFrist.SectionID) : @Html.DisplayFor(modelItem => dataFrist.SectionName)
+                                </option>
+
+                            }
+                        </select>
+                      
+                    </div>
+                    <div class="mb-3">
+                        <label for="recipient-STD" class="col-form-label">STD:</label>
+                        <input type="text" class="form-control" id="STDCreate" Name="STD" required>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="recipient-MIN" class="col-form-label">MIN:</label>
+                                <input type="text" class="form-control" id="MINCreate" Name="MIN" required>
+                            </div>
+                            <div class="col-6">
+                                <label for="recipient-MAX" class="col-form-label">MAX:</label>
+                                <input type="text" class="form-control" id="MAXCreate" Name="MAX" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="recipient-Rate" class="col-form-label">Rate:</label>
+                                <input type="text" class="form-control" id="RateCreate" Name="Rate" required>
+                            </div>
+                            <div class="col-6">
+                                <label for="recipient-Greade" class="col-form-label">Grade:</label>
+                                <input type="text" class="form-control" id="GradeCreate" Name="Grade" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+
+                        @*<div class="form-check form-switch">*@
+                   @*      <input class="form-check-input" type="checkbox" id="StatusCreate" Name="Status" checked> *@
+                        <input class="form-check-input" rel="active" type="checkbox" id="StatusCreate" name="Status" value="1" checked>
+
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="Submit" class="btn btn-primary" asp-action="IncentiveCreate">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@*Modal Edit*@
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post" asp-action="IncentiveUpdate" asp-controller="Master">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Incentive Edit</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @* Incentive ID *@
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Incentive ID:</label>
+                        <input type="text" class="form-control" id="ModalIncentiveID" Name="IncentiveID" readonly style="background-color:gainsboro">
+                    </div>
+
+                    @* Incentive Name*@
+                    <div class="mb-3">
+                        <label  class="col-form-label">Incentive Name:</label>
+                        <input class="form-control" name="IncentiveName" id="ModalIncentiveName" required>
+                    </div>
+
+
+                    @* Line Name*@                  
+                    <div class="mb-3">
+                        <label class="col-form-label">Line Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName" required>
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.LineID">@dataFrist.LineName</option>
+                            }
+                        </select>
+                    </div>
+
+
+
+                    @* Product Name *@
+                    <div class="mb-3">
+                        <label class="col-form-label">Product Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductName" required>
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.ProductID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.ProductID">@dataFrist.ProductName</option>
+                            }
+                        </select>
+                    </div>
+
+                    @* Section Name *@
+                    <div class="mb-3">
+                        <label class="col-form-label">Section Name:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName" required>
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.SectionID">@dataFrist.SectionName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="recipient-STD" class="col-form-label">STD:</label>
+                        <input type="text" class="form-control" id="ModalSTD" Name="STD" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="recipient-MIN" class="col-form-label">MIN:</label>
+                                <input type="text" class="form-control" id="ModalMIN" Name="MIN" required>
+                            </div>
+                            <div class="col-6">
+                                <label for="recipient-MAX" class="col-form-label">MAX:</label>
+                                <input type="text" class="form-control" Name="MAX" id="ModalMAX" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="recipient-Rate" class="col-form-label">Rate:</label>
+                                <input type="text" class="form-control" id="ModalRate" Name="Rate" required>
+                            </div>
+                            <div class="col-6">
+                                <label for="recipient-Greade" class="col-form-label">Grade:</label>
+                                <input type="text" class="form-control" id="ModalGrade" Name="Grade" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" rel="active" type="checkbox" id="ModalStatus" name="Status" value="1">
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="Submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+<script>
+    $(document).ready(function () {
+        $('.selectfillter').select2({
+            closeOnSelect: false,
+            theme: 'bootstrap-5',
+
+        });
+
+    });
+
+
+    document.getElementById("inactivestatus").addEventListener("change", function () {
+        if (this.checked) {
+            // Set the value of the hidden input field to "true" when checked
+            document.getElementById("inactivestatus-hidden").value = "true";
+        } else {
+            // Set the value of the hidden input field to "false" when unchecked
+            document.getElementById("inactivestatus-hidden").value = "false";
+        }
+    });
+
+
+</script>
+

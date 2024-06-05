@@ -1,0 +1,312 @@
+﻿@model Plims.ViewModel.ViewModelAll
+@using Microsoft.AspNetCore.Http
+@{
+    Layout = "_layout";
+    ViewBag.Title = "Efficiency Report";
+}
+
+@* ////////////////////////////////////  Reference lib //////////////////////////////////////////// *@
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<link href="~/css/bootstrap5.3.css" rel="stylesheet" />
+
+<!-- Ensure jQuery is included before DataTables -->
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
+
+<!-- Include DataTables and its Bootstrap 5 integration -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- Remove the duplicate CSS link -->
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
+<script src="~/js/table2excel.js"></script>
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+    
+    #table_id th {
+        background-color: #E8E8E8; /* Set your desired header background color */
+        font-weight: bold;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+
+    #table_id td {
+        text-align: left;
+    }
+
+
+    #table_id tr {
+        text-align: left;
+        padding: initial;
+    }
+
+    #table_id th,
+    #table_id td {
+        border: 0.5px solid #D7D8D7; /* Set border style */
+        border-collapse: collapse;
+    }
+
+    /* .dataTables_scrollHeadInner,
+    .table {
+        width: 100% !important;
+    }
+ */
+ 
+
+</style>
+
+
+
+
+<script>
+
+  
+     $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+           // buttons: ['copy', 'excel', 'pdf'],
+            ordering: false,
+            searching: false,
+            scrollX: true,
+            scrollY: true,
+            select: {
+                style: 'os',
+                selector: 'td:first-child'
+            },
+            order: [[1, 'asc']],
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 10, // Default page length
+            paging: true, // Enable paging
+        });
+
+    });
+
+
+    // $(document).ready(function () {
+    //     $('#btnExport').click(function () {
+    //         var $table = $('#table_id');
+    //         var pageCount = $table.DataTable().page.info().pages; // Get total number of pages
+
+    //         var $clonedTable = $('<table>').append($table.find('thead').clone()); // Clone the table header
+
+    //         // Iterate through all pages
+    //         for (var i = 0; i < pageCount; i++) {
+    //             $table.DataTable().page(i).draw('page'); // Go to the specific page
+    //             var $pageRows = $table.find('tbody tr').clone(); // Clone the rows of the current page
+    //             $clonedTable.append($pageRows); // Append cloned rows to the cloned table
+    //         }
+
+    //         // Export the cloned table with all pages
+    //         $clonedTable.table2excel({
+    //             exclude: ".noExl", // Exclude elements with class "noExl"
+    //             name: "Worksheet Name",
+    //             filename: "EFF-Report"
+    //         });
+
+    //         // Reset DataTable to the initial page
+    //         $table.DataTable().page(0).draw('page');
+    //     });
+    // });
+
+
+
+</script>
+
+
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Efficiency Report</h2>
+<div class="row" style="height:10px"></div>
+<form method="GET" asp-controller="Working">
+    @* ///////////////////////////////////Textbox for search ///////////////////////////////////////////////*@
+    <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 5px;">
+        <div class="col left" style="border: solid 1px #d5d5d5; margin-left:1em;">
+
+
+            <div class="row" style="height:10px"></div>
+            <div class="row">
+                <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Start Date:</label></div>
+                <div class="col-3">
+                    <input class="form-control StartDate" type="Date" name="StartDate" id="StartDate" value="@ViewBag.SelectedStartDate" style="width:100%">  @* max="@DateTime.Now.ToString("yyyy-MM-dd")" *@
+                </div>
+
+            
+                <div class="col-1"></div>
+                <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  End Date:</label></div>
+                <div class="col-3">
+                    <input class="form-control EndDate" type="Date" name="EndDate" id="EndDate" value="@ViewBag.SelectedEndDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%">
+                </div>
+
+            </div>
+            <div class="row" style="height:10px"></div>
+            <div class="row">
+                <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Line :</label></div>
+                <div class="col-3">
+                    <select class="selectfillter form-control" style="width:100%" name="LineID" id="LineName">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbLine)
+                        {
+                            <option value="@item.LineID" selected="@(item.LineID == ViewBag.SelectedLineID ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.LineID) :    @Html.DisplayFor(modelItem => item.LineName)
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-1"></div>
+                <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> Section :</label></div>
+                <div class="col-3">
+                    <select class="selectfillter form-control" list="SectionName" style="width:100%" name="SectionName" id="SectionName">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbSection)
+                        {
+
+                            <option value="@item.SectionID" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
+                            </option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+          
+
+            <div class="row" style="height:10px"></div>
+        </div>
+
+    </div>
+    <div class="row" style="height:20px"></div>
+    <div class="row" style="height:40px">
+
+        <div class="col" style="width:15% ">
+            <button class="clear-button" type="submit" value="clear" action="EFFReportClear" name="submit">
+                Clear
+            </button>
+
+        </div>
+        <div class="col-8" style="width:55% ">
+        </div>
+        <div class="col" style="width:15% ">
+            <button class="search-button" type="submit" value="search" name="submit" action="EFFReport">
+                Search
+            </button>
+        </div>
+
+    </div>
+
+
+
+    <div class="row" style="height:20px"></div>
+
+    @*//////////////////////////////////////Diaplay data tabel ////////////////////////////////////////*@
+    <table id="table_id" class="table table-hover">
+        <thead style="background-color:lightgrey;">
+            <tr>
+                <th rowspan="2" style="width:100px">Line</th>
+                <th rowspan="2" style="width:100px">Section</th>
+                <th rowspan="2" style="width:100px">ProductID</th>
+                <th rowspan="2" style="width:100px">ProductName</th>
+                <th rowspan="2" style="width:100px">Unit</th>
+                <th rowspan="2" style="width:100px">EFFSTD</th>
+                <th rowspan="2" style="width:100px"> ชม. งาน STD </th>
+                <th rowspan="2" style="width:100px"> ชม. งาน ACT </th>
+                <th rowspan="2"  style="width:100px"> ชิ้นรับเข้า </th>
+                <th rowspan="2" style="width:100px"> ชั่วโมงจริง </th>   @* EFF1 *@
+                <th rowspan="2" style="width:100px"> บริการแยกได้ </th> @* Servicehour *@
+                <th rowspan="2" style="width:100px"> บริการแยกไม่ได้ </th> @*  Supporthour *@
+                <th rowspan="2" style="width:100px"> ชมจริง + บริการแยกไม่ได้ </th> @* EFF2 *@
+                <th rowspan="2" style="width:100px"> ชมจริง + บริการแยกได้ +บริการแยกไม่ได้ </th>@*  EFF3 *@
+                <th colspan="3" style="width:100px"> EFF Working </th>
+
+                <th rowspan="2" style="width:100px"> KPI </th>
+                <th rowspan="2" style="width:100px"> ค่ากลาง ชม.3</th>
+                <th rowspan="2" style="width:100px"> ค่าที่ได้</th>
+
+                <th rowspan="2" style="width:100px"> KPI </th>
+                <th rowspan="2" style="width:100px"> ค่ากลาง ชม.1</th>
+                <th rowspan="2" style="width:100px"> ค่าที่ได้</th>
+            </tr>
+            <tr>
+
+                <th style="width:100px"> EFF ชม. 1 </th>
+                <th style="width:100px"> EFF ชม. 2 </th>
+                <th style="width:100px"> EFF ชม. 3</th>
+            </tr>
+        </thead>
+        <tbody>
+             @foreach (var item in Model.view_EFFReport)
+        {
+            <tr>
+                <td> @Html.DisplayFor(modelItem => item.LineName)</td>
+                    <td> @Html.DisplayFor(modelItem => item.SectionID)</td>
+                <td> @Html.DisplayFor(modelItem => item.ProductID)</td>
+                 <td> @Html.DisplayFor(modelItem => item.ProductName)</td>
+                    <td> @Html.DisplayFor(modelItem => item.Unit)</td>
+                   <td>@Html.DisplayFor(modelItem => item.ProductSTD)</td>
+                              <td>@Html.DisplayFor(modelItem => item.WorkinghourSTD)</td>
+                              <td>@Html.DisplayFor(modelItem => item.WorkinghourACT)</td>
+                              <td>@Html.DisplayFor(modelItem => item.FinishGood)</td>
+                              <td>@Html.DisplayFor(modelItem => item.EFF1)</td>
+                                   <td>@Html.DisplayFor(modelItem => item.Servicehour)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Supporthour)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.EFF2)</td>
+                                      <td>@Html.DisplayFor(modelItem => item.EFF3)</td>
+                                       <td>@Html.DisplayFor(modelItem => item.EFFhr1)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.EFFhr2)</td>
+                            <td>@Html.DisplayFor(modelItem => item.EFFhr3)</td>
+
+                                           <td>@Html.DisplayFor(modelItem => item.KPIh3)</td>
+                                              <td>@Html.DisplayFor(modelItem => item.MEDh3)</td>
+                                                 <td>@Html.DisplayFor(modelItem => item.ValueEFF3)</td>
+
+                    <td>@Html.DisplayFor(modelItem => item.KPIh1)</td>
+                    <td>@Html.DisplayFor(modelItem => item.MEDh1)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ValEffh1)</td>
+            </tr>
+         }
+          
+        </tbody>
+    </table>
+
+    <div style="height:20px">
+    </div>
+
+
+
+    @* /////////////////////////// Export / Import /////////////////////// *@
+    <div class="row" style="height:40px">
+
+        <div class="col-10">
+        </div>
+        <div class="col">
+            @if (ViewBag.VBRoleEfficiency == "Full")
+            {
+                <button class="search-button" id="btnExportreport" type="submit" asp-action="EFFReportExport" value="export" name="submit">Export</button>
+            
+            }
+            else
+            {
+                <button type="button" class="search-button">Export2</button>
+            }
+        </div>
+    </div>
+
+
+
+</form>
+
+<div style="height:30px"></div>

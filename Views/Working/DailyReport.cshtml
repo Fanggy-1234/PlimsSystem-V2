@@ -1,0 +1,437 @@
+﻿@model Plims.ViewModel.ViewModelAll
+@using Microsoft.AspNetCore.Http
+@{
+    Layout = "_layout";
+    ViewBag.Title = "Daily Report";
+}
+
+@* ////////////////////////////////////  Reference lib //////////////////////////////////////////// *@
+
+<link href="~/css/bootstrap5.3.css" rel="stylesheet" />
+<!-- Include DataTables and its Bootstrap 5 integration -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- Remove the duplicate CSS link -->
+ <link href="~/css/datatable2.2.0.css" rel="stylesheet" /> 
+<script src="~/js/table2excel.js"></script>
+
+@* 
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
+ *@
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+    #table_id th {
+        background-color: lightgrey; /* Set your desired header background color */
+        font-weight: bold;
+        text-align: center;
+        font-family: Arial, sans-serif,
+    }
+
+    #table_id td {
+        text-align: left;
+    }
+
+
+    #table_id tr {
+        text-align: left;
+    }
+
+    #table_id th,
+    #table_id td {
+        border: 0.5px solid #F5F5F5; /* Set border style */
+        border-collapse: collapse;
+    }
+
+    .table-container {
+        overflow-x: auto; /* Enable horizontal scrollbar */
+        max-width: 100%; /* Adjust the maximum width as needed */
+    }
+
+</style>
+
+
+
+
+<script>
+
+
+    $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            buttons: ['copy', 'excel', 'pdf'],
+            ordering: false,
+            searching: false,
+            scrollX: true,
+            scrollY: true,
+            select: {
+                style: 'os',
+                selector: 'td:first-child'
+            },
+            order: [[1, 'asc']],
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 10, // Default page length
+            paging: true, // Enable paging
+        });
+
+    });
+
+
+    // $(document).ready(function () {
+    //     $('#btnExport').click(function () {
+    //         var $table = $('#table_id');
+    //         var pageCount = $table.DataTable().page.info().pages; // Get total number of pages
+
+    //         var $clonedTable = $('<table>').append($table.find('thead').clone()); // Clone the table header
+
+    //         // Iterate through all pages
+    //         for (var i = 0; i < pageCount; i++) {
+    //             $table.DataTable().page(i).draw('page'); // Go to the specific page
+    //             var $pageRows = $table.find('tbody tr').clone(); // Clone the rows of the current page
+    //             $clonedTable.append($pageRows); // Append cloned rows to the cloned table
+    //         }
+    //         console.log('Test');
+    //         // Export the cloned table with all pages
+    //         $clonedTable.table2excel({
+    //             exclude: ".noExl", // Exclude elements with class "noExl"
+    //             name: "Worksheet Name",
+    //             filename: "Daily-Report"
+    //         });
+
+    //         // Reset DataTable to the initial page
+    //         $table.DataTable().page(0).draw('page');
+    //     });
+    // });
+
+
+
+</script>
+
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Daily Report</h2>
+<div class="row" style="height:10px"></div>
+<form method="GET" asp-controller="Working">
+    @* ///////////////////////////////////Textbox for search ///////////////////////////////////////////////*@
+      <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 5px;">
+                        <div class="col left" style="border: solid 1px #d5d5d5; margin-left:1em;">
+
+
+                    <div class="row" style="height:10px"></div>
+                    <div class="row">
+                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Start Date:</label></div>
+                        <div class="col-3">
+                    <input class="form-control StartDate" type="Date" name="StartDate" id="StartDate" value="@ViewBag.SelectedStartDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%">
+                        </div>
+
+                        <div class="col-1"></div>
+                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  End Date:</label></div>
+                        <div class="col-3">
+                    <input class="form-control EndDate" type="Date" name="EndDate" id="EndDate" value="@ViewBag.SelectedEndDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%">
+                        </div>
+
+                    </div>
+                    <div class="row" style="height:10px"></div>
+                    <div class="row">
+                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Employee ID:</label></div>
+                        <div class="col-3">
+                            <select class="selectfillter form-control" list="EmployeeID" style="width:100%" name="EmployeeID" id="EmployeeID">
+                                <option value="" default selected></option>
+                                @foreach (var item in Model.tbEmployeeMaster)
+                                {
+
+                            <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">
+                                        @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
+                                    </option>
+                                }
+                            </select>
+
+                 @*    @Html.DropDownListFor(model => model.FilterEmp, (IEnumerable<SelectListItem>)ViewBag.varEmp as SelectList, ":: All Employee ::", new { @class = "btn form-select", style = "text-align:center;" })
+                     *@    </div>
+
+                        <div class="col-1"></div>
+                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> Line  :</label></div>
+                        <div class="col-3">
+                                    <select class="selectfillter form-control" style="width:100%" name="LineID" id="LineName">
+                                <option value="" default selected></option>
+                                @foreach (var item in Model.tbLine)
+                                {
+                                            <option value="@item.LineID" selected="@(ViewBag.SelectedLineID != null && ViewBag.SelectedLineID.Contains(item.LineID) ? "selected" : null)">
+                                                @Html.DisplayFor(modelItem => item.LineID) :    @Html.DisplayFor(modelItem => item.LineName)
+                                    </option>
+                                }
+                            </select>
+
+                   @*  @Html.DropDownListFor(model => model.FilterLine, (IEnumerable<SelectListItem>)ViewBag.varLine as SelectList, ":: All Line ::", new { @class = "btn form-select", style = "text-align:center;" })
+                    *@     </div>
+
+                    </div>
+
+                      <div class="row" style="height:10px"></div>
+                    <div class="row">
+                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Section:</label></div>
+                        <div class="col-3">
+                            <select class="selectfillter form-control" style="width:100%" name="SectionID" id="SectionID">
+                                <option value="" default selected></option>
+                                @foreach (var item in Model.tbSection)
+                                {
+                                    <option value="@item.SectionID" selected="@(item.SectionID == ViewBag.SelectedSectionID ? "selected" : null)">
+                                                @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
+                                    </option>
+                                }
+                            </select>
+
+                   @*  @Html.DropDownListFor(model => model.FilterPoint, (IEnumerable<SelectListItem>)ViewBag.varPoint as SelectList, ":: All Section ::", new { @class = "btn form-select", style = "text-align:center;" })
+ *@
+
+                        </div>
+
+                        <div class="col-1"></div> 
+                <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Prefix:</label></div>
+                        <div class="col-3">
+                    <select class="selectfillter form-control" style="width:100%" name="Prefix" id="Prefix">
+                        <option value="" default selected></option>
+                        @foreach (var Prefixgroup in Model.tbShift.GroupBy(x => x.Prefix))
+                        {
+                            var line = Prefixgroup.First(); // Take the first item in the group
+                            <option value="@line.Prefix" selected="@(line.Prefix == ViewBag.SelectedPrefix ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => line.Prefix)
+                            </option>
+
+                        }
+                    </select>
+                        </div>
+
+                    </div>
+                    <div class="row" style="height:10px"></div>
+  </div>
+
+</div>
+    <div class="row" style="height:20px"></div>
+    <div class="row" style="height:40px">
+
+        <div class="col" style="width:15% ">
+            <button class="clear-button" type="submit" value="clear" asp-action="DailyReportClear" name="submit">
+                Clear
+            </button>
+
+        </div>
+        <div class="col-8" style="width:55% ">
+        </div>
+        <div class="col" style="width:15% ">
+            <button class="search-button" type="submit" value="search" name="submit" asp-action="DailyReport">
+                Search
+            </button>
+        </div>
+      
+    </div>
+
+
+<div class="row" style="height:20px"></div>
+
+    @*//////////////////////////////////////Diaplay data tabel ////////////////////////////////////////*@
+    <table id="table_id" class="table table-hover ; width:100%">
+        <thead style="background-color:lightgrey; width:100%">
+            <tr>
+               @*  <th class="column">
+                    Production Date
+                </th> *@
+                <th>
+                    Plant
+                </th>
+                <th>
+                    Line
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Shift
+                </th>
+                <th style="width: 100px;">
+                    Product
+                </th>
+                <th style="width: 100px;">
+                    Employee ID
+                </th>
+                <th style="width: 150px;">
+                    Employee Name
+                </th>
+                <th>
+                    Section  
+                </th>
+                <th >
+                    Total Count
+                </th>
+                <th >
+                    Total Peice Scan
+                </th>
+                <th>
+                    Total Defect Real Time Employee
+                </th>
+                <th>
+                    Total Defect 
+                </th>
+                <th>
+                    Actual FG
+                </th>
+
+                 <th>
+                    Total Piece Adjust
+                </th>
+
+                <th>
+                    Working Hours
+                </th>
+                <th>
+                    % Yield 
+                </th>
+                <th>
+                    Piece Per Hr.
+                </th>
+                <th>
+                    EFF.-M/STD
+                </th>
+                <th>
+                    Grade Eff. Real Time
+                </th>
+                <th>
+                    wage Real Time Per Employee
+                </th>
+              @*   <th>
+                    Total Summary Piece Real Time
+                </th> *@
+            </tr>
+        </thead>
+        <tbody style="width:100%">
+            @foreach (var item in Model.view_DailyReportSummary)
+            {
+                <tr>
+                    @* @Html.HiddenFor(modelItem => item.TransactionDate) *@
+                   @*  <td id="TransactionNo">
+                        @Html.DisplayFor(modelItem => item.TransactionDate)
+                    </td> *@
+                    <td id="PlantID">
+                        @Html.DisplayFor(modelItem => item.PlantName)
+                    </td>
+                    <td id="LineID">
+                        @Html.DisplayFor(modelItem => item.LineName)
+                    </td>
+                    <td id="TransactionDate">
+                        @Html.DisplayFor(modelItem => item.TransactionDate)
+                    </td>
+                    <td id="ShiftName">
+                        @Html.DisplayFor(modelItem => item.ShiftName)
+                    </td>
+                    <td id="ProductName">
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+                    <td id="EmployeeID">
+                        @Html.DisplayFor(modelItem => item.QRCode)
+                    </td>
+                    <td id="EmployeeName">
+                        @Html.DisplayFor(modelItem => item.EmployeeName)
+                    </td>
+                    <td id="SectionName">
+                        @Html.DisplayFor(modelItem => item.SectionName)
+                    </td>
+                    <td id="CountQty" style="text-align:center">
+                        @* Total Piece *@
+                        @Html.DisplayFor(modelItem => item.CountQty)
+                    </td>
+                    <td id="Qty">
+                        @* Total Piece *@
+                        @Html.DisplayFor(modelItem => item.FG_Count_Qty)
+                    </td>
+                    <td id="TotalDefectinput">
+                        @* Total Defect *@
+                        @Html.DisplayFor(modelItem => item.DefectQty)
+                    </td>
+                    <td id="TotalDefect">
+                        @Html.DisplayFor(modelItem => item.TotalDefect)
+                    </td>
+                    <td id=" Actual FG">
+                        @Html.DisplayFor(modelItem => item.ActualFG)
+                    </td>
+                    <td id="TotalPiece">
+                        @Html.DisplayFor(modelItem => item.FGAdjust)
+                    </td>
+                    <td id="hours">
+                        @* hours *@
+                        @Html.DisplayFor(modelItem => item.DiffHours)
+                    </td>
+                    <td id="YieldDefect">
+                        @* Yield Defect *@
+                        @string.Format("{0:0.000}", item.YieldDefect)
+                         @* @Html.DisplayFor(modelItem => item.YieldDefect)  *@
+                    </td>
+                    <td id="PeicePerHr">
+                        @* Peice / Hr *@
+                        @Html.DisplayFor(modelItem => item.PiecePerHr)
+                    </td>
+                    <td id="EFFManSTD" style="@(item.EffManPerSTD < item.PercentSTD ? "background-color: #FF4949;" : "background-color: #61FF41;")">
+                        @* Eff man STD *@
+                        @Html.DisplayFor(modelItem => item.EffManPerSTD)
+                    </td>
+                    <td id="Grade">
+                        @* Grade EFF *@
+                        @Html.DisplayFor(modelItem => item.Grade)
+                    </td>
+                    <td id="Wage">
+                        @* Wage *@
+                        @string.Format("{0:0.000}", item.wage)
+                     @*    @Html.DisplayFor(modelItem => item.wage) *@
+                    </td>
+                   @*  <td id="FGQty">
+                        @Html.DisplayFor(modelItem => item.FGQty) 
+                    </td> *@
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div style="height:20px">
+    </div>
+
+
+
+    @* /////////////////////////// Export / Import /////////////////////// *@
+  <div class="row" style="height:40px">
+
+        <div class="col-10">
+        </div>
+        <div class="col" >
+            @if (ViewBag.VBRoleDailyReport == "Full")
+            {
+                <button class="search-button" id="btnExportreport" type="submit" asp-action="DailyReportExport" value="export" name="submit">Export</button>
+                 
+            }
+            else
+            {
+                <button type="button" class="search-button">Export2</button>
+            }
+        </div>
+    </div>
+
+
+
+</form>
+
+<div style="height:30px"></div>

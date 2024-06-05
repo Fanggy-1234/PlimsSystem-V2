@@ -1,0 +1,378 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@{
+    ViewBag.Title = "Employee Break Adjust";
+}
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<link href="~/css/main.css" rel="stylesheet" />
+
+<link href="~/css/bootstrap5.3.css" rel="stylesheet" />
+
+<!-- Ensure jQuery is included before DataTables -->
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
+
+<!-- Include DataTables and its Bootstrap 5 integration -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- Remove the duplicate CSS link -->
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
+
+
+
+<style type="text/css">
+
+    .form-control {
+        width: 80%;
+        padding: 8px 15px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+    .clock-in-button,
+    .clock-out-button,
+    .break-time-button,
+    .leave-holiday-button,
+    .service-clock-in-button,
+    .service-clock-out-button {
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 200px;
+        height: 40px;
+    }
+</style>
+
+
+<script>
+
+    function RevertFn(id) {
+        $.ajax({
+            url: '/Employee/EmployeeBreakAdjustRevert/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                alert("Revert Finish");
+                location.reload();
+            },
+            error: function (response) {
+                alert("Revert something went wrong.");
+            }
+
+        });
+    }
+
+
+</script>
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Employee Break Adjust Function</h2>
+
+@*Button Link*@
+<div class="row" style="height:10px"></div>
+<div class="row employee-button-container">
+    <div class="col-2">
+        <a href="@Url.Action("EmployeeClockIn", "Employee")" class="clock-in-button clock-in-button-text">Employee Clock in</a>
+    </div>
+    <div class="col-2">
+        <a href="@Url.Action("EmployeeClockOut", "Employee")" class="clock-out-button clock-out-button-text">Employee Clock out</a>
+    </div>
+    <div class="col-2">
+        <a href="@Url.Action("EmployeeBreakAdjust", "Employee")" class="break-time-button break-time-button-text">Break time</a>
+    </div>
+    <div class="col-2">
+        <a href="@Url.Action("EmployeeLeaveHoliday", "Employee")" class="leave-holiday-button leave-holiday-button-text">Leave/Holiday</a>
+    </div>
+    <div class="col-2">
+        <a href="@Url.Action("ServicesClockIn", "Employee")" class="service-clock-in-button service-clock-in-button-text">Service clock in</a>
+    </div>
+    <div class="col-2">
+        <a href="@Url.Action("ServicesClockOut", "Employee")" class="service-clock-out-button service-clock-out-button-text">Service clock out</a>
+    </div>
+</div>
+
+
+<div class="row" style="height:20px"></div>
+<form method="get" asp-controller="Employee">
+    <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;">
+   
+        <div class="col left" style="border: solid 1px #d5d5d5;">
+
+            <div class="row" style="height:10px"></div>
+            <div class="row">
+                <div class="col-2">  <label for="recipient-name" class="col-form-label">Production Date:</label></div>
+                <div class="col-3">
+                        <!-- Transaction Date -->
+                    <input type="date" class="form-control" name="TransactionDate" style="width:100%" id="TransactionDate" value="@DateTime.Now.Date">
+                   </div>
+
+
+
+                <div class="col-1"></div>
+                <div class="col-2"> <label for="recipient-name" class="col-form-label">  Line Name:</label></div>
+                <div class="col-3">
+                    <select class="selectfillter form-control" list="LineName" style="width:100%" name="LineName" id="LineName" >
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbLine)
+                        {
+
+                            <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
+                            </option>
+                        }
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="row" style="height:10px"></div>
+            <div class="row">
+                <div class="col-2"><label class="FillterLabel"> Section Name:</label></div>
+                <div class="col-3">
+                    <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName" >
+                        <option value="" default selected></option>
+                        @foreach (var sectionGroup in Model.view_PLPS.GroupBy(x => x.SectionID))
+                        {
+                            var sectiond = sectionGroup.First(); // Take the first item in the group
+                            <option value="@sectiond.SectionName" selected="@(sectiond.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => sectiond.SectionID) : @Html.DisplayFor(modelItem => sectiond.SectionName)
+                            </option>
+
+                        }
+                    </select>
+
+
+                </div>
+                <div class="col-1"></div>
+                <div class="col-2">  <label for="recipient-name" class="col-form-label"> Employee ID:</label></div>
+                <div class="col-3">
+                    <select class="selectfillter form-control" list="EmployeeID" style="width:100%" name="EmployeeID" id="EmployeeID" >
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbEmployeeMaster)
+                        {
+
+                            <option value="@item.EmployeeID" selected="@(item.EmployeeName == ViewBag.SelectedEmpID ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
+                            </option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+
+
+            <div class="row" style="height:20px"></div>
+          
+        </div>
+
+    </div>
+
+
+
+
+    <div class="row" style="height:40px">
+        <div class="col-6"></div>
+        <div class="col-2">
+                    <button class="clear-button" type="submit" asp-action="EmployeeBreakAdjustClear">
+                        Clear
+                    </button>
+        </div>
+
+       <div class="col-2">
+                    <button class="search-button" type="submit" asp-action="EmployeeBreakAdjust">
+                        Search
+                    </button>
+        </div>   
+        <div class="col-2">
+            @if (ViewBag.VBRoleEmployeeBreakAdjust == "Full")
+            {
+                <button class="clear-button" type="submit" asp-action="EmployeeBreakAdjust">
+                    Remove Break-time for OT
+                </button>
+            }
+            else
+            {
+                <button class="clear-button" type="button">
+                    Remove Break-time for OT
+                </button>
+            }
+           
+
+        </div>
+    </div>
+
+
+    <div class="row" style="height:30px">
+    </div>
+
+    @*Diaplay data*@
+    <table id="tabledata" class="cell-border">
+        <thead style="background-color:gainsboro; height:20px;">
+            <tr>
+                <th ><input type="checkbox" id="checkall" /></th>
+                <th >
+                    Employee ID
+                </th>
+                <th >
+                    Employee Name
+                </th>
+                <th >
+                    Line
+                </th>
+                <th >
+                    Section
+                </th>
+                <th >
+                    Date
+                </th>
+                <th>
+                    Clock in 
+                </th>
+                <th>
+                    Clock Out
+                </th>
+                <th >
+                   OT
+                </th>
+               
+                <th>
+                    Revert
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.view_EmployeeAdjustBreak)
+            {
+                <tr>
+                @*     @Html.HiddenFor(modelItem => item.TransactionNo) *@
+                    <td>
+                        <input type="checkbox" id="@item.TransactionNo" value="@item.TransactionNo" class="checkthis" Name="EmployeeIDchk" />
+                    </td>
+                    @*<input id="@fruit.Value" type="checkbox" name="Fruit" value="@fruit.Value" checked="@fruit.Selected" />*@
+
+
+                    <td >
+                        @Html.DisplayFor(modelItem => item.EmployeeID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EmployeeName)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LineName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SectionName)
+                    </td>
+                    <td>
+
+                        @Html.DisplayFor(modelItem => item.TransactionDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClockIn)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClockOut)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BreakFlag)
+                    </td>
+
+                    <td >
+                        @if (@item.ClockIn == "" && @item.ClockOut == "")
+                        {
+                            <a href="#" id="btnEdit">Revert</a>
+
+                        }
+                        else
+                        {
+                            @if (ViewBag.VBRoleEmployeeBreakAdjust == "Full")
+                            {
+                                <a href="#" id="Revertid" data-id="@item.TransactionNo" onclick="RevertFn(@item.TransactionNo)">Revert</a>
+                            }
+                            else
+                            {
+                                <a href="#" id="Revertid">Revert</a>
+                            }
+                           
+
+                        }
+
+
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+<div class="row" style="height:100px"></div>
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        $("#tabledata #checkall").click(function () {
+            if ($("#tabledata #checkall").is(':checked')) {
+                $("#tabledata input[type=checkbox]").each(function () {
+                    $(this).prop("checked", true);
+                });
+
+            } else {
+                $("#tabledata input[type=checkbox]").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
+
+        $("[data-toggle=tooltip]").tooltip();
+    });
+
+
+
+    $(document).ready(function () {
+        var table = $('#tabledata').DataTable({
+            dom: 'Bfrtip',
+            buttons: ['copy', 'excel', 'pdf'],
+            columnDefs: [{
+                orderable: false,
+                className: 'select-checkbox',
+                targets: 0
+            }],
+            ordering: false,
+            searching: false,
+            select: {
+                style: 'os',
+                selector: 'td:first-child'
+            },
+            order: [[1, 'asc']],
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 20
+        });
+
+        $('#checkallHeader').click(function () {
+            if ($(this).is(':checked')) {
+                table.rows().select();
+            } else {
+                table.rows().deselect();
+            }
+        });
+    });
+
+
+
+</script>

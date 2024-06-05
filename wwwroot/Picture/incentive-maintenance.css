@@ -1,0 +1,344 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+#container {
+    display: flex
+}
+
+#main-container {
+    margin-left: 80px;
+    /* padding: 20px; */
+    width: 100%;
+    height: 100vh;
+    /* height: calc(100vh - 42px); */
+    transition: margin-left 0.5s ease;
+    /* border: 1px solid black; */
+    display: grid;
+    grid-template-rows: 64.63px 1fr;
+}
+
+label {
+    display: inline-block;
+    width: 150px;
+}
+
+
+.page-name {
+    font-weight: lighter;
+}
+
+#main-content {
+    margin: 10px;
+    /* display: grid; */
+    grid-area: 2 / 1 / 3 / 2;
+    /* grid-template-rows: 0.05fr 1fr 0.4fr; */
+}
+
+.incentive-maintenance-form-container {
+    display: flex;
+    margin: 70px 30px 30px 30px;
+    justify-content: center;
+}
+
+.save-button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.save-button {
+    background-color: #A4ADB3;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    width: 100px;
+    height: 35px;
+}
+
+.save-button-text {
+    color: white;
+}
+
+input, select, label {
+    margin-bottom: 15px;
+}
+
+select {
+    width: 250px;
+    height: 30px;
+}
+
+#line-dropdown,
+#from-month-dropdown,
+#to-month-dropdown {
+    min-width: 200px;
+    min-height: 40px;
+}
+
+#address-bar {
+    /* min-height: 64.63px; */
+    background-color: #0F40F5;
+}
+
+#company-name {
+    display: flex;
+    width: 100%;
+    background-color: white;
+    align-items: center;
+    justify-content: center;
+}
+
+.company-logo {
+    width: 60px;
+    height: auto;
+    padding: 10px;
+    display: inline-block;
+}
+
+/* SIDEBAR STYLES */
+
+#sidebar {
+    position: fixed;
+    width: 80px;
+    height: 100%;
+    background-color: #0F40F5;
+    left: 0;
+    top: 0;
+    overflow-x: hidden;
+    transition: width 0.4s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+#sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+#sidebar:hover {
+    width: 200px;
+}
+
+#sidebar #company-name .company-text {
+    font-weight: bold;
+    color: black;
+    visibility: hidden;
+    transition: visibility 0.3s ease;
+    display: none;
+}
+
+#sidebar .nav-text {
+    display: none;
+    visibility: hidden;
+    transition: visibility 0.3s ease;
+    font-size: 12px;
+}
+
+#sidebar:hover .nav-text {
+    display: block;
+    visibility: visible;
+    color: white;
+    transition: visibility 0.3s ease;
+}
+
+#sidebar:hover #company-name .company-text {
+    visibility: visible;
+    display: inline-block;
+}
+
+#sidebar a {
+    text-decoration: none;
+    display: block;
+    position: relative;
+}
+
+.nav-images {
+    width: 14px;
+    height: 14px;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+#sidebar:hover .has-dropdown::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-color: transparent transparent transparent white;
+    transform: translateY(-50%) rotate(90deg);
+    transition: transform 0.4s ease;
+}
+
+#sidebar:hover .has-blue-dropdown::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-color: transparent transparent transparent #000A7B;
+    transform: translateY(-50%) rotate(90deg);
+    transition: transform 0.4s ease;
+}
+
+#sidebar:hover .has-dropdown:hover::after {
+    transform: translateY(-50%) rotate(270deg);
+}
+
+#sidebar:hover .has-blue-dropdown:hover::after {
+    transform: translateY(-50%) rotate(270deg);
+}
+
+#sidebar:hover .submenu-category-dropdown:hover .has-blue-dropdown::after {
+    transform: translateY(-50%) rotate(270deg);
+}
+
+#sidebar:hover + #main-container {
+    margin-left: 200px;
+}
+
+#sidebar .nav-categories {
+    display: block;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.nav-category {
+    list-style: none;
+    align-items: center;
+    border-right: 0.2px solid #0F40F5;
+}
+
+.nav-image-and-text-container:hover {
+    background-color: #4095E5;
+    border-right: 2px solid white;
+}
+
+#sidebar .submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.8s ease-in-out;
+    list-style: none;
+    background-color: white;
+    border-right: 2px solid white;
+}
+
+.submenu-category {
+    cursor: pointer;
+    padding: 10px;
+}
+
+.submenu-category-dropdown {
+    cursor: pointer;
+}
+
+#sidebar:hover .nav-category:hover .has-dropdown::after {
+    transform: translateY(-50%) rotate(270deg);
+}
+
+#sidebar:hover .has-dropdown {
+    margin-left: auto;
+    margin-right: 4px;
+}
+
+#sidebar:hover .has-blue-dropdown {
+    margin-left: auto;
+    margin-right: 8px;
+    align-self: center;
+}
+
+.submenu-category:hover {
+    background-color: #4095E5;
+}
+
+.submenu-category:hover .submenu-text {
+    color: white;
+}
+
+#sidebar .nav-image-and-text-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 8px 12px 13px;
+    cursor: pointer;
+}
+
+#sidebar:hover .nav-image-and-text-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 8px 12px 13px;
+}
+
+.submenu-text-and-arrow {
+    display: flex;
+
+}
+
+a.submenu-text {
+    color: #000A7B;
+    font-size: 11px;
+    padding-left: 25px;
+}
+
+.submenu-dropdown-text {
+    color: #000A7B;
+    font-size: 11px;
+    padding: 10px 10px 10px 35px;
+}
+
+#sidebar .nav-category:hover .submenu {
+    max-height: 1000px;
+}
+
+
+#sidebar .submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.8s ease-in-out;
+    list-style: none;
+    background-color: white;
+    border-right: 2px solid white;
+}
+
+.sub-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.8s ease-in-out;
+    list-style: none;
+    background-color: white;
+}
+
+#sidebar .submenu-category-dropdown:hover .sub-submenu {
+    max-height: 1000px;
+} 
+
+.sub-submenu-category {
+    font-size: 11px;
+    width: 100%;
+    display: inline-block;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.sub-submenu-text {
+    color: #000A7B;
+    margin-left: 40px;
+}
+
+.sub-submenu-category:hover {
+    background-color: #4095E5;
+}
+
+.sub-submenu-category:hover .sub-submenu-text {
+    color: white;
+}
+
+

@@ -1,0 +1,365 @@
+﻿@model Plims.ViewModel.ViewModelReport
+@{
+    ViewData["Title"] = "Overview Dashboard";
+    Layout = null;
+    DateTime currentDateTime = DateTime.Now;
+    string formattedDate = currentDateTime.ToString("dd-MM-yyyy HH:mm");
+}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="~/assets/login/images/thai_union_icon.ico" type="image/x-icon">
+    <title>PLIMS: @ViewData["Title"] </title>
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="~/dashboard/css/bootstrap.min.css" />
+    <!-- site css -->
+    <link rel="stylesheet" href="~/dashboard/style.css" />
+    <!-- responsive css -->
+    <link rel="stylesheet" href="~/dashboard/css/responsive.css" />
+    <!-- color css -->
+    <link rel="stylesheet" href="~/dashboard/css/colors.css" />
+    <!-- select bootstrap -->
+    <link rel="stylesheet" href="~/dashboard/css/bootstrap-select.css" />
+    <!-- scrollbar css -->
+    <link rel="stylesheet" href="~/dashboard/css/perfect-scrollbar.css" />
+    <!-- custom css -->
+    <link rel="stylesheet" href="~/dashboard/css/custom.css" />
+    <!-- calendar file css -->
+    <link rel="stylesheet" href="~/dashboard/js/semantic.min.css" />
+
+    <link rel="stylesheet" href="~/dashboard/css/flaticon.css" />
+
+    <!-- data tables -->
+    <link href="~/dashboard/datatable-new/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/dashboard/datatable-new/dataTables.dateTime.min.css" rel="stylesheet" />
+    <link href="~/dashboard/datatable-new/responsive.dataTables.min.css" rel="stylesheet" />
+
+    <link href="~/dashboard/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-md-1">
+            <div class="table_section" style="font-weight:bold;text-align: center;">
+                <img src="~/Picture/Thai-union-logo.png" width="100px" height="80px" />
+            </div>
+        </div>
+        <div class="col-md-11">
+            <div class="table_section">
+                <div class="table-responsive-sm">
+                    <table class="table" style="color: black">
+                        <thead>
+                            <tr>
+                                <th style="font-weight:bold;text-align: center;"></th>
+                                <th style="font-weight:bold;text-align: center;">Starting Date:</th>
+                                <th style="font-weight:bold;text-align: center;">Ending Date:</th>
+                                <th style="font-weight:bold;text-align: center;">Year:</th>
+                                <th style="font-weight:bold;text-align: center;">Month:</th>
+                                <th style="font-weight:bold;text-align: center;">Line:</th>
+                                <th style="font-weight:bold;text-align: center;">Product:</th>
+                                <th style="font-weight:bold;text-align: center;">Point:</th>
+                                <th style="font-weight:bold;text-align: center;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <form asp-action="FilterOverview" asp-controller="Report" method="post">
+                            <tr>
+                                <td style="font-weight:bold;text-align: center;"><h3></h3></td>
+                                <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;"} })</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;"} })</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterYear, (IEnumerable<SelectListItem>)ViewBag.varYear as SelectList, ":: All Year ::", new { @class = "btn form-select", style = "text-align:center;"})</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterMonth, (IEnumerable<SelectListItem>)ViewBag.varMonth as SelectList, ":: All Month ::", new { @class = "btn form-select", style = "text-align:center;"})</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterLine, (IEnumerable<SelectListItem>)ViewBag.varLine as SelectList, ":: All Line ::", new { @class = "btn form-select", style = "text-align:center;"})</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterProduct, (IEnumerable<SelectListItem>)ViewBag.varProduct as SelectList, ":: All Product ::", new { @class = "btn form-select", style = "text-align:center;"})</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterPoint, (IEnumerable<SelectListItem>)ViewBag.varPoint as SelectList, ":: All Point ::", new { @class = "btn form-select", style = "text-align:center;"})</td>
+                                <td style="font-weight:bold;text-align: center;"><button type="submit" class="btn cur-p btn-primary" id="fetchDataButton">&nbsp;&nbsp;  Filter  &nbsp;&nbsp;</button></td>
+                            </tr>
+                            </form>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row" id="dataContainer">
+            <div class="col-md-2">
+            <table class="table  table-bordered" style="color: black">
+                        <tbody>
+                            <tr>
+                        <td style="background-color:aquamarine;text-align: center;"><br /><h3 style="font-size:32px;font-weight:bold"><i class="fa fa-user blue2_color"></i> @ViewBag.SumEmployee</h3> จำนวนพนักงาน<br /> &nbsp;  </td>
+                            </tr>
+                            <tr>
+                        <td style="background-color:lightgreen;text-align: center;"><br /><h3 style="font-size:32px;font-weight:bold"> @ViewBag.AvgCapHr.ToString("#,##0.00") </h3>Cap./Hr.<br /> &nbsp;</td>
+                            </tr>
+                            <tr>
+                        <td style="background-color:coral;text-align: center;"><br /><h3 style="font-size:32px;font-weight:bold"> @ViewBag.AvgEFFhr1.ToString("#,##0.00") </h3>Eff.hr 1<br />&nbsp;</td>
+                            </tr>
+                            <tr>
+                        <td style="background-color:lightpink;text-align: center;"><br /><h3 style="font-size:32px;font-weight:bold"> @ViewBag.AvgEFFhr2.ToString("#,##0.00") </h3>Eff.hr 2<br />&nbsp;</td>
+                            </tr>
+                            <tr>
+                        <td style="background-color:cornflowerblue;text-align: center;"><br /><h3 style="font-size:32px;font-weight:bold"> @ViewBag.AvgEFFhr3.ToString("#,##0.00") </h3>Eff.hr 3<br />&nbsp;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+            <div class="col-md-10">
+                 <div class="row">
+                        <div class="col-md-6">
+                            <div id="container_eff" style="width: 100%; height: 250%;"></div>
+                         </div>
+                        <div class="col-md-6">
+                    <div id="container_yield" style="width: 100%; height: 250%;"></div>
+                        </div>
+                  </div>
+                <div class="row" style="height:40%;">
+                <br />&nbsp;<br /><br />&nbsp;<br />
+                </div>
+                  <div class="row">
+                        <div class="col-md-1">
+                        </div>
+                <div class="col-md-10">
+                                <table class="table table-striped  table-bordered" style="color: black">
+                                    <thead>
+                                    <tr class="table-Primary" style="font-weight:bold;text-align: center;font-size:24px">
+                                            <th style="font-weight:bold;text-align: center;">Product</th>
+                                             <th style="font-weight:bold;text-align: center;">Section</th>
+                                            <th style="font-weight:bold;text-align: center;">Target/STD</th>
+                                            <th style="font-weight:bold;text-align: center;">Actual</th>
+                                            <th style="font-weight:bold;text-align: center;">% Diff</th>
+                                            <th></th>
+                                            <th style="font-weight:bold;text-align: center;">% Yield (Target)</th>
+                                            <th style="font-weight:bold;text-align: center;">% Actual</th>
+                                            <th style="font-weight:bold;text-align: center;">% Diff</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            decimal totalStd = 0;
+                                            decimal totalActual = 0;
+                                            decimal totalDiff = 0;
+                                            decimal totalYieldStd = 0;
+                                            decimal totalYieldActual = 0;
+                                            decimal totalYieldDiff = 0;
+                                        }
+                                         @foreach (var item in Model.ResultGrpProductOverviewModel)
+                                        {
+                                            <tr style="text-align: center;font-size:22px">
+                                                <td>@item.ProductName</td>
+                                                <td>@item.SectionName</td>
+                                                <td style="text-align: right;">@item.EffTarget.ToString("#,##0.00")</td>
+                                                <td style="text-align: right;">@item.EffAct.ToString("#,##0.00")</td>
+                                                @if (@item.DiffEff >= 100)
+                                                {
+                                               <td style="background-color:limegreen; color:aliceblue;text-align: right;">@item.DiffEff.ToString("#,##0")</td>
+                                                }
+                                                else if (@item.DiffEff < 100)
+                                                {
+                                                <td style="background-color:indianred; color:aliceblue;text-align: right;">@item.DiffEff.ToString("#,##0")</td>
+                                                }
+                                                <td></td>
+                                                <td style="text-align: right;">@item.YieldTarget.ToString("#,##0.00")</td>
+                                               <td style="text-align: right;">@item.YieldActual.ToString("#,##0.00")</td>
+                                                @if (@item.DiffYield >= 100)
+                                                {
+                                                <td style="background-color:limegreen; color:aliceblue;text-align: right;">@item.DiffYield.ToString("#,##0")</td>
+                                                }
+                                                else if (@item.DiffYield < 100)
+                                                {
+                                                <td style="background-color:indianred; color:aliceblue;text-align: right;">@item.DiffYield.ToString("#,##0")</td>
+                                                }
+                                            </tr>
+                                                totalStd += item.EffTarget;
+                                                totalActual += item.EffAct;
+                                                totalDiff += item.DiffEff;
+                                                totalYieldStd += item.YieldTarget;
+                                                totalYieldActual += item.YieldActual;
+                                                totalYieldDiff += item.DiffYield;
+                                        }
+                                        <tr style="font-size:22px">
+                                            <td style="font-weight:bold;text-align: center;">Total</td>
+                                    <td style="font-weight:bold;text-align: center;"></td>
+                                            <td style="font-weight:bold;text-align: right;">@totalStd.ToString("#,##0.00")</td>
+                                            <td style="font-weight:bold;text-align: right;">@totalActual.ToString("#,##0.00")</td>
+                                            <td style="font-weight:bold;text-align: right;">@totalDiff.ToString("#,##0")</td>
+                                            <td></td>
+                                            <td style="font-weight:bold;text-align: right;">@totalYieldStd.ToString("#,##0.00")</td>
+                                            <td style="font-weight:bold;text-align: right;">@totalYieldActual.ToString("#,##0.00")</td>
+                                            <td style="font-weight:bold;text-align: right;">@totalYieldDiff.ToString("#,##0")</td>
+							            </tr>
+                                    </tbody>
+                            </table>
+                            <label>Data of @formattedDate</label>
+                        </div>
+                  </div>
+            </div>
+    </div>
+
+
+        <!-- end dashboard filter -->
+        <!-- jQuery -->
+        <script src="~/dashboard/js/jquery.min.js"></script>
+        <script src="~/dashboard/js/popper.min.js"></script>
+        <script src="~/dashboard/js/bootstrap.min.js"></script>
+        <!-- Add your scripts at the end of the body -->
+        <!-- Add your other scripts -->
+        <!-- wow animation -->
+        <script src="~/dashboard/js/animate.js"></script>
+        <!-- select country -->
+        <script src="~/dashboard/js/bootstrap-select.js"></script>
+        <!-- owl carousel -->
+        <script src="~/dashboard/js/owl.carousel.js"></script>
+        <!-- nice scrollbar -->
+        <script src="~/dashboard/js/perfect-scrollbar.min.js"></script>
+        <!-- sidebar -->
+        <script>
+            var ps = new PerfectScrollbar('#sidebar');
+        </script>
+        <!-- data tables -->
+        <script src="~/dashboard/datatable-new/jquery-3.5.1.js"></script>
+        <script src="~/dashboard/datatable-new/jquery.dataTables.min.js"></script>
+        <script src="~/dashboard/datatable-new/moment.min.js"></script>
+        <script src="~/dashboard/datatable-new/dataTables.dateTime.min.js"></script>
+        <script src="~/dashboard/datatable-new/dataTables.responsive.min.js"></script>
+        <!-- anychart pie chart -->
+        <script src="~/dashboard/database-new/anychart/anychart-core.min.js"></script>
+        <script src="~/dashboard/database-new/anychart/anychart-pie.min.js"></script>
+
+        <!-- anychart bar chart -->
+        <script src="~/dashboard/database-new/barchart/js/anychart-base.min.js"></script>
+        <script src="~/dashboard/database-new/barchart/js/anychart-exports.min.js"></script>
+        <script src="~/dashboard/database-new/barchart/js/anychart-ui.min.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#datepicker-group").datepicker({
+                    format: "dd-M-yyyy",
+                    todayHighlight: true,
+                    autoclose: true,
+                    clearBtn: true
+                });
+            });
+        </script>
+
+    @*     <script>
+            // Function to fetch data
+            function fetchData() {
+                console.log('Fetching data...'); // Log a message to verify if fetchData() is called
+                // Place your code here to fetch data
+                var newData = "Example data fetched at " + new Date().toLocaleTimeString();
+                document.getElementById("dataContainer").innerText = newData;
+            }
+
+            // Start triggering button click event after page load
+            window.addEventListener("load", function () {
+                //var interval = parseInt(document.getElementById("intervalInput").value); // Get the interval value from the input field
+                var interval = @ViewBag.SetTime
+                    triggerButtonClick(interval); // Start triggering button click event with the specified interval
+            });
+
+            // Function to trigger button click event periodically
+            function triggerButtonClick(interval) {
+                console.log('Triggering button click event with interval:', interval); // Log the interval value
+
+                // Trigger button click event periodically
+                var intervalId = setInterval(function () {
+                    document.getElementById("fetchDataButton").click(); // Automatically click the button
+                }, interval);
+            }
+
+        </script> *@
+
+        <script>
+        anychart.onDocumentReady(function () {
+  
+            var chartData = @Html.Raw(ViewBag.ChartDataJsonEff);
+
+            var data = anychart.data.set(chartData);
+
+            // map the data
+            var seriesData_1 = data.mapAs({ x: 0, value: 1, fill: 3, stroke: 5, label: 6 });
+            var seriesData_2 = data.mapAs({ x: 0, value: 2, fill: 4, stroke: 5, label: 6 });
+
+            // create a chart
+            var chart = anychart.column();;
+
+            // create the first series, set the data and name
+            var series1 = chart.column(seriesData_1);
+            series1.name("Eff. Target/STD");
+            series1.labels().enabled(true).position("center-top").anchor("center-bottom");
+
+            // create the second series, set the data and name
+            var series2 = chart.column(seriesData_2);
+            series2.name("Eff. Actual");
+            series2.labels().enabled(true).position("center-top").anchor("center-bottom");
+
+            // set the chart title
+            chart.title("Efficiency");
+
+            // set the titles of the axes
+            var xAxis = chart.xAxis();
+            xAxis.title("Line");
+            var yAxis = chart.yAxis();
+            yAxis.title("Percent");
+
+
+            // set the container id
+            chart.container("container_eff");
+
+            // initiate drawing the chart
+            chart.draw();
+        });
+        </script>
+        <script>
+        anychart.onDocumentReady(function () {
+
+            var chartData_y = @Html.Raw(ViewBag.ChartDataJsonYield);
+
+            var data_y = anychart.data.set(chartData_y);
+
+            // map the data
+            var seriesData_1_y = data_y.mapAs({ x: 0, value: 1, fill: 3, stroke: 5, label: 6 });
+            var seriesData_2_y = data_y.mapAs({ x: 0, value: 2, fill: 4, stroke: 5, label: 6 });
+
+            // create a chart
+            var chart_y = anychart.column();
+
+            // create the first series, set the data and name
+            var series1_y = chart_y.column(seriesData_1_y);
+            series1_y.name("%Yield Target");
+            // enable and configure labels
+            //series1_y.labels().position("outside");
+            series1_y.labels().enabled(true).position("center-top").anchor("center-bottom");
+
+
+            // create the second series, set the data and name
+            var series2_y = chart_y.column(seriesData_2_y);
+            series2_y.name("%Yield Yield");
+            // enable and configure labels
+            //series2_y.labels().position("outside");
+            series2_y.labels().enabled(true).position("center-top").anchor("center-bottom");
+
+            // set the chart title
+            chart_y.title("Yield");
+
+            // set the titles of the axes
+            var xAxis_y = chart_y.xAxis();
+            xAxis_y.title("Line");
+            var yAxis_y = chart_y.yAxis();
+            yAxis_y.title("Percent");
+
+            // set the container id
+            chart_y.container("container_yield");
+
+            // initiate drawing the chart
+            chart_y.draw();
+        });
+    </script>
+
+
+</body>
+

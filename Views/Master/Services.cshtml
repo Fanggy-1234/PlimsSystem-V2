@@ -1,0 +1,884 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@{
+    ViewBag.Title = "Sevices";
+    //TbUser user = Utilities.GetCurrentUser();
+}
+
+
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+    #table_id {
+        border: 0.1px solid #A9A9A9; /* Set border style */
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #table_id th {
+            background-color: #C5C5C5; /* Set your desired header background color */
+            font-weight: bold;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            padding: 15px 0px;
+            border-collapse: collapse;
+        }
+
+        #table_id td {
+            text-align: left;
+            font-size: 14px;
+        }
+
+        #table_id tr {
+            text-align: left;
+            padding: initial;
+        }
+
+        #table_id th,
+        #table_id td {
+            border: 0.1px solid #A9A9A9; /* Set border style */
+            border-collapse: collapse;
+        }
+
+</style>
+
+
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            ordering: false,
+            searching: false,
+            scrollX: true,
+            scrollY: true,
+            // order: [[1, 'asc']],
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 20, // Default page length
+            paging: true, // Enable paging
+        });
+
+    });
+</script>
+
+
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
+
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Services Management</h2>
+
+@* Textbox for search *@
+<form method="get" asp-controller="Master">
+
+        <div class="row">
+            <div class="col-2"><label class="FillterLabel">Line Name :</label></div>
+            <div class="col-3">
+
+            @* <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
+                <option value="" default selected></option>
+                    @foreach (var item in Model.tbLine)
+                    {
+
+                    <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName) </option>
+                    }
+                </select> *@
+
+            <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
+                <option value="" default selected></option>
+                @foreach (var lineGroup in Model.view_Service.GroupBy(x => x.LineID))
+                {
+                    var line = lineGroup.First(); // Take the first item in the group
+                    <option value="@line.LineName" selected="@(line.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => line.LineID) : @Html.DisplayFor(modelItem => line.LineName)
+                    </option>
+
+                }
+            </select>
+
+
+
+            </div>
+
+        <div class="col-1"></div>
+        <div class="col-2"><label class="FillterLabel"> Services Name :</label></div>
+        <div class="col-3">
+         @*    <select class="selectfillter form-control" style="width:100%" name="ServicesName" id="ServicesName">
+                <option value="" default selected></option>
+                @foreach (var item in Model.tbService)
+                {
+                    <option value="@item.ServicesName" selected="@(item.ServicesName == ViewBag.SelectedServicesName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => item.ServicesName) </option>
+                }
+            </select> *@
+
+            <select class="selectfillter form-control" style="width:100%" name="ServicesName" id="ServicesName">
+                <option value="" default selected></option>
+                @foreach (var sectionGroup in Model.tbService.GroupBy(x => x.ServicesID))
+                {
+                    var sectiond = sectionGroup.First(); // Take the first item in the group
+                    <option value="@sectiond.ServicesName" selected="@(sectiond.ServicesName == ViewBag.SelectedServicesNamee ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => sectiond.ServicesID) : @Html.DisplayFor(modelItem => sectiond.ServicesName)
+                    </option>
+
+                }
+            </select>
+
+
+
+
+
+        </div>
+
+        </div>
+        <div class="row" style="height:10px"></div>
+        <div class="row">
+            <div class="col-2"><label class="FillterLabel"> Section Name:</label></div>
+            <div class="col-3">
+@*                 <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
+                    <option value="" default selected></option>
+                    @foreach (var item in Model.tbSection)
+                    {
+                    <option value="@item.SectionName" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                            @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
+                        </option>
+
+                    }
+                </select> *@
+            <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
+                <option value="" default selected></option>
+                @foreach (var sectionGroup in Model.view_Service.GroupBy(x => x.SectionID))
+                {
+                    var sectiond = sectionGroup.First(); // Take the first item in the group
+                    <option value="@sectiond.SectionName" selected="@(sectiond.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => sectiond.SectionID) : @Html.DisplayFor(modelItem => sectiond.SectionName)
+                    </option>
+
+                }
+            </select>
+
+
+            </div>
+            <div class="col-1"></div>
+            <div class="col-2"></div>
+            <div class="col-3">
+            </div>
+
+        </div>
+
+    <div class="row" style="height:20px"></div>
+
+
+    @* //Inactive Checkbox *@
+    <div class="row ">
+        <div class="col-2" style=" padding-top:0.5em"></div>
+        <div class="col-3">
+            @{
+                // Determine if the checkbox should be checked based on ViewBag.InactiveStatus
+                string checkedAttribute = (ViewBag.InactiveStatus ?? false) ? "checked" : "";
+            }
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="inactivestatus" name="inactivestatus" @checkedAttribute>
+                <label class="form-check-label" for="inactivestatus">Inactive Status</label>
+                <input type="hidden" id="inactivestatus-hidden" name="inactivestatus" value="@((ViewBag.InactiveStatus ?? false).ToString().ToLower())">
+            </div>
+        </div>
+        <div class="col-6"></div>
+    </div>
+
+
+    <div class="row" style="height:20px"></div>
+
+    <div class="row" style="height:35px">
+
+        <div class="col" style="width:15% ">
+            <button class="clear-button" type="submit" asp-action="ServicesClear">
+                Clear
+            </button>
+        </div>
+        <div class="col-3" style="width:55% ">
+        </div>
+        <div class="col" style="width:15% ">
+            <button class="search-button" type="submit" asp-action="Services">
+                Search
+            </button>
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleServices == "Full")
+            {
+                <button type="button" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal" style="justify-content: flex-end">Create</button>
+
+            }
+            else
+            {
+                <button type="button" class="create-button" style="justify-content: flex-end">Create</button>
+
+            }
+
+            
+        </div>
+    </div>
+@* </form> *@
+</br>
+
+<div class="row" style="height:10px"></div>
+@* <form asp-controller="Master"  method="post" id="dataTableForm"> *@
+@*Diaplay data*@
+    <table id="table_id" class="table table-hover" style="width:100%">
+    <thead style="background-color:gainsboro;">
+        <tr>
+            @* <th><input type="checkbox" id="checkall" /></th>*@
+            <th>
+                Services ID
+            </th>
+            <th>
+                Services Name
+            </th>
+
+            <th>
+                Line Name
+            </th>
+                <th>
+                    Section Name
+                </th>
+            <th>
+                Rate
+            </th>
+
+            <th>
+                Status
+            </th>
+                <th>
+                    Edit
+                </th>
+                <th>
+                    Active/Inactive
+                </th>
+
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.view_Service)
+        {
+            <tr>
+                @Html.HiddenFor(modelItem => item.ServicesID)
+                @* <td><input type="checkbox" class="checkthis" /></td>*@
+                <td id="ServicesID">
+                      @Html.DisplayFor(modelItem => item.ServicesID)
+                </td>
+                <td id="ServicesName" >
+                    @Html.DisplayFor(modelItem => item.ServicesName)
+                </td>
+
+                <td id="LineName">
+                    @Html.DisplayFor(modelItem => item.LineName)
+                </td>
+                    <td id="LineName">
+                        @Html.DisplayFor(modelItem => item.SectionName)
+                    </td>
+                <td id="Rate">
+                    @Html.DisplayFor(modelItem => item.ServicesRate)
+                </td>
+
+                @if (item.ServicesStatus == 1)
+                {
+                    <td id="Status"> <span id="open">Active</span> </td>
+                    <td>
+                        @if (ViewBag.VBRoleServices == "Full")
+                            {
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="'@item.ServicesID'" onclick="EditFn('@item.ServicesID')">Edit</a>
+
+                            }
+                            else
+                            {
+                                <a href="#" id="btnEdit">Edit</a>
+
+                            }
+                             </td>
+
+                    <td>
+                            @if (ViewBag.VBRoleServices == "Full")
+                            {
+                                <a href="#" id="Inactive" onclick="InactiveFn('@item.ServicesID')">Inactive</a>
+                            }
+                            else
+                            {
+                                <a href="#" id="Inactive" >Inactive</a>
+                            }
+                           
+                    </td>
+
+                }
+                @if (item.ServicesStatus == 0)
+                {
+                    <td id="Status"><span id="closed" style="color:red">Inactive</span></td>
+                    <td>
+                        <span id="closed">Edit</span>
+                    </td>
+                    <td>
+                            @if (ViewBag.VBRoleServices == "Full")
+                            {
+                                <a href="#" id="Active" onclick="ActiveFn('@item.ServicesID')">Active</a>
+                            }
+                            else
+                            {
+                                <a href="#" id="Active" >Active</a>
+                            }
+                           
+                    </td>
+                }
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div style="height:20px">
+</div>
+
+@* /////////////////////////// Export / Import /////////////////////// *@
+
+
+    <br>
+    <div class="row" style="height:40px">
+
+        <div class="col-3" style="width:70% ">
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleServices == "Full")
+            {
+                <button class="search-button" id="btnExport"  type="Submit"  asp-action="ServicesExport" value="export" name="submit">Export</button>
+            }
+            else
+            {
+                <button type="button" id="btnExportView" class="search-button">Export</button>
+           
+            }
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleServices == "Full")
+            {
+
+                <button type="button" class="clear-button" id="btnSelectFile">Import</button>
+                <input type="file" id="FileUpload" name="FileUpload" class="hidden-file-input" style="display: none" />
+
+            }
+            else
+            {
+
+                <button type="button" id="btnSubmitView" class="clear-button">Import</button>
+
+            }
+
+        </div>
+    </div>
+
+
+
+</form>
+
+<div class="row" style="height:10px">
+</div>
+
+
+@*Modal Create*@
+<div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-controller="Master" asp-action="ServicesCreate">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Services Create</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @* Services ID *@
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Services ID:</label>
+                        @{
+                            // int value = Model.tbService.Count() + 1;
+                            
+                            //    string formattedValue = value.ToString("00000");
+                            // value = "@formattedValue"
+                            <input type="text" class="form-control" id="ServicesIDCreate" name="ServicesID" readonly style="background-color:gainsboro" >
+                        }
+                    </div>
+
+                    @* Services Name*@
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Services Name:</label>
+                        <input class="form-control" name="ServicesName" id="ServicesNameCreate" required>
+                    </div>
+
+
+
+                    @* Line Name*@
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Line Name:</label>
+                       @*  <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineNameCreate">
+                            <option value="" default selected>Please Select ..</option>
+                            @foreach (var item in Model.view_Service)
+                            {
+
+                                <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineName) </option>
+                            }
+                        </select>
+ *@
+                        <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineNameCreate" required onchange="filterSectionsByLineCreate()">
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.tbLine.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.LineID">
+                                    @Html.DisplayFor(modelItem => dataFrist.LineID) : @Html.DisplayFor(modelItem => dataFrist.LineName)
+                                </option>
+
+                            }
+                        </select>
+
+
+                    </div>
+
+
+                       @* section Name*@
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Section Name:</label>
+                       @*  <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionNameCreate">
+                            @foreach (var item in Model.view_Service)
+                            {
+
+                                <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionName) </option>
+                            }
+                        </select> *@
+
+                         <select class="selectfillter form-control" style="width:100%" name="SectionName" required id="SectionNameCreate">
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.tbSection.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.SectionID">
+                                    @Html.DisplayFor(modelItem => dataFrist.SectionID) : @Html.DisplayFor(modelItem => dataFrist.SectionName)
+                                </option>
+
+                            }
+                        </select>
+
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="recipient-Rate" class="col-form-label">Rate:</label>
+                        <input type="text" class="form-control" id="RateCreate" name="ServicesRate" required>
+                    </div>
+
+
+                    <div class="form-check form-switch">
+
+                        <input class="form-check-input" rel="active" type="checkbox" id="StatusCreate" name="ServicesStatus" value="1" checked />
+
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="Submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@*Modal Edit*@
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post" action="ServicesUpdate" controller="Master">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Services Edit</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @* Services ID *@
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Services ID:</label>
+                        <input type="text" class="form-control" Name="ServicesID" id="ModalServicesID" readonly style="background-color:gainsboro">
+                    </div>
+
+
+                    @* Services Name*@
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Services Name:</label>
+                        <input class="form-control" list="BrowsersID" name="ServicesName" id="ModalServicesName" required>
+                    </div>
+
+                    @* Line Name*@
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Line Name:</label>
+                       @*  <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName">
+                            @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
+                            {
+
+                                <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineName) </option>
+                            }
+                        </select> *@
+
+                        <select class="selectfillter form-control" style="width:100%" name="LineName" id="ModalLineName" required>
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.tbLine.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.LineID">
+                                    @Html.DisplayFor(modelItem => dataFrist.LineID) : @Html.DisplayFor(modelItem => dataFrist.LineName)
+                                </option>
+
+                            }
+                        </select>
+
+
+                    </div>
+
+                    @* section Name*@
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Section Name:</label>
+             @*            <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName">
+                            @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
+                            {
+
+                                <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionName) </option>
+                            }
+                        </select> *@
+
+                        <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName" required>
+                            <option value="" default selected></option>
+                            @foreach (var dataGroup in Model.tbSection.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
+                            {
+                                var dataFrist = dataGroup.First(); // Take the first item in the group
+                                <option value="@dataFrist.SectionID">
+                                    @Html.DisplayFor(modelItem => dataFrist.SectionID) : @Html.DisplayFor(modelItem => dataFrist.SectionName)
+                                </option>
+
+                            }
+                        </select>
+
+
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label for="recipient-Rate" class="col-form-label">Rate:</label>
+                        <input type="text" class="form-control" id="ModalServicesRate" name="ServicesRate" required>
+
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" rel="active" type="checkbox" id="ModalStatus" name="ServicesStatus" value="1">
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="Submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<script>
+    // $(document).ready(function () {
+    //     $('.selectfillter').select2({
+    //         closeOnSelect: false,
+    //         theme: 'bootstrap-5'
+    //     });
+
+    // });
+
+
+        // Ensure that the checkbox state is included in the form submission
+    document.getElementById("inactivestatus").addEventListener("change", function () {
+        if (this.checked) {
+            // Set the value of the hidden input field to "true" when checked
+            document.getElementById("inactivestatus-hidden").value = "true";
+        } else {
+            // Set the value of the hidden input field to "false" when unchecked
+            document.getElementById("inactivestatus-hidden").value = "false";
+        }
+    });
+
+
+
+</script>
+
+
+<script type="text/javascript" charset="utf8">
+
+
+    //Edit to modal
+    function EditFn(id) {
+        $.ajax({
+            url: '/Master/ServicesEdit/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response == null || response == undefined) {
+
+                    alert("This data can't read1!")
+                }
+                else if (response.length == 0) {
+
+                    alert("This data can't id!" + id)
+                }
+                else {
+
+                    console.log('AJAX request successful:', response);
+                    $('#ModalServicesID').val(response.servicesID);
+                    $('#ModalServicesName').val(response.servicesName);
+
+
+                    //  $('#ModalPlantName').append('<option value="' + response.plantID + '">' + response.plantName + '</option>');
+                 //   $('#ModalPlantName').val(response.plantID).trigger('change');
+
+                    //  $('#ModalLineName').append('<option value="' + response.lineID + '">' + response.lineName + '</option>');
+                    $('#ModalLineName').val(response.lineID).trigger('change');
+
+
+                    //   $('#ModalSectionName').append('<option value="' + response.sectionID + '">' + response.sectionName + '</option>');
+                    $('#ModalSectionName').val(response.sectionID).trigger('change');
+
+
+                    // $('#ModalPlantName').val(response.plantName);
+                    // $('#ModalLineName').val(response.lineName);
+                    $('#ModalServicesRate').val(response.servicesRate);
+                    //  alert(formattedDate)
+                   // $('.calendar').fullCalendar('renderEvent', response.teacher, true);
+                    // $('#ModalMonthYear').val(formattedDate);
+                    $('#ModalStatus').prop('checked', response.servicesStatus == 1)
+                    $('#EditModal').modal('show');
+
+
+                }
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+
+        });
+    }
+
+
+
+
+    //Function Inactive
+    function InactiveFn(id) {
+        $.ajax({
+            url: '/Master/ServicesInactive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                location.reload();
+                alert("Inactive Finish");
+            },
+            error: function (response) {
+                alert("Inactive something went wrong.");
+            }
+
+        });
+    }
+
+
+
+    //Function Inactive
+    function ActiveFn(id) {
+        $.ajax({
+            url: '/Master/ServicesActive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                location.reload();
+                alert("Active Finish");
+            },
+            error: function (response) {
+                alert("Active something went wrong.");
+            }
+
+        });
+    }
+
+
+
+
+    $(document).ready(function () {
+        $('#btnSelectFile').on('click', function () {
+            $('#FileUpload').click();
+        });
+
+        $('#FileUpload').on('change', function () {
+            var selectedFile = this.files[0];
+
+            // Create FormData object
+            var formData = new FormData();
+            formData.append('FileUpload', selectedFile);  // Use the correct name
+
+            // Send the file to the controller using AJAX
+            $.ajax({
+                url: '/Master/ServicesUpload',
+                type: 'POST',
+                processData: false,
+                contentType: false,  // Set this to false when using FormData
+                data: formData,
+                success: function (response) {  // Expecting JSON response
+                    if (response.success) {
+                        alert(response.message);  // Success message
+                        location.reload();  // Reload or do other success-related tasks
+                    } else {
+                        alert(response.message);  // Error message
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error uploading file:', error);
+                    alert('Error uploading file');
+                }
+            });
+        });
+    });
+
+
+    // $(function () {
+    //     $("#btnExport").click(function () {
+    //         $("#table_id").table2excel({
+    //             filename: "Services-Master.xls"
+    //         });
+    //     });
+    // });
+
+
+
+
+    // $(document).ready(function () {
+    //     $('#btnExport').click(function () {
+    //         var $table = $('#table_id');
+
+    //         // Clone the table to preserve the original
+    //         var $clonedTable = $table.clone();
+
+    //         // Remove unwanted columns (in this case, remove second column)
+    //         $clonedTable.find('tr').each(function () {
+    //             $(this).find('th:eq(7), td:eq(7)').remove();
+    //             $(this).find('th:eq(6), td:eq(6)').remove();
+    //            // $(this).find('td:eq(5)').remove();
+
+    //         });
+
+    //         // Export the modified table using table2excel
+    //         $clonedTable.table2excel({
+    //             exclude: ".noExl", // Exclude elements with class "noExl"
+    //             name: "Worksheet Name",
+    //             filename: "Services-Master"
+    //         });
+    //     });
+    // });
+
+
+
+    
+    function filterSectionsByLineCreate() {
+        // Clear previous options
+        $("#SectionNameCreate").empty();
+        // Add a default option
+        $("#SectionNameCreate").append("<option value='' default selected>Please Select ..</option>");
+
+        // Get the selected Product ID
+      //  var selectedSectionID = $("#SectionNameCreate").val().toString();
+        var selectedLineID = $("#LineNameCreate").val().toString();
+
+        // Check if a product is selected
+        if (selectedLineID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Master/FilterSectionsByLine", // Update the URL to your controller action
+                data: { lineId: selectedLineID },
+                success: function (filteredSections) {
+                    console.log(filteredSections)
+                    // Add filtered sections to the dropdown
+                    filteredSections.forEach(function (section) {
+                        $("#SectionNameCreate").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering sections: " + error);
+                }
+            });
+        }
+    }
+
+
+    function filterSectionsByLineEdit() {
+        // Clear previous options
+        //$("#SectionNameEdit").empty();
+        // Add a default option
+      //  $("#SectionNameEidt").append("<option value='' default selected>Please Select ..</option>");
+
+        // Get the selected Product ID
+        //  var selectedSectionID = $("#SectionNameCreate").val().toString();
+        var selectedLineID = $("#LineNameEdit").val().toString();
+
+        // Check if a product is selected
+        if (selectedLineID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Master/FilterSectionsByLine", // Update the URL to your controller action
+                data: { lineId: selectedLineID },
+                success: function (filteredSections) {
+                    console.log(filteredSections)
+                    // Add filtered sections to the dropdown
+                    filteredSections.forEach(function (section) {
+                        $("#SectionNameEdit").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering sections: " + error);
+                }
+            });
+        }
+    }
+
+
+
+
+</script>

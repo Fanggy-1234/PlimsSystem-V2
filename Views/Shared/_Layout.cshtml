@@ -1,0 +1,716 @@
+﻿@model Plims.ViewModel.ViewModelAll
+@using Microsoft.AspNetCore.Http
+@{
+    string UserEmpIDs = Context.Session.GetString("UserEmpID");
+    string RoleIDs = Context.Session.GetString("RoleID");
+    string UserName = Context.Session.GetString("UserName");
+   
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Plims</title>
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Plims.styles.css" asp-append-version="true" />
+
+
+    <link href="~/css/bootstrap-grid.css" rel="stylesheet" />
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/js/bootstrap.js"></script>
+
+
+   <link href="~/css/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+     <!-- DataTables CSS -->
+    <link href="~/css/jquery.datatables.min.css" rel="stylesheet" />
+    <link href="~/css/jquery.datatables.css" rel="stylesheet" />
+    <script src="~/js/jquery-1.10.2.min.js"></script>
+    <script src="~/js/jquery.datatables.min.js"></script>
+    <script src="~/js/jquery.datatables.js"></script>
+    <link href="~/css/datatable2.0.1.css" rel="stylesheet" />
+
+    <!-- Styles -->
+    <script src="~/js/jquery-3.7.1.js"></script>
+    <link href="~/css/w3.css" rel="stylesheet" />
+
+    <!-- Select 2 dropdown -->
+    <link href="~/css/select2.min.css" rel="stylesheet" />
+    <script src="~/js/select2.min.js"></script>
+
+    <!-- Main -->
+    <link href="~/css/main.css" rel="stylesheet" />
+
+
+    <!-- QR Code -->
+    <script src="~/js/qrcode.min.js"></script>
+    <script src="path/to/qrcode-generator.js"></script>
+
+
+    <style>
+        .nav-images {
+            width: 14px;
+            height: 12px;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        .nav-text {
+            font-size: 10px;
+            color: white;
+            font-style: normal;
+        }
+
+        a, button {
+            font-size: 14px;
+        }
+
+
+        .form-control {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #808080;
+            border-radius: 2px;
+            box-sizing: border-box;
+        }
+
+        .create-button, .clear-button {
+            background-color: #A4ADB3;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            color: white;
+            width: 100%;
+            height: 100%;
+        }
+
+        .search-button, .import-button {
+            border: 0.4px solid black;
+            background-color: white;
+            border-radius: 2px;
+            cursor: pointer;
+            color: black;
+            width: 100%;
+            height: 100%;
+        }
+
+
+        .page-table-head, .page-table-data {
+            border: solid 1px #8e8e8e;
+            text-align: center;
+        }
+
+
+        /* Dropdown Button */
+.dropbtn {
+  background-color: #3498DB;
+  color: white;
+  padding: 23px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #2980B9;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd;}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}
+
+
+
+/* .dataTables_scrollHeadInner,
+.table{
+    width: 100% !important;
+} */
+
+    </style>
+
+
+
+</head>
+<body>
+
+
+
+   <div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display: none; background-color: #0F40F5" id="mySidebar">
+
+        <div class="logos">
+            <img style="width:100%;height:35%; background-color: #0F40F5" src="~/Picture/logo.jpg" onclick="w3_close()">
+        </div>
+
+        @*<button class="w3-bar-item w3-button w3-large" style="background-color: #0F40F5"
+                    onclick="w3_close()">
+                Close &times;
+            </button>*@
+
+     
+
+        <div>
+            <a href="@Url.Action("UserInformation", "Home")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
+                <img class="nav-images" src="~/picture/flaticon-user-management-white.png" alt="User management photo"> User Information
+            </a>
+        </div>
+
+        @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(2) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+            {
+            ViewBag.VBRoleUserManagement = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(2)).Select(x => x.RoleAction).ToString();
+            <a href="@Url.Action("UserManagement", "Home")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
+                <img class="nav-images" src="~/Picture/flaticon-user-management-white.png" alt="User management photo"> User Management
+            </a>
+            }
+
+        @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(4) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+            {
+            ViewBag.VBRoleManagement = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(4)).Select(x => x.RoleAction).ToString();
+            <a href="@Url.Action("RoleManagement", "Home")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
+                <img src="~/Picture/flaticon-user-white.png" class="nav-images" alt="Role management photo"> Role Management
+             </a>
+            }
+        @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(3) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+        {
+            ViewBag.VBEmployeeManagement = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(3)).Select(x => x.RoleAction).ToString(); ;
+        <a href="@Url.Action("EmployeeManagement", "Master")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
+            <img src="~/Picture/flaticon-employee-management-white.png" class="nav-images" alt="Employee management photo"> Employee Management
+        </a>
+        }
+        @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && (x.PageID.Equals(5) || x.PageID.Equals(6) || x.PageID.Equals(7) || x.PageID.Equals(8) || x.PageID.Equals(9) || x.PageID.Equals(10) || x.PageID.Equals(11) || x.PageID.Equals(12) || x.PageID.Equals(13) || x.PageID.Equals(14) || x.PageID.Equals(15)) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+        {
+            
+        
+        <div class="w3-dropdown-hover w3-hover-black">
+                <button class="w3-button" style="color:white" onclick="myMasterFunc()">
+                <img src="~/Picture/flaticon-master-white.png" class="nav-images" alt="Master management photo"> Master Management
+                <i class="fa fa-caret-down"></i>
+            </button>
+
+
+                <div id="demo-master" class="w3-hide w3-white w3-card">
+                    @* class="w3-dropdown-content w3-bar-block w3-white" *@
+                    @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(5) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                    {//
+                       <a href="@Url.Action("Plant", "Master")" class="w3-bar-item w3-button w3-hover-blue">Plant Management </a>
+                        
+                    }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(6) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {//
+                       <a href="@Url.Action("Line", "Master")" class="w3-bar-item w3-button w3-hover-blue">Line Manangement </a>
+                    }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(7) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {//
+                      <a href="@Url.Action("Product", "Master")" class="w3-bar-item w3-button w3-hover-blue">Product Manangement </a>
+                    }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(8) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {//
+                     <a href="@Url.Action("Section", "Master")" class="w3-bar-item w3-button w3-hover-blue">Section Management</a>
+                    }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(9) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                   //
+                   <a href="@Url.Action("Shift", "Master")" class="w3-bar-item w3-button w3-hover-blue">Shift Management</a>
+                    }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(10) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                   //
+                   <a href="@Url.Action("Incentive", "Master")" class="w3-bar-item w3-button w3-hover-blue">Incentive Management</a>
+                    }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(11) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                    {
+                        //
+                    <a href="@Url.Action("Services", "Master")" class="w3-bar-item w3-button w3-hover-blue">Service Management</a>
+                    }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(12) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                      <a href="@Url.Action("Reason", "Master")" class="w3-bar-item w3-button w3-hover-blue">Defect Management</a>
+                    }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(13) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                    {
+                        //
+                   <a href="@Url.Action("ProductSTD", "Master")" class="w3-bar-item w3-button w3-hover-blue">Product Standard Management</a>
+                    }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(14) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                    //
+                   <a href="@Url.Action("PLPS", "Master")" class="w3-bar-item w3-button w3-hover-blue">PLPS Management</a>
+                    }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(15) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                    {
+                        //
+                        <a href="@Url.Action("EmployeeGroupQRCode", "Master")" class="w3-bar-item w3-button w3-hover-blue">EmployeeGroupQRCode Management</a>
+                    }
+                </div>
+        </div>
+        }
+        @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && (x.PageID.Equals(16) || x.PageID.Equals(17) || x.PageID.Equals(18) || x.PageID.Equals(19) || x.PageID.Equals(21) || x.PageID.Equals(22)) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+
+               
+
+            <div class="w3-dropdown-hover w3-hover-black">
+                <button class="w3-button" style="color:white" onclick="myEmployeeFunc()">
+                <img src="~/Picture/flaticon-employee-clock-in-white.png" class="nav-images" alt="Employee clock in photo">Employee Function
+                <i class="fa fa-caret-down"></i>
+            </button>
+                <div id="demo-Employee" class="w3-hide w3-white w3-card">
+                
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(16) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                    //
+                     <a href="@Url.Action("EmployeeClockIn", "Employee")" class="w3-bar-item w3-button w3-hover-blue">Employee Clock-In</a>
+                }
+                
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(17) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                    <a href="@Url.Action("EmployeeClockOut", "Employee")" class="w3-bar-item w3-button w3-hover-blue">Employee Clock-Out</a>
+                }
+                
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(18) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                    <a href="@Url.Action("ServicesClockIn", "Employee")" class="w3-bar-item w3-button w3-hover-blue">Service Clock-In</a>
+                }
+                
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(19) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                        <a href="@Url.Action("ServicesClockOut", "Employee")" class="w3-bar-item w3-button w3-hover-blue">Service Clock-Out</a>
+                }
+                
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(20) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                    ViewBag.VBRoleEmployeeAdjustLine = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(20)).Select(x => x.RoleAction).FirstOrDefault();
+                    <a href="@Url.Action("EmployeeAdjustLine", "Employee")" class="w3-bar-item w3-button w3-hover-blue">Employee Adjust Line</a>
+                }
+                
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(21) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                        ViewBag.VBRoleEmployeeLeaveHoliday = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(21)).Select(x => x.RoleAction).FirstOrDefault();
+                        <a href="@Url.Action("EmployeeLeaveHoliday", "Employee")" class="w3-bar-item w3-button w3-hover-blue">Employee Leave/Holiday</a>
+                }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(31) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                        ViewBag.VBRoleEmployeeBreakAdjust = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(31)).Select(x => x.RoleAction).FirstOrDefault();
+                        <a href="@Url.Action("EmployeeBreakAdjust", "Employee")" class="w3-bar-item w3-button w3-hover-blue">Employee Break Adjust</a>
+                }
+            </div>
+        </div>
+        }
+
+@* 
+        @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(22) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+        {
+            ViewBag.VBRoleWorkingFunction = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(22)).Select(x => x.RoleAction).FirstOrDefault();
+            <a href="@Url.Action("WorkingFunction", "Working")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
+                <img src="~/Picture/flaticon-pd-incentive-scan-white.png" class="nav-images" alt="PD incentive scan photo"> Product Working
+        </a>
+        } *@
+
+        
+        @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(22) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+        {
+            ViewBag.VBRoleWorkingFunctionWithPackage = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(22)).Select(x => x.RoleAction).FirstOrDefault();
+            <a href="@Url.Action("WorkingFunctionWithPackage", "Working")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
+                <img src="~/Picture/flaticon-pd-incentive-scan-white.png" class="nav-images" alt="PD incentive scan photo"> Product Working
+        </a>
+        }
+
+        @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(22) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+        {
+            ViewBag.VBRoleWorkingFunction = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(22)).Select(x => x.RoleAction).FirstOrDefault();
+            <a href="@Url.Action("WorkingFunction", "Working")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
+                <img src="~/Picture/flaticon-pd-incentive-scan-white.png" class="nav-images" alt="PD incentive scan photo"> Product Working for key
+            </a>
+        }
+          @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(33) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+        {
+            ViewBag.VBRoleProducttionTransactionAjust = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+            <a href="@Url.Action("ProductionTransactionAdjust", "Working")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
+                <img src="~/Picture/flaticon-pd-incentive-scan-white.png" class="nav-images" alt="PD Adjust"> Production Transaction Adjust
+            </a>
+        }
+
+
+        @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && (x.PageID.Equals(23) || x.PageID.Equals(24) || x.PageID.Equals(25)) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+        {
+            
+        
+        <div class="w3-dropdown-hover w3-hover-White">
+                <button class="w3-button w3-block w3-left-align" style="color:white" onclick="myReportFunc()">
+                <img src="~/Picture/flaticon-report-white.png" class="nav-images" alt="Reports photo"> Report
+                <i class="fa fa-caret-down"></i>
+            </button>
+
+
+                <div id="demo-Report" class="w3-hide w3-white w3-card">
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(23) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                    ViewBag.VBRoleDailyReport = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(23)).Select(x => x.RoleAction).FirstOrDefault();
+                    <a href="@Url.Action("DailyReport", "Working")" class="w3-bar-item w3-button w3-hover-blue">Daily Report</a>           
+                }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(24) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                    ViewBag.VBRoleFinancial = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(24)).Select(x => x.RoleAction).FirstOrDefault();
+                        <a href="@Url.Action("FinancialReport", "Working")" class="w3-bar-item w3-button w3-hover-blue">Finacial Report</a>
+                }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(25) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                    ViewBag.VBRoleEfficiency = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(25)).Select(x => x.RoleAction).FirstOrDefault();
+                        <a href="@Url.Action("EFFReport", "Working")" class="w3-bar-item w3-button w3-hover-blue">Efficiency Report</a>
+                }
+            </div>
+        </div>
+        }
+        @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && (x.PageID.Equals(26) || x.PageID.Equals(27)) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+        {
+            <div class="w3-dropdown-hover w3-hover-While">
+                <button class="w3-button" style="color:white" onclick="myDashboardFunc()">
+                    <img class="nav-images" src="~/Picture/flaticon-dashboard-white.png" alt="Dashboard photo">Dashboard
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div id="demo-Dashboard" class="w3-hide w3-white w3-card">
+                    @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(26) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                    {
+                        ViewBag.VBRoleOverviewDashBoard = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(26)).Select(x => x.RoleAction).FirstOrDefault();
+                        <a href="@Url.Action("OverviewDashBoard", "Report")" class="w3-bar-item w3-button w3-hover-blue" target="_blank" >DashBoard Efficiency</a>
+                    }
+                    @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(27) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                    {
+                        ViewBag.VBRoleEmployeeDashBaord = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(27)).Select(x => x.RoleAction).FirstOrDefault();
+                        <a href="@Url.Action("EmployeeDashBaord", "Report")" class="w3-bar-item w3-button w3-hover-blue" target="_blank">DashBoard Grade</a>
+                    }
+            </div>
+        </div>
+        }
+
+        @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && (x.PageID.Equals(28) || x.PageID.Equals(28) || x.PageID.Equals(29) || x.PageID.Equals(30)) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {               
+        <div class="w3-dropdown-hover w3-hover-While">
+                <button class="w3-button" style="color:white" onclick="mySettingFunc()">
+                <img class="nav-images" src="~/Picture/flaticon-set-up-refresh-white.png" alt="System Managementh photo">System Management
+                <i class="fa fa-caret-down"></i>
+            </button>
+                <div id="demo-Setting" class="w3-hide w3-white w3-card">
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(28) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                    ViewBag.VBRoleSetUpRefreshtime = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(28)).Select(x => x.RoleAction).FirstOrDefault();
+                        <a href="@Url.Action("SetUpRefreshTime", "Working")" class="w3-bar-item w3-button w3-hover-blue">Set Up Refresh time </a>
+                }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(29) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                    ViewBag.VBRoleRollBackDataProduction = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(29)).Select(x => x.RoleAction).FirstOrDefault();
+                        <a href="@Url.Action("RollBackDataProduction", "Working")" class="w3-bar-item w3-button w3-hover-blue">Roll Back Data</a>
+                }
+                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(30) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                        ViewBag.VBRoleManualImport = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(30)).Select(x => x.RoleAction).FirstOrDefault();
+                        <a href="@Url.Action("ImportManualData", "Working")" class="w3-bar-item w3-button w3-hover-blue">Manual Import Data </a>
+                }   
+                  @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(32) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                    ViewBag.VBPRoductionPlan = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
+                        <a href="@Url.Action("ProductionPlan", "Working")" class="w3-bar-item w3-button w3-hover-blue">ProductionPlan </a>
+                }
+              
+            </div>
+          
+
+        </div>
+        }
+        <div class="buttons" style="height:210px">
+            
+        </div>
+         <div class="buttons">
+            <img style="width:50%;height:30%;  background-color: #0F40F5"> <p style="color:whitesmoke">Version1.0.16 | LastUpdate: 22/05/24 </p>
+        </div>
+
+    </div>
+
+    <div id="main">
+
+
+        @* //Top Bar *@
+        <div style=" height: 70px; background-color: #0F40F5">
+            <div>
+                <button id="openNav" class="w3-bar-item w3-button w3-large" style="background-color: #0F40F5; color:whitesmoke" onclick="w3_open()">&#9776;</button>
+
+                <div class="topnav-right dropdown" style="float:right;">
+                    <button onclick="myFunction()" class="dropbtn">Welcome : @UserName</button>
+                    <div id="myDropdown" class="dropdown-content">
+                        <a href="/Home/Logout" style="color:white">Sign out  </a>
+                    </div>
+                </div>
+
+            </div>
+            
+           @*  <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last" >
+
+                <p align="right" style="color:white ;font-size:14px ;padding-right:10px">Welcome : @UserName</p> 
+
+            </div>
+            <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last" align="right">
+                <p align="right"><a href="/Home/Logout" style="color:white">Sign out    </a></p>
+            </div> *@
+
+           
+
+
+
+        </div>
+
+
+
+        @* // Content *@
+        <div class="w3-container">
+
+            @RenderBody()
+        </div>
+
+    </div>
+
+
+    <script>
+
+        function w3_open() {
+            document.getElementById("main").style.marginLeft = "20%";
+            document.getElementById("mySidebar").style.width = "20%";
+            document.getElementById("mySidebar").style.display = "block";
+            document.getElementById("openNav").style.display = 'none';
+        }
+        function w3_close() {
+            document.getElementById("main").style.marginLeft = "0%";
+            document.getElementById("mySidebar").style.display = "none";
+            document.getElementById("openNav").style.display = "inline-block";
+        }
+
+
+        $("#setEN").click(function (e) {
+            e.stopImmediatePropagation();
+            gbLang = "enlang";
+            $(".thlang").addClass("d-none");
+            $(".enlang").removeClass("d-none");
+        });
+        $("#setTH").click(function (e) {
+            e.stopImmediatePropagation();
+            gbLang = "thlang";
+            $(".thlang").removeClass("d-none");
+            $(".enlang").addClass("d-none");
+        });
+
+
+
+function myMasterFunc() {
+            var x = document.getElementById("demo-master");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+    x.previousElementSibling.className += " w3-green";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+    x.previousElementSibling.className = 
+    x.previousElementSibling.className.replace(" w3-green", "");
+  }
+}
+
+
+
+function myEmployeeFunc() {
+            var x = document.getElementById("demo-Employee");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+    x.previousElementSibling.className += " w3-green";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+    x.previousElementSibling.className = 
+    x.previousElementSibling.className.replace(" w3-green", "");
+  }
+
+
+}
+
+
+function myReportFunc() {
+            var x = document.getElementById("demo-Report");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+    x.previousElementSibling.className += " w3-green";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+    x.previousElementSibling.className = 
+    x.previousElementSibling.className.replace(" w3-green", "");
+  }
+}
+
+
+function myDashboardFunc() {
+            var x = document.getElementById("demo-Dashboard");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+    x.previousElementSibling.className += " w3-green";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+    x.previousElementSibling.className = 
+    x.previousElementSibling.className.replace(" w3-green", "");
+  }
+}
+
+
+        function mySettingFunc() {
+            var x = document.getElementById("demo-Setting");
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+                x.previousElementSibling.className += " w3-green";
+            } else {
+                x.className = x.className.replace(" w3-show", "");
+                x.previousElementSibling.className =
+                    x.previousElementSibling.className.replace(" w3-green", "");
+            }
+        }
+
+
+function myDropFunc() {
+  var x = document.getElementById("demoDrop");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+    x.previousElementSibling.className += " w3-green";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+    x.previousElementSibling.className = 
+    x.previousElementSibling.className.replace(" w3-green", "");
+  }
+}
+
+
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('.selectfillter').select2({
+                closeOnSelect: false,
+                theme: 'bootstrap-5',
+                placeholder: "Select Value ...",
+                // width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                
+            });
+
+        });
+
+
+
+
+        function myFunction() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown menu if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+
+
+
+    </script>
+
+    @RenderSection("scripts", false)
+
+
+</body>
+</html>
+@* 
+        <div class="w3-container">
+
+            @RenderBody()
+        </div>
+
+    </div>
+
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - Plims - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    
+    <script>
+
+        function w3_open() {
+            document.getElementById("main").style.marginLeft = "20%";
+            document.getElementById("mySidebar").style.width = "20%";
+            document.getElementById("mySidebar").style.display = "block";
+            document.getElementById("openNav").style.display = 'none';
+        }
+        function w3_close() {
+            document.getElementById("main").style.marginLeft = "0%";
+            document.getElementById("mySidebar").style.display = "none";
+            document.getElementById("openNav").style.display = "inline-block";
+        }
+
+
+        $("#setEN").click(function (e) {
+            e.stopImmediatePropagation();
+            gbLang = "enlang";
+            $(".thlang").addClass("d-none");
+            $(".enlang").removeClass("d-none");
+        });
+        $("#setTH").click(function (e) {
+            e.stopImmediatePropagation();
+            gbLang = "thlang";
+            $(".thlang").removeClass("d-none");
+            $(".enlang").addClass("d-none");
+        });
+
+
+    </script>
+ *@
+
+
+@* 
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+ *@

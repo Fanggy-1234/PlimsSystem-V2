@@ -1,0 +1,1132 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@{
+    ViewBag.Title = "EmployeeGroup";
+    //TbUser user = Utilities.GetCurrentUser();
+    string groupId = ViewBag.groupid;
+}
+
+
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+    #table_id {
+        border: 0.1px solid #A9A9A9; 
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #table_id th {
+            background-color: #C5C5C5;
+            font-weight: bold;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            padding: 15px 0px;
+            border-collapse: collapse;
+        }
+
+        #table_id td {
+            text-align: left;
+            font-size: 14px;
+        }
+
+        #table_id tr {
+            text-align: left;
+            padding: initial;
+        }
+
+        #table_id th,
+        #table_id td {
+            border: 0.1px solid #A9A9A9; 
+            border-collapse: collapse;
+        }
+     .dataTables_scrollHeadInner,
+    .table {
+        width: 100% !important;
+    }  
+
+</style>
+
+
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            ordering: false,
+            searching: false,
+            scrollX: true,
+            scrollY: true,
+            // order: [[1, 'asc']],
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 20, // Default page length
+            paging: true, // Enable paging
+        });
+
+    });
+
+    
+
+</script>
+
+
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Employee Group QRCode Management</h2>
+<div class="row" style="height:10px"> </div>
+
+<form method="get" asp-controller="Master">
+    @* <div style="background-color: #fcfcfc; border-radius: 2px"> *@
+    <div class="row">
+        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> EmployeeID:</label></div>
+        <div class="col-3">
+    @*         <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeID">
+                <option value="" default selected></option>
+                @foreach (var item in Model.tbEmployeeMaster)
+                {
+
+                    <option>@Html.DisplayFor(modelItem => item.EmployeeID) </option>
+                }
+            </select>
+ *@
+              <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="Employee">
+                                    <option value="" default selected></option>
+                                    @foreach (var dataGroup in Model.view_EmployeeGroup.GroupBy(x => x.EmployeeID))
+                                    {
+                                        var dataFrist = dataGroup.First(); // Take the first item in the group
+                                        <option value="@dataFrist.EmployeeID" selected="@(dataFrist.EmployeeID == ViewBag.SelectedEmployeeID ? "selected" : null)">
+                                            @Html.DisplayFor(modelItem => dataFrist.EmployeeID) : @Html.DisplayFor(modelItem => dataFrist.EmployeeName)
+                                        </option>
+
+                                    }
+                                </select>
+
+        </div>
+        <div class="col-2"></div>
+    </div>
+
+
+    <div class="row" style="height:20px"></div>
+
+
+    @* //Inactive Checkbox *@
+    <div class="row ">
+        <div class="col-2" style=" padding-top:0.5em"></div>
+        <div class="col-3">
+            @{
+                // Determine if the checkbox should be checked based on ViewBag.InactiveStatus
+                string checkedAttribute = (ViewBag.InactiveStatus ?? false) ? "checked" : "";
+            }
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="inactivestatus" name="inactivestatus" @checkedAttribute>
+                <label class="form-check-label" for="inactivestatus">Inactive Status</label>
+                <input type="hidden" id="inactivestatus-hidden" name="inactivestatus" value="@((ViewBag.InactiveStatus ?? false).ToString().ToLower())">
+            </div>
+        </div>
+        <div class="col-6"></div>
+    </div>
+
+
+    <div class="row" style="height:20px"></div>
+
+    <div class="row" style="height:10px">
+        @if (TempData.ContainsKey("AlertMessage"))
+        {
+            <script>
+                alert('@TempData["AlertMessage"]');
+            </script>
+        }
+    </div>
+    @* </div> *@
+
+
+    <div class="row" style="height:40px">
+
+        <div class="col" style="width:15% ">
+            <button id="Clear" type="submit" asp-action="EmployeeGroupQRClear" class="clear-button">
+                Clear
+            </button>
+        </div>
+        <div class="col-3" style="width:55% ">
+        </div>
+        <div class="col" style="width:15% ">
+            <button id="Search" type="submit" asp-action="EmployeeGroupQRCode" class="search-button">
+                Search
+            </button>
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleEmpGroup == "Full")
+            {
+                <button type="button" asp-action="EmpGroupQRCreate" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal">Create</button>
+
+            }
+            else
+            {
+                <button type="button" class="create-button">Create</button>
+
+            }
+
+        </div>
+    </div>
+@* </form> *@
+
+
+<br />
+
+<div class="row" style="height:10px"></div>
+
+@* <form asp-controller="Master" method="post" id="dataTableForm"> *@
+    @* <div id="table_info" class="page-table"></div> *@
+    @*Display data*@
+    <table id="table_id" class="table table-hover" style="width:100%">
+        <thead style="background-color:gainsboro;">
+            <tr>
+                <th>
+                    Group ID
+                </th>
+                <th>
+                    Employee ID
+                </th>
+                <th>
+                    Employee Name
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Edit
+                </th>
+                <th>
+                    Active/Inactive
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.view_EmployeeGroupList)
+            {
+                <tr>
+                    @Html.HiddenFor(modelItem => item.GroupID)
+
+                    <td id="GroupID" >
+                        @Html.DisplayFor(modelItem => item.GroupID)
+                    </td>
+                    <td id="EmployeeID">
+                        @Html.DisplayFor(modelItem => item.EmployeeIDs)
+                    </td>
+                    <td id="EmployeeName" >
+                        @Html.DisplayFor(modelItem => item.EmployeeNames)
+                    </td>
+                    @if (item.Status == 1)
+                    {
+                        <td id="Status"> <span id="open">Active</span> </td>
+                        <td>
+                            @if (ViewBag.VBRoleEmpGroup == "Full")
+                            {
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.GroupID." onclick="EditFn(@item.GroupID)">Edit</a>
+
+                            }
+                            else
+                            {
+                                <a href="#" id="btnEdit">Edit</a>
+
+                            }
+                        </td>
+
+                        <td>
+                            @if (ViewBag.VBRoleEmpGroup == "Full")
+                            {
+                                <a href="#" id="Inactive" onclick="InactiveFn(@item.GroupID)">Inactive</a>
+                            }
+                            else
+                            {
+                                <a href="#" id="Inactive">Inactive</a>
+                            }
+
+                        </td>
+
+                    }
+                    @if (item.Status == 0)
+                    {
+                        <td id="Status"><span id="closed" style="color:red">Inactive</span></td>
+                        <td>
+                            <span id="closed">Edit</span>
+                        </td>
+                        <td>
+                            @if (ViewBag.VBRoleEmpGroup == "Full")
+                            {
+                                <a href="#" id="Active" onclick="ActiveFn(@item.GroupID)">Active</a>
+                            }
+                            else
+                            {
+                                <a href="#" id="Active">Active</a>
+                            }
+
+                        </td>
+                    }
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div style="height:20px">
+    </div>
+    @* /////////////////////////// Export / Import /////////////////////// *@
+
+
+    <br>
+    <div class="row" style="height:40px">
+
+        <div class="col-3" style="width:70% ">
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleEmpGroup == "Full")
+            {
+                <button class="search-button" id="btnExport" type="Submit" asp-action="EmployeeGroupQRCodeExport" value="export" name="submit">Export</button>
+            }
+            else
+            {
+                <button type="button" id="btnExportView" class="search-button">Export</button>
+            }
+        </div>
+        <div class="col" style="width:15% ">
+            @if (ViewBag.VBRoleEmpGroup == "Full")
+            {
+
+                <button type="button" class="clear-button" id="btnSelectFile">Import</button>
+                <input type="file" id="FileUpload" name="FileUpload" class="hidden-file-input" style="display: none" />
+                
+            }
+            else
+            {
+
+                <button type="button" id="btnSubmitView" class="clear-button">Import</button>
+
+            }
+
+        </div>
+    </div>
+
+
+</form>
+
+<div class="row" style="height:10px">
+</div>
+
+
+
+
+
+@*  /////////////////////// Modal /////////////////////////////////////// *@
+
+
+
+@*Modal Create*@
+<div class="modal fade bd-example-modal-lg" id="CreateModal" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="get" asp-controller="Master" asp-action="EmployeeGroupeCreate">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Employee Group Create</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Group ID:</label>
+                                @{
+                                    // int value = @Model.view_EmployeeGroupList.Count() + 1;
+                                    // string formattedValue = value.ToString("00000");
+                                    <input type="text" class="form-control" style="background-color:gainsboro" name="GroupID" id="GroupIDCreate" readonly >
+                                }
+
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Employee ID:</label>
+                          @*       <select class="selectfillter form-control" style="width:100%" name="EmployeeIDCreate" id="EmployeeIDCreate">
+                                    <option value="" default selected>Please Select ..</option>
+                                    @foreach (var item in Model.tbEmployeeMaster.Where(x => x.Status.Equals(1)))
+                                    {
+
+                                        <option>@Html.DisplayFor(modelItem => item.EmployeeID) </option>
+                                    }
+                                </select> *@
+
+                                <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeIDCreate" >
+                                    <option value="" default selected></option>
+                                    @foreach (var dataGroup in Model.tbEmployeeMaster.GroupBy(x => x.EmployeeID))
+                                    {
+                                        var dataFrist = dataGroup.First(); // Take the first item in the group
+                                        <option value="@dataFrist.EmployeeID">
+                                            @Html.DisplayFor(modelItem => dataFrist.EmployeeID) : @Html.DisplayFor(modelItem => dataFrist.EmployeeName)
+                                        </option>
+
+                                    }
+                                </select>
+
+
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row" style="height:100%">
+                                <div class="col-6">         
+                                    <img id="QRCodeImage" src="" class="img-thumbnail" style="display: none; width:100% ; height:100%" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-3">
+                            <button type="button" class="btn btn-secondary" id="AddEmpCreate" name="AddEmp" style="width:100%">Add</button>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                    <div class="row" style="height:20px"></div>
+                    @*  // Display table *@
+                    <div class="row">
+                        <table id="tablesubcreate_id" class="page-table" style="width:100%">
+                            <thead style="background-color:gainsboro;">
+                                <tr>
+
+                                    <th style="text-align:center">
+                                        Employee ID
+                                    </th>
+                                    <th  style="text-align:center">
+                                        Employee Name
+                                    </th>
+                                    <th style="text-align:center">
+                                        Action
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @*  ... *@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+
+                <div class="modal-footer">
+               
+                    <button type="button" class="btn btn-secondary" name="submit" id="CreateGroupQRCode" onclick="generateQRCode()" value="Generate">Generate Barcode</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="btncreatesubmit" value="Enter">Submit</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@*Modal Update*@
+<div class="modal fade bd-example-modal-lg" id="EditModal" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+           @*  asp-action="EmployeeGroupQRCodeUpdate" *@
+            <form method="get" controller="Master" >
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Employee Group Update</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Group ID:</label>
+                                <input type="text" class="form-control" style="background-color:gainsboro" name="GroupID" id="ModalGroupID" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Employee ID:</label>
+                             @*    <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="ModalEmployeeID">
+                                    <option value="" default selected></option>
+                                    @foreach (var item in Model.tbEmployeeMaster.Where(x => x.Status.Equals(1)))
+                                    {
+
+                                        <option>@Html.DisplayFor(modelItem => item.EmployeeID) </option>
+                                    }
+                                </select> *@
+
+
+                                <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="ModalEmployeeID" required>
+                                    <option value="" default selected></option>
+                                    @foreach (var dataGroup in Model.tbEmployeeMaster.GroupBy(x => x.EmployeeID))
+                                    {
+                                        var dataFrist = dataGroup.First(); // Take the first item in the group
+                                        <option value="@dataFrist.EmployeeID">
+                                            @Html.DisplayFor(modelItem => dataFrist.EmployeeID) : @Html.DisplayFor(modelItem => dataFrist.EmployeeName)
+                                        </option>
+
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row" style="height:100%">
+                                <div class="col-3">
+                                     <img alt="QRImg" id="modalImage" style="width: 100%; height: auto;" />
+                                    @* <img src="D:\PLIMS PROJECT\Plims_11\QRCode.png" id="ModalImgQRCode" alt="QR Code"> *@
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-3">
+                            <button type="button" class="btn btn-secondary" id="AddEmpEdit" name="AddEmp" style="width:100%">Add</button>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                    <div class="row" style="height:20px"></div>
+                    @*  // Display table *@
+                    <div class="row">
+                        <table id="tablesubedit_id" class="page-table" style="width:100%">
+                            <thead style="background-color:gainsboro;">
+                                <tr>
+
+                                    <th class="page-table-head" style="text-align:center">
+                                        Employee ID
+                                    </th>
+                                    <th class="page-table-head" style="text-align:center">
+                                        Employee Name
+                                    </th>
+                                    <th class="page-table-head" style="text-align:center">
+                                        Action
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmitEdit" value="Enter">Submit</button>
+                </div>
+
+
+
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+    // Ensure that the checkbox state is included in the form submission
+    document.getElementById("inactivestatus").addEventListener("change", function () {
+        if (this.checked) {
+            // Set the value of the hidden input field to "true" when checked
+            document.getElementById("inactivestatus-hidden").value = "true";
+        } else {
+            // Set the value of the hidden input field to "false" when unchecked
+            document.getElementById("inactivestatus-hidden").value = "false";
+        }
+    });
+
+
+</script>
+
+<script type="text/javascript" charset="utf8">
+
+
+    //Edit to modal//////////////////////////////////////////////////////////////////////////////
+    function EditFn(id) {
+        $.ajax({
+            url: '/Master/EmployeeGroupEdit/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response == null || response == undefined) {
+
+                    alert("This data can't read1!")
+                }
+                else if (response.length == 0) {
+
+                    alert("This data can't id!" + id)
+                }
+                else {
+                    // console.log('AJAX request successful:', response);
+
+                    var tableBody = $('#tablesubedit_id tbody');
+                    tableBody.empty();
+
+                    // // Iterate through the response array and append rows to the table
+                    $.each(response, function (index, item) {
+                        $('#ModalGroupID').val(item.groupID);
+                        var row = $('<tr>');
+                        row.append('<td class="page-table-data">' + item.employeeID + '</td>');
+                        row.append('<td class="page-table-data">' + item.employeeName + '</td>');
+                        // row.append('<td class="page-table-data"><a href="#" class="Inactive" id="btnEmpDel" onclick="DeleteFn(' + item.employeeID + ')">Deletes</a></td>');
+                        row.append('<td class="page-table-data"><a href="#" class="Inactive btnEmpDel" data-employee-id="' + item.employeeID + '">Delete</a></td>');
+
+                        tableBody.append(row);
+                    });
+
+
+                      var employeeID = $('#ModalGroupID').val();
+
+                         // Construct the URL for the QR code image
+                    var qrCodeUrl = '@Url.Content("~/qrcodes/")' + employeeID + '_QRCode.png';
+                             console.log('QR path : ' + qrCodeUrl)
+                        // Set the src attribute of the img tag to the constructed URL
+                        $('#modalImage').attr('src', qrCodeUrl);
+
+
+
+
+                    $('#EditModal').modal('show');
+
+                }
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+
+        });
+    }
+  /////////////////////////////////////////////////////////////////////////
+  $(document).on('click', '.btnEmpDel', function() {
+    // Find the parent row and remove it
+    $(this).closest('tr').remove();
+});
+
+
+///////////////////////////////////////////////////////////////
+
+    //Function Inactive ////////////////////////////////////////////////
+    function InactiveFn(id) {
+        $.ajax({
+            url: '/Master/EmployeeGroupInactive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                location.reload();
+                alert("Inactive Finish");
+            },
+            error: function (response) {
+                alert("Inactive something went wrong.");
+            }
+
+        });
+    }
+    ///////////////////////////////////////////////////////////////
+
+    //Function Inactive//////////////////////////////////////////////
+    function ActiveFn(id) {
+        $.ajax({
+            url: '/Master/EmployeeGroupActive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                location.reload();
+                alert("Active Finish");
+            },
+            error: function (response) {
+                alert("Active something went wrong.");
+            }
+
+        });
+    }
+    ////////////////////////////////////////////////////////////
+
+
+    //Genearate QR Code /////////////////////////////////////////////////////
+    function GenerateQRCodeFn() {
+        // Get the value from the Employee ID select element
+        var employeeId = document.getElementById("EmployeeIDCreate").value;
+
+        // Generate the QR code with the employeeId
+        var qrcode = new QRCode(document.getElementById("imageDisplay"), {
+            text: employeeId,
+            width: 128,
+            height: 128,
+        });
+
+        // Display the image
+        document.getElementById("imageDisplay").style.display = "block";
+    }
+
+    //Import Excel /////////////////////////////////////////////////////////////
+    $(document).ready(function () {
+        $('#btnSelectFile').on('click', function () {
+            $('#FileUpload').click();
+        });
+
+        $('#FileUpload').on('change', function () {
+            var selectedFile = this.files[0];
+
+            // Create FormData object
+            var formData = new FormData();
+            formData.append('FileUpload', selectedFile);  // Use the correct name
+
+            // Send the file to the controller using AJAX
+            $.ajax({
+                url: '/Master/EmployeeManagementGroupUpload',
+                type: 'POST',
+                processData: false,
+                contentType: false,  // Set this to false when using FormData
+                data: formData,
+                success: function (data, status, xhr) {
+                    // Handle success
+                    console.log(data);
+                    location.reload();
+                    // Trigger the download process or perform other actions
+                },
+                error: function (xhr, status, error) {
+                    // Handle error
+                    console.error('Error uploading file:', error);
+                }
+            });
+        });
+    });
+    ////////////////////////////////////////////////////////////////////////
+
+
+    //Export Excel ////////////////////////////////////////////////////////
+
+
+    // $(function () {
+    //     $("#btnExport").click(function () {
+    //         $("#table_id").table2excel({
+    //             filename: "EmployeeGroup-Master.xls"
+    //         });
+    //     });
+    // });
+
+
+    
+    // $(document).ready(function () {
+    //     $('#btnExport').click(function () {
+    //         var $table = $('#table_id');
+
+    //         // Clone the table to preserve the original
+    //         var $clonedTable = $table.clone();
+
+    //         // Remove unwanted columns (in this case, remove second column)
+    //         $clonedTable.find('tr').each(function () {
+    //             $(this).find('th:eq(5), td:eq(5)').remove();
+    //             $(this).find('th:eq(4), td:eq(4)').remove();
+    //            // $(this).find('td:eq(2)').remove();
+
+    //         });
+
+    //         // Export the modified table using table2excel
+    //         $clonedTable.table2excel({
+    //             exclude: ".noExl", // Exclude elements with class "noExl"
+    //             name: "Worksheet Name",
+    //             filename: "EmployeeGroup-Master"
+    //         });
+    //     });
+    // });
+
+    // $(document).ready(function () {
+    //     $('#btnExport').click(function () {
+    //         var tableData = [];
+    //         $('#table_id tbody tr').each(function (index, row) {
+    //             var rowData = {};
+    //             $(row).find('td').each(function (index, col) {
+    //                 var columnName = $('#table_id thead th').eq(index).text();
+    //                 rowData[columnName] = $(col).text();
+    //             });
+    //             tableData.push(rowData);
+    //         });
+
+    //         // Convert tableData to JSON
+    //         var jsonData = JSON.stringify(tableData);
+
+    //         // Send JSON data to controller
+    //         $.ajax({
+    //             url: '/Master/EmployeeGroupProcessDataTable',
+    //             type: 'POST',
+    //             contentType: 'application/json',
+    //             data: jsonData,
+    //             success: function (response) {
+    //                 alert("EmployeeGroup Master Export Finished!");
+    //             },
+    //             error: function (xhr, status, error) {
+    //                 console.error('Error exporting data:', error);
+    //                 // Handle error response if needed
+    //             }
+    //         });
+    //     });
+    // });
+    //////////////////////////////////////////////////////////////////////
+
+
+
+
+    $(document).ready(function () {
+    $('#btncreatesubmit').click(function () {
+        // Initialize an array to store table data
+        var tableData = [];
+
+        // Iterate through each row in the table
+        $('#tablesubcreate_id tbody tr').each(function (index, row) {
+            // Initialize an object to store row data
+            var rowData = {};
+
+            // Iterate through each cell in the row
+            $(row).find('td').each(function (index, col) {
+                // Extract column name and cell value
+                var columnName = $('#tablesubcreate_id thead th').eq(index).text();
+                var cellValue = $(col).text();
+
+                // Add cell value to rowData object
+                rowData[columnName] = cellValue;
+            });
+
+            // Add rowData object to tableData array
+            tableData.push(rowData);
+        });
+
+        // Convert tableData array to JSON string
+        var jsonData = JSON.stringify(tableData);
+
+        // Send JSON data to server via AJAX
+        $.ajax({
+            url: '/Master/EmployeeGroupCreate',
+            type: 'POST',
+            contentType: 'application/json',
+            data: jsonData,
+            success: function (response) {
+                // Handle success response     
+                    location.reload();
+            },
+            error: function (xhr, status, error) {
+                // Handle error response
+                console.error('Error creating data:', error);
+                alert("Error creating Employee Group");
+            }
+        });
+    });
+});
+
+
+
+
+    // Attach click event to the "Add" button  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    $('#AddEmpCreate').on('click', function () {
+        addRowCreate();
+    });
+
+    // Function to add a new row to DataTable Modal Create
+    function addRowCreate() {
+
+        var employeeID = $("#EmployeeIDCreate").val(); // Get the selected value from the dropdown
+
+        // Check for duplicates
+        var duplicate = false;
+        $('#tablesubcreate_id tbody tr').each(function () {
+            var existingEmployeeID = $(this).find('td:first').text().trim(); // Assuming employeeID is the first column
+            if (employeeID === existingEmployeeID) {
+                duplicate = true;
+                return false; // Exit the loop early since we found a duplicate
+            }
+        });
+
+        if (duplicate) {
+            // Handle duplicate entry
+            alert('Duplicate entry found.');
+            return; // Exit the function to prevent adding duplicate rows
+        }
+
+
+        // Make an AJAX request to fetch the employeeName
+        $.ajax({
+            url: '/Master/GetEmployeeName', // Replace with your actual route
+            type: 'GET',
+            data: { employeeID: employeeID },
+            success: function (employeeName) {
+               // console.log(employeeName);
+                var tableBody = $('#tablesubcreate_id tbody');
+                var row = $('<tr>');
+                row.append('<td>' + employeeID + '</td>');
+                row.append('<td>' + employeeName + '</td>');
+              //  row.append('<td  class="page-table-data"><a href="#" class="delete-link delete-row" data-employee-id="' + employeeID + '">Delete</a></td>');
+                row.append('<td><a href="#" class="delete-link delete-row" data-employee-id="' + employeeID + '">Delete</a></td>');
+                tableBody.append(row);
+                // class="page-table-data"
+               // GroupIDCreate
+                // Redraw DataTable after adding a new row
+                $('#tablesubcreate_id').DataTable().draw();
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    $(document).ready(function () {
+        // Function to handle click event for delete links
+        $('#tablesubcreate_id').on('click', '.delete-row', function () {
+            var employeeID = $(this).data('employee-id');
+
+            // Make an AJAX request to delete the row with this employee ID
+            // You can use this employee ID to delete the corresponding row from your backend
+            // For demonstration purposes, let's just remove the row from the table
+            $(this).closest('tr').remove();
+
+            // Redraw DataTable after deleting the row
+            $('#tablesubcreate_id').DataTable().draw();
+        });
+    });
+
+
+
+
+
+    // Function to delete a row from DataTable////////////////////////////////////////////////////
+    function deleteRowcreate(button) {
+        var dataTable = $('#tablesubcreate_id').DataTable(); // Use the correct DataTable ID
+        var row = dataTable.row($(button).parents('tr'));
+
+        // Add a callback to handle the row removal
+        dataTable.row(row).remove().draw(false);
+
+        // Ensure that the deleted row is removed from the DataTable
+        row.remove().draw();
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    
+
+    // Attach click event to the "Add" button
+    $('#AddEmpEdit').on('click', function () {
+        addRowEdit();
+    });
+
+    // Button add function
+    function addRowEdit() {
+        var employeeID = $("#ModalEmployeeID").val(); // Get the selected value from the dropdown
+        // Check for duplicates
+        var duplicate = false;
+        $('#tablesubedit_id tbody tr').each(function () {
+            var existingEmployeeID = $(this).find('td:first').text().trim(); // Assuming employeeID is the first column
+            if (employeeID === existingEmployeeID) {
+                duplicate = true;
+                return false; // Exit the loop early since we found a duplicate
+            }
+        });
+
+        if (duplicate) {
+            // Handle duplicate entry
+            alert('Duplicate entry found.');
+            return; // Exit the function to prevent adding duplicate rows
+        }
+
+        // Make an AJAX request to fetch the employeeName
+        $.ajax({
+            url: '/Master/GetEmployeeName',
+            type: 'GET',
+            data: { employeeID: employeeID },
+            success: function (employeeName) {
+              
+                // Get DataTable instance
+                var dataTableedit = $('#tablesubedit_id tbody');
+               // dataTableedit.empty();
+                        var row = $('<tr>');
+                        row.append('<td class="page-table-data">' + employeeID + '</td>');
+                        row.append('<td class="page-table-data">' + employeeName + '</td>');
+                        row.append('<td class="page-table-data"><a href="#" class="delete-link btnEmpDel" onclick="DeleteFn(' + employeeID + ')" data-employee-id="' + employeeID + '">Delete</a></td>');
+                dataTableedit.append(row);
+
+                // Add the new row to the DataTable
+                dataTableedit.row.add.append(newRow).draw();
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Function to delete a row from DataTable
+    function deleteRowedit(Button) {
+
+        var dataTable = $('#tablesubedit_id').DataTable(); // Use the correct DataTable ID
+        var row = dataTable.row($(button).parents('tr'));
+
+        // Add a callback to handle the row removal
+        dataTable.row(row).remove().draw(false);
+
+        // Ensure that the deleted row is removed from the DataTable
+        row.remove().draw();
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+    //Submit Edit finished ///////////////////////////////////////////////////////////////////////
+    $(document).ready(function () {
+
+        $('#btnSubmitEdit').click(function () {
+            var GroupID = $("#ModalGroupID").val();
+            var tableData = [];
+            $('#tablesubedit_id tbody tr').each(function (index, row) {
+                var rowData = {};
+                $(row).find('td').each(function (index, col) {
+                    var columnName = $('#tablesubedit_id thead th').eq(index).text();
+                    rowData[columnName] = $(col).text();
+                });
+                tableData.push(rowData);
+            });
+            // Convert tableData to JSON
+            // var jsonData = JSON.stringify(tableData);
+            var jsonData = JSON.stringify({ tableData: tableData, GroupID: GroupID });
+            // Send JSON data to controller
+            $.ajax({
+                url: '@Url.Action("EmployeeGroupQRCodeUpdate", "Master")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: jsonData,
+                success: function (response) {
+                    // alert("Successful"); 
+                     location.reload();
+                  //  console.log('test test test');
+                $('#EditModal .modal-content').html(response); // Replace EditModal with the correct ID of your modal
+                // Optionally, you can close the modal after updating its content
+                $('#EditModal').modal('hide');
+
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error exporting data:', error);
+                    // Handle error response if needed
+                }
+            });
+        });
+    });
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+
+    //////////////////////////////////// Bootstrap //////////////////////////////////////////////
+
+    // new DataTable('#tablesubcreate_id', {
+    //     searching: false,
+    //     ordering: false,
+    //     paging: false,
+       
+    // });
+
+    new DataTable('#tablesubedit_id', {
+        searching: false,
+        ordering: false,
+        paging: false,
+        
+    });
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    // Function to generate QR code path based on GroupIDCreate
+    function generateQRCodePath(groupID) {
+        // Replace this with your logic to generate the QR code path
+        return '/QRCode/EmployeeGroup/' + groupID + '.png';
+    }
+    // Function to update ImgQRCodeCreate based on GroupIDCreate
+    function updateQRCodeImage() {
+        var groupID = $('#GroupIDCreate').val();
+        var qrCodePath = generateQRCodePath(groupID);
+
+        // Set the src attribute of the ImgQRCodeCreate element
+        $('#ImgQRCodeCreate').attr('src', qrCodePath);
+    }
+
+    // Event listener for the "Generate Barcode" button
+    $('#btngenerateQR').click(function () {
+        // Call the function to update ImgQRCodeCreate
+        updateQRCodeImage();
+    });
+
+
+
+
+    function GenerateFn() {
+        var GroupID = $("#GroupIDCreate").val();
+        $.ajax({
+            url: '/Master/GenerateQRGroup/',
+            type: 'GET',
+            data: { GroupID: GroupID },
+            success: function (response) {
+                if (GroupID.trim() !== '') {
+                    // Set the src attribute of the img element dynamically
+                    $('#imageDisplay').attr('src', '/Image/GetImage?imageName=' + GroupID);
+
+         
+                } else {
+                    alert("Please enter Image Name");
+                }
+            },
+            error: function (response) {
+                alert("Generate something went wrong.");
+            }
+
+        });
+    }
+
+
+    /////// FANG /////////////////////////
+     function generateQRCode() {
+        var employeeID = $('#GroupIDCreate').val(); // Get the employee ID from the input field
+     //   console.log(employeeID)
+        $.ajax({
+            url: '@Url.Action("CreateQRCodeGroup", "Master")', // Specify the controller action URL
+            type: 'POST',
+            data: { employeeID: employeeID }, // Send the employee ID to the controller
+            success: function (response) {
+               console.log(response);
+                // Update the QR code image source
+                $('#QRCodeImage').attr('src', response.qrUri);
+               // $('#EmployeeIDCreate').val(response.employeeID);
+                // Optionally, update other elements in the modal as needed
+                $('#QRCodeImage').show(); // Show the QR code image
+                $('#QrCodeUri').val(response.qrUri); // Set the QR code URI to a hidden input field
+                $('#generateButton').prop('disabled', true); // Disable the "Generate QR Code" button
+                // You can add more actions here based on your requirements
+            }
+        });
+    }
+    ///////////////////////////////////
+</script>
+

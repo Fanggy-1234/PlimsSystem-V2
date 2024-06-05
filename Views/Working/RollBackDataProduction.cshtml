@@ -1,0 +1,464 @@
+﻿@model Plims.ViewModel.ViewModelAll
+
+@{
+    ViewBag.Title = "RollBack Data Production";
+}
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+@* <link href="~/css/main.css" rel="stylesheet" /> *@
+
+<link href="~/css/bootstrap5.3.css" rel="stylesheet" />
+
+<!-- Ensure jQuery is included before DataTables -->
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
+
+<!-- Include DataTables and its Bootstrap 5 integration -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- Remove the duplicate CSS link -->
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
+
+
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
+
+
+<style type="text/css">
+
+    .form-control {
+        width: 100%;
+        height: 70%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #2D2828;
+        border-radius: 1px;
+        box-sizing: border-box;
+    }
+
+</style>
+
+
+<script>
+
+
+    $(document).ready(function () {
+        $("#tabledata #checkall").click(function () {
+            if ($("#tabledata #checkall").is(':checked')) {
+                $("#tabledata input[type=checkbox]").each(function () {
+                    $(this).prop("checked", true);
+                });
+
+            } else {
+                $("#tabledata input[type=checkbox]").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
+
+        $("[data-toggle=tooltip]").tooltip();
+    });
+
+
+
+    // //Edit to modal
+    // function EditFn(ID) {
+
+    //     $.ajax({
+    //         url: '/Employee/EmployeeAdjustLineEdit/' + ID,
+    //         type: 'GET',
+    //         contentType: 'application/json;charset=UTF-8',
+    //         dataType: 'json',
+    //         success: function (response) {
+    //             if (response == null || response == undefined) {
+
+    //                 alert("This data no clock in time")
+    //             }
+    //             else if (response.length == 0) {
+
+    //                 alert("This data can't id" + EmployeeID)
+    //             }
+    //             else {
+
+    //                 console.log('AJAX request successful:', response);
+    //                 var transactionDate = new Date(response.transactionDate);
+    //                 var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed
+    //                 console.log('AJAX request successful:', transactionDate)
+    //                 $('#ModalEmployeeID').val(response.employeeID);
+    //                 $('#ModalClockIn').val(response.clockIn);
+    //                 $('#ModalTransactionDate').val(formattedDate);
+    //                 $('#EditModal').modal('show');
+
+
+    //             }
+    //         },
+    //         error: function (response) {
+    //             alert(response.responseText);
+    //         }
+
+    //     });
+    // }
+
+
+
+
+</script>
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">RollBack Data Production</h2>
+
+
+<div class="row" style="height:10px"></div>
+<form method="get" asp-controller="Working">
+    <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;">
+        @*  //// Fillter ///// *@
+        <div class="col left" style="border: solid 1px #d5d5d5; margin-left:2em;">
+
+
+            <div class="row" style="height:10px">
+            </div>
+
+            
+            <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:1em">
+                <div class="col-3 label">
+                    <label for="recipient-name" class="col-form-label">Production Date:</label>
+                </div>
+                <div class="col">
+                    <!-- Transaction Date -->
+                    <input type="date" class="form-control" name="ProductionDate" id="ProductionDate" style="width:100%" value="@DateTime.Now.Date">
+                </div>
+
+
+            </div>
+
+
+            <div class="row" style="height:10px">
+            </div>
+
+            <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:1em">
+                <div class="col-3 label">
+                    <label for="recipient-name" class="col-form-label">  Line Name:</label>
+                </div>
+                <div class="col">
+                    <!-- Line Name -->
+                    <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
+                        <option value="" default selected></option>
+                        @foreach (var lineGroup in Model.View_RollBackData.GroupBy(x => x.LineID))
+                        {
+                            var line = lineGroup.First(); // Take the first item in the group
+                            <option value="@line.LineName" selected="@(line.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => line.LineID) : @Html.DisplayFor(modelItem => line.LineName)
+                            </option>
+
+                        }
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="row" style="height:10px">
+            </div>
+
+             <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:1em">
+                <div class="col-3 label">
+                    <label for="recipient-name" class="col-form-label">  Section Name:</label>
+                </div>
+                <div class="col">
+                    <!-- Section Name -->
+
+                    <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
+                <option value="" default selected></option>
+                        @foreach (var sectionGroup in Model.View_RollBackData.GroupBy(x => x.SectionID))
+                {
+                    var sectiond = sectionGroup.First(); // Take the first item in the group
+                    <option value="@sectiond.SectionName" selected="@(sectiond.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => sectiond.SectionID) : @Html.DisplayFor(modelItem => sectiond.SectionName)
+                    </option>
+               
+                }
+            </select>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:1em">
+                <div class="col-3 label">
+                    <label for="recipient-name" class="col-form-label"> Employee ID:</label>
+                </div>
+                <div class="col">
+                    <!-- Employee ID -->
+ 
+              <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeID">
+                <option value="" default selected></option>
+                        @foreach (var EmpGroup in Model.View_RollBackData.GroupBy(x => x.EmployeeID))
+                {
+                            var Empd = EmpGroup.First(); // Take the first item in the group
+                            <option value="@Empd.EmployeeName" selected="@(Empd.EmployeeName == ViewBag.SelectedEmployeeName ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => Empd.EmployeeID) : @Html.DisplayFor(modelItem => Empd.EmployeeName)
+                    </option>
+               
+                }
+            </select>
+                </div>
+
+
+            </div>
+
+
+
+            <div class="row" style="height:10px;"></div>
+
+        </div>
+
+
+        @*    /////    Create /////// *@
+        <div class="col right" style="border: solid 1px #d5d5d5; margin-left: 2em ">
+
+            <div class="row" style="height:10px">
+            </div>
+
+            
+            <div class="row" style="padding-left:2em ; padding-right:2em ; padding-bottom:1em">
+                <div class="col-3 label">
+                    <label for="recipient-name" class="col-form-label"> Product From :</label>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" name="ProductFrom" id="ProductFrom" style="width:100% ;background-color:gainsboro" readonly>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="row" style="height:10px;"></div>
+            <div class="row" style="padding-left:2em ; padding-right:2em ; padding-bottom:1em">
+                <div class="col-3 label">
+                    <label for="recipient-name" class="col-form-label"> Product To :</label>
+                </div>
+                <div class="col">
+                    <!-- Employee ID -->
+                    <select class="selectfillter form-control" name="ProductTo" id="ProductTo" style="width:100%">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbProduct)
+                        {
+
+                            <option value="@item.ProductID" selected="@(item.ProductName == ViewBag.SelectedProductName ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
+                            </option>
+                        }
+                    </select>
+                </div>
+
+
+            </div>
+
+
+           
+
+
+
+            <div class="row" style="height:10px;"></div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <div class="row" style="height:40px ;">
+                <div class="col-6"></div>
+                <div class="col-3">
+                    <button class="clear-button" type="submit" asp-action="RollBackDataProductionClear">
+                        Clear
+                    </button>
+                </div>
+
+                <div class="col-3">
+                    <button class="search-button" type="submit" asp-action="RollBackDataProduction">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="row" style="height:40px ;">
+                <div class="col-9"></div>
+                <div class="col-3">
+                    @if (ViewBag.VBRoleRollBackDataProduction == "Full")
+                    {
+                        <button type="submit" class="clear-button" onclick="return confirm('Are you sure?')">Adjust</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="clear-button">Adjust</button>
+                    }
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row" style="height:30px">
+    </div>
+
+    @*Diaplay data*@  @*   *@
+    <table id="tabledata" class="cell-border" style="width:100% ;padding-left:0.5em ">
+        <thead style="background-color:#D1D1D1; height:20px;">
+            <tr>
+                <th><input type="checkbox" id="checkall" /></th>
+                <th>
+                    Production Date
+                </th>
+                <th>
+                    Employee Name
+                </th>
+                <th>
+                    Line
+                </th>
+                <th>
+                    Section
+                </th>
+                <th>
+                    Product
+                </th>
+                <th>
+                    Shift
+                </th>
+                <th>
+                    Start Time
+                </th>
+                <th>
+                    End Time
+                </th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.View_RollBackData)
+            {
+                <tr>
+           
+                   <td>
+                        <input type="checkbox" id="@item.RunningNumber" value="@item.RunningNumber" class="checkthis" Name="Productchk" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductionDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.QRCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LineID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SectionID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ShiftName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EndTime)
+                    </td>
+
+                  
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+<div class="row" style="height:100px"></div>
+
+
+<script>
+
+    $(document).ready(function () {
+        $("#tabledata #checkall").click(function () {
+            if ($("#tabledata #checkall").is(':checked')) {
+                $("#tabledata input[type=checkbox]").each(function () {
+                    $(this).prop("checked", true);
+                });
+
+            } else {
+                $("#tabledata input[type=checkbox]").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
+
+        $("[data-toggle=tooltip]").tooltip();
+    });
+
+
+
+    $(document).ready(function () {
+        var table = $('#tabledata').DataTable({
+            dom: 'Bfrtip',
+            buttons: ['copy', 'excel', 'pdf'],
+            columnDefs: [{
+                orderable: false,
+                className: 'select-checkbox dt-body-center',
+                // className: 'dt-body-right',
+                targets: 0,
+
+            }],
+            headerCallback: function (thead, data, start, end, display) {
+                $(thead).find('th').css({
+                    'text-align': 'center', // Center align column headers
+                    'font-family': 'Arial, sans-serif', // Set font family for column headers
+                    'font-weight': 'bold', // Set font weight for column headers
+
+                });
+            },
+            createdRow: function (row, data, dataIndex) {
+                $(row).find('td').css({
+                    'text-align': 'center' // Center align cell content
+
+                });
+            },
+            ordering: false,
+            searching: false,
+            select: {
+                style: 'os',
+                selector: 'td:first-child'
+            },
+            order: [[1, 'asc']],
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 10
+        });
+
+        $('#checkallHeader').click(function () {
+            if ($(this).is(':checked')) {
+                table.rows().select();
+            } else {
+                table.rows().deselect();
+            }
+        });
+    });
+
+
+
+</script>
