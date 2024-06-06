@@ -44,14 +44,12 @@ namespace Plims.Controllers
         [HttpGet]
         public ActionResult EmployeeDashBaord(ViewModelReport model)
         {
-          
 
 
-            
-            int PlantID  = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+
+
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
-
-
 
             if (EmpID == null)
             {
@@ -62,6 +60,9 @@ namespace Plims.Controllers
 
                 ViewBag.DefaultStartDate = DateTime.Now.ToString("dd-MM-yyyy");
                 ViewBag.DefaultEndDate = DateTime.Now.ToString("dd-MM-yyyy");
+
+                //model.StartDate = DateTime.Now;
+                //model.EndDate   = DateTime.Now;
 
                 var varYear = from a in db.View_DailyReportSummary
                               group a by new { a.TransactionDate.Year } into g
@@ -156,33 +157,33 @@ namespace Plims.Controllers
                                               (model.FilterPoint == null || summary.SectionID == model.FilterPoint) &&
                                               (model.StartDate == DateTime.MinValue || summary.TransactionDate >= model.StartDate) && (model.EndDate == DateTime.MinValue || summary.TransactionDate <= model.EndDate) &&
                                                (summary.PlantID == PlantID)
-                                        group summary by new { summary.ProductID, summary.ProductName,summary.SectionName, summary.STD } into grouped
+                                        group summary by new { summary.ProductID, summary.ProductName, summary.SectionName, summary.STD } into grouped
                                         select new ResultGrpProductModel
                                         {
                                             ProductID = grouped.Key.ProductID,
                                             ProductName = grouped.Key.ProductName,
                                             SectionName = grouped.Key.SectionName,
-                                            STD =  Convert.ToInt32(grouped.Key.STD),
+                                            STD = Convert.ToInt32(grouped.Key.STD),
                                             Actual = Convert.ToInt32(grouped.Sum(x => x.FG_Count_Qty)),
-                                            Diff = Convert.ToInt32(( grouped.Sum(x => x.FG_Count_Qty) * 100 ) / grouped.Key.STD )
+                                            Diff = Convert.ToInt32((grouped.Sum(x => x.FG_Count_Qty) * 100) / grouped.Key.STD)
                                         }).ToList();
 
 
                 /////////////////// 3 Group Grad 
                 var sumGrpGrade = (from count in db.View_DailyReportSummary
-                                      where (model.FilterYear == 0 || count.TransactionDate.Year == model.FilterYear) &&
-                                            (model.FilterMonth == 0 || count.TransactionDate.Month == model.FilterMonth) &&
-                                            (model.FilterLine == null || count.LineID == model.FilterLine) &&
-                                            (model.FilterProduct == null || count.ProductID == model.FilterProduct) &&
-                                            (model.FilterPoint == null || count.SectionID == model.FilterPoint) &&
-                                            (model.StartDate == DateTime.MinValue || count.TransactionDate >= model.StartDate) && (model.EndDate == DateTime.MinValue || count.TransactionDate <= model.EndDate) &&
-                                             (count.PlantID == PlantID)
+                                   where (model.FilterYear == 0 || count.TransactionDate.Year == model.FilterYear) &&
+                                         (model.FilterMonth == 0 || count.TransactionDate.Month == model.FilterMonth) &&
+                                         (model.FilterLine == null || count.LineID == model.FilterLine) &&
+                                         (model.FilterProduct == null || count.ProductID == model.FilterProduct) &&
+                                         (model.FilterPoint == null || count.SectionID == model.FilterPoint) &&
+                                         (model.StartDate == DateTime.MinValue || count.TransactionDate >= model.StartDate) && (model.EndDate == DateTime.MinValue || count.TransactionDate <= model.EndDate) &&
+                                          (count.PlantID == PlantID)
                                    group count by count.Grade into grouped
-                                      select new
-                                      {
-                                          Grade = grouped.Key,
-                                          CountSum = grouped.Count()
-                                      }).ToList();
+                                   select new
+                                   {
+                                       Grade = grouped.Key,
+                                       CountSum = grouped.Count()
+                                   }).ToList();
 
                 int sumOfCounts = sumGrpGrade.Sum(item => item.CountSum);
 
@@ -207,9 +208,9 @@ namespace Plims.Controllers
 
                 /////////////////// 4 Show Chart Pie
                 //Create separate lists for Grade, Cnt, and Percent
-                List<string> grades     = resultGrpGrade.Select(x => x.Grade).ToList();
-                List<int> counts        = resultGrpGrade.Select(x => x.Cnt).ToList();
-                List<double> percents   = resultGrpGrade.Select(x => x.Percent).ToList();
+                List<string> grades = resultGrpGrade.Select(x => x.Grade).ToList();
+                List<int> counts = resultGrpGrade.Select(x => x.Cnt).ToList();
+                List<double> percents = resultGrpGrade.Select(x => x.Percent).ToList();
 
                 //Set data pie
                 List<object[]> chartData = new List<object[]>();
@@ -228,32 +229,32 @@ namespace Plims.Controllers
                 ViewBag.GrdJoin = chartDataString;
 
 
-				var mymodel = new ViewModelReport
-				{
-					view_PermissionMaster = db.View_PermissionMaster.ToList(),
-					view_DailyReportSummary = db.View_DailyReportSummary.Where(x=>x.PlantID == PlantID).ToList(),
-					StartDate = model.StartDate,
-					EndDate = model.EndDate,
-					FilterYear = model.FilterYear,
-					FilterMonth = model.FilterMonth,
-					FilterLine = model.FilterLine,
-					FilterProduct = model.FilterProduct,
-					FilterPoint = model.FilterPoint,
+                var mymodel = new ViewModelReport
+                {
+                    view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID == PlantID).ToList(),
+                    StartDate = model.StartDate,
+                    EndDate = model.EndDate,
+                    FilterYear = model.FilterYear,
+                    FilterMonth = model.FilterMonth,
+                    FilterLine = model.FilterLine,
+                    FilterProduct = model.FilterProduct,
+                    FilterPoint = model.FilterPoint,
                     ResultGrpProduct = resultGrpProduct,
                     ResultGrpGrade = resultGrpGrade
                 };
 
-				ViewBag.VBRoleEmployeeDashBaord = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(23)).Select(x => x.RoleAction).FirstOrDefault();
+                ViewBag.VBRoleEmployeeDashBaord = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(23)).Select(x => x.RoleAction).FirstOrDefault();
 
                 ////Set Refrsh Time
-                //int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
-                //ViewBag.SetTime = Valuesetup * 60000; //Change minute to millisecond
+                int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
+                ViewBag.SetTime = Valuesetup * 60000; //Change minute to millisecond
 
                 //Set Refrsh Time
-                int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
-               // ViewBag.SetTime = Valuesetup * 60; //Change minute to millisecond
-                String Refreshtime = Convert.ToString(Valuesetup * 60000);
-                Response.Headers.Add("Refresh", Refreshtime);
+                //int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
+                // ViewBag.SetTime = Valuesetup * 60; //Change minute to millisecond
+                // String Refreshtime = Convert.ToString(Valuesetup * 60000);
+                //  Response.Headers.Add("Refresh", Refreshtime);
 
 
                 return View(mymodel);
@@ -264,7 +265,7 @@ namespace Plims.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Filter(ViewModelReport mymodel) 
+        public ActionResult Filter(ViewModelReport mymodel)
         {
             return RedirectToAction("EmployeeDashBaord", mymodel);
         }
@@ -272,7 +273,7 @@ namespace Plims.Controllers
         [HttpGet]
         public ActionResult OverviewDashBoard(ViewModelReport model)
         {
-            int PlantID  = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
             if (EmpID == null)
@@ -284,6 +285,9 @@ namespace Plims.Controllers
 
                 ViewBag.DefaultStartDate = DateTime.Now.ToString("dd-MM-yyyy");
                 ViewBag.DefaultEndDate = DateTime.Now.ToString("dd-MM-yyyy");
+
+                //model.StartDate = DateTime.Now;
+                //model.EndDate  = DateTime.Now;
 
                 var varYear = from a in db.View_EFFReport
                               group a by new { a.TransactionDate.Year } into g
@@ -348,7 +352,7 @@ namespace Plims.Controllers
 
 
                 /////////////////// 1 Product Overview
-				var resultGrpProductOverview = (from summary in db.View_EFFReport
+                var resultGrpProductOverview = (from summary in db.View_EFFReport
                                                 where (model.FilterYear == 0 || summary.TransactionDate.Year == model.FilterYear) &&
                                                       (model.FilterMonth == 0 || summary.TransactionDate.Month == model.FilterMonth) &&
                                                       (model.FilterLine == null || summary.LineID == model.FilterLine) &&
@@ -357,59 +361,17 @@ namespace Plims.Controllers
                                                       (model.StartDate == DateTime.MinValue || summary.TransactionDate >= model.StartDate) &&
                                                       (model.EndDate == DateTime.MinValue || summary.TransactionDate <= model.EndDate) &&
                                                        (summary.PlantID == PlantID)
-                                                group summary by new { summary.ProductID, summary.ProductName ,summary.SectionID, summary.SectionName } into grouped
+                                                group summary by new { summary.ProductID, summary.ProductName, summary.SectionID, summary.SectionName } into grouped
                                                 select new ResultGrpProductOverviewModel
                                                 {
                                                     //Display Box
                                                     SumEmp = grouped.Sum(x => x.CountQRCode),
-													SumFG = grouped.Sum(x => x.FinishGood),
-													CapHr = grouped.Sum(x => x.FinishGood) / grouped.Sum(x => x.CountQRCode),
+                                                    SumFG = grouped.Sum(x => x.FinishGood),
+                                                    CapHr = grouped.Sum(x => x.FinishGood) / grouped.Sum(x => x.CountQRCode),
                                                     EFFhr1 = grouped.Average(x => x.EFFhr1),
-													EFFhr2 = grouped.Average(x => x.EFFhr2),
-													EFFhr3 = grouped.Average(x => x.EFFhr3), 
-
-													//1st Graph
-													EffSTD = grouped.Average(x => x.PercentSTD), 
-													EffLine = grouped.Sum(x => x.EFF3),
-
-													//2nd Graph
-													YieldSTD = grouped.Average(x => x.PercentYield), 
-													YieldDefect = grouped.Sum(x => x.YieldDefect), 
-
-													//Table
-													ProductName = grouped.Key.ProductName,
-                                                    SectionName = grouped.Key.SectionName,
-                                                    EffTarget = grouped.Average(x => x.PercentSTD),
-													EffAct = grouped.Sum(x => x.EFFhr3), 
-													DiffEff = (grouped.Sum(x => x.EFFhr3)) - (grouped.Average(x => x.PercentSTD)), 
-													YieldTarget = grouped.Average(x => x.PercentYield),
-													YieldActual = grouped.Sum(x => x.YieldDefect), 
-													DiffYield = (grouped.Sum(x => x.YieldDefect)) - (grouped.Average(x => x.PercentYield)) //YieldActual - YieldTarget
-												}).ToList();
-
-
-				ViewBag.SumEmployee = resultGrpProductOverview.Sum(x => x.SumEmp);
-				ViewBag.AvgCapHr    = resultGrpProductOverview.Average(x => x.CapHr);
-				ViewBag.AvgEFFhr1   = resultGrpProductOverview.Average(x => x.EFFhr1);
-				ViewBag.AvgEFFhr2   = resultGrpProductOverview.Average(x => x.EFFhr2);
-				ViewBag.AvgEFFhr3   = resultGrpProductOverview.Average(x => x.EFFhr3);
-
-                /////////////////// 2 Group Bar Chart Line Overview
-                var resultGrpLineOverview = (from summary in db.View_EFFReport
-                                                where (model.FilterYear == 0 || summary.TransactionDate.Year == model.FilterYear) &&
-                                                      (model.FilterMonth == 0 || summary.TransactionDate.Month == model.FilterMonth) &&
-                                                      (model.FilterLine == null || summary.LineID == model.FilterLine) &&
-                                                      (model.FilterProduct == null || summary.ProductID == model.FilterProduct) &&
-                                                      (model.FilterPoint == null || summary.SectionID == model.FilterPoint) &&
-                                                      (model.StartDate == DateTime.MinValue || summary.TransactionDate >= model.StartDate) &&
-                                                      (model.EndDate == DateTime.MinValue || summary.TransactionDate <= model.EndDate) &&
-                                                       (summary.PlantID == PlantID)
-                                             group summary by new { summary.LineID, summary.LineName } into grouped
-                                                select new ResultGrpLineOverviewModel
-                                                {
-                                                    //Title
-                                                    LineID = grouped.Key.LineID,
-                                                    LineName = grouped.Key.LineName,
+                                                    EFFhr2 = grouped.Average(x => x.EFFhr2),
+                                                    EFFhr3 = grouped.Average(x => x.EFFhr3),
+                                                    TotalDefect = grouped.Sum(x => x.TotalDefect),
 
                                                     //1st Graph
                                                     EffSTD = grouped.Average(x => x.PercentSTD),
@@ -417,9 +379,53 @@ namespace Plims.Controllers
 
                                                     //2nd Graph
                                                     YieldSTD = grouped.Average(x => x.PercentYield),
-                                                    YieldDefect = grouped.Sum(x => x.YieldDefect)
+                                                    YieldDefect = grouped.Sum(x => x.YieldDefect),
 
+                                                    //Table
+                                                    ProductName = grouped.Key.ProductName,
+                                                    SectionName = grouped.Key.SectionName,
+                                                    EffTarget = grouped.Average(x => x.PercentSTD),
+                                                    EffAct = grouped.Sum(x => x.EFFhr3),
+                                                    DiffEff = (grouped.Sum(x => x.EFFhr3)) - (grouped.Average(x => x.PercentSTD)),
+                                                    YieldTarget = grouped.Average(x => x.PercentYield),
+                                                    YieldActual = grouped.Sum(x => x.YieldDefect),
+                                                    DiffYield = (grouped.Sum(x => x.YieldDefect)) - (grouped.Average(x => x.PercentYield)) //YieldActual - YieldTarget
                                                 }).ToList();
+
+
+                ViewBag.SumEmployee = resultGrpProductOverview.Sum(x => x.SumEmp);
+                ViewBag.AvgCapHr = resultGrpProductOverview.Average(x => x.CapHr);
+                ViewBag.AvgEFFhr1 = resultGrpProductOverview.Average(x => x.EFFhr1);
+                ViewBag.AvgEFFhr2 = resultGrpProductOverview.Average(x => x.EFFhr2);
+                ViewBag.AvgEFFhr3 = resultGrpProductOverview.Average(x => x.EFFhr3);
+                ViewBag.DefectAll = resultGrpProductOverview.Average(x => x.TotalDefect);
+
+                /////////////////// 2 Group Bar Chart Line Overview
+                var resultGrpLineOverview = (from summary in db.View_EFFReport
+                                             where (model.FilterYear == 0 || summary.TransactionDate.Year == model.FilterYear) &&
+                                                   (model.FilterMonth == 0 || summary.TransactionDate.Month == model.FilterMonth) &&
+                                                   (model.FilterLine == null || summary.LineID == model.FilterLine) &&
+                                                   (model.FilterProduct == null || summary.ProductID == model.FilterProduct) &&
+                                                   (model.FilterPoint == null || summary.SectionID == model.FilterPoint) &&
+                                                   (model.StartDate == DateTime.MinValue || summary.TransactionDate >= model.StartDate) &&
+                                                   (model.EndDate == DateTime.MinValue || summary.TransactionDate <= model.EndDate) &&
+                                                    (summary.PlantID == PlantID)
+                                             group summary by new { summary.LineID, summary.LineName } into grouped
+                                             select new ResultGrpLineOverviewModel
+                                             {
+                                                 //Title
+                                                 LineID = grouped.Key.LineID,
+                                                 LineName = grouped.Key.LineName,
+
+                                                 //1st Graph
+                                                 EffSTD = grouped.Average(x => x.PercentSTD),
+                                                 EffLine = grouped.Sum(x => x.EFF3),
+
+                                                 //2nd Graph
+                                                 YieldSTD = grouped.Average(x => x.PercentYield),
+                                                 YieldDefect = grouped.Sum(x => x.YieldDefect)
+
+                                             }).ToList();
 
                 //Create separate lists Bar 1
                 List<string> lineNameEff = resultGrpLineOverview.Select(x => x.LineName).ToList();
@@ -437,7 +443,7 @@ namespace Plims.Controllers
 
                 // Pass chartDataJson to the ViewBag
                 ViewBag.ChartDataJsonEff = chartDataJsonEff;
-            
+
                 //Create separate lists Bar 2
                 List<string> lineNameYield = resultGrpLineOverview.Select(x => x.LineName).ToList();
                 List<decimal> yieldSTD = resultGrpLineOverview.Select(x => x.YieldSTD).ToList();
@@ -458,7 +464,7 @@ namespace Plims.Controllers
                 var mymodel = new ViewModelReport
                 {
                     view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x=>x.PlantID == PlantID).ToList(),
+                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID == PlantID).ToList(),
                     StartDate = model.StartDate,
                     EndDate = model.EndDate,
                     FilterYear = model.FilterYear,
@@ -472,15 +478,15 @@ namespace Plims.Controllers
                 ViewBag.VBRoleEmployeeDashBaord = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(23)).Select(x => x.RoleAction).FirstOrDefault();
 
                 ////Set Refrsh Time
-                //int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
-                //ViewBag.SetTime = Valuesetup * 60000; //Change minute to millisecond
+                int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
+                ViewBag.SetTime = Valuesetup * 60000; //Change minute to millisecond
 
 
                 //Set Refrsh Time
-                int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
+                //int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
                 //ViewBag.SetTime = Valuesetup * 60; //Change minute to millisecond
-                String Refreshtime = Convert.ToString(Valuesetup * 60000);
-                Response.Headers.Add("Refresh", Refreshtime);
+                //String Refreshtime = Convert.ToString(Valuesetup * 60000);
+                //Response.Headers.Add("Refresh", Refreshtime);
 
                 return View(mymodel);
             }

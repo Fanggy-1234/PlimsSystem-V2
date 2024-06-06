@@ -17,9 +17,9 @@ namespace Plims.Models
 
         public int CountQRCode { get; set; }
         //[Key]
-      //  public string StartTime { get; set; }
+        //  public string StartTime { get; set; }
         //[Key]
-      //  public string EndTime { get; set; }
+        //  public string EndTime { get; set; }
 
         //[Key]
         public string SectionID { get; set; }
@@ -31,7 +31,7 @@ namespace Plims.Models
         public decimal WorkinghourSTD { get; set; } // decimal
         public int FinishGood { get; set; }
         public int Defect { get; set; }
-      public string Unit { get; set; }
+        public string Unit { get; set; }
         public decimal EFF1 { get; set; } // decimal
         public decimal WorkinghourACT { get; set; } // decimal
         public decimal Servicehour { get; set; } // decimal
@@ -53,6 +53,8 @@ namespace Plims.Models
         public decimal MEDh1 { get; set; }
 
         public decimal ValEffh1 { get; set; }
+
+        public int TotalDefect { get; set; }
 
 
     }
