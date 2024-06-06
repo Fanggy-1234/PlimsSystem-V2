@@ -4212,13 +4212,14 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                  view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
 
             };
 
             ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
-            if (!string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.Prefix) || obj.TransactionDate != DateTime.MinValue)
+            if (!string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.Prefix) || !string.IsNullOrEmpty(obj.QRCode) || obj.TransactionDate != DateTime.MinValue)
             {//obj.PlanDate.HasValue != false ||
 
                 if (obj.TransactionDate != DateTime.MinValue)
@@ -4244,7 +4245,11 @@ namespace Plims.Controllers
                     mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.Prefix.Equals(obj.Prefix)).ToList();
                     ViewBag.SelectedPrefix = obj.Prefix;
                 }
-
+                if (!string.IsNullOrEmpty(obj.QRCode))
+                {
+                    mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.QRCode.Equals(obj.QRCode)).ToList();
+                    ViewBag.SelectedPrefix = obj.Prefix;
+                }
 
                 return View(mymodel);
 
@@ -4276,6 +4281,7 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
 
@@ -4306,6 +4312,7 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
 
@@ -4461,6 +4468,7 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
 
@@ -4502,6 +4510,113 @@ namespace Plims.Controllers
 
 
         }
+
+
+
+        [HttpGet]
+        public IActionResult ProductionTransactionAdjustByEmployee(View_ProductionTransactionAdjust obj)
+        {
+
+
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var mymodel = new ViewModelAll
+            {
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
+
+            };
+
+            ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+            if (!string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.Prefix) || !string.IsNullOrEmpty(obj.QRCode) || obj.TransactionDate != DateTime.MinValue)
+            {//obj.PlanDate.HasValue != false ||
+
+                if (obj.TransactionDate != DateTime.MinValue)
+                {
+                    mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(obj.TransactionDate)).ToList();
+                    ViewBag.SelectedTransactionDate = obj.TransactionDate.ToString("yyyy-MM-dd");
+
+                }
+
+                if (!string.IsNullOrEmpty(obj.SectionName))
+                {
+                    mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.SectionID.Equals(obj.SectionName)).ToList();
+                    ViewBag.SelectedSectionName = obj.SectionName;
+                }
+
+                if (!string.IsNullOrEmpty(obj.LineName))
+                {
+                    mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.LineID.Equals(obj.LineName)).ToList();
+                    ViewBag.SelectedLineName = obj.LineName;
+                }
+                if (!string.IsNullOrEmpty(obj.Prefix))
+                {
+                    mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.Prefix.Equals(obj.Prefix)).ToList();
+                    ViewBag.SelectedPrefix = obj.Prefix;
+                }
+                if (!string.IsNullOrEmpty(obj.QRCode))
+                {
+                    mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.QRCode.Equals(obj.QRCode)).ToList();
+                    ViewBag.SelectedPrefix = obj.Prefix;
+                }
+
+                return View(mymodel);
+
+            }
+            else
+            {
+                mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                return View(mymodel);
+            }
+
+        }
+
+
+
+        public IActionResult ProductionTransactionAdjustClearByEmployee(View_ProductionTransactionAdjust obj)
+        {
+
+
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var mymodel = new ViewModelAll
+            {
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
+
+            };
+
+            ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+            mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+
+            return View("ProductionTransactionAdjust", mymodel);
+
+        }
+
+
+
+
 
 
 
