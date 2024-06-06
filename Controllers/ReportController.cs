@@ -29,6 +29,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using DocumentFormat.OpenXml.Office2016.Drawing.Charts;
 
 using Newtonsoft.Json;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Plims.Controllers
 {
@@ -436,7 +437,16 @@ namespace Plims.Controllers
                 List<object[]> chartDataEff = new List<object[]>();
                 for (int i = 0; i < lineNameEff.Count; i++)
                 {
-                    chartDataEff.Add(new object[] { lineNameEff[i], effSTD[i], effLine[i] });
+                    string color = "";
+                    if (effLine[i] >= effSTD[i])
+                    {
+                        color = "#5cd65c";
+                    }
+                    else
+                    {
+                        color = "#F44336";
+                    }
+                    chartDataEff.Add(new object[] { lineNameEff[i], effSTD[i], effLine[i], "#33c7ff", @color, null , null });
                 }
 
                 string chartDataJsonEff = JsonConvert.SerializeObject(chartDataEff);
@@ -453,7 +463,16 @@ namespace Plims.Controllers
                 List<object[]> chartDataYield = new List<object[]>();
                 for (int i = 0; i < lineNameYield.Count; i++)
                 {
-                    chartDataYield.Add(new object[] { lineNameYield[i], yieldSTD[i], yieldDefect[i] });
+                    string color = "";
+                    if (yieldDefect[i] >= yieldSTD[i])
+                    {
+                        color = "#5cd65c";
+                    }
+                    else
+                    {
+                        color = "#F44336";
+                    }
+                    chartDataYield.Add(new object[] { lineNameYield[i], yieldSTD[i], yieldDefect[i], "#33c7ff", @color, null, null });
                 }
 
                 string chartDataJsonYield = JsonConvert.SerializeObject(chartDataYield);

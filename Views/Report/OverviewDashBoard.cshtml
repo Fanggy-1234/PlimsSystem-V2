@@ -5,6 +5,8 @@
     DateTime currentDateTime = DateTime.Now;
     string formattedDate = currentDateTime.ToString("dd-MM-yyyy HH:mm");
 }
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -87,24 +89,24 @@
     <br />
     <div class="row" id="dataContainer">
         <div class="col-md-2">
-            <table class="table  table-bordered" style="color: black">
+            <table class="table  table-bordered" style="color: black;font-size:28px"">
                 <tbody>
                     <tr>
-                        <td style="background-color:aquamarine;text-align: center;"><br /><h3 style="font-size:40px;font-weight:bold"><i class="fa fa-user blue2_color"></i> @ViewBag.SumEmployee</h3> จำนวนพนักงาน<</td>
+                        <td style="background-color:aquamarine;text-align: center;"><h3 style="font-size:40px;font-weight:bold"><i class="fa fa-user blue2_color"></i> @ViewBag.SumEmployee</h3> จำนวนพนักงาน</td>
                     </tr>
                     <tr>
-                        <td style="background-color:lightgreen;text-align: center;"><br /><h3 style="font-size:40px;font-weight:bold"> @ViewBag.AvgCapHr.ToString("#,##0.00") </h3>Cap./Hr.</td>
+                        <td style="background-color:lightgreen;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.AvgCapHr.ToString("#,##0.00") </h3>Cap./Hr.</td>
                     </tr>
                     <tr>
-                        <td style="background-color:coral;text-align: center;"><br /><h3 style="font-size:40px;font-weight:bold"> @ViewBag.AvgEFFhr1.ToString("#,##0.00") </h3>Eff.hr 1</td>
+                        <td style="background-color:coral;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.AvgEFFhr1.ToString("#,##0.00") </h3>Eff.hr 1</td>
                     </tr>
                     <tr>
-                        <td style="background-color:lightpink;text-align: center;"><br /><h3 style="font-size:40px;font-weight:bold"> @ViewBag.AvgEFFhr2.ToString("#,##0.00") </h3>Eff.hr 2<</td>
+                        <td style="background-color:lightpink;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.AvgEFFhr2.ToString("#,##0.00") </h3>Eff.hr 2</td>
                     </tr>
                     <tr>
-                        <td style="background-color:cornflowerblue;text-align: center;"><br /><h3 style="font-size:40px;font-weight:bold"> @ViewBag.AvgEFFhr3.ToString("#,##0.00") </h3>Eff.hr 3</td>
+                        <td style="background-color:cornflowerblue;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.AvgEFFhr3.ToString("#,##0.00") </h3>Eff.hr 3</td>
                     </tr>
-                <td style="background-color:gray;text-align: center;"><br /><h3 style="font-size:40px;font-weight:bold"> @ViewBag.DefectAll.ToString("#,##0.00") </h3>Defect All</td>
+                <td style="background-color:gray;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.DefectAll.ToString("#,##0.00") </h3>Defect All</td>
                 </tr>
                 </tbody>
             </table>
@@ -112,22 +114,21 @@
         <div class="col-md-10">
             <div class="row">
                 <div class="col-md-6">
-                    <div id="container_eff" style="width: 100%; height: 250%;"></div>
+                   <div id="container_eff" style="width: 90%; height: 250%;"></div>
                 </div>
                 <div class="col-md-6">
-                    <div id="container_yield" style="width: 100%; height: 250%;"></div>
+                    <div id="container_yield" style="width: 90%; height: 250%;"></div>
                 </div>
             </div>
-            <div class="row" style="height:40%;">
-                <br />&nbsp;<br /><br />&nbsp;<br />
+            <div class="row" style="height:35%;">
+                <br />&nbsp;<br /> <br />&nbsp;<br />
             </div>
             <div class="row">
-                <div class="col-md-1">
-                </div>
-                <div class="col-md-10">
+                
+                <div class="col-md-12">
                     <table class="table table-striped  table-bordered" style="color: black">
                         <thead>
-                            <tr class="table-Primary" style="font-weight:bold;text-align: center;font-size:24px">
+                            <tr class="table-Primary" style="font-weight:bold;text-align: center;font-size:28px">
                                 <th style="font-weight:bold;text-align: center;">Product</th>
                                 <th style="font-weight:bold;text-align: center;">Section</th>
                                 <th style="font-weight:bold;text-align: center;">Target/STD</th>
@@ -137,6 +138,7 @@
                                 <th style="font-weight:bold;text-align: center;">% Yield (Target)</th>
                                 <th style="font-weight:bold;text-align: center;">% Actual</th>
                                 <th style="font-weight:bold;text-align: center;">% Diff</th>
+                                <th style="font-weight:bold;text-align: center;background-color:white"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -156,7 +158,7 @@
                             }
                             @foreach (var item in Model.ResultGrpProductOverviewModel)
                             {
-                                <tr style="text-align: center;font-size:22px">
+                                <tr style="text-align: center;font-size:28px">
                                     <td>@item.ProductName</td>
                                     <td>@item.SectionName</td>
                                     <td style="text-align: right;">@item.EffTarget.ToString("#,##0.00")</td>
@@ -197,7 +199,7 @@
 
                             // } *@
 
-                            <tr style="font-size:22px">
+                            <tr style="font-size:28px">
                                 <td colspan="3" style="font-weight:bold;text-align: center;">Total</td>
                                 <td style="font-weight:bold;text-align: right;">@totalActual.ToString("#,##0.00")</td>
                                 <td style="font-weight:bold;text-align: right;">@totalAvgDiff.ToString("#,##0")</td>
@@ -205,10 +207,11 @@
                                 <td style="font-weight:bold;text-align: right;">@totalYieldStd.ToString("#,##0.00")</td>
                                 <td style="font-weight:bold;text-align: right;">@totalYieldActual.ToString("#,##0.00")</td>
                                 <td style="font-weight:bold;text-align: right;">@totalAvgYieldDiff.ToString("#,##0")</td>
+                                <td></td>
                             </tr>
                         </tbody>
                     </table>
-                    <label>Data of @formattedDate</label>
+                    <label style="font-size:26px;color:black">Data of @formattedDate</label>
                 </div>
             </div>
         </div>
@@ -291,12 +294,15 @@
         anychart.onDocumentReady(function () {
 
             var chartData = @Html.Raw(ViewBag.ChartDataJsonEff);
-
+            //var chartData = "[[\"Line01\",92.758620,519.330],[\"Line02\",88.000000,5.980]]";
+            //ChartDataJsonEff = "[[\"Line01\",92.758620,519.330,\"#4CAF50\",\"#4CAF50\",\"\",\"\"],
+            //                     [\"Line02\",88.000000,5.980,\"#F44336\",\"#F44336\",\"\",\"\"]]"
             var data = anychart.data.set(chartData);
 
             // map the data
-            var seriesData_1 = data.mapAs({ x: 0, value: 1, fill: 3, stroke: 5, label: 6 });
-            var seriesData_2 = data.mapAs({ x: 0, value: 2, fill: 4, stroke: 5, label: 6 });
+             var seriesData_1 = data.mapAs({ x: 0, value: 1, fill: 3, stroke: 5, label: 6 });
+             var seriesData_2 = data.mapAs({ x: 0, value: 2, fill: 4, stroke: 5, label: 6 });
+
 
             // create a chart
             var chart = anychart.column();;
@@ -304,22 +310,64 @@
             // create the first series, set the data and name
             var series1 = chart.column(seriesData_1);
             series1.name("Eff. Target/STD");
-            series1.labels().enabled(true).position("center-top").anchor("center-bottom");
+            series1.labels()
+                .enabled(true)
+                .position("center-top")
+                .anchor("center-bottom")
+                .fontSize(20)  // set font size
+                .fontColor("#000000")  // set font color
+                .useHtml(true)  // enable HTML in labels
+                .format(function () {
+                    return "Target:" + this.value.toFixed(2);
+                    // return "Target: <br/>" + this.value.toFixed(2);
+                });
+
 
             // create the second series, set the data and name
             var series2 = chart.column(seriesData_2);
             series2.name("Eff. Actual");
-            series2.labels().enabled(true).position("center-top").anchor("center-bottom");
+            series2.labels()
+                .enabled(true)
+                .position("center-top")
+                .anchor("center-bottom")
+                .fontSize(20)  // set font size
+                .fontColor("#000000")  // set font color
+                .useHtml(true)  // enable HTML in labels
+                .format(function () {
+                    return "Actual:" + this.value.toFixed(2);
+                });
 
             // set the chart title
             chart.title("Efficiency");
+            chart.title().fontSize(28);  // set font size for the title
+            chart.title().fontColor("#333333");  // set font color for the title
+
+            // // Apply conditional color based on the condition
+            // chart.listen("container_eff", function () {
+            //     var series1Max = seriesData_1.mapAs().getMax("value");
+            //     var series2Max = seriesData_2.mapAs().getMax("value");
+
+            //     if (series2Max >= series1Max) {
+            //         chart.fill("#4CAF50");  // Green color for chart
+            //     } else {
+            //         chart.fill("#F44336");  // Red color for chart
+            //     }
+            // });
+  
 
             // set the titles of the axes
             var xAxis = chart.xAxis();
             xAxis.title("Line");
+            xAxis.title().fontSize(26);  // set font size for the x-axis title
+            xAxis.title().fontColor("#333333");  // set font color for the x-axis title
+
             var yAxis = chart.yAxis();
             yAxis.title("Percent");
+            yAxis.title().fontSize(26);  // set font size for the y-axis title
+            yAxis.title().fontColor("#333333");  // set font color for the y-axis title
 
+
+        
 
             // set the container id
             chart.container("container_eff");
@@ -345,29 +393,68 @@
             // create the first series, set the data and name
             var series1_y = chart_y.column(seriesData_1_y);
             series1_y.name("%Yield Target");
+            series1_y.labels()
+                .enabled(true)
+                .position("center-top")
+                .anchor("center-bottom")
+                .fontSize(20)  // set font size
+                .fontColor("#000000")  // set font color
+                .useHtml(true)  // enable HTML in labels
+                .format(function () {
+                    return "Target:" + this.value.toFixed(2);
+                    // return "Target: <br/>" + this.value.toFixed(2);
+                });
+           
             // enable and configure labels
             //series1_y.labels().position("outside");
-            series1_y.labels().enabled(true).position("center-top").anchor("center-bottom");
-
 
             // create the second series, set the data and name
             var series2_y = chart_y.column(seriesData_2_y);
             series2_y.name("%Yield Yield");
             // enable and configure labels
             //series2_y.labels().position("outside");
-            series2_y.labels().enabled(true).position("center-top").anchor("center-bottom");
+            series2_y.labels()
+                .enabled(true)
+                .position("center-top")
+                .anchor("center-bottom")
+                .fontSize(20)  // set font size
+                .fontColor("#000000")  // set font color
+                .useHtml(true)  // enable HTML in labels
+                .format(function () {
+                    return "Actual:" + this.value.toFixed(2);
+                });
 
             // set the chart title
             chart_y.title("Yield");
+            chart_y.title().fontSize(28);  // set font size for the title
+            chart_y.title().fontColor("#333333");  // set font color for the title
 
             // set the titles of the axes
             var xAxis_y = chart_y.xAxis();
             xAxis_y.title("Line");
+            xAxis_y.title().fontSize(26);  // set font size for the x-axis title
+            xAxis_y.title().fontColor("#333333");  // set font color for the x-axis title
+
+
             var yAxis_y = chart_y.yAxis();
             yAxis_y.title("Percent");
+            yAxis_y.title().fontSize(26);  // set font size for the y-axis title
+            yAxis_y.title().fontColor("#333333");  // set font color for the y-axis title
 
             // set the container id
             chart_y.container("container_yield");
+
+            // apply conditional color based on the value
+            // chart_y.listen("pointDraw", function (e) {
+            //     var actualValue = e.point.get("value");
+            //     if (actualValue > 80) {  // example condition
+            //         e.point.fill("#4CAF50");  // green
+            //     } else if (actualValue > 50) {
+            //         e.point.fill("#FFC107");  // yellow
+            //     } else {
+            //         e.point.fill("#F44336");  // red
+            //     }
+            // });
 
             // initiate drawing the chart
             chart_y.draw();
