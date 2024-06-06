@@ -357,7 +357,7 @@
           @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(33) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
         {
             ViewBag.VBRoleProducttionTransactionAjust = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
-            <a href="@Url.Action("ProductionTransactionAdjust", "Working")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
+            <a href="@Url.Action("ProductionTransactionAdjustByEmployee", "Working")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
                 <img src="~/Picture/flaticon-pd-incentive-scan-white.png" class="nav-images" alt="PD Adjust"> Production Transaction Adjust
             </a>
         }

@@ -933,12 +933,15 @@ namespace Plims.Controllers
                         {
                                 var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.StartTime).SingleOrDefault();
                                 var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.EndTime).SingleOrDefault();
+                                var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
+
                                 db.TbServicesTransaction.Add(new TbServicesTransaction()
                             {
                                 TransactionDate = Convert.ToDateTime(TransactionDateVar),
                                 EmployeeID = empid,
                                 Plant = PlantID,
                                 Shift = empdetails.ShiftID,
+                                    Prefix = Prefixt,
                                 StartTime = startt,
                                 EndTime = Endt,
                                  Line = obj.LineID,//obj.LineName,

@@ -10,7 +10,7 @@ namespace Plims.Models
         public string EmployeeID { get; set; }
         public int Plant { get; set; }
         public int Shift { get; set; }
-
+        public string Prefix { get; set; }
         public string StartTime { get; set; }
         public string EndTime { get; set; }
 
