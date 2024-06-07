@@ -526,12 +526,12 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-         public ActionResult EmployeeClockOut(View_EmployeeClocktime obj, string[] EmployeeIDchk , DateTime TransactionDate)
+         public ActionResult EmployeeClockOut(View_EmployeeClocktime obj, string[] EmployeeIDchk )
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             //var TransactionDateVar = obj.TransactionDate;
-            var TransactionDateVar = TransactionDate; //DateTime.Today;
+            var TransactionDateVar = DateTime.Today;
 
             if (EmpID == null)
             {
@@ -753,13 +753,13 @@ namespace Plims.Controllers
         /// 
 
         [HttpGet]
-        public ActionResult ServicesClockIn(View_ServicesClocktime obj, string[] EmployeeIDchk , string TableData, string LineID, string SectionSelect,DateTime TransactionDate)
+        public ActionResult ServicesClockIn(View_ServicesClocktime obj, string[] EmployeeIDchk , string TableData, string LineID, string SectionSelect)
         {
 
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             //var TransactionDateVar = obj.TransactionDate;
-            var TransactionDateVar = TransactionDate;// DateTime.Today;
+            var TransactionDateVar = DateTime.Today;
 
             if (EmpID == null)
             {
@@ -941,7 +941,7 @@ namespace Plims.Controllers
                                 EmployeeID = empid,
                                 Plant = PlantID,
                                 Shift = empdetails.ShiftID,
-                                    Prefix = Prefixt,
+                                Prefix = Prefixt,
                                 StartTime = startt,
                                 EndTime = Endt,
                                  Line = obj.LineID,//obj.LineName,
@@ -1092,12 +1092,12 @@ namespace Plims.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult ServicesClockOut(View_ServicesClocktime obj, string[] EmployeeIDchk, string[] ID, string[]  EmployeeIDlist, DateTime TransactionDate)
+        public ActionResult ServicesClockOut(View_ServicesClocktime obj, string[] EmployeeIDchk, string[] ID, string[]  EmployeeIDlist)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             //var TransactionDateVar = obj.TransactionDate;
-            var TransactionDateVar = TransactionDate; // DateTime.Today;
+            var TransactionDateVar =  DateTime.Today;
 
             if (EmpID == null)
             {
