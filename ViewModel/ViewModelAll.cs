@@ -36,7 +36,7 @@ namespace Plims.ViewModel
 
         public IEnumerable<TbServicesTransaction> tbServicesTransaction { get; set; }
 
-        public IEnumerable<TbEmployeeLeaveHoliday> tbEmployeeLeaveHoliday{ get; set;}
+        public IEnumerable<TbEmployeeLeaveHoliday> tbEmployeeLeaveHoliday { get; set; }
 
         public IEnumerable<TbProductionTransaction> tbProductionTransaction { get; set; }
 
@@ -49,7 +49,7 @@ namespace Plims.ViewModel
 
         public IEnumerable<View_User> view_User { get; set; }
         public IEnumerable<View_Incentive> view_Incentive { get; set; }
-       public IEnumerable<View_PLPS> view_PLPS { get; set; }
+        public IEnumerable<View_PLPS> view_PLPS { get; set; }
 
         public IEnumerable<View_EmployeeClocktime> view_EmployeeClocktime { get; set; }
         public IEnumerable<View_ServicesClocktime> view_ServicesClocktime { get; set; }
@@ -94,7 +94,7 @@ namespace Plims.ViewModel
         public string RoleNames { get; set; }
 
         public IFormFile ImageFile { get; set; }
-        
+
         public string GroupID { get; set; }
         public string EmployeeID { get; set; }
         public List<Dictionary<string, string>> TableData { get; set; }
@@ -121,7 +121,7 @@ namespace Plims.ViewModel
         public decimal TotalIncentive { get; set; }
 
         public string SectionName { get; set; }
- 
+
     }
 
 

@@ -5,8 +5,8 @@
 
         //Display Box
         public int SumEmp { get; set; } //View_EFFReport  => sum(CountQRCode)
-		public int SumFG { get; set; }
-		public decimal CapHr { get; set; } //View_EFFReport  => sum(FinidGood)/sum(CountQRCode)
+        public int SumFG { get; set; }
+        public decimal CapHr { get; set; } //View_EFFReport  => sum(FinidGood)/sum(CountQRCode)
 
 
         public decimal EFFhr1 { get; set; } //View_EFFReport.EFFhr1
@@ -31,7 +31,7 @@
         public decimal YieldTarget { get; set; } //View_EFFReport.PercentYield
         public decimal YieldActual { get; set; } //View_EFFReport.YieldDefect
         public decimal DiffYield { get; set; } //View_EFFReport => YieldDefect - PercentYield
-
+        public int TotalDefect { get; set; } //View_EFFReport => Defect
 
 
     }

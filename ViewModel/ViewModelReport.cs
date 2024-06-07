@@ -22,8 +22,8 @@ namespace Plims.ViewModel
 
         //public int filter { get; set; }
 
-		public List<ResultGrpProductModel> ResultGrpProduct { get; set; }
-		public List<ResultGrpGradeModel> ResultGrpGrade { get; set; }
+        public List<ResultGrpProductModel> ResultGrpProduct { get; set; }
+        public List<ResultGrpGradeModel> ResultGrpGrade { get; set; }
 
         public List<ResultGrpProductOverviewModel> ResultGrpProductOverviewModel { get; set; }
 

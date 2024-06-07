@@ -5,6 +5,8 @@
     DateTime currentDateTime = DateTime.Now;
     string formattedDate = currentDateTime.ToString("dd-MM-yyyy HH:mm");
 }
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,50 +44,50 @@
 </head>
 
 <body>
-      <div class="col-md-12">
-         <div class="table_section">
-             <div class="table-responsive-sm">
+    <div class="col-md-12">
+        <div class="table_section">
+            <div class="table-responsive-sm">
                 <table class="table" style="color: black">
                     <thead>
                         <tr>
-                           <th style="font-weight:bold;text-align: center;"><img src="~/Picture/Thai-union-logo.png" width="80px" height="60px" /></th>
-                           <th style="font-weight:bold;text-align: center;">Starting Date:</th>
+                            <th style="font-weight:bold;text-align: center;"><img src="~/Picture/Thai-union-logo.png" width="80px" height="60px" /></th>
+                            <th style="font-weight:bold;text-align: center;">Starting Date:</th>
                             <th style="font-weight:bold;text-align: center;">Ending Date:</th>
                             <th style="font-weight:bold;text-align: center;">Year:</th>
                             <th style="font-weight:bold;text-align: center;">Month:</th>
-                           <th style="font-weight:bold;text-align: center;">Line:</th>
+                            <th style="font-weight:bold;text-align: center;">Line:</th>
                             <th style="font-weight:bold;text-align: center;">Product:</th>
                             <th style="font-weight:bold;text-align: center;">Point:</th>
                             <th style="font-weight:bold;text-align: center;"></th>
                             <th style="font-weight:bold;text-align: center;font-size:22px"><h3><i class="fa fa-user blue1_color"></i> @ViewBag.SumEmployee</h3></th>
-                       </tr>
+                        </tr>
                     </thead>
                     <tbody>
-                       <form asp-action="Filter" asp-controller="Report" method="post">
-                         <tr>
+                        <form asp-action="Filter" asp-controller="Report" method="post">
+                        <tr>
                             <td style="font-weight:bold;text-align: center;"><h3>Efficiency</h3></td>
-                            <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;color: black"} })</td>
-                            <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;"} })</td>
-                            <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterYear, (IEnumerable<SelectListItem>)ViewBag.varYear as SelectList, ":: All Year ::", new { @class = "btn form-select", style = "text-align:center;"})</td>
-                            <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterMonth, (IEnumerable<SelectListItem>)ViewBag.varMonth as SelectList, ":: All Month ::", new { @class = "btn form-select", style = "text-align:center;"})</td>
-                            <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterLine, (IEnumerable<SelectListItem>)ViewBag.varLine as SelectList, ":: All Line ::", new { @class = "btn form-select", style = "text-align:center;"})</td>
-                            <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterProduct, (IEnumerable<SelectListItem>)ViewBag.varProduct as SelectList, ":: All Product ::", new { @class = "btn form-select", style = "text-align:center;"})</td>
-                            <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterPoint, (IEnumerable<SelectListItem>)ViewBag.varPoint as SelectList, ":: All Point ::", new { @class = "btn form-select", style = "text-align:center;"})</td>
+                            <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;color: black" } })</td>
+                            <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;" } })</td>
+                            <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterYear, (IEnumerable<SelectListItem>)ViewBag.varYear as SelectList, ":: All Year ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
+                            <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterMonth, (IEnumerable<SelectListItem>)ViewBag.varMonth as SelectList, ":: All Month ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
+                            <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterLine, (IEnumerable<SelectListItem>)ViewBag.varLine as SelectList, ":: All Line ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
+                            <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterProduct, (IEnumerable<SelectListItem>)ViewBag.varProduct as SelectList, ":: All Product ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
+                            <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterPoint, (IEnumerable<SelectListItem>)ViewBag.varPoint as SelectList, ":: All Point ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
                             <td style="font-weight:bold;text-align: center;"><button type="submit" class="btn cur-p btn-primary" id="fetchDataButton">&nbsp;&nbsp;  Filter  &nbsp;&nbsp;</button></td>
                             <td style="font-weight:bold;text-align: center;font-size:18px">จำนวนพนักงาน</td>
                         </tr>
                         </form>
                     </tbody>
-               </table>
-         </div>
-     </div>
-            <!-- start header -->
-    <!-- end dashboard filter -->
+                </table>
+            </div>
+        </div>
+        <!-- start header -->
+        <!-- end dashboard filter -->
 
-    <div class="col-lg-12" id="dataContainer">
-        <div class="row column1">
-            <div class="col-lg-4">
-                
+        <div class="col-lg-12" id="dataContainer">
+            <div class="row column1">
+                <div class="col-lg-4">
+
                     <div class="white_shd full margin_bottom_30">
                         <div class="full graph_head">
                             <div class="heading1 margin_0">
@@ -97,197 +99,197 @@
                             <div id="container"></div>
                         </div>
                     </div>
-                
-            </div>
+
+                </div>
                 <div class="col-lg-8">
-                <div class="row column1">
-                    <div class="col-lg-12">
-                        <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
+                    <div class="row column1">
+                        <div class="col-lg-12">
+                            <div class="white_shd full margin_bottom_30">
+                                <div class="full graph_head">
                                     <div class="heading1 margin_0" style="color: black;font-size:22px">
-                                    <h3>ตารางแสดงข้อมูล Eff Pcs/Man/Hr</h3>
+                                        <h3>ตารางแสดงข้อมูล Eff Pcs/Man/Hr</h3>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="map_section padding_infor_info">
+                                <div class="map_section padding_infor_info">
                                     <table class="table table-bordered" style="color: black;font-size:20px">
-                                    <thead>
-                                            <tr class="table-Primary">
-                                            <th style="font-weight:bold;text-align: center;">Product</th>
-                                            <th style="font-weight:bold;text-align: center;">Section</th>
-                                            <th style="font-weight:bold;text-align: center;">Target/Std.</th>
-                                            <th style="font-weight:bold;text-align: center;">Actual</th>
-                                            <th style="font-weight:bold;text-align: center;">% Diff</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @{
-                                            int totalStd = 0;
-                                            int totalActual = 0;
-                                            double totalDiff = 0.0;
-                                        }
-                                        @foreach (var item in Model.ResultGrpProduct)
-                                        {
-                                            <tr>
-                                                <td style="text-align: center;">@item.ProductName</td>
-                                                <td style="text-align: left;">@item.SectionName</td>
-                                                <td style="text-align: right;">@item.STD.ToString("#,##0.00")</td>
-                                                <td style="text-align: right;">@item.Actual.ToString("#,##0.00")</td>
-                                                @if (@item.Diff >= 100)
-                                                {
-                                                  <td style="background-color:limegreen;text-align: right;">@item.Diff.ToString("#,##0")</td>
-                                                }
-                                                else if (@item.Diff < 100)
-                                                {
-                                                  <td style="background-color:indianred;text-align: right;">@item.Diff.ToString("#,##0")</td>
-                                                }
-
-                                            </tr>
-                                            totalStd += item.STD;
-                                            totalActual += item.Actual;
-                                            totalDiff += item.Diff;
-                                        }
-                                        <tr>
-                                                <td style="font-weight:bold;text-align: center;" colspan="2">Total</td>
-                                                <td style="font-weight:bold;text-align: right;">@totalStd.ToString("#,##0.00")</td>
-                                                <td style="font-weight:bold;text-align: right;">@totalActual.ToString("#,##0.00")</td>
-                                                <td style="font-weight:bold;text-align: right;">@totalDiff.ToString("#,##0")</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-12">
-                        <div class="white_shd full margin_bottom_30">
-                            <div class="full graph_head">
-                                    <div class="heading1 margin_0" style="color: black;font-size:22px">
-                                    <h3>Grade พนักงาน</h3>
-                                </div>
-                            </div>
-
-                            <div class="table_section padding_infor_info">
-                                <div class="table-responsive-sm">
-                                        <table class="table table-bordered" style="color: black;font-size:20px">
                                         <thead>
-                                                <tr class="table-Primary">
-                                                <th style="font-weight:bold;text-align: center;">เกรด</th>
-                                                <th style="font-weight:bold;text-align: center;">จำนวนคน</th>
-                                                <th style="font-weight:bold;text-align: center;">%</th>
+                                            <tr class="table-Primary">
+                                                <th style="font-weight:bold;text-align: center;">Product</th>
+                                                <th style="font-weight:bold;text-align: center;">Section</th>
+                                                <th style="font-weight:bold;text-align: center;">Target/Std.</th>
+                                                <th style="font-weight:bold;text-align: center;">Actual</th>
+                                                <th style="font-weight:bold;text-align: center;">% Diff</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @{
-                                                int totalEmp = 0;
-                                                double totalPercent = 0.0;
+                                                int totalStd = 0;
+                                                int totalActual = 0;
+                                                double totalDiff = 0.0;
                                             }
-                                            @foreach (var item in Model.ResultGrpGrade)
+                                            @foreach (var item in Model.ResultGrpProduct)
                                             {
                                                 <tr>
+                                                    <td style="text-align: center;">@item.ProductName</td>
+                                                    <td style="text-align: left;">@item.SectionName</td>
+                                                    <td style="text-align: right;">@item.STD.ToString("#,##0.00")</td>
+                                                    <td style="text-align: right;">@item.Actual.ToString("#,##0.00")</td>
+                                                    @if (@item.Diff >= 100)
+                                                    {
+                                                        <td style="background-color:limegreen;text-align: right;">@item.Diff.ToString("#,##0")</td>
+                                                    }
+                                                    else if (@item.Diff < 100)
+                                                    {
+                                                        <td style="background-color:indianred;text-align: right;">@item.Diff.ToString("#,##0")</td>
+                                                    }
 
-                                                    <td style="font-weight:bold;text-align: center;">@item.Grade</td>
-                                                    <td style="text-align: center;">@item.Cnt</td>
-                                                    <td style="text-align: center;">@item.Percent</td>
                                                 </tr>
-                                                totalEmp += item.Cnt;
-                                                totalPercent += item.Percent;
+                                                totalStd += item.STD;
+                                                totalActual += item.Actual;
+                                                totalDiff += item.Diff;
                                             }
                                             <tr>
-                                                <td style="font-weight:bold;text-align: center;">Total</td>
-                                                    <td style="font-weight:bold;text-align: center;">@totalEmp.ToString("#,##0")</td>
-                                                    <td style="font-weight:bold;text-align: center;">@totalPercent.ToString("#,##0")</td>
+                                                <td style="font-weight:bold;text-align: center;" colspan="2">Total</td>
+                                                <td style="font-weight:bold;text-align: right;">@totalStd.ToString("#,##0.00")</td>
+                                                <td style="font-weight:bold;text-align: right;">@totalActual.ToString("#,##0.00")</td>
+                                                <td style="font-weight:bold;text-align: right;">@totalDiff.ToString("#,##0")</td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-
                         </div>
+
+                        <div class="col-lg-12">
+                            <div class="white_shd full margin_bottom_30">
+                                <div class="full graph_head">
+                                    <div class="heading1 margin_0" style="color: black;font-size:22px">
+                                        <h3>Grade พนักงาน</h3>
+                                    </div>
+                                </div>
+
+                                <div class="table_section padding_infor_info">
+                                    <div class="table-responsive-sm">
+                                        <table class="table table-bordered" style="color: black;font-size:20px">
+                                            <thead>
+                                                <tr class="table-Primary">
+                                                    <th style="font-weight:bold;text-align: center;">เกรด</th>
+                                                    <th style="font-weight:bold;text-align: center;">จำนวนคน</th>
+                                                    <th style="font-weight:bold;text-align: center;">%</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    int totalEmp = 0;
+                                                    double totalPercent = 0.0;
+                                                }
+                                                @foreach (var item in Model.ResultGrpGrade)
+                                                {
+                                                    <tr>
+
+                                                        <td style="font-weight:bold;text-align: center;">@item.Grade</td>
+                                                        <td style="text-align: center;">@item.Cnt</td>
+                                                        <td style="text-align: center;">@item.Percent</td>
+                                                    </tr>
+                                                    totalEmp += item.Cnt;
+                                                    totalPercent += item.Percent;
+                                                }
+                                                <tr>
+                                                    <td style="font-weight:bold;text-align: center;">Total</td>
+                                                    <td style="font-weight:bold;text-align: center;">@totalEmp.ToString("#,##0")</td>
+                                                    <td style="font-weight:bold;text-align: center;">@totalPercent.ToString("#,##0")</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
                     </div>
 
+
                 </div>
-
-
             </div>
         </div>
-    </div>
 
-    <!-- jQuery -->
-    <script src="~/dashboard/js/jquery.min.js"></script>
-    <script src="~/dashboard/js/popper.min.js"></script>
-    <script src="~/dashboard/js/bootstrap.min.js"></script>
-    <!-- Add your scripts at the end of the body -->
-    <!-- Add your other scripts -->
-    <!-- wow animation -->
-    <script src="~/dashboard/js/animate.js"></script>
-    <!-- select country -->
-    <script src="~/dashboard/js/bootstrap-select.js"></script>
-    <!-- owl carousel -->
-    <script src="~/dashboard/js/owl.carousel.js"></script>
-    <!-- nice scrollbar -->
-    <script src="~/dashboard/js/perfect-scrollbar.min.js"></script>
-    <!-- sidebar -->
-    <script>
-        var ps = new PerfectScrollbar('#sidebar');
-    </script>
-	<!-- data tables -->
-	<script src="~/dashboard/datatable-new/jquery-3.5.1.js"></script>
-	<script src="~/dashboard/datatable-new/jquery.dataTables.min.js"></script>
-	<script src="~/dashboard/datatable-new/moment.min.js"></script>
-	<script src="~/dashboard/datatable-new/dataTables.dateTime.min.js"></script>
-	<script src="~/dashboard/datatable-new/dataTables.responsive.min.js"></script>
-    <!-- anychart -->
-    <script src="~/dashboard/database-new/anychart/anychart-core.min.js"></script>
-    <script src="~/dashboard/database-new/anychart/anychart-pie.min.js"></script>
-     <!-- anychart bar chart -->
-    <script src="~/dashboard/database-new/barchart/anychart-base.min.js"></script>
-    <script src="~/dashboard/database-new/barchart/anychart-exports.min.js"></script>
-   <script src="~/dashboard/database-new/barchart/anychart-ui.min.js"></script>
+        <!-- jQuery -->
+        <script src="~/dashboard/js/jquery.min.js"></script>
+        <script src="~/dashboard/js/popper.min.js"></script>
+        <script src="~/dashboard/js/bootstrap.min.js"></script>
+        <!-- Add your scripts at the end of the body -->
+        <!-- Add your other scripts -->
+        <!-- wow animation -->
+        <script src="~/dashboard/js/animate.js"></script>
+        <!-- select country -->
+        <script src="~/dashboard/js/bootstrap-select.js"></script>
+        <!-- owl carousel -->
+        <script src="~/dashboard/js/owl.carousel.js"></script>
+        <!-- nice scrollbar -->
+        <script src="~/dashboard/js/perfect-scrollbar.min.js"></script>
+        <!-- sidebar -->
+        <script>
+            var ps = new PerfectScrollbar('#sidebar');
+        </script>
+        <!-- data tables -->
+        <script src="~/dashboard/datatable-new/jquery-3.5.1.js"></script>
+        <script src="~/dashboard/datatable-new/jquery.dataTables.min.js"></script>
+        <script src="~/dashboard/datatable-new/moment.min.js"></script>
+        <script src="~/dashboard/datatable-new/dataTables.dateTime.min.js"></script>
+        <script src="~/dashboard/datatable-new/dataTables.responsive.min.js"></script>
+        <!-- anychart -->
+        <script src="~/dashboard/database-new/anychart/anychart-core.min.js"></script>
+        <script src="~/dashboard/database-new/anychart/anychart-pie.min.js"></script>
+        <!-- anychart bar chart -->
+        <script src="~/dashboard/database-new/barchart/anychart-base.min.js"></script>
+        <script src="~/dashboard/database-new/barchart/anychart-exports.min.js"></script>
+        <script src="~/dashboard/database-new/barchart/anychart-ui.min.js"></script>
 
-    <script>
-        $(document).ready(function () {
-            $("#datepicker-group").datepicker({
-                format: "dd-M-yyyy",
-                todayHighlight: true,
-                autoclose: true,
-                clearBtn: true
+        <script>
+            $(document).ready(function () {
+                $("#datepicker-group").datepicker({
+                    format: "dd-M-yyyy",
+                    todayHighlight: true,
+                    autoclose: true,
+                    clearBtn: true
+                });
             });
-        });
-    </script>
+        </script>
 
-   @*  <script>
-        // Function to fetch data
-        function fetchData() {
-            console.log('Fetching data...'); // Log a message to verify if fetchData() is called
-            // Place your code here to fetch data
-            var newData = "Example data fetched at " + new Date().toLocaleTimeString();
-            document.getElementById("dataContainer").innerText = newData;
-        }
+        <script>
+            // Function to fetch data
+            function fetchData() {
+                console.log('Fetching data...'); // Log a message to verify if fetchData() is called
+                // Place your code here to fetch data
+                var newData = "Example data fetched at " + new Date().toLocaleTimeString();
+                document.getElementById("dataContainer").innerText = newData;
+            }
 
-        // Start triggering button click event after page load
-        window.addEventListener("load", function () {
-            //var interval = parseInt(document.getElementById("intervalInput").value); // Get the interval value from the input field
-            var interval = @ViewBag.SetTime
-                triggerButtonClick(interval); // Start triggering button click event with the specified interval
-        });
+            // Start triggering button click event after page load
+            window.addEventListener("load", function () {
+                //var interval = parseInt(document.getElementById("intervalInput").value); // Get the interval value from the input field
+                var interval = @ViewBag.SetTime
+                    triggerButtonClick(interval); // Start triggering button click event with the specified interval
+            });
 
-        // Function to trigger button click event periodically
-        function triggerButtonClick(interval) {
-            console.log('Triggering button click event with interval:', interval); // Log the interval value
+            // Function to trigger button click event periodically
+            function triggerButtonClick(interval) {
+                console.log('Triggering button click event with interval:', interval); // Log the interval value
 
-            // Trigger button click event periodically
-            var intervalId = setInterval(function () {
-                document.getElementById("fetchDataButton").click(); // Automatically click the button
-            }, interval);
+                // Trigger button click event periodically
+                var intervalId = setInterval(function () {
+                    document.getElementById("fetchDataButton").click(); // Automatically click the button
+                }, interval);
 
-            // If you want to stop the interval after a certain amount of time (e.g., after 1 hour)
-            // setTimeout(function () {
-            //     clearInterval(intervalId); // Stop the interval
-            //     console.log('Interval stopped.'); // Log a message
-            // }, 3600000); // 1 hour = 3600 seconds = 3600000 milliseconds
-        }
+                // If you want to stop the interval after a certain amount of time (e.g., after 1 hour)
+                // setTimeout(function () {
+                //     clearInterval(intervalId); // Stop the interval
+                //     console.log('Interval stopped.'); // Log a message
+                // }, 3600000); // 1 hour = 3600 seconds = 3600000 milliseconds
+            }
 
-    </script> *@
+        </script>
 
         <script>
             anychart.onDocumentReady(function () {
