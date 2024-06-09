@@ -50,6 +50,7 @@ namespace Plims.Models
       //  public TimeSpan CurrentTime { get; set; }
         public decimal DiffHours { get; set; }
         [Column(TypeName = "decimal(18,3)")]
+        public decimal PcsPerHr { get; set; }
         public decimal PiecePerHr { get; set; }// change from int
         public decimal EffManPerSTD { get; set; }
         public int FGQty { get; set; }

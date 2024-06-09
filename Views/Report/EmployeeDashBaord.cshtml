@@ -59,7 +59,7 @@
                             <th style="font-weight:bold;text-align: center;">Product:</th>
                             <th style="font-weight:bold;text-align: center;">Point:</th>
                             <th style="font-weight:bold;text-align: center;"></th>
-                            <th style="font-weight:bold;text-align: center;font-size:22px"><h3><i class="fa fa-user blue1_color"></i> @ViewBag.SumEmployee</h3></th>
+                            <th style="font-weight:bold;text-align: center;font-size:32px"><h3 style="font-weight:bold;text-align: center;font-size:32px"><i class="fa fa-user blue1_color"></i> @ViewBag.SumEmployee</h3></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,7 +74,7 @@
                             <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterProduct, (IEnumerable<SelectListItem>)ViewBag.varProduct as SelectList, ":: All Product ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
                             <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterPoint, (IEnumerable<SelectListItem>)ViewBag.varPoint as SelectList, ":: All Point ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
                             <td style="font-weight:bold;text-align: center;"><button type="submit" class="btn cur-p btn-primary" id="fetchDataButton">&nbsp;&nbsp;  Filter  &nbsp;&nbsp;</button></td>
-                            <td style="font-weight:bold;text-align: center;font-size:18px">จำนวนพนักงาน</td>
+                            <td style="font-weight:bold;text-align: center;font-size:26px">จำนวนพนักงาน</td>
                         </tr>
                         </form>
                     </tbody>
@@ -86,39 +86,42 @@
 
         <div class="col-lg-12" id="dataContainer">
             <div class="row column1">
-                <div class="col-lg-4">
+                <div class="col-lg-3">
 
                     <div class="white_shd full margin_bottom_30">
                         <div class="full graph_head">
                             <div class="heading1 margin_0">
-                                <h3>กราฟ Grade พนักงาน</h3>
-                                <label>Data of @formattedDate</label>
+                                <h3 style="font-weight:bold;font-size:28px">กราฟ Grade พนักงาน</h3>
+                                <label style="font-size:18px">Data of @formattedDate</label>
                             </div>
                         </div>
-                        <div class="map_section padding_infor_info">
-                            <div id="container"></div>
+                        <div class="cc map_section padding_infor_info">
+                            <div class="cc row" style="height: 400px; width: 100%;">
+								 <div id="container"></div>
+                            </div>
+                          
                         </div>
                     </div>
 
                 </div>
-                <div class="col-lg-8">
+                <div class="col-lg-9">
                     <div class="row column1">
                         <div class="col-lg-12">
                             <div class="white_shd full margin_bottom_30">
                                 <div class="full graph_head">
-                                    <div class="heading1 margin_0" style="color: black;font-size:22px">
-                                        <h3>ตารางแสดงข้อมูล Eff Pcs/Man/Hr</h3>
+                                    <div class="heading1 margin_0" style="color: black;font-size:28px">
+                                        <h3 style="font-weight:bold;font-size:28px">ตารางแสดงข้อมูล Eff Pcs/Man/Hr</h3>
                                     </div>
                                 </div>
                                 <div class="map_section padding_infor_info">
-                                    <table class="table table-bordered" style="color: black;font-size:20px">
+                                    <table class="table table-bordered" style="color: black;font-size:28px">
                                         <thead>
-                                            <tr class="table-Primary">
+                                            <tr class="table-Primary" style="font-weight:bold;text-align: center;font-size:28px">
                                                 <th style="font-weight:bold;text-align: center;">Product</th>
                                                 <th style="font-weight:bold;text-align: center;">Section</th>
                                                 <th style="font-weight:bold;text-align: center;">Target/Std.</th>
                                                 <th style="font-weight:bold;text-align: center;">Actual</th>
-                                                <th style="font-weight:bold;text-align: center;">% Diff</th>
+                                                <th style="font-weight:bold;text-align: center;">%</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -129,7 +132,7 @@
                                             }
                                             @foreach (var item in Model.ResultGrpProduct)
                                             {
-                                                <tr>
+                                                <tr style="font-size:28px">
                                                     <td style="text-align: center;">@item.ProductName</td>
                                                     <td style="text-align: left;">@item.SectionName</td>
                                                     <td style="text-align: right;">@item.STD.ToString("#,##0.00")</td>
@@ -159,56 +162,64 @@
                                 </div>
                             </div>
                         </div>
+                      
 
-                        <div class="col-lg-12">
-                            <div class="white_shd full margin_bottom_30">
-                                <div class="full graph_head">
-                                    <div class="heading1 margin_0" style="color: black;font-size:22px">
-                                        <h3>Grade พนักงาน</h3>
-                                    </div>
-                                </div>
+                    </div>
 
-                                <div class="table_section padding_infor_info">
-                                    <div class="table-responsive-sm">
-                                        <table class="table table-bordered" style="color: black;font-size:20px">
-                                            <thead>
-                                                <tr class="table-Primary">
-                                                    <th style="font-weight:bold;text-align: center;">เกรด</th>
-                                                    <th style="font-weight:bold;text-align: center;">จำนวนคน</th>
-                                                    <th style="font-weight:bold;text-align: center;">%</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @{
-                                                    int totalEmp = 0;
-                                                    double totalPercent = 0.0;
-                                                }
-                                                @foreach (var item in Model.ResultGrpGrade)
-                                                {
-                                                    <tr>
+                </div>
+            </div>
+            <div class="row column1">
+                <div class="col-lg-12">
 
-                                                        <td style="font-weight:bold;text-align: center;">@item.Grade</td>
-                                                        <td style="text-align: center;">@item.Cnt</td>
-                                                        <td style="text-align: center;">@item.Percent</td>
-                                                    </tr>
-                                                    totalEmp += item.Cnt;
-                                                    totalPercent += item.Percent;
-                                                }
-                                                <tr>
-                                                    <td style="font-weight:bold;text-align: center;">Total</td>
-                                                    <td style="font-weight:bold;text-align: center;">@totalEmp.ToString("#,##0")</td>
-                                                    <td style="font-weight:bold;text-align: center;">@totalPercent.ToString("#,##0")</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                    <div class="white_shd full margin_bottom_30">
+                        <div class="full graph_head">
+                            <div class="heading1 margin_0" style="color: black;font-size:28px">
+                                <h3 style="font-weight:bold;font-size:28px">Grade พนักงาน</h3>
+                            </div>
+                        </div>
 
+                        <div class="table_section padding_infor_info">
+                            <div class="table-responsive-sm">
+                                <table class="table table-bordered" style="color: black;font-size:28px">
+                                    <thead>
+                                        <tr class="table-Primary" style="font-weight:bold;text-align: center;font-size:28px">
+                                            <th style="font-weight:bold;text-align: center;">เกรด</th>
+                                            <th style="font-weight:bold;text-align: center;">Pcs/hr</th>
+                                            <th style="font-weight:bold;text-align: center;">จำนวนคน</th>
+                                            <th style="font-weight:bold;text-align: center;">%</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int totalEmp = 0;
+                                            double totalPercent = 0.0;
+                                            decimal totalPerPce = 0M;
+                                        }
+                                        @foreach (var item in Model.ResultGrpGrade)
+                                        {
+                                            <tr>
+
+                                                <td style="font-weight:bold;text-align: center;">@item.Grade</td>
+                                                <td style="text-align: right;">@item.PcsPerHr.ToString("#,##0.00")</td>
+                                                <td style="text-align: center;">@item.Cnt</td>
+                                                <td style="text-align: center;">@item.Percent</td>
+                                            </tr>
+                                            totalEmp += item.Cnt;
+                                            totalPercent += item.Percent;
+                                            totalPerPce += @item.PcsPerHr;
+                                        }
+                                        <tr>
+                                            <td style="font-weight:bold;text-align: center;" >Total</td>
+                                            <td style="font-weight:bold;text-align: right;">@totalPerPce.ToString("#,##0.00")</td>
+                                            <td style="font-weight:bold;text-align: center;">@totalEmp.ToString("#,##0")</td>
+                                            <td style="font-weight:bold;text-align: center;">@totalPercent.ToString("#,##0")</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
                     </div>
-
 
                 </div>
             </div>
@@ -302,7 +313,7 @@
                 let chart = anychart.pie(dataSet.mapAs({ name: 0, value: 1, abbr: 2 }));
 
                 // Configure the labels
-                chart.labels().format("{%abbr}  {%value}%").fontSize(14).position("outside");
+                chart.labels().format("{%abbr}  {%value}%").fontSize(26).position("outside");
 
                 // Configure the legend position
                 chart.legend().position('top');
@@ -312,13 +323,15 @@
 
                 // Set chart title text settings
                 chart.title().enabled(true).useHtml(true).text("Grade");
+                chart.title().fontSize(28);  // set font size for the title
+                chart.title().fontColor("#333333");  // set font color for the title
 
                 // Set container id for the chart
                 chart.container("container");
 
                 // Set the size of the chart
-                chart.width("90%"); // Set width
-                chart.height("60%"); // Set height
+                chart.width("100%"); // Set width
+                chart.height("100%"); // Set height
 
                 // Initiate chart drawing
                 chart.draw();
