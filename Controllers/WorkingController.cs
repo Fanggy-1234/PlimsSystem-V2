@@ -4509,7 +4509,7 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-        public IActionResult ProductionTransactionAdjustByEmployee(View_ProductionTransactionAdjust obj)
+        public IActionResult ProductionTransactionAdjustByEmployee(View_ProductionTransactionAdjust obj,string FGPlanDate, String FGLine, String FGSection, String FGShift, int FGQTY, string[] TransactionID, string checkthis, string checkall)
         {
 
 
@@ -4605,6 +4605,185 @@ namespace Plims.Controllers
             ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
             mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
 
+            return View("ProductionTransactionAdjust", mymodel);
+
+        }
+
+
+
+        
+        public IActionResult ProductionTransactionAdjustFGByEmployee(DateTime FGPlanDate, string FGLine, string FGSection, string FGShift, int FGQTY, List<int> TransactionID)
+        {
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var mymodel = new ViewModelAll
+            {
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
+
+            };
+
+
+            //Check ALL , Employee , Employee > 1
+            int checkPrdAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).ToList().Count();
+            if (checkPrdAdjust == TransactionID.Count()) // All FG Adjust
+            {
+
+            }
+            else
+            {
+                if(checkPrdAdjust == 1) // Employee Adjust
+                {
+
+                }
+                else // adjust empoyee more than 1 person
+                {
+
+                }
+            }
+
+
+            //Check Duplicate
+            int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).ToList().Count();
+            if (checkDuplicate > 0)
+            {
+
+                //Update  TbProductionTransactionAdjust      
+                var TranFGAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).SingleOrDefault();
+                TranFGAdjust.QTY = FGQTY;
+                db.SaveChanges();
+                int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).ToList().Count();
+                if (ProductionTrand == 0)
+                {
+
+                    ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                    mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                    ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                    return View("ProductionTransactionAdjust", mymodel);
+                }
+                // Calculate FG/Count for QTYPerQR
+                int QRPerAdjust = FGQTY / ProductionTrand;
+                string[] note;
+                if (ProductionTrand != 0)
+                {
+                    var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+
+                    foreach (string item in EmpIDtran)
+                    {
+                        // Update Table : TbProductionTransaction column QTYPerQR
+                        var ProdUpdate = db.TbProductionTransaction
+                             .Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) &&
+                                         x.PlantID.Equals(PlantID) &&
+                                         x.LineID.Equals(FGLine) &&
+                                         x.SectionID.Equals(FGSection) &&
+                                         x.Prefix.Equals(FGShift) &&
+                                         x.QRCode.Equals(item) &&
+                                         x.DataType.Equals("Count"))
+                             .ToList();
+
+                        foreach (var transaction in ProdUpdate)
+                        {
+
+                            transaction.QtyPerQR = QRPerAdjust;
+
+                            note = transaction.Note.Split(":");
+                            if (note.Length > 0)
+                            {
+                                transaction.Note = "Replace : " + note[1] + "," + transaction.QtyPerQR;
+                            }
+                            else
+                            {
+                                transaction.Note = "Replace : " + transaction.QtyPerQR;
+                            }
+                            transaction.UpdateBy = EmpID; // User.Identity.Name;
+                            transaction.UpdateDate = DateTime.Now;
+                        }
+                    }
+                    db.SaveChanges();
+
+
+
+                }
+            }
+            else
+            {
+
+
+                // Table : TbProductionTransactionAdjust  Create
+                db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                {
+                    TransactionDate = Convert.ToDateTime(FGPlanDate),
+                    PlantID = PlantID,
+                    LineID = FGLine,
+                    SectionID = FGSection,
+                    Prefix = FGShift,
+                    Type = "FG",
+                    QTY = FGQTY,
+                    CreateDate = DateTime.Now,
+                    CreateBy = EmpID
+                });
+                //  db.SaveChanges();
+
+
+                //// Count Employee base on plant, line ,section, productiondate ,prefix
+                int ProductionTrandinsert = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).ToList().Count();
+
+                if (ProductionTrandinsert == 0)
+                {
+
+                    ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                    mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                    ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                    return View("ProductionTransactionAdjust", mymodel);
+                }
+                // Calculate FG/Count for QTYPerQR
+                int QRPerAdjustinsert = FGQTY / ProductionTrandinsert;
+                if (ProductionTrandinsert != 0)
+                {
+                    var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+
+                    foreach (string item in EmpIDtran)
+                    {
+                        // Update Table : TbProductionTransaction column QTYPerQR
+                        var ProdUpdate = db.TbProductionTransaction
+                             .Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) &&
+                                         x.PlantID.Equals(PlantID) &&
+                                         x.LineID.Equals(FGLine) &&
+                                         x.SectionID.Equals(FGSection) &&
+                                         x.Prefix.Equals(FGShift) &&
+                                         x.QRCode.Equals(item) &&
+                                         x.DataType.Equals("Count"))
+                             .ToList();
+
+                        foreach (var transaction in ProdUpdate)
+                        {
+
+                            transaction.QtyPerQR = QRPerAdjustinsert;
+                            transaction.Note = "Replace : " + transaction.QtyPerQR;
+                            transaction.UpdateBy = EmpID; // User.Identity.Name;
+                            transaction.UpdateDate = DateTime.Now;
+                        }
+                    }
+                    db.SaveChanges();
+
+                }
+
+
+            }
+
+            ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+            mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+            ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
             return View("ProductionTransactionAdjust", mymodel);
 
         }
