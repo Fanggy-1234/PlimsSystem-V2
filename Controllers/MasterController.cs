@@ -14,7 +14,6 @@ using System.Drawing.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 
-
 namespace Plims.Controllers
 {
     public class MasterController : Controller
@@ -1850,6 +1849,8 @@ namespace Plims.Controllers
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int CntDb = db.TbSection.ToList().Count;
+            int CntDbnext = CntDb;
 
 
             if (EmpID == null)
@@ -1857,10 +1858,11 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
             //Check Duplicate
-            var cntsection = db.TbSection.Select(x => x.SectionID).Max();
+            var cntsection = db.TbSection.Where(x=>x.PlantID.Equals(PlantID)).Select(x => x.SectionID).Max();
             string cntsectionString = cntsection.ToString();
             string sectiononly = cntsectionString.Substring(cntsectionString.Length - 5);
-            int nextcntsection = Convert.ToInt32(sectiononly) + 1;
+           // int nextcntsection = Convert.ToInt32(sectiononly) + 1;
+            int nextcntsection = Convert.ToInt32(CntDbnext) + 1;
 
             var Sectiondb = db.TbSection.Where(p => p.SectionName.Equals(obj.SectionName) && p.PlantID.Equals(PlantID) && p.Status.Equals(1));
             if (Sectiondb.Count() == 0)
