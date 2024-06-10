@@ -47,8 +47,6 @@ namespace Plims.Controllers
         {
 
 
-
-
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
@@ -62,8 +60,11 @@ namespace Plims.Controllers
                 ViewBag.DefaultStartDate = DateTime.Now.ToString("dd-MM-yyyy");
                 ViewBag.DefaultEndDate = DateTime.Now.ToString("dd-MM-yyyy");
 
-                //model.StartDate = DateTime.Now;
-                //model.EndDate   = DateTime.Now;
+                if (model.filter == 0)
+                {
+                    model.StartDate = DateTime.Now;
+                    model.EndDate = DateTime.Now;
+                }
 
                 var varYear = from a in db.View_DailyReportSummary
                               group a by new { a.TransactionDate.Year } into g
@@ -270,12 +271,14 @@ namespace Plims.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Filter(ViewModelReport mymodel)
         {
+            mymodel.filter = 1;
             return RedirectToAction("EmployeeDashBaord", mymodel);
         }
 
         [HttpGet]
         public ActionResult OverviewDashBoard(ViewModelReport model)
         {
+      
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
@@ -289,8 +292,12 @@ namespace Plims.Controllers
                 ViewBag.DefaultStartDate = DateTime.Now.ToString("dd-MM-yyyy");
                 ViewBag.DefaultEndDate = DateTime.Now.ToString("dd-MM-yyyy");
 
-                //model.StartDate = DateTime.Now;
-                //model.EndDate  = DateTime.Now;
+
+                if (model.filter == 0)
+                {
+                    model.StartDate = DateTime.Now;
+                    model.EndDate = DateTime.Now;
+                }
 
                 var varYear = from a in db.View_EFFReport
                               group a by new { a.TransactionDate.Year } into g
@@ -517,7 +524,7 @@ namespace Plims.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult FilterOverview(ViewModelReport mymodel)
         {
-
+            mymodel.filter = 1;
             return RedirectToAction("OverviewDashBoard", mymodel);
 
         }
