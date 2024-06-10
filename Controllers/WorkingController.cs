@@ -4612,7 +4612,7 @@ namespace Plims.Controllers
 
 
         
-        public IActionResult ProductionTransactionAdjustFGByEmployee(DateTime FGPlanDate, string FGLine, string FGSection, string FGShift, int FGQTY, List<int> TransactionID)
+        public IActionResult ProductionTransactionAdjustFGByEmployee(string FGPlanDate, string FGLine, string FGSection, string FGShift, int FGQTY, List<int> TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -4633,21 +4633,35 @@ namespace Plims.Controllers
 
             };
 
+            DateTime transactionDate = DateTime.Parse(FGPlanDate);
 
             //Check ALL , Employee , Employee > 1
-            int checkPrdAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).ToList().Count();
-            if (checkPrdAdjust == TransactionID.Count()) // All FG Adjust
+            int checkPrdAdjust = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(transactionDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).ToList().Count();
+            if (checkPrdAdjust == TransactionID.Count()) 
             {
+                // All FG Adjust
+                
 
+                // END All FG Adjust
             }
             else
             {
                 if(checkPrdAdjust == 1) // Employee Adjust
                 {
+                    // Employee Adjust
+                   
+
+
+
+                    // END Employee Adjust
 
                 }
-                else // adjust empoyee more than 1 person
+                else 
                 {
+                    // adjust empoyee more than 1 person
+                   
+
+                    // END adjust empoyee more than 1 person
 
                 }
             }
