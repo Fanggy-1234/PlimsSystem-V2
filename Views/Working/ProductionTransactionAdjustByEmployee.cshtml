@@ -432,29 +432,53 @@
         });
     }
 
-    // Function to set data in FG modal
     function setFGModalData() {
-        var table = document.getElementById('table_id');
-        var firstRow = table.getElementsByTagName('tbody')[0].rows[0];
+        var selectedCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]:checked');
+        var allCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]');
+        var checkAllCheckbox = document.querySelector('#tableForm input[name="checkall"]');
 
-        // Remove highlight from all rows
-        removeRowHighlight();
+        if (selectedCheckboxes.length > 1 && selectedCheckboxes.length < allCheckboxes.length) {
+            if (confirm('You have selected more than one item but not all. Do you want to proceed?')) {
+                // Set modal data and highlight first row if confirmed
+                var table = document.getElementById('table_id');
+                var firstRow = table.getElementsByTagName('tbody')[0].rows[0];
 
-        // Highlight the first row
-        firstRow.classList.add('selected-row');
+                removeRowHighlight();
+                firstRow.classList.add('selected-row');
 
-        // Extract the values from the first row
-        var transactionDate = firstRow.cells[1].innerText;
-        var lineName = firstRow.cells[3].innerText;
-        var sectionName = firstRow.cells[4].innerText;
-        var prefix = firstRow.cells[6].innerText;
-        console.log(transactionDate);
-        // Set the values in the modal
-        document.getElementById('FGPlanDate').value = transactionDate.toString("dd/MM/yyyy")
-        document.getElementById('FGLine').value = lineName;
-        document.getElementById('FGSection').value = sectionName;
-        document.getElementById('FGShift').value = prefix;
+                var transactionDate = firstRow.cells[1].innerText;
+                var lineName = firstRow.cells[3].innerText;
+                var sectionName = firstRow.cells[4].innerText;
+                var prefix = firstRow.cells[6].innerText;
+
+                document.getElementById('FGPlanDate').value = transactionDate.toString("dd/MM/yyyy");
+                document.getElementById('FGLine').value = lineName;
+                document.getElementById('FGSection').value = sectionName;
+                document.getElementById('FGShift').value = prefix;
+            } else {
+                // Prevent modal from showing if not confirmed
+                return;
+            }
+        } else {
+            // Set modal data and highlight first row if condition not met
+            var table = document.getElementById('table_id');
+            var firstRow = table.getElementsByTagName('tbody')[0].rows[0];
+
+            removeRowHighlight();
+            firstRow.classList.add('selected-row');
+
+            var transactionDate = firstRow.cells[1].innerText;
+            var lineName = firstRow.cells[3].innerText;
+            var sectionName = firstRow.cells[4].innerText;
+            var prefix = firstRow.cells[6].innerText;
+
+            document.getElementById('FGPlanDate').value = transactionDate.toString("dd/MM/yyyy");
+            document.getElementById('FGLine').value = lineName;
+            document.getElementById('FGSection').value = sectionName;
+            document.getElementById('FGShift').value = prefix;
+        }
     }
+
 
     // Event listener to set FG modal data when the button is clicked
     document.querySelector('[data-bs-target="#FGModal"]').addEventListener('click', setFGModalData);
@@ -463,7 +487,6 @@
     function submitModalForm() {
         var selectedCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]:checked');
         var modalForm = document.getElementById('modalForm');
-        console.log('2');
         selectedCheckboxes.forEach(function (checkbox) {
             var hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';

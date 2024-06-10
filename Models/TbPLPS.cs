@@ -14,7 +14,7 @@ namespace Plims.Models
         public string ProductID { get; set; }
         public string SectionID { get; set; }
         public string Size { get; set; }
-        public int QTYPerQRCode { get; set; }
+        public decimal QTYPerQRCode { get; set; }
         public string Unit { get; set; }
         public int FormularID { get; set; }
         public int Status { get; set; }

@@ -132,8 +132,8 @@ namespace Plims.Controllers
                         {
                             var LastTransactionTime = db.TbProductionTransaction
                            .Where(x => x.QRCode.Equals(employeeId) && x.TransactionDate.Date == currentDate)
-                           .OrderByDescending(x => x.TransactionDate)
-                           .Select(x => x.TransactionDate.TimeOfDay)
+                           .OrderByDescending(x => x.CreateDate)
+                           .Select(x => x.CreateDate.TimeOfDay)
                            .FirstOrDefault();
 
 
@@ -1669,8 +1669,8 @@ namespace Plims.Controllers
                                     {
                                         var LastTransactionTime = db.TbProductionTransaction
                                        .Where(x => x.QRCode.Equals(employeeId) && x.TransactionDate.Date == currentDate)
-                                       .OrderByDescending(x => x.TransactionDate)
-                                       .Select(x => x.TransactionDate.TimeOfDay)
+                                       .OrderByDescending(x => x.CreateDate)
+                                       .Select(x => x.CreateDate.TimeOfDay)
                                        .FirstOrDefault();
 
 
@@ -1775,8 +1775,8 @@ namespace Plims.Controllers
                                 {
                                     var LastTransactionTime = db.TbProductionTransaction
                                    .Where(x => x.QRCode.Equals(objEmp.EmployeeID) && x.TransactionDate.Date == currentDate)
-                                   .OrderByDescending(x => x.TransactionDate)
-                                   .Select(x => x.TransactionDate.TimeOfDay)
+                                   .OrderByDescending(x => x.CreateDate)
+                                   .Select(x => x.CreateDate.TimeOfDay)
                                    .FirstOrDefault();
 
                                     // Convert TimeSpan to total seconds
@@ -1933,8 +1933,8 @@ namespace Plims.Controllers
                                 {
                                     var LastTransactionTime = db.TbProductionTransaction
                                    .Where(x => x.QRCode.Equals(employeeId) && x.TransactionDate.Date == currentDate)
-                                   .OrderByDescending(x => x.TransactionDate)
-                                   .Select(x => x.TransactionDate.TimeOfDay)
+                                   .OrderByDescending(x => x.CreateDate)
+                                   .Select(x => x.CreateDate.TimeOfDay)
                                    .FirstOrDefault();
 
 
@@ -2040,8 +2040,8 @@ namespace Plims.Controllers
                                     {
                                         var LastTransactionTime = db.TbProductionTransaction
                                        .Where(x => x.QRCode.Equals(objEmp.EmployeeID) && x.TransactionDate.Date == currentDate)
-                                       .OrderByDescending(x => x.TransactionDate)
-                                       .Select(x => x.TransactionDate.TimeOfDay)
+                                       .OrderByDescending(x => x.CreateDate)
+                                       .Select(x => x.CreateDate.TimeOfDay)
                                        .FirstOrDefault();
 
 
@@ -4329,7 +4329,7 @@ namespace Plims.Controllers
                     ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                     mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                     ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                    return View("ProductionTransactionAdjust", mymodel);
+                    return View("ProductionTransactionAdjustByEmployee", mymodel);
                 }
                 // Calculate FG/Count for QTYPerQR
                 int QRPerAdjust = FGQTY / ProductionTrand;
@@ -4404,7 +4404,7 @@ namespace Plims.Controllers
                     ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                     mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                     ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                    return View("ProductionTransactionAdjust", mymodel);
+                    return View("ProductionTransactionAdjustByEmployee", mymodel);
                 }
                 // Calculate FG/Count for QTYPerQR
                 int QRPerAdjustinsert = FGQTY / ProductionTrandinsert;
@@ -4444,7 +4444,7 @@ namespace Plims.Controllers
             ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
             mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
             ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-            return View("ProductionTransactionAdjust", mymodel);
+            return View("ProductionTransactionAdjustByEmployee", mymodel);
 
         }
 
@@ -4501,7 +4501,7 @@ namespace Plims.Controllers
             ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
             mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
             ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-            return View("ProductionTransactionAdjust", mymodel);
+            return View("ProductionTransactionAdjustByEmployee", mymodel);
 
 
         }
@@ -4605,7 +4605,7 @@ namespace Plims.Controllers
             ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
             mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
 
-            return View("ProductionTransactionAdjust", mymodel);
+            return View("ProductionTransactionAdjustByEmployee", mymodel);
 
         }
 
@@ -4640,165 +4640,304 @@ namespace Plims.Controllers
             if (checkPrdAdjust == TransactionID.Count()) 
             {
                 // All FG Adjust
-                
 
-                // END All FG Adjust
-            }
-            else
-            {
-                if(checkPrdAdjust == 1) // Employee Adjust
-                {
-                    // Employee Adjust
-                   
-
-
-
-                    // END Employee Adjust
-
-                }
-                else 
-                {
-                    // adjust empoyee more than 1 person
-                   
-
-                    // END adjust empoyee more than 1 person
-
-                }
-            }
-
-
-            //Check Duplicate
-            int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).ToList().Count();
-            if (checkDuplicate > 0)
-            {
-
-                //Update  TbProductionTransactionAdjust      
-                var TranFGAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).SingleOrDefault();
-                TranFGAdjust.QTY = FGQTY;
-                db.SaveChanges();
-                int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).ToList().Count();
-                if (ProductionTrand == 0)
-                {
-
-                    ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
-                    mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
-                    ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                    return View("ProductionTransactionAdjust", mymodel);
-                }
-                // Calculate FG/Count for QTYPerQR
-                int QRPerAdjust = FGQTY / ProductionTrand;
-                string[] note;
-                if (ProductionTrand != 0)
-                {
-                    var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
-
-                    foreach (string item in EmpIDtran)
-                    {
-                        // Update Table : TbProductionTransaction column QTYPerQR
-                        var ProdUpdate = db.TbProductionTransaction
-                             .Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) &&
-                                         x.PlantID.Equals(PlantID) &&
-                                         x.LineID.Equals(FGLine) &&
-                                         x.SectionID.Equals(FGSection) &&
-                                         x.Prefix.Equals(FGShift) &&
-                                         x.QRCode.Equals(item) &&
-                                         x.DataType.Equals("Count"))
-                             .ToList();
-
-                        foreach (var transaction in ProdUpdate)
+                        //Check Duplicate
+                        int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).ToList().Count();
+                        if (checkDuplicate > 0)
                         {
 
-                            transaction.QtyPerQR = QRPerAdjust;
+                            //Update  TbProductionTransactionAdjust      
+                            var TranFGAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).SingleOrDefault();
+                            TranFGAdjust.QTY = FGQTY;
+                            db.SaveChanges();
 
-                            note = transaction.Note.Split(":");
-                            if (note.Length > 0)
+
+                            int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).ToList().Count();
+                            if (ProductionTrand == 0)
                             {
-                                transaction.Note = "Replace : " + note[1] + "," + transaction.QtyPerQR;
+
+                                ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                                mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                                ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                                return View("ProductionTransactionAdjust", mymodel);
                             }
-                            else
+                            // Calculate FG/Count for QTYPerQR
+                            int QRPerAdjust = FGQTY / ProductionTrand;
+                            string[] note;
+                            if (ProductionTrand != 0)
+                            {
+                                var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+
+                                foreach (string item in EmpIDtran)
+                                {
+                                    // Update Table : TbProductionTransaction column QTYPerQR
+                                    var ProdUpdate = db.TbProductionTransaction
+                                         .Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) &&
+                                                     x.PlantID.Equals(PlantID) &&
+                                                     x.LineID.Equals(FGLine) &&
+                                                     x.SectionID.Equals(FGSection) &&
+                                                     x.Prefix.Equals(FGShift) &&
+                                                     x.QRCode.Equals(item) &&
+                                                     x.DataType.Equals("Count"))
+                                         .ToList();
+
+                                    foreach (var transaction in ProdUpdate)
+                                    {
+
+                                        transaction.QtyPerQR = QRPerAdjust;
+
+                                        note = transaction.Note.Split(":");
+                                        if (note.Length > 0)
+                                        {
+                                            transaction.Note = "Replace : " + note[1] + "," + transaction.QtyPerQR;
+                                        }
+                                        else
+                                        {
+                                            transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                        }
+                                        transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                        transaction.UpdateDate = DateTime.Now;
+                                    }
+                                }
+                                db.SaveChanges();
+
+
+
+                            }
+                        }
+                        else
+                        {
+
+
+                            // Table : TbProductionTransactionAdjust  Create
+                            db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                            {
+                                TransactionDate = Convert.ToDateTime(FGPlanDate),
+                                PlantID = PlantID,
+                                LineID = FGLine,
+                                SectionID = FGSection,
+                                Prefix = FGShift,
+                                Type = "FG",
+                                QTY = FGQTY,
+                                CreateDate = DateTime.Now,
+                                CreateBy = EmpID
+                            });
+                            //  db.SaveChanges();
+
+
+                            //// Count Employee base on plant, line ,section, productiondate ,prefix
+                            int ProductionTrandinsert = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).ToList().Count();
+
+                            if (ProductionTrandinsert == 0)
+                            {
+
+                                ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                                mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                                ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                                return View("ProductionTransactionAdjustByEmployee", mymodel);
+                            }
+                            // Calculate FG/Count for QTYPerQR
+                            int QRPerAdjustinsert = FGQTY / ProductionTrandinsert;
+                            if (ProductionTrandinsert != 0)
+                            {
+                                var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+
+                                foreach (string item in EmpIDtran)
+                                {
+                                    // Update Table : TbProductionTransaction column QTYPerQR
+                                    var ProdUpdate = db.TbProductionTransaction
+                                         .Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) &&
+                                                     x.PlantID.Equals(PlantID) &&
+                                                     x.LineID.Equals(FGLine) &&
+                                                     x.SectionID.Equals(FGSection) &&
+                                                     x.Prefix.Equals(FGShift) &&
+                                                     x.QRCode.Equals(item) &&
+                                                     x.DataType.Equals("Count"))
+                                         .ToList();
+
+                                    foreach (var transaction in ProdUpdate)
+                                    {
+                                        transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                        transaction.QtyPerQR = QRPerAdjustinsert;
+                                        transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                        transaction.UpdateDate = DateTime.Now;
+                                    }
+                                }
+                                db.SaveChanges();
+
+                            }
+
+
+                        }
+
+                        ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                        mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                        ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+
+
+                         // END All FG Adjust
+            }
+            else 
+            {
+                // Employee Adjust
+
+                //Check for Update
+                int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("Employee")).ToList().Count();
+                if (checkDuplicate > 0)
+                {
+
+                    //Update  TbProductionTransactionAdjust      
+                    var TranFGAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("Employee")).SingleOrDefault();
+                    TranFGAdjust.QTY = FGQTY;
+                    db.SaveChanges();
+
+                    //CountQRCode
+                    int sumQRCodeEmp = 0;
+
+                    foreach(int item in TransactionID)
+                    {
+                        var QREmp = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.TransactionID.Equals(TransactionID)).Select(x=>x.QRCode).ToList();
+                        int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp)).Count();
+                        sumQRCodeEmp += ProductionTrand;
+
+                    }
+                   // int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && ).ToList().Count();
+                    if (sumQRCodeEmp == 0)
+                    {
+
+                        ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                        mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                        ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+                    }
+
+                    // Calculate FG/Count for QTYPerQR
+                    int QRPerAdjust = FGQTY / sumQRCodeEmp;
+                    string[] note;
+                    if (sumQRCodeEmp != 0)
+                    {
+                        var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+
+                        foreach (string item in EmpIDtran)
+                        {
+                            // Update Table : TbProductionTransaction column QTYPerQR
+                            var ProdUpdate = db.TbProductionTransaction
+                                 .Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) &&
+                                             x.PlantID.Equals(PlantID) &&
+                                             x.LineID.Equals(FGLine) &&
+                                             x.SectionID.Equals(FGSection) &&
+                                             x.Prefix.Equals(FGShift) &&
+                                             x.QRCode.Equals(item) &&
+                                             x.DataType.Equals("Count"))
+                                 .ToList();
+
+                            foreach (var transaction in ProdUpdate)
+                            {
+
+                               
+
+                                note = transaction.Note.Split(":");
+                                if (note.Length > 0)
+                                {
+                                    transaction.Note = "Replace : " + note[1] + "," + transaction.QtyPerQR;
+                                }
+                                else
+                                {
+                                    transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                }
+                                transaction.QtyPerQR = QRPerAdjust;
+                                transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                transaction.UpdateDate = DateTime.Now;
+                            }
+                        }
+                        db.SaveChanges();
+
+
+
+                    }                 
+                }
+
+                else
+                {
+
+
+                    // Table : TbProductionTransactionAdjust  Create
+                    db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                    {
+                        TransactionDate = Convert.ToDateTime(FGPlanDate),
+                        PlantID = PlantID,
+                        LineID = FGLine,
+                        SectionID = FGSection,
+                        Prefix = FGShift,
+                        Type = "Employee",
+                        QTY = FGQTY,
+                        CreateDate = DateTime.Now,
+                        CreateBy = EmpID
+                    });
+                    //  db.SaveChanges();
+
+
+                    //// Count Employee base on plant, line ,section, productiondate ,prefix
+                    //CountQRCode
+                    int sumQRCodeEmp = 0;
+
+                    foreach (int item in TransactionID)
+                    {
+                        var QREmp = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.TransactionID.Equals(item)).Select(x => x.QRCode).SingleOrDefault();
+                        int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp)).Count();
+                        sumQRCodeEmp += ProductionTrand;
+
+                    }
+                    if (sumQRCodeEmp == 0)
+                    {
+
+                        ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                        mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                        ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+                    }
+                    // Calculate FG/Count for QTYPerQR
+                    int QRPerAdjustinsert = FGQTY / sumQRCodeEmp;
+                    if (sumQRCodeEmp != 0)
+                    {
+                        var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+
+                        foreach (string item in EmpIDtran)
+                        {
+                            // Update Table : TbProductionTransaction column QTYPerQR
+                            var ProdUpdate = db.TbProductionTransaction
+                                 .Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) &&
+                                             x.PlantID.Equals(PlantID) &&
+                                             x.LineID.Equals(FGLine) &&
+                                             x.SectionID.Equals(FGSection) &&
+                                             x.Prefix.Equals(FGShift) &&
+                                             x.QRCode.Equals(item) &&
+                                             x.DataType.Equals("Count"))
+                                 .ToList();
+
+                            foreach (var transaction in ProdUpdate)
                             {
                                 transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                transaction.QtyPerQR = QRPerAdjustinsert;
+                                transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                transaction.UpdateDate = DateTime.Now;
                             }
-                            transaction.UpdateBy = EmpID; // User.Identity.Name;
-                            transaction.UpdateDate = DateTime.Now;
                         }
+                        db.SaveChanges();
+
                     }
-                    db.SaveChanges();
-
 
 
                 }
-            }
-            else
-            {
+                ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
 
+                return View("ProductionTransactionAdjustByEmployee", mymodel);
 
-                // Table : TbProductionTransactionAdjust  Create
-                db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
-                {
-                    TransactionDate = Convert.ToDateTime(FGPlanDate),
-                    PlantID = PlantID,
-                    LineID = FGLine,
-                    SectionID = FGSection,
-                    Prefix = FGShift,
-                    Type = "FG",
-                    QTY = FGQTY,
-                    CreateDate = DateTime.Now,
-                    CreateBy = EmpID
-                });
-                //  db.SaveChanges();
-
-
-                //// Count Employee base on plant, line ,section, productiondate ,prefix
-                int ProductionTrandinsert = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).ToList().Count();
-
-                if (ProductionTrandinsert == 0)
-                {
-
-                    ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
-                    mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
-                    ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                    return View("ProductionTransactionAdjust", mymodel);
-                }
-                // Calculate FG/Count for QTYPerQR
-                int QRPerAdjustinsert = FGQTY / ProductionTrandinsert;
-                if (ProductionTrandinsert != 0)
-                {
-                    var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
-
-                    foreach (string item in EmpIDtran)
-                    {
-                        // Update Table : TbProductionTransaction column QTYPerQR
-                        var ProdUpdate = db.TbProductionTransaction
-                             .Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) &&
-                                         x.PlantID.Equals(PlantID) &&
-                                         x.LineID.Equals(FGLine) &&
-                                         x.SectionID.Equals(FGSection) &&
-                                         x.Prefix.Equals(FGShift) &&
-                                         x.QRCode.Equals(item) &&
-                                         x.DataType.Equals("Count"))
-                             .ToList();
-
-                        foreach (var transaction in ProdUpdate)
-                        {
-
-                            transaction.QtyPerQR = QRPerAdjustinsert;
-                            transaction.Note = "Replace : " + transaction.QtyPerQR;
-                            transaction.UpdateBy = EmpID; // User.Identity.Name;
-                            transaction.UpdateDate = DateTime.Now;
-                        }
-                    }
-                    db.SaveChanges();
-
-                }
-
+                // END Employee Adjust
 
             }
-
-            ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
-            mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
-            ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-            return View("ProductionTransactionAdjust", mymodel);
 
         }
 

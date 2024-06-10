@@ -21,7 +21,7 @@ namespace Plims.Models
         public string SectionID { get; set; }
         public string SectionName { get; set; }
         public int Qty { get; set; }
-        public int QtyPerQR { get; set; }
+        public decimal QtyPerQR { get; set; }
         public string DataType { get; set; }
         public string Reason { get; set; }
         public string Note { get; set; }

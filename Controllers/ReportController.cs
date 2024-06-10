@@ -401,14 +401,30 @@ namespace Plims.Controllers
                                                     YieldActual = grouped.Sum(x => x.YieldDefect),
                                                     DiffYield = (grouped.Sum(x => x.YieldDefect)) - (grouped.Average(x => x.PercentYield)) //YieldActual - YieldTarget
                                                 }).ToList();
-
-
-                ViewBag.SumEmployee = resultGrpProductOverview.Sum(x => x.SumEmp);
-                ViewBag.AvgCapHr = resultGrpProductOverview.Average(x => x.CapHr);
-                ViewBag.AvgEFFhr1 = resultGrpProductOverview.Average(x => x.EFFhr1);
-                ViewBag.AvgEFFhr2 = resultGrpProductOverview.Average(x => x.EFFhr2);
-                ViewBag.AvgEFFhr3 = resultGrpProductOverview.Average(x => x.EFFhr3);
-                ViewBag.DefectAll = resultGrpProductOverview.Average(x => x.TotalDefect);
+                if(resultGrpProductOverview.Count == 0)
+                {
+                    ViewBag.SumEmployee = 0;
+                    ViewBag.AvgCapHr = 0;
+                    ViewBag.AvgEFFhr1 = 0;
+                    ViewBag.AvgEFFhr2 = 0;
+                    ViewBag.AvgEFFhr3 = 0;
+                    ViewBag.DefectAll = 0; 
+                }
+                else
+                {
+                    ViewBag.SumEmployee = resultGrpProductOverview.Sum(x => x.SumEmp);
+                    ViewBag.AvgCapHr = resultGrpProductOverview.Average(x => x.CapHr);
+                    ViewBag.AvgEFFhr1 = resultGrpProductOverview.Average(x => x.EFFhr1);
+                    ViewBag.AvgEFFhr2 = resultGrpProductOverview.Average(x => x.EFFhr2);
+                    ViewBag.AvgEFFhr3 = resultGrpProductOverview.Average(x => x.EFFhr3);
+                    ViewBag.DefectAll = resultGrpProductOverview.Average(x => x.TotalDefect);
+                }
+                //ViewBag.SumEmployee = resultGrpProductOverview.Sum(x => x.SumEmp);
+                //ViewBag.AvgCapHr = resultGrpProductOverview.Average(x => x.CapHr);
+                //ViewBag.AvgEFFhr1 = resultGrpProductOverview.Average(x => x.EFFhr1);
+                //ViewBag.AvgEFFhr2 = resultGrpProductOverview.Average(x => x.EFFhr2);
+                //ViewBag.AvgEFFhr3 = resultGrpProductOverview.Average(x => x.EFFhr3);
+                //ViewBag.DefectAll = resultGrpProductOverview.Average(x => x.TotalDefect);
 
                 /////////////////// 2 Group Bar Chart Line Overview
                 var resultGrpLineOverview = (from summary in db.View_EFFReport
