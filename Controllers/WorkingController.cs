@@ -4797,8 +4797,8 @@ namespace Plims.Controllers
 
                     foreach(int item in TransactionID)
                     {
-                        var QREmp = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.TransactionID.Equals(TransactionID)).Select(x=>x.QRCode).ToList();
-                        int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp)).Count();
+                        var QREmp = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.TransactionID.Equals(item)).Select(x=>x.QRCode).SingleOrDefault();
+                        int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp) && x.DataType.Equals("Count")).Count();
                         sumQRCodeEmp += ProductionTrand;
 
                     }
@@ -4817,7 +4817,7 @@ namespace Plims.Controllers
                     string[] note;
                     if (sumQRCodeEmp != 0)
                     {
-                        var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                        var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.TransactionID.Equals(TransactionID[0])).Select(x => x.QRCode).ToList();
 
                         foreach (string item in EmpIDtran)
                         {
@@ -4829,7 +4829,7 @@ namespace Plims.Controllers
                                              x.SectionID.Equals(FGSection) &&
                                              x.Prefix.Equals(FGShift) &&
                                              x.QRCode.Equals(item) &&
-                                             x.DataType.Equals("Count"))
+                                             x.DataType.Equals("Count") )
                                  .ToList();
 
                             foreach (var transaction in ProdUpdate)
