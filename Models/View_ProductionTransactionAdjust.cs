@@ -40,7 +40,7 @@ namespace Plims.Models
         public int TotalPiece { get; set; }
 
         public decimal Yield { get; set; }
-
+        public decimal ALLDefect { get; set; }
 
     }
 }

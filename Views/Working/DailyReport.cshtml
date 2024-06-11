@@ -384,9 +384,9 @@
                     </td>
                     <td id="PeicePerHr">
                         @* Peice / Hr *@
-                        @Html.DisplayFor(modelItem => item.PiecePerHr)
+                        @Html.DisplayFor(modelItem => item.PcsPerHr)
                     </td>
-                    <td id="EFFManSTD" style="@(item.EffManPerSTD < item.PercentSTD ? "background-color: #FF4949;" : "background-color: #61FF41;")">
+                    <td id="EFFManSTD" style="@(item.EffManPerSTD < item.EFFSTD ? "background-color: #FF4949;" : "background-color: #61FF41;")">
                         @* Eff man STD *@
                         @Html.DisplayFor(modelItem => item.EffManPerSTD)
                     </td>

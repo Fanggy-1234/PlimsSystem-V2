@@ -1363,7 +1363,7 @@ namespace Plims.Controllers
                         sumTotalHr = sumTotalHr + item.DiffHours;
 
                         Sheet.Cells[string.Format("P{0}", row)].Value = item.YieldDefect;
-                        Sheet.Cells[string.Format("Q{0}", row)].Value = item.PiecePerHr;
+                        Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr;
 
                         Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD;
                         Sheet.Cells[string.Format("S{0}", row)].Value = item.Grade;
@@ -1483,7 +1483,7 @@ namespace Plims.Controllers
                             sumTotalHr = sumTotalHr + item.DiffHours;
 
                             Sheet.Cells[string.Format("P{0}", row)].Value = item.YieldDefect;
-                            Sheet.Cells[string.Format("Q{0}", row)].Value = item.PiecePerHr;
+                            Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr;
 
                             Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD;
                             Sheet.Cells[string.Format("S{0}", row)].Value = item.Grade;
@@ -2477,7 +2477,7 @@ namespace Plims.Controllers
                 db.SaveChanges();
 
 
-                return View("WorkingFunctionWithPackage", mymodel);
+                return View("WorkingFunction", mymodel);
             }
             catch (Exception ex)
             {
@@ -2555,7 +2555,7 @@ namespace Plims.Controllers
                 db.SaveChanges();
 
 
-                return View("WorkingFunctionWithPackage", mymodel);
+                return View("WorkingFunction", mymodel);
             }
             catch (Exception ex)
             {
@@ -4496,6 +4496,67 @@ namespace Plims.Controllers
                 CreateBy = EmpID
             });
               db.SaveChanges();
+
+            }
+            ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+            mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+            ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+            return View("ProductionTransactionAdjustByEmployee", mymodel);
+
+
+        }
+
+
+
+        public IActionResult ProductionTransactionAdjustDefectByEmployee(string DefectPlanDate, String DefectLine, String DefectSection, String DefectShift, int DefectQTY, string[] TransactionID)
+        {
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var mymodel = new ViewModelAll
+            {
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
+
+            };
+
+
+            //Check Duplicate
+            int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(DefectPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLine) && x.SectionID.Equals(DefectSection) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect")).ToList().Count();
+            if (checkDuplicate > 0)
+            {
+
+                //Update  TbProductionTransactionAdjust      
+                var TranDefectAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(DefectPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLine) && x.SectionID.Equals(DefectSection) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect")).SingleOrDefault();
+                TranDefectAdjust.QTY = DefectQTY;
+                db.SaveChanges();
+            }
+            else
+            {
+
+                // Table : TbProductionTransactionAdjust  Create
+                db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                {
+                    TransactionDate = Convert.ToDateTime(DefectPlanDate),
+                    PlantID = PlantID,
+                    LineID = DefectLine,
+                    SectionID = DefectSection,
+                    Prefix = DefectShift,
+                    Type = "Defect",
+                    QTY = DefectQTY,
+                    CreateDate = DateTime.Now,
+                    CreateBy = EmpID
+                });
+                db.SaveChanges();
 
             }
             ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();

@@ -37,7 +37,7 @@ namespace Plims.Models
      //   public string IncentiveID { get; set; }
     //    public string IncentiveName { get; set; }
         public decimal STD { get; set; }  //int  std
-        public decimal PercentSTD { get; set; }  //int  std
+        public decimal EFFSTD { get; set; }  //int  std
         public decimal Min { get; set; }
         public decimal Max { get; set; }
         public string Grade { get; set; }
@@ -51,7 +51,7 @@ namespace Plims.Models
         public decimal DiffHours { get; set; }
         [Column(TypeName = "decimal(18,3)")]
         public decimal PcsPerHr { get; set; }
-        public decimal PiecePerHr { get; set; }// change from int
+       // public decimal PiecePerHr { get; set; }// change from int
         public decimal EffManPerSTD { get; set; }
         public int FGQty { get; set; }
 
