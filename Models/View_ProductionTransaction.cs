@@ -21,6 +21,7 @@ namespace Plims.Models
         public string EmployeeName { get; set; }
         public int Qty { get; set; }
         public int QtyPerQR { get; set; }
+       // public decimal QtyPerQR { get; set; }
         public string DataType { get; set; }
         public string Reason { get; set; }
         public string Note { get; set; }

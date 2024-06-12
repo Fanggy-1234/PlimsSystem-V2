@@ -4972,7 +4972,7 @@ namespace Plims.Controllers
                     ProductID = obj.ProductName,
                     Unit = obj.Unit,
                     STD = Convert.ToDecimal(obj.STD),
-                    PercentSTD = Convert.ToDecimal(obj.PercentSTD),
+                    PercentSTD = 100, //Convert.ToDecimal(obj.PercentSTD),
                     PercentYield = Convert.ToDecimal(obj.PercentYield),
                     YieldIncentive = Convert.ToDecimal(obj.YieldIncentive),
                     EFFSTD = Convert.ToDecimal(obj.EFFSTD),
@@ -4981,7 +4981,7 @@ namespace Plims.Controllers
                     CreateBy = EmpID,//userdb.UserEmpID,
                     UpdateDate = DateTime.Now,
                     UpdateBy = EmpID//userdb.UserEmpID
-                }); ; ;
+                }) ;
                 db.SaveChanges();
 
             }
@@ -5229,7 +5229,7 @@ namespace Plims.Controllers
                 PLPSdb.ProductID = obj.ProductID;
                 PLPSdb.SectionID =obj.SectionID;
                 PLPSdb.STD = obj.STD;
-                PLPSdb.PercentSTD = obj.PercentSTD;
+                PLPSdb.PercentSTD = 100;// obj.PercentSTD;
                 PLPSdb.PercentYield = obj.PercentYield;
                 PLPSdb.YieldIncentive = obj.YieldIncentive;
                 PLPSdb.EFFSTD = obj.EFFSTD;
@@ -5338,11 +5338,11 @@ namespace Plims.Controllers
                 Sheet.Cells["D1"].Value = "SectionID";
                 Sheet.Cells["E1"].Value = "Unit";
                 Sheet.Cells["F1"].Value = "STD";
-                Sheet.Cells["G1"].Value = "%STD";
-                Sheet.Cells["H1"].Value = "%Yield";
-                Sheet.Cells["I1"].Value = "YieldIncentive";
-                Sheet.Cells["J1"].Value = "EFFSTD";
-                Sheet.Cells["K1"].Value = "Status";
+                //Sheet.Cells["G1"].Value = "%STD";
+                Sheet.Cells["G1"].Value = "%Yield";
+                Sheet.Cells["H1"].Value = "YieldIncentive";
+                Sheet.Cells["I1"].Value = "EFFSTD";
+                Sheet.Cells["J1"].Value = "Status";
                 int row = 2;
                 foreach (var item in collection)
                 {
@@ -5352,11 +5352,11 @@ namespace Plims.Controllers
                     Sheet.Cells[string.Format("D{0}", row)].Value = item.SectionID;
                     Sheet.Cells[string.Format("E{0}", row)].Value = item.Unit;
                     Sheet.Cells[string.Format("F{0}", row)].Value = item.STD;
-                    Sheet.Cells[string.Format("G{0}", row)].Value = item.PercentSTD;
-                    Sheet.Cells[string.Format("H{0}", row)].Value = item.PercentYield;
-                    Sheet.Cells[string.Format("I{0}", row)].Value = item.YieldIncentive;
-                    Sheet.Cells[string.Format("J{0}", row)].Value = item.EFFSTD;
-                    Sheet.Cells[string.Format("K{0}", row)].Value = item.Status;
+                    //Sheet.Cells[string.Format("G{0}", row)].Value = item.PercentSTD;
+                    Sheet.Cells[string.Format("G{0}", row)].Value = item.PercentYield;
+                    Sheet.Cells[string.Format("H{0}", row)].Value = item.YieldIncentive;
+                    Sheet.Cells[string.Format("I{0}", row)].Value = item.EFFSTD;
+                    Sheet.Cells[string.Format("J{0}", row)].Value = item.Status;
                     row++;
                 }
                 Sheet.Cells["A:AZ"].AutoFitColumns();
@@ -5379,11 +5379,11 @@ namespace Plims.Controllers
                 Sheet.Cells["D1"].Value = "SectionID";
                 Sheet.Cells["E1"].Value = "Unit";
                 Sheet.Cells["F1"].Value = "STD";
-                Sheet.Cells["G1"].Value = "%STD";
-                Sheet.Cells["H1"].Value = "%Yield";
-                Sheet.Cells["I1"].Value = "YieldIncentive";
-                Sheet.Cells["J1"].Value = "EFFSTD";
-                Sheet.Cells["K1"].Value = "Status";
+                //Sheet.Cells["G1"].Value = "%STD";
+                Sheet.Cells["G1"].Value = "%Yield";
+                Sheet.Cells["H1"].Value = "YieldIncentive";
+                Sheet.Cells["I1"].Value = "EFFSTD";
+                Sheet.Cells["J1"].Value = "Status";
                 int row = 2;
                 foreach (var item in collection)
                 {
@@ -5393,11 +5393,11 @@ namespace Plims.Controllers
                     Sheet.Cells[string.Format("D{0}", row)].Value = item.SectionID;
                     Sheet.Cells[string.Format("E{0}", row)].Value = item.Unit;
                     Sheet.Cells[string.Format("F{0}", row)].Value = item.STD;
-                    Sheet.Cells[string.Format("G{0}", row)].Value = item.PercentSTD;
-                    Sheet.Cells[string.Format("H{0}", row)].Value = item.PercentYield;
-                    Sheet.Cells[string.Format("I{0}", row)].Value = item.YieldIncentive;
-                    Sheet.Cells[string.Format("J{0}", row)].Value = item.EFFSTD;
-                    Sheet.Cells[string.Format("K{0}", row)].Value = item.Status;
+                    //Sheet.Cells[string.Format("G{0}", row)].Value = item.PercentSTD;
+                    Sheet.Cells[string.Format("G{0}", row)].Value = item.PercentYield;
+                    Sheet.Cells[string.Format("H{0}", row)].Value = item.YieldIncentive;
+                    Sheet.Cells[string.Format("I{0}", row)].Value = item.EFFSTD;
+                    Sheet.Cells[string.Format("J{0}", row)].Value = item.Status;
                     row++;
                 }
                 Sheet.Cells["A:AZ"].AutoFitColumns();
@@ -5516,11 +5516,11 @@ namespace Plims.Controllers
                                     DataDb.SectionID = SectionIDDb;
                                     DataDb.Unit = worksheet.Cells[row, 5].Text;
                                     DataDb.STD = decimal.Parse(worksheet.Cells[row, 6].Text);
-                                    DataDb.PercentSTD = decimal.Parse(worksheet.Cells[row, 7].Text);
-                                    DataDb.PercentYield = decimal.Parse(worksheet.Cells[row, 8].Text);
-                                    DataDb.YieldIncentive = decimal.Parse(worksheet.Cells[row, 9].Text);
-                                    DataDb.EFFSTD = decimal.Parse(worksheet.Cells[row,10].Text);
-                                    DataDb.Status = int.Parse(worksheet.Cells[row, 11].Text);
+                                    DataDb.PercentSTD = 100;// decimal.Parse(worksheet.Cells[row, 7].Text);
+                                    DataDb.PercentYield = decimal.Parse(worksheet.Cells[row, 7].Text);
+                                    DataDb.YieldIncentive = decimal.Parse(worksheet.Cells[row, 8].Text);
+                                    DataDb.EFFSTD = decimal.Parse(worksheet.Cells[row,9].Text);
+                                    DataDb.Status = int.Parse(worksheet.Cells[row, 10].Text);
                                     DataDb.UpdateDate = DateTime.Now;
                                     DataDb.UpdateBy = EmpID;
 
@@ -5552,11 +5552,11 @@ namespace Plims.Controllers
                                         SectionID = SectionIDDb,
                                         STD = decimal.Parse(worksheet.Cells[row, 6].Text),
                                         Unit = worksheet.Cells[row,5].Text,
-                                        PercentSTD = decimal.Parse(worksheet.Cells[row,7].Text),
-                                        PercentYield = decimal.Parse(worksheet.Cells[row,8].Text),
-                                        YieldIncentive = decimal.Parse(worksheet.Cells[row, 9].Text),
-                                        EFFSTD = decimal.Parse(worksheet.Cells[row, 10].Text),
-                                        Status = int.Parse(worksheet.Cells[row, 11].Text),
+                                        PercentSTD =100,// decimal.Parse(worksheet.Cells[row,7].Text),
+                                        PercentYield = decimal.Parse(worksheet.Cells[row,7].Text),
+                                        YieldIncentive = decimal.Parse(worksheet.Cells[row, 8].Text),
+                                        EFFSTD = decimal.Parse(worksheet.Cells[row, 9].Text),
+                                        Status = int.Parse(worksheet.Cells[row, 10].Text),
                                         CreateDate = DateTime.Now,
                                         CreateBy = EmpID,//User.Identity.Name;
                                         UpdateDate = DateTime.Now,
@@ -7351,10 +7351,11 @@ namespace Plims.Controllers
 
                             var LineDb = db.TbLine.Where(x => x.LineID.Equals(worksheet.Cells[row, 5].Text.Trim()) && x.PlantID.Equals(PlantID)).Select(x => x.LineID).SingleOrDefault();
                             //Check Product
-                          
+                            int shiftidvar = Convert.ToInt16(worksheet.Cells[row, 7].Text.Trim());
                             var SectionDb = db.TbSection.Where(x => x.SectionID.Equals(worksheet.Cells[row, 6].Text.Trim()) && x.PlantID.Equals(PlantID)).Select(x => x.SectionID).SingleOrDefault();
+                            var ShiftDbs = db.TbShift.Where(x => x.ShiftID.Equals(shiftidvar) && x.PlantID.Equals(PlantID)).Select(x => x.ShiftID).SingleOrDefault();
 
-                            var ShiftDb = db.TbShift.Where(x => x.ShiftID.Equals(worksheet.Cells[row, 7].Text.Trim()) && x.PlantID.Equals(PlantID)).Select(x => x.ShiftID).SingleOrDefault();
+                            var ShiftDb = db.TbShift.Where(x => x.ShiftID.Equals(shiftidvar) && x.PlantID.Equals(PlantID)).Select(x => x.ShiftID).SingleOrDefault();
                             var statuevar = worksheet.Cells[row, 8].Text;
                             bool isEmpty = string.IsNullOrWhiteSpace(statuevar);
                             bool isInt = int.TryParse(statuevar, out int result);
@@ -7363,9 +7364,11 @@ namespace Plims.Controllers
                             if (LineDb == null || SectionDb == null || ShiftDb == null  || ((isEmpty == true || isNotOneOrZero == true)))
                             {
                                 int rowerror = row - 1;
-                                TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake please check line or section Master ";
+                              //  TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake please check line or section Master ";
+                                return Json(new { success = false, message = "Data Row : " + rowerror + " =>  Mistake please check line or section Master. " });
+
                                 // ViewBag.Success = "Data Row : " + row + "=>  Mistake ";
-                                return RedirectToAction("EmployeeManagement");
+                              //  return RedirectToAction("EmployeeManagement");
 
                             }
 
@@ -7396,13 +7399,15 @@ namespace Plims.Controllers
                                 x.LineID.Equals(LineDb) &&
                                 x.SectionID.Equals(SectionDb)
                                 ).ToList();
-
+                                
                                 if (PLPSData.Count == 0)
                                 {
                                     int rowerror = row - 1;
-                                    TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake please add PLPS";
+                                    return Json(new { success = false, message = "Data Row : " + rowerror + " =>  Mistake please add PLPS. " });
+
+                                   // TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake please add PLPS";
                                     // ViewBag.Success = "Data Row : " + row + "=>  Mistake ";
-                                    return RedirectToAction("EmployeeManagement");
+                                   // return RedirectToAction("EmployeeManagement");
                                 }
                                 else
                                 {

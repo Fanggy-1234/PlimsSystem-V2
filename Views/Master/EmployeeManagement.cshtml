@@ -884,9 +884,9 @@
                 processData: false,
                 contentType: false,  // Set this to false when using FormData
                 data: formData,
-                success: function (data, status, xhr) {
+                success: function (response) {
                     // Handle success
-                    console.log(data);
+                    alert(response.message);
                     location.reload();
                     // Trigger the download process or perform other actions
                 },

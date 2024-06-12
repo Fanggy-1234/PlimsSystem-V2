@@ -245,9 +245,9 @@
             <th>
                 STD
             </th>
-            <th>
+          @*   <th>
                 %STD
-            </th>
+            </th> *@
             <th>
                 %Yield
             </th>
@@ -293,9 +293,9 @@
                     <td id="STD">
                         @Html.DisplayFor(modelItem => item.STD)
                 </td>
-                    <td id="PercentSTD">
+                  @*   <td id="PercentSTD">
                     @Html.DisplayFor(modelItem => item.PercentSTD)
-                </td>
+                </td> *@
                     <td id="PercentYield">
                     @Html.DisplayFor(modelItem => item.PercentYield)
                 </td>
@@ -476,11 +476,11 @@
                         <input class="form-control" style="width:100%" list="STD" name="STD" id="STDCreate" required />
                     </div>
 
-                    <div class="mb-3">
+                  @*   <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">PercentSTD:</label>
                         <input class="form-control" list="PercentSTD" name="PercentSTD" id="PercentSTDCreate" required />
 
-                    </div>
+                    </div> *@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">PercentYield:</label>
                         <input class="form-control"  name="PercentYield" id="PercentYieldCreate" required />
@@ -578,11 +578,11 @@
 
                     </div>
 
-                    <div class="mb-3">
+                    @* <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">PercentSTD:</label>
                         <input class="form-control" name="PercentSTD" id="ModalPercentSTD" required />
 
-                    </div>
+                    </div> *@
 
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">PercentYield:</label>

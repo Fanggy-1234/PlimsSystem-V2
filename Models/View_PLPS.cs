@@ -11,7 +11,8 @@ namespace Plims.Models
         public string SectionName { get; set; }
         public string LineName { get; set; }
         public string Size { get; set; }
-        public Nullable<int> QTYPerQRCode { get; set; }
+      //  public decimal QTYPerQRCode { get; set; }
+        public int QTYPerQRCode { get; set; }
         public string Unit { get; set; }
         public Nullable<int> Status { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }

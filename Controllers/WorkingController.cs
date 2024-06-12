@@ -1448,6 +1448,8 @@ namespace Plims.Controllers
                         decimal sumTotalHr = 0;
                         int sumTotalYield = 0;
                         decimal sumTotalWage = 0;
+                        decimal SumPercentYield = 0;
+                        int sumTotalActualFG = 0;
                         foreach (var item in collection)
                         {
                             Sheet.Cells[string.Format("A{0}", row)].Value = item.PlantID;
@@ -1472,8 +1474,8 @@ namespace Plims.Controllers
                             Sheet.Cells[string.Format("L{0}", row)].Value = 0;  //Total defect adjust
                             sumTotalDefectAll = sumTotalDefectAll + 0;
 
-                            Sheet.Cells[string.Format("M{0}", row)].Value = 0;  //Actual FG
-                            sumTotalDefectAll = sumTotalDefectAll + 0;
+                            Sheet.Cells[string.Format("M{0}", row)].Value = 0;  //ActualFG
+                            sumTotalActualFG = sumTotalActualFG + 0;
 
                             Sheet.Cells[string.Format("N{0}", row)].Value = 0;  //Total Piece
                             sumTotalDefectAll = sumTotalDefectAll + 0;
@@ -1483,6 +1485,8 @@ namespace Plims.Controllers
                             sumTotalHr = sumTotalHr + item.DiffHours;
 
                             Sheet.Cells[string.Format("P{0}", row)].Value = item.YieldDefect;
+                            SumPercentYield = SumPercentYield + item.YieldDefect;
+
                             Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr;
 
                             Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD;
@@ -1501,6 +1505,7 @@ namespace Plims.Controllers
                         Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice;
                         Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect;
                         Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll;
+                        Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG;
 
                         Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr;//DiffHours
                         Sheet.Cells[string.Format("P{0}", row)].Value = (sumTotalPeice - sumTotalDefect) / sumTotalPeice * 100; //YieldDefect
@@ -1694,7 +1699,8 @@ namespace Plims.Controllers
                                                 Prefix = objEmp.Prefix,
                                                 QRCode = employeeId,
                                                 Qty = 1,
-                                                QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
+                                                //QtyPerQR = Convert.ToDecimal(objPLPS.QTYPerQRCode),//Get from PLPS
+                                                QtyPerQR = Convert.ToInt16(objPLPS.QTYPerQRCode),//Get from PLPS
                                                 DataType = "Count",
                                                 Reason = "",
                                                 Note = "",

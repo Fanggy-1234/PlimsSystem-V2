@@ -11,7 +11,6 @@ namespace Plims.Models
         public string ShiftName { get; set; }
         public string StartTime { get; set; }
         public string EndTime { get; set; }
-        [Key]
         public int PlantID { get; set; }
         public int Status { get; set; }
         public DateTime CreateDate { get; set; }
