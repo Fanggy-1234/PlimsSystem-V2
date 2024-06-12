@@ -101,6 +101,12 @@ namespace Plims.Data
         public DbSet<TbProductionTransactionAdjust> TbProductionTransactionAdjust { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<TbProductionTransaction>()
+      .Property(p => p.QtyPerQR)
+      .HasColumnType("decimal(28, 8)");
+
+
             modelBuilder.Entity<View_PermissionMaster>()
                 .HasKey(v => new { v.PageID, v.UserEmpID });
 

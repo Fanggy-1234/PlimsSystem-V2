@@ -15,8 +15,8 @@ namespace Plims.Models
         public string Prefix { get; set; }
         public string QRCode { get; set; }
         public int Qty { get; set; }
-       // public decimal QtyPerQR { get; set; }
-        public int QtyPerQR { get; set; }
+        public decimal QtyPerQR { get; set; }
+      //  public int QtyPerQR { get; set; }
         public string DataType { get; set; }
         public string Reason { get; set; }
         public string Note { get; set; }

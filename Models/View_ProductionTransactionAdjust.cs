@@ -29,15 +29,16 @@ namespace Plims.Models
         public string SectionName { get; set; }
 
         public decimal WorkHr { get; set; }
-        public int QtyPerQR { get; set; }
+        [Column(TypeName = "decimal(28,8)")]
+        public decimal QtyPerQR { get; set; }
 
         public int CountQty { get; set; }
         public int FGInputQty { get; set; }  //int
         public int DefectQty { get; set; }  //int
         public int MinusQty { get; set; }  //int
 
-        public int FG { get; set; }  //int
-        public int TotalPiece { get; set; }
+        public decimal FG { get; set; }  //int
+        public decimal TotalPiece { get; set; }
 
         public decimal Yield { get; set; }
         public decimal ALLDefect { get; set; }

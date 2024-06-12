@@ -25,11 +25,11 @@ namespace Plims.Models
         public string SectionID { get; set; }
         public string SectionName { get; set; }
         public decimal ActualworkhourService { get; set; }
-        public decimal ProductSTD { get; set; }
-        public decimal PercentSTD { get; set; }
+        public decimal EFFSTD { get; set; }
+        public decimal STD { get; set; }
         public decimal PercentYield { get; set; }
         public decimal WorkinghourSTD { get; set; } // decimal
-        public int FinishGood { get; set; }
+        public decimal FinishGood { get; set; }
         public int Defect { get; set; }
         public string Unit { get; set; }
         public decimal EFF1 { get; set; } // decimal
@@ -54,7 +54,7 @@ namespace Plims.Models
 
         public decimal ValEffh1 { get; set; }
 
-        public int TotalDefect { get; set; }
+        public decimal TotalDefect { get; set; }
 
 
     }

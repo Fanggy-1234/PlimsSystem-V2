@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Plims.Models
 {
@@ -20,8 +21,9 @@ namespace Plims.Models
         public string QRCode { get; set; }
         public string EmployeeName { get; set; }
         public int Qty { get; set; }
-        public int QtyPerQR { get; set; }
-       // public decimal QtyPerQR { get; set; }
+        //  public int QtyPerQR { get; set; }
+        [Column(TypeName = "decimal(28,8)")]
+        public decimal QtyPerQR { get; set; }
         public string DataType { get; set; }
         public string Reason { get; set; }
         public string Note { get; set; }

@@ -1319,7 +1319,7 @@ namespace Plims.Controllers
 
                     int row = 2;
                     int sumTotalCount = 0;
-                    int sumTotalPeice = 0;
+                    decimal sumTotalPeice = 0;
                     int sumTotalDefect = 0;
                     decimal sumTotalDefectAll = 0;
                     decimal sumTotalActualFG = 0;
@@ -1442,7 +1442,7 @@ namespace Plims.Controllers
                         int row = 2;
 
                         int sumTotalCount = 0;
-                        int sumTotalPeice = 0;
+                        decimal sumTotalPeice = 0;
                         int sumTotalDefect = 0;
                         int sumTotalDefectAll = 0;
                         decimal sumTotalHr = 0;
@@ -1699,8 +1699,8 @@ namespace Plims.Controllers
                                                 Prefix = objEmp.Prefix,
                                                 QRCode = employeeId,
                                                 Qty = 1,
-                                                //QtyPerQR = Convert.ToDecimal(objPLPS.QTYPerQRCode),//Get from PLPS
-                                                QtyPerQR = Convert.ToInt16(objPLPS.QTYPerQRCode),//Get from PLPS
+                                               QtyPerQR = objPLPS.QTYPerQRCode,//Get from PLPS
+                                               // QtyPerQR = Convert.ToInt16(objPLPS.QTYPerQRCode),//Get from PLPS
                                                 DataType = "Count",
                                                 Reason = "",
                                                 Note = "",
@@ -3127,7 +3127,7 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
+              //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
                 view_EFFReport = db.View_EFFReport.Where(x=>x.PlantID == PlantID).ToList()
             };
 
@@ -3343,7 +3343,7 @@ namespace Plims.Controllers
 
                             worksheet.Cells[row, 4].Value = item.ProductName;
                             worksheet.Cells[row, 5].Value = item.Unit;
-                            worksheet.Cells[row, 6].Value = item.ProductSTD;
+                            worksheet.Cells[row, 6].Value = item.EFFSTD;
 
                             worksheet.Cells[row, 7].Value = item.WorkinghourSTD;
                             sumWorkinghourSTD += item.WorkinghourSTD;
@@ -3510,7 +3510,7 @@ namespace Plims.Controllers
 
                             worksheet.Cells[row, 4].Value = item.ProductName;
                             worksheet.Cells[row, 5].Value = item.Unit;
-                            worksheet.Cells[row, 6].Value = item.ProductSTD;
+                            worksheet.Cells[row, 6].Value = item.EFFSTD;
 
                             worksheet.Cells[row, 7].Value = item.WorkinghourSTD;
                             worksheet.Cells[row, 8].Value = item.WorkinghourACT;
@@ -4729,8 +4729,9 @@ namespace Plims.Controllers
                                 return View("ProductionTransactionAdjust", mymodel);
                             }
                             // Calculate FG/Count for QTYPerQR
-                            int QRPerAdjust = FGQTY / ProductionTrand;
-                            string[] note;
+                            decimal QRPerAdjust = Math.Round((decimal)FGQTY / ProductionTrand, 8);
+                
+                    string[] note;
                             if (ProductionTrand != 0)
                             {
                                 var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
@@ -4804,8 +4805,9 @@ namespace Plims.Controllers
                                 return View("ProductionTransactionAdjustByEmployee", mymodel);
                             }
                             // Calculate FG/Count for QTYPerQR
-                            int QRPerAdjustinsert = FGQTY / ProductionTrandinsert;
-                            if (ProductionTrandinsert != 0)
+                            decimal QRPerAdjustinsert = Math.Round((decimal)FGQTY / ProductionTrandinsert, 8);
+                 
+                    if (ProductionTrandinsert != 0)
                             {
                                 var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
 
@@ -4860,7 +4862,7 @@ namespace Plims.Controllers
                     db.SaveChanges();
 
                     //CountQRCode
-                    int sumQRCodeEmp = 0;
+                    decimal sumQRCodeEmp = 0;
 
                     foreach(int item in TransactionID)
                     {
@@ -4880,7 +4882,9 @@ namespace Plims.Controllers
                     }
 
                     // Calculate FG/Count for QTYPerQR
-                    int QRPerAdjust = FGQTY / sumQRCodeEmp;
+                    decimal QRPerAdjust = 0;
+                     //  QRPerAdjust =  FGQTY / sumQRCodeEmp;
+                            QRPerAdjust = Math.Round((decimal)FGQTY / sumQRCodeEmp, 8);
                     string[] note;
                     if (sumQRCodeEmp != 0)
                     {
@@ -4951,7 +4955,9 @@ namespace Plims.Controllers
 
                     foreach (int item in TransactionID)
                     {
-                        var QREmp = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.TransactionID.Equals(item)).Select(x => x.QRCode).SingleOrDefault();
+                        var QREmp = db.View_ProductionTransactionAdjust.Where(x => x.TransactionID.Equals(item)).Select(x => x.QRCode).SingleOrDefault();
+
+                        //var QREmp = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.TransactionID.Equals(item)).Select(x => x.QRCode).SingleOrDefault();
                         int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp)).Count();
                         sumQRCodeEmp += ProductionTrand;
 
@@ -4965,7 +4971,8 @@ namespace Plims.Controllers
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
                     }
                     // Calculate FG/Count for QTYPerQR
-                    int QRPerAdjustinsert = FGQTY / sumQRCodeEmp;
+                    decimal QRPerAdjustinsert = Math.Round((decimal)FGQTY / sumQRCodeEmp, 8);
+                   
                     if (sumQRCodeEmp != 0)
                     {
                         var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();

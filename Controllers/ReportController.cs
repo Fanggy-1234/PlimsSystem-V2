@@ -384,7 +384,7 @@ namespace Plims.Controllers
                                                     TotalDefect = grouped.Sum(x => x.TotalDefect),
 
                                                     //1st Graph
-                                                    EffSTD = grouped.Average(x => x.PercentSTD),
+                                                    EffSTD = grouped.Average(x => x.STD),
                                                     EffLine = grouped.Sum(x => x.EFF3),
 
                                                     //2nd Graph
@@ -394,9 +394,9 @@ namespace Plims.Controllers
                                                     //Table
                                                     ProductName = grouped.Key.ProductName,
                                                     SectionName = grouped.Key.SectionName,
-                                                    EffTarget = grouped.Average(x => x.PercentSTD),
+                                                    EffTarget = grouped.Average(x => x.STD),
                                                     EffAct = grouped.Sum(x => x.EFFhr3),
-                                                    DiffEff = (grouped.Sum(x => x.EFFhr3)) - (grouped.Average(x => x.PercentSTD)),
+                                                    DiffEff = (grouped.Sum(x => x.EFFhr3)) - (grouped.Average(x => x.STD)),
                                                     YieldTarget = grouped.Average(x => x.PercentYield),
                                                     YieldActual = grouped.Sum(x => x.YieldDefect),
                                                     DiffYield = (grouped.Sum(x => x.YieldDefect)) - (grouped.Average(x => x.PercentYield)) //YieldActual - YieldTarget
@@ -444,7 +444,7 @@ namespace Plims.Controllers
                                                  LineName = grouped.Key.LineName,
 
                                                  //1st Graph
-                                                 EffSTD = grouped.Average(x => x.PercentSTD),
+                                                 EffSTD = grouped.Average(x => x.STD),
                                                  EffLine = grouped.Sum(x => x.EFF3),
 
                                                  //2nd Graph

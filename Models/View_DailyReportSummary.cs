@@ -28,10 +28,11 @@ namespace Plims.Models
         public string SectionName { get; set; }
         public int CountQty { get; set; }  //int
         public int DefectQty { get; set; }  //int
-        public int FG_Count_Qty { get; set; }
+        public decimal FG_Count_Qty { get; set; }  //int
         [Column(TypeName = "decimal(18,3)")]
         public decimal YieldDefect { get; set; }
-        public int QtyPerQR { get; set; }
+       // public int QtyPerQR { get; set; }
+        public decimal QtyPerQR { get; set; }
         public string Reason { get; set; }
         public string Note { get; set; }
      //   public string IncentiveID { get; set; }
@@ -53,7 +54,7 @@ namespace Plims.Models
         public decimal PcsPerHr { get; set; }
        // public decimal PiecePerHr { get; set; }// change from int
         public decimal EffManPerSTD { get; set; }
-        public int FGQty { get; set; }
+        public decimal FGQty { get; set; } //int
 
         [Column(TypeName = "decimal(18,3)")]
         public decimal wage { get; set; }
@@ -61,7 +62,7 @@ namespace Plims.Models
         public decimal TotalDefect { get; set; }
 
         public decimal ActualFG { get; set; }
-        public int FGAdjust { get; set; }
+        public int FGAdjust { get; set; } //int
 
     }
 }
