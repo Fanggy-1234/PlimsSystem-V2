@@ -3195,7 +3195,7 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
+               // view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
                 view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).ToList()
             };
 
@@ -3207,7 +3207,7 @@ namespace Plims.Controllers
 
          
                 mymodel.view_EFFReport = db.View_EFFReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
-                return View(mymodel);
+                return View("EFFReport",mymodel);
             
 
         }
@@ -3233,7 +3233,7 @@ namespace Plims.Controllers
                     tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                     tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                     view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                    view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
+                  //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
                     view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).ToList()
 
                 };
@@ -3384,8 +3384,8 @@ namespace Plims.Controllers
                             worksheet.Cells[row, 19].Value = item.MEDh3;
                             sumMEDh3 += item.MEDh3;
 
-                            worksheet.Cells[row, 20].Value = item.ValEffh3;
-                            sumValEffh3 += item.ValEffh3;
+                            worksheet.Cells[row, 20].Value = item.ValueEFF3;
+                            sumValEffh3 += item.ValueEFF3;
 
                             worksheet.Cells[row, 21].Value = item.KPIh1;
                             sumKPIh1 += item.KPIh1;
@@ -3393,8 +3393,8 @@ namespace Plims.Controllers
                             worksheet.Cells[row, 22].Value = item.MEDh1;
                             sumMEDh1 += item.MEDh1;
 
-                            worksheet.Cells[row, 23].Value = item.ValEffh1;
-                            sumValEffh1 += item.ValEffh1;
+                            worksheet.Cells[row, 23].Value = item.ValueEFF1;
+                            sumValEffh1 += item.ValueEFF1;
                             row++;
                     }
 
@@ -3530,11 +3530,11 @@ namespace Plims.Controllers
 
 
                             worksheet.Cells[row, 19].Value = item.MEDh3;
-                            worksheet.Cells[row, 20].Value = item.ValEffh3;
+                            worksheet.Cells[row, 20].Value = item.ValueEFF3;
                             worksheet.Cells[row, 21].Value = item.KPIh1;
 
                             worksheet.Cells[row, 22].Value = item.MEDh1;
-                            worksheet.Cells[row, 23].Value = item.ValEffh1;
+                            worksheet.Cells[row, 23].Value = item.ValueEFF1;
 
                             row++;
                         }

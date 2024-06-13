@@ -175,7 +175,7 @@
                         @foreach (var item in Model.tbSection)
                         {
 
-                            <option value="@item.SectionID" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                            <option value="@item.SectionID" selected="@(item.SectionID == ViewBag.SelectedSectionName ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
                             </option>
                         }
@@ -193,7 +193,7 @@
     <div class="row" style="height:40px">
 
         <div class="col" style="width:15% ">
-            <button class="clear-button" type="submit" value="clear" action="EFFReportClear" name="submit">
+            <button class="clear-button" type="submit" value="clear" asp-action="EFFReportClear" name="submit">
                 Clear
             </button>
 
@@ -201,7 +201,7 @@
         <div class="col-8" style="width:55% ">
         </div>
         <div class="col" style="width:15% ">
-            <button class="search-button" type="submit" value="search" name="submit" action="EFFReport">
+            <button class="search-button" type="submit" value="search" name="submit" asp-action="EFFReport">
                 Search
             </button>
         </div>
@@ -275,7 +275,7 @@
 
                     <td>@Html.DisplayFor(modelItem => item.KPIh1)</td>
                     <td>@Html.DisplayFor(modelItem => item.MEDh1)</td>
-                    <td>@Html.DisplayFor(modelItem => item.ValEffh1)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ValueEFF1)</td>
             </tr>
          }
           

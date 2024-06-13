@@ -43,16 +43,17 @@ namespace Plims.Models
         public decimal EFFhr3 { get; set; }  // decimal
         public decimal YieldDefect { get; set; }
 
-        public decimal MEDEFF3 { get; set; }
-        public decimal ValueEFF3 { get; set; }
+       // public decimal MEDEFF3 { get; set; }
+   
 
         public decimal KPIh3 { get; set; }
         public decimal MEDh3 { get; set; }
-        public decimal ValEffh3 { get; set; }
+        public decimal ValueEFF3 { get; set; }
+
         public decimal KPIh1 { get; set; }
         public decimal MEDh1 { get; set; }
 
-        public decimal ValEffh1 { get; set; }
+        public decimal ValueEFF1 { get; set; }
 
         public decimal TotalDefect { get; set; }
 
