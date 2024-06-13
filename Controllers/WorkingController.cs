@@ -1302,7 +1302,7 @@ namespace Plims.Controllers
                     Sheet.Cells["K1"].Value = "Total Defect Real Time Employee";
                     Sheet.Cells["L1"].Value = "Total Defect Adjust";
                     Sheet.Cells["M1"].Value = "Actual FG ";
-                    Sheet.Cells["N1"].Value = "TotalPiece";
+                    Sheet.Cells["N1"].Value = "TotalPiece Adjust";
 
                     Sheet.Cells["O1"].Value = "Work Hours";
                     Sheet.Cells["P1"].Value = " % Yield";
@@ -1327,6 +1327,8 @@ namespace Plims.Controllers
                     decimal sumTotalHr = 0;
                     int sumTotalYield = 0;
                     decimal sumTotalWage = 0;
+                    int sumTotalFGAdjust = 0;
+
                     foreach (var item in collection)
                     {
 
@@ -1355,8 +1357,8 @@ namespace Plims.Controllers
                         Sheet.Cells[string.Format("M{0}", row)].Value = item.ActualFG;  //Actual FG
                         sumTotalActualFG = sumTotalActualFG + item.ActualFG;
 
-                        Sheet.Cells[string.Format("N{0}", row)].Value = 0;  //Total Piece
-                        sumTotalDefectAll = sumTotalDefectAll + 0;
+                        Sheet.Cells[string.Format("N{0}", row)].Value = item.FGAdjust;  //Total Piece
+                        sumTotalFGAdjust = sumTotalFGAdjust + 0;
 
 
                         Sheet.Cells[string.Format("O{0}", row)].Value = item.DiffHours;
@@ -1378,6 +1380,8 @@ namespace Plims.Controllers
                     Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice;
                     Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect;
                     Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll;
+                    Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG;
+                    Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust;
 
                     Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr;//DiffHours
                     Sheet.Cells[string.Format("P{0}", row)].Value = (sumTotalPeice- sumTotalDefect) / sumTotalPeice *100; //YieldDefect
@@ -1423,7 +1427,7 @@ namespace Plims.Controllers
                         Sheet.Cells["K1"].Value = "Total Defect Real Time Employee";
                         Sheet.Cells["L1"].Value = "Total Defect Adjust";
                         Sheet.Cells["M1"].Value = "Actual FG ";
-                        Sheet.Cells["N1"].Value = "TotalPiece";
+                        Sheet.Cells["N1"].Value = "TotalPiece Adjust";
 
                         Sheet.Cells["O1"].Value = "Work Hours";
                         Sheet.Cells["P1"].Value = " % Yield";
@@ -1444,12 +1448,14 @@ namespace Plims.Controllers
                         int sumTotalCount = 0;
                         decimal sumTotalPeice = 0;
                         int sumTotalDefect = 0;
-                        int sumTotalDefectAll = 0;
+                        decimal sumTotalDefectAll = 0;
                         decimal sumTotalHr = 0;
                         int sumTotalYield = 0;
                         decimal sumTotalWage = 0;
                         decimal SumPercentYield = 0;
-                        int sumTotalActualFG = 0;
+                        decimal sumTotalActualFG = 0;
+                        decimal sumTotalFGAdjust = 0;
+
                         foreach (var item in collection)
                         {
                             Sheet.Cells[string.Format("A{0}", row)].Value = item.PlantID;
@@ -1471,14 +1477,14 @@ namespace Plims.Controllers
                             Sheet.Cells[string.Format("K{0}", row)].Value = item.DefectQty;
                             sumTotalDefect = sumTotalDefect + item.DefectQty;
 
-                            Sheet.Cells[string.Format("L{0}", row)].Value = 0;  //Total defect adjust
-                            sumTotalDefectAll = sumTotalDefectAll + 0;
+                            Sheet.Cells[string.Format("L{0}", row)].Value = item.TotalDefect;  //Total defect adjust
+                            sumTotalDefectAll = sumTotalDefectAll + item.TotalDefect;
 
-                            Sheet.Cells[string.Format("M{0}", row)].Value = 0;  //ActualFG
-                            sumTotalActualFG = sumTotalActualFG + 0;
+                            Sheet.Cells[string.Format("M{0}", row)].Value = item.ActualFG;  //ActualFG
+                            sumTotalActualFG = sumTotalActualFG + item.ActualFG;
 
-                            Sheet.Cells[string.Format("N{0}", row)].Value = 0;  //Total Piece
-                            sumTotalDefectAll = sumTotalDefectAll + 0;
+                            Sheet.Cells[string.Format("N{0}", row)].Value = item.FGAdjust;  //Total Piece
+                            sumTotalFGAdjust = sumTotalFGAdjust + item.FGAdjust;
 
 
                             Sheet.Cells[string.Format("O{0}", row)].Value = item.DiffHours;
@@ -1506,6 +1512,7 @@ namespace Plims.Controllers
                         Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect;
                         Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll;
                         Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG;
+                        Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust;
 
                         Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr;//DiffHours
                         Sheet.Cells[string.Format("P{0}", row)].Value = (sumTotalPeice - sumTotalDefect) / sumTotalPeice * 100; //YieldDefect
@@ -2830,7 +2837,7 @@ namespace Plims.Controllers
 
                         int dateStartColumn = 3;
                         decimal[] sumByDate = new decimal[dateRange.Count];
-
+                        decimal sumtotalall = 0;
                         for (int i = 0; i < dateRange.Count; i++)
                         {
                             worksheet.Cells[2, dateStartColumn + i].Value = dateRange[i].ToString("dd/MM/yy");
@@ -2863,7 +2870,7 @@ namespace Plims.Controllers
 
                                 decimal totalIncentive = 0;
                                 //decimal totalIncentivedate = 0;
-
+                                
                                 for (int i = 0; i < dateRange.Count; i++)
                                 {
                                     var date = dateRange[i];
@@ -2874,6 +2881,7 @@ namespace Plims.Controllers
                                     totalIncentive += matchingTransaction != null ? matchingTransaction.TotalIncentive : 0;
                                    // totalIncentivedate += incentive;
                                     sumByDate[i] += incentive;
+                                    sumtotalall += incentive;
                                 }
 
                                 worksheet.Cells[row, dateStartColumn + dateRange.Count].Value = totalIncentive.ToString("0.00");
@@ -2890,7 +2898,9 @@ namespace Plims.Controllers
                                 worksheet.Cells[row, dateStartColumn + i].Value = sumByDate[i].ToString("0.00");
                                 worksheet.Cells[row, dateStartColumn + i].Style.Font.Bold = true;
                             }
-                            worksheet.Cells[row, dateStartColumn + dateRange.Count].Formula = $"SUM({worksheet.Cells[3, dateStartColumn + dateRange.Count].Address}:{worksheet.Cells[row - 1, dateStartColumn + dateRange.Count].Address})";
+
+                            worksheet.Cells[row, dateStartColumn + dateRange.Count].Value = sumtotalall;
+                           // worksheet.Cells[row, dateStartColumn + dateRange.Count].Formula = $"SUM({worksheet.Cells[3, dateStartColumn + dateRange.Count].Address}:{worksheet.Cells[row - 1, dateStartColumn + dateRange.Count].Address})";
                             worksheet.Cells[row, dateStartColumn + dateRange.Count].Style.Font.Bold = true;
 
 
@@ -3504,6 +3514,7 @@ namespace Plims.Controllers
                         foreach (var item in collection)
                         {
 
+
                             worksheet.Cells[row, 1].Value = item.LineName;
                             worksheet.Cells[row, 2].Value = item.SectionName;
                             worksheet.Cells[row, 3].Value = item.ProductID;
@@ -3513,29 +3524,55 @@ namespace Plims.Controllers
                             worksheet.Cells[row, 6].Value = item.EFFSTD;
 
                             worksheet.Cells[row, 7].Value = item.WorkinghourSTD;
+                            sumWorkinghourSTD += item.WorkinghourSTD;
+
                             worksheet.Cells[row, 8].Value = item.WorkinghourACT;
+                            sumWorkinghourACT += item.WorkinghourACT;
+
                             worksheet.Cells[row, 9].Value = item.FinishGood;
+                            sumFinishGood += item.FinishGood;
 
                             worksheet.Cells[row, 10].Value = item.EFF1;
+                            sumEFF1 += item.EFF1;
+
                             worksheet.Cells[row, 11].Value = item.Servicehour;
+                            sumServicehour += item.Servicehour;
+
                             worksheet.Cells[row, 12].Value = item.Supporthour;
+                            sumSupporthour += item.Supporthour;
 
                             worksheet.Cells[row, 13].Value = item.EFF2;
+                            sumEFF2 += item.EFF2;
+
                             worksheet.Cells[row, 14].Value = item.EFF3;
+                            sumEFF3 += item.EFF3;
+
                             worksheet.Cells[row, 15].Value = item.EFFhr1;
+                            sumEFFhr1 += item.EFFhr1;
 
                             worksheet.Cells[row, 16].Value = item.EFFhr2;
-                            worksheet.Cells[row, 17].Value = item.EFFhr3;
-                            worksheet.Cells[row, 18].Value = item.KPIh3;
+                            sumEFFhr2 += item.EFFhr2;
 
+                            worksheet.Cells[row, 17].Value = item.EFFhr3;
+                            sumEFFhr3 += item.EFFhr3;
+
+                            worksheet.Cells[row, 18].Value = item.KPIh3;
+                            sumKPIh3 += item.KPIh3;
 
                             worksheet.Cells[row, 19].Value = item.MEDh3;
+                            sumMEDh3 += item.MEDh3;
+
                             worksheet.Cells[row, 20].Value = item.ValueEFF3;
+                            sumValEffh3 += item.ValueEFF3;
+
                             worksheet.Cells[row, 21].Value = item.KPIh1;
+                            sumKPIh1 += item.KPIh1;
 
                             worksheet.Cells[row, 22].Value = item.MEDh1;
-                            worksheet.Cells[row, 23].Value = item.ValueEFF1;
+                            sumMEDh1 += item.MEDh1;
 
+                            worksheet.Cells[row, 23].Value = item.ValueEFF1;
+                            sumValEffh1 += item.ValueEFF1;
                             row++;
                         }
 

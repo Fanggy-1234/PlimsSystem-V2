@@ -26,7 +26,7 @@ namespace Plims.Models
         public string ProductID { get; set; }
         public string ProductName { get; set; }
         public string Unit { get; set; }
-        public int QTYPerQRCode { get; set; }
+        public decimal QTYPerQRCode { get; set; }
         public int FormularID { get; set; }
         public string QRCode { get; set; }
         public string EmployeeName { get; set; }
@@ -36,9 +36,9 @@ namespace Plims.Models
         public string EndTime { get; set; }
         public string  Reason { get; set; }
         public string  Note { get; set; }
-        public int TotalCountQty { get; set; }
+        public decimal TotalCountQty { get; set; }
         public int TotalFGQty { get; set; }
-        public int TotalQty { get; set; }
+        public decimal TotalQty { get; set; }
         public int Defect { get; set; }
         public decimal ProductSTD { get; set; }
         public decimal PercentSTD { get; set; }

@@ -634,7 +634,7 @@ namespace Plims.Controllers
                     }
                     else 
                     {
-                        TempData["AlertMessage"] = "Please Contact IT : Check data in database !";
+                        TempData["AlertMessage"] = "Please Contact IT : Check data in database some transaction not clock out!";
                         return RedirectToAction("EmployeeClockOut");
 
                     }
