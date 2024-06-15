@@ -131,7 +131,7 @@ namespace Plims.Controllers
                         if (objPLPS != null)
                         {
                             var LastTransactionTime = db.TbProductionTransaction
-                           .Where(x => x.QRCode.Equals(employeeId) && x.TransactionDate.Date == currentDate)
+                           .Where(x => x.QRCode.Equals(employeeId) && x.CreateDate.Date == currentDate)
                            .OrderByDescending(x => x.CreateDate)
                            .Select(x => x.CreateDate.TimeOfDay)
                            .FirstOrDefault();
@@ -1680,7 +1680,7 @@ namespace Plims.Controllers
                                     if (objPLPS != null)
                                     {
                                         var LastTransactionTime = db.TbProductionTransaction
-                                       .Where(x => x.QRCode.Equals(employeeId) && x.TransactionDate.Date == currentDate)
+                                       .Where(x => x.QRCode.Equals(employeeId) && x.CreateDate.Date == currentDate)
                                        .OrderByDescending(x => x.CreateDate)
                                        .Select(x => x.CreateDate.TimeOfDay)
                                        .FirstOrDefault();
@@ -1759,7 +1759,8 @@ namespace Plims.Controllers
                             //Select EmployeeTransaction
                             var objEmp = db.View_ClockTime
                             .Where(x => x.EmployeeID.Equals(item.EmployeeID) &&
-                                        x.TransactionDate.Date == currentDate &&
+                                         (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) &&
+                                         x.ClockOut == "" &&
                                         x.PlantID.Equals(PlantID))
                             .FirstOrDefault();
 
@@ -1787,7 +1788,7 @@ namespace Plims.Controllers
                                 if (objPLPS != null)
                                 {
                                     var LastTransactionTime = db.TbProductionTransaction
-                                   .Where(x => x.QRCode.Equals(objEmp.EmployeeID) && x.TransactionDate.Date == currentDate)
+                                   .Where(x => x.QRCode.Equals(objEmp.EmployeeID) && x.CreateDate.Date == currentDate)
                                    .OrderByDescending(x => x.CreateDate)
                                    .Select(x => x.CreateDate.TimeOfDay)
                                    .FirstOrDefault();
@@ -1945,7 +1946,7 @@ namespace Plims.Controllers
                                 if (objPLPS != null && objproductSTD != null)
                                 {
                                     var LastTransactionTime = db.TbProductionTransaction
-                                   .Where(x => x.QRCode.Equals(employeeId) && x.TransactionDate.Date == currentDate)
+                                   .Where(x => x.QRCode.Equals(employeeId) && x.CreateDate.Date == currentDate)
                                    .OrderByDescending(x => x.CreateDate)
                                    .Select(x => x.CreateDate.TimeOfDay)
                                    .FirstOrDefault();
@@ -2052,7 +2053,7 @@ namespace Plims.Controllers
                                     if (objPLPS != null)
                                     {
                                         var LastTransactionTime = db.TbProductionTransaction
-                                       .Where(x => x.QRCode.Equals(objEmp.EmployeeID) && x.TransactionDate.Date == currentDate)
+                                       .Where(x => x.QRCode.Equals(objEmp.EmployeeID) && x.CreateDate.Date == currentDate)
                                        .OrderByDescending(x => x.CreateDate)
                                        .Select(x => x.CreateDate.TimeOfDay)
                                        .FirstOrDefault();
@@ -2359,8 +2360,8 @@ namespace Plims.Controllers
             // For demonstration purposes, let's assume you have a method to get section and unit
             var objEmp = db.TbEmployeeTransaction
                         .Where(x => x.EmployeeID.Equals(employeeID) &&
-                                    x.TransactionDate.Date == currentDate &&
-                                    x.Plant.Equals(PlantID))
+                                     (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+                             x.Plant.Equals(PlantID))
                         .OrderByDescending(x => x.TransactionNo)
                         .FirstOrDefault();
 
@@ -2395,7 +2396,7 @@ namespace Plims.Controllers
             // For demonstration purposes, let's assume you have a method to get section and unit
             var objEmp = db.TbEmployeeTransaction
                         .Where(x => x.EmployeeID.Equals(employeeID) &&
-                                    x.TransactionDate.Date == currentDate &&
+                                    (x.TransactionDate.Date == currentDate || (x.TransactionDate == currentDate.AddDays(-1) && x.ClockOut == "") ) &&
                                     x.Plant.Equals(PlantID))
                         .OrderByDescending(x => x.TransactionNo)
                         .FirstOrDefault();
@@ -2447,11 +2448,23 @@ namespace Plims.Controllers
             try
             {
 
+                var empsectioncount = db.View_ClockTime
+                 .Where(x => x.EmployeeID.Equals(employeeID) &&
+                              (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+                            x.PlantID.Equals(PlantID)).ToList();
+
+                if (empsectioncount.Count() > 1)
+                {
+
+                    return Json(new { success = false, message = "Please contact IT some data not clock out.Please check. : " + employeeID });
+                }
+
+
 
                 var objEmp = db.View_ClockTime
                    .Where(x => x.EmployeeID.Equals(employeeID) &&
-                               x.TransactionDate.Date == currentDate &&
-                               x.PlantID.Equals(PlantID))
+                                (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+                              x.PlantID.Equals(PlantID))
                    .FirstOrDefault();
 
                 var objPLPS = db.View_PLPS
@@ -2467,7 +2480,7 @@ namespace Plims.Controllers
                 db.TbProductionTransaction.Add(new TbProductionTransaction()
                 {
                     // TransactionNo = db.TbProductionTransaction.Count() + 1,
-                    TransactionDate = DateTime.Now,
+                    TransactionDate = objEmp.TransactionDate,
                     PlantID = PlantID,
                     LineID = objEmp.LineID,
                     SectionID = objEmp.SectionID,
@@ -2525,9 +2538,20 @@ namespace Plims.Controllers
             try
             {
 
+                var empsectioncount = db.View_ClockTime
+               .Where(x => x.EmployeeID.Equals(employeeID) &&
+                            (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+                          x.PlantID.Equals(PlantID)).ToList();
+
+                if (empsectioncount.Count() > 1)
+                {
+
+                    return Json(new { success = false, message = "Please contact IT some data not clock out.Please check. : " + employeeID });
+                }
+
                 var objEmp = db.View_ClockTime
                    .Where(x => x.EmployeeID.Equals(employeeID) &&
-                               x.TransactionDate.Date == currentDate &&
+                              (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
                                x.PlantID.Equals(PlantID))
                    .FirstOrDefault();
 
@@ -2545,7 +2569,7 @@ namespace Plims.Controllers
                 db.TbProductionTransaction.Add(new TbProductionTransaction()
                 {
                     // TransactionNo = db.TbProductionTransaction.Count() + 1,
-                    TransactionDate = DateTime.Now,
+                    TransactionDate = objEmp.TransactionDate,
                     PlantID = PlantID,
                     LineID = objEmp.LineID,
                     SectionID = objEmp.SectionID,
@@ -4180,7 +4204,7 @@ namespace Plims.Controllers
             var empsection = db.View_EmployeeClocktime
                 .Where(x => x.EmployeeID == selectedEmpID
                             && x.PlantID.Equals(PlantID)
-                            && x.TransactionDate == DateTime.Today
+                            && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
                             && x.ClockIn != ""
                             && x.ClockOut == "")
                 .SingleOrDefault();
@@ -4209,15 +4233,28 @@ namespace Plims.Controllers
             // var emp = db.View_EmployeeClocktime.Where(x=>x.EmployeeID == selectedEmpID && x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today ).ToList();
 
             // Query with time-based filtering in addition to date and other conditions
+
+            var empsectioncount = db.View_EmployeeClocktime
+               .Where(x => x.EmployeeID.Equals(selectedEmpID)
+                           && x.PlantID.Equals(PlantID)
+                           && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
+                           && x.ClockIn != ""
+                           && x.ClockOut == "")
+               .ToList();
+
+            if(empsectioncount.Count() > 1)
+            {
+
+                return Json(new { success = false, message = "Please contact IT some data not clock out.Please check. : " + selectedEmpID });
+            }
+
             var empsection = db.View_EmployeeClocktime
                 .Where(x => x.EmployeeID.Equals(selectedEmpID)
                             && x.PlantID.Equals(PlantID)
-                            && x.TransactionDate == DateTime.Today
+                            && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
                             && x.ClockIn != ""
                             && x.ClockOut == "")
                 .SingleOrDefault();
-
-
 
             var groupedProducts = db.View_PLPS
                  .Where(x => x.SectionID.Equals(empsection.SectionID) && x.LineID.Equals(empsection.LineID))
@@ -4227,6 +4264,7 @@ namespace Plims.Controllers
                      ProductID = group.Key.ProductID,
                      ProductName = group.Key.ProductName
                  }).ToList();
+
             return Json(groupedProducts);
         }
 

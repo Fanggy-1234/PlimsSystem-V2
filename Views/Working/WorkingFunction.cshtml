@@ -1,7 +1,8 @@
-﻿  @model Plims.ViewModel.ViewModelAll
+﻿@model Plims.ViewModel.ViewModelAll
 @{
     ViewBag.Title = "Working Function [key]";
 }
+
 <style type="text/css">
 
     /* The container */
@@ -147,8 +148,10 @@
 
 </style>
 
+
+
 <div class="row" style="height:10px"></div>
-<h2 class="page-name">Working Function [Key]</h2>
+<h2 class="page-name">Working Function [Keys]</h2>
 <div class="row" style="height:30px"> </div>
 
 <div class="row" style="height:300px">
@@ -258,10 +261,10 @@
 
 @* ************************ Modal ************************************* *@
 @*FG Create*@
-<div class="modal fade" id="FGModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ <div class="modal fade" id="FGModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" controller="Working" action="ProductQTYPieceWithRef">
+            <form method="post" asp-controller="Working" asp-action="ProductQTYPieceWithRef">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Product QTY Piece</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -320,14 +323,21 @@
             </form>
         </div>
     </div>
-</div>
+</div> 
+
+
+
+
+
+
+
 
 
 @*Defect Create*@
 <div class="modal fade" id="DefectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" controller="Working" action="ProductQtyDefectWithRef">
+            <form method="post" asp-controller="Working" asp-action="ProductQtyDefectWithRef">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Input Defect</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -335,9 +345,9 @@
                 <div class="modal-body">
 
                     <div class="mb-3">
-                        <label for="recipient-name" class="col-form-label">Employee ID:</label>
-                        <input class="form-control" name="EmployeeID" id="EmployeeIDDefect" placeholder="Scan QR Code" onchange="filterSectionsByProductEdit()">
-
+                    <label for="recipient-name" class="col-form-label">Employee ID:</label>
+                    <input class="form-control" name="EmployeeID" id="EmployeeIDDefect" placeholder="Scan QR Code" onchange="filterSectionsByProductEdit()"/>
+                       
                     </div>
 
                     <div class="mb-3">
@@ -405,16 +415,13 @@
             </form>
         </div>
     </div>
-</div>
-
-
-
+</div> 
 
 @*minus Create*@
 <div class="modal fade" id="SpecialModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" controller="Working" action="ProductQtySpeialMinus">
+            <form method="post" asp-controller="Working" asp-action="ProductQtySpeialMinus">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">เรียงสุก FinalProdcess</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -460,7 +467,7 @@
     </div>
 </div>
 
-<script>
+<script type="text/javascript">
 
     // Modal FG
     $(document).ready(function () {
@@ -512,7 +519,7 @@
 
 </script>
 
-<script>
+<script type="text/javascript">
 
     $(document).ready(function () {
 
@@ -567,42 +574,8 @@
 </script>
 
 
-<script>
-    // $(document).ready(function () {
-    //     $('#EmployeeID').on('input', function () {
-    //         var employeeId = $(this).val(); // Fetch value using $(this)
-    //         var productId = $('#ProductID').val();
-    //         var PackageRef = $('#PackageRef').val();
-    //       //  console.log(employeeId);
-    //         if (employeeId.trim() !== '') {
-    //             // AJAX request to the controller
-    //             $.ajax({
-    //                 url: '/Working/WorkingFunctionCreateWithRef',
-    //                 type: 'GET',
-    //                 data: { employeeId: employeeId, productId: productId, PackageRef: PackageRef },
-    //                 success: function (section) {
-    //                     if (section == "EmployeeRefSectionEnabled") {
-    //                         $('#EmployeeRefsection').prop('disabled', false);
-    //                         $('#EmployeeRefsection').val('');
-    //                         $('#EmployeeRefsection').focus();
-    //                     } else {
-    //                         $('#EmployeeRefsection').prop('disabled', true);
-    //                         $('#SectionName').val(section);
-    //                         $('#EmployeeID').val("");
-    //                         $('#EmployeeID').focus();
-
-
-    //                     }
-    //                     $('#EmployeeRefsection').val(''); // Clear EmployeeRefSection input
-    //                 },
-    //                 error: function () {
-    //                     console.log('Error occurred while fetching section.');
-    //                 }
-    //             });
-    //         }
-    //     });
-
-
+<script type="text/javascript">
+   
 
     $('#EmployeeRefsection').on('input', function () {
         var employeeId = $('#EmployeeID').val(); // Fetch EmployeeID value
@@ -610,6 +583,7 @@
         var EmployeeRef = $(this).val();
         insertIntoTbProductionTransaction(employeeId, productId, EmployeeRef);
     });
+
 
     function insertIntoTbProductionTransaction(employeeId, productId, EmployeeRef) {
         $.ajax({
@@ -634,61 +608,64 @@
 
 
 
-    $(document).ready(function () {
-        function toggleRadioInputs(enable) {
-            $("#PackageRadio, #EmployeeRadio").prop("disabled", !enable);
-        }
+    // $(document).ready(function () {
+    //     function toggleRadioInputs(enable) {
+    //         $("#PackageRadio, #EmployeeRadio").prop("disabled", !enable);
+    //     }
 
-        $("#PackageCheckbox").change(function () {
-            if ($(this).is(":checked")) {
-                // Enable Package radio and input
-                $("#PackageRadio").prop("disabled", false).prop("checked", true);
-                $("#PackageRef").prop("disabled", false);
-                // Uncheck Employee radio and disable input
-                //    $("#EmployeeRadio").prop("disabled", false).prop("checked", false);
-                //   $("#EmployeeRef").prop("disabled", true);
+    //     $("#PackageCheckbox").change(function () {
+    //         if ($(this).is(":checked")) {
+    //             // Enable Package radio and input
+    //             $("#PackageRadio").prop("disabled", false).prop("checked", true);
+    //             $("#PackageRef").prop("disabled", false);
+    //             // Uncheck Employee radio and disable input
+    //             //    $("#EmployeeRadio").prop("disabled", false).prop("checked", false);
+    //             //   $("#EmployeeRef").prop("disabled", true);
 
-            } else {
-                // Disable all radio buttons and inputs
-                toggleRadioInputs(false);
-                $("#PackageRef").prop("disabled", true).val("");
-                // $("#PackageRef, #EmployeeRef").prop("disabled", true).val("");
+    //         } else {
+    //             // Disable all radio buttons and inputs
+    //             toggleRadioInputs(false);
+    //             $("#PackageRef").prop("disabled", true).val("");
+    //             // $("#PackageRef, #EmployeeRef").prop("disabled", true).val("");
 
-            }
-        });
+    //         }
+    //     });
 
-        $("#PackageRadio").change(function () {
-            if ($(this).is(":checked")) {
-                // Enable Package input
-                $("#PackageRef").prop("disabled", false);
-                // Disable Employee input and uncheck its radio
-                //   $("#EmployeeRef").prop("disabled", true).val("");
-                //   $("#EmployeeRadio").prop("checked", false);
-            }
-        });
+    //     $("#PackageRadio").change(function () {
+    //         if ($(this).is(":checked")) {
+    //             // Enable Package input
+    //             $("#PackageRef").prop("disabled", false);
+    //             // Disable Employee input and uncheck its radio
+    //             //   $("#EmployeeRef").prop("disabled", true).val("");
+    //             //   $("#EmployeeRadio").prop("checked", false);
+    //         }
+    //     });
 
-        $("#EmployeeRadio").change(function () {
-            if ($(this).is(":checked")) {
-                // Enable Employee input
-                //  $("#EmployeeRef").prop("disabled", false);
-                // Disable Package input and uncheck its radio
-                $("#PackageRef").prop("disabled", true).val("");
-                $("#PackageRadio").prop("checked", false);
-            }
-        });
-    });
+    //     $("#EmployeeRadio").change(function () {
+    //         if ($(this).is(":checked")) {
+    //             // Enable Employee input
+    //             //  $("#EmployeeRef").prop("disabled", false);
+    //             // Disable Package input and uncheck its radio
+    //             $("#PackageRef").prop("disabled", true).val("");
+    //             $("#PackageRadio").prop("checked", false);
+    //         }
+    //     });
+    // });
 
     /// Fillter Create
     function filterReasonByProduct() {
+   
         // Clear previous options
-        $("#ReasonDefect").empty();;
+        $("#ReasonDefect").empty();
+
         // Add a default option
         $("#ReasonDefect").append("<option value='' default selected>Please Select ..</option>");
         // Get the selected Line ID
-
+     
         var selectedProductID = $("#ProductIDDefect").val().toString();
         // Check if a line is selected
         //     alert(selectedProductID);
+      
         if (selectedProductID !== "") {
             // Use AJAX to filter products based on the selected Line ID
             $.ajax({
@@ -696,10 +673,11 @@
                 url: "/Working/FilterReasonByProduct", // Update the URL to your controller action
                 data: { selectedProductID: selectedProductID },
                 success: function (filteredDefect) {
-                    console.log(filteredDefect)
+                   // console.log(filteredDefect)
                     // Add filtered products to the dropdown
                     filteredDefect.forEach(function (defect) {
-                        $("#ReasonDefect").append("<option value='" + defect.productID + "'>" + defect.productID + " : " + defect.productName + "</option>");
+                        //$("#ReasonDefect").append("<option value='" + defect.productID + "'>" + defect.productID + " : " + defect.productName + "</option>");
+                        $("#ReasonDefect").append("<option value='" + defect.reasonID + "'>" + defect.reasonID + " : " + defect.reasonName + "</option>");
 
                     });
                 },
@@ -714,29 +692,37 @@
 
 
     //////////////////// 30042024 FANG ///////////////////////////////////////
-    function filterSectionsByProductEdit() {
+
+
+
+
+
+  
+
+
+    function filterDefectByProductSpecial() {
         // Clear previous options
-        $("#ProductIDDefect").empty();
+        $("#ReasonDefect").empty();
         // Add a default option
-        $("#ProductIDDefect").append("<option value='' default selected>Please Select ..</option>");
-        console.log('1');
+        $("#ReasonDefect").append("<option value='' default selected>Please Select ..</option>");
+
         // Get the selected Product ID
 
-        var selectedEmpID = $("#EmployeeIDDefect").val().toString();
+        var productID = $("#ProductIDDfect").val().toString();
         // var selectedLineID = $("#ModalLineName").val().toString();
 
         // Check if a product is selected
-        if (selectedEmpID !== "") {
+        if (productID !== "") {
             // Use AJAX to filter sections based on the selected Product ID
             $.ajax({
                 type: "GET",
-                url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
-                data: { selectedEmpID: selectedEmpID },
-                success: function (filteredproduct) {
-                    console.log(filteredproduct)
+                url: "/Working/FilterDefectByProductMinus", // Update the URL to your controller action
+                data: { productID: productID },
+                success: function (filteredDefect) {
+                    console.log(filteredDefect)
                     // Add filtered sections to the dropdown
-                    filteredproduct.forEach(function (product) {
-                        $("#ProductIDDefect").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                    filterfilteredDefectedproduct.forEach(function (defect) {
+                        $("#ReasonDefect").append("<option value='" + defect.reasonID + "'>" + defect.reasonID + " : " + defect.reasonName + "</option>");
                     });
                 },
                 error: function (error) {
@@ -746,6 +732,14 @@
         }
     }
 
+
+
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+</script>
+<script>
 
     function filterProductByEmployeeClockin() {
         // Clear previous options
@@ -770,6 +764,43 @@
                     // Add filtered sections to the dropdown
                     filteredproduct.forEach(function (product) {
                         $("#ProductIDFG").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
+
+
+    
+    function filterSectionsByProductEdit() {
+
+        // Clear previous options
+        $("#ProductIDDefect").empty();
+        // Add a default option
+        $("#ProductIDDefect").append("<option value='' default selected> Please Select ..</option>");
+
+        // Get the selected Product ID
+
+        var selectedEmpID = $("#EmployeeIDDefect").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+
+        // Check if a product is selected
+        if (selectedEmpID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
+                data: { selectedEmpID: selectedEmpID },
+                success: function (filteredproduct) {
+                    // console.log(filteredproduct)
+                    // Add filtered sections to the dropdown
+                    filteredproduct.forEach(function (product) {
+                        $("#ProductIDDefect").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
                     });
                 },
                 error: function (error) {
@@ -812,41 +843,6 @@
             });
         }
     }
-
-
-
-    function filterDefectByProductSpecial() {
-        // Clear previous options
-        $("#ReasonDefect").empty();
-        // Add a default option
-        $("#ReasonDefect").append("<option value='' default selected>Please Select ..</option>");
-
-        // Get the selected Product ID
-
-        var productID = $("#ProductIDDfect").val().toString();
-        // var selectedLineID = $("#ModalLineName").val().toString();
-
-        // Check if a product is selected
-        if (productID !== "") {
-            // Use AJAX to filter sections based on the selected Product ID
-            $.ajax({
-                type: "GET",
-                url: "/Working/FilterDefectByProductMinus", // Update the URL to your controller action
-                data: { productID: productID },
-                success: function (filteredDefect) {
-                    console.log(filteredDefect)
-                    // Add filtered sections to the dropdown
-                    filterfilteredDefectedproduct.forEach(function (defect) {
-                        $("#ReasonDefect").append("<option value='" + defect.reasonID + "'>" + defect.reasonID + " : " + defect.reasonName + "</option>");
-                    });
-                },
-                error: function (error) {
-                    console.log("Error filtering product: " + error);
-                }
-            });
-        }
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////
+    FANG15
+  
 </script>

@@ -780,43 +780,42 @@
 
     //////////////////// 30042024 FANG ///////////////////////////////////////
 
-    function filterSectionsByProductEdit() {
-        console.log('0');
-        // Clear previous options
-        $("#ProductIDDefect").empty();
-        // Add a default option
-        $("#ProductIDDefect").append("<option value='' default selected>Please Select ..</option>");
-        console.log('1');
-        // Get the selected Product ID
+    // function filterSectionsByProductEdit() {
+    //     console.log('0');
+    //     // Clear previous options
+    //     $("#ProductIDDefect").empty();
+    //     // Add a default option
+    //     $("#ProductIDDefect").append("<option value='' default selected>Please Select ..</option>");
+    //     console.log('1');
+    //     // Get the selected Product ID
 
-        var selectedEmpID = $("#EmployeeIDDefect").val().toString();
-        // var selectedLineID = $("#ModalLineName").val().toString();
+    //     var selectedEmpID = $("#EmployeeIDDefect").val().toString();
+    //     // var selectedLineID = $("#ModalLineName").val().toString();
 
-        // Check if a product is selected
-        if (selectedEmpID !== "") {
-            // Use AJAX to filter sections based on the selected Product ID
-            $.ajax({
-                type: "GET",
-                url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
-                data: { selectedEmpID: selectedEmpID },
-                success: function (filteredproduct) {
-                    console.log(filteredproduct)
-                    // Add filtered sections to the dropdown
-                    filteredproduct.forEach(function (product) {
-                        $("#ProductIDDefect").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
-                    });
-                },
-                error: function (error) {
-                    console.log("Error filtering product: " + error);
-                }
-            });
-        }
-    }
+    //     // Check if a product is selected
+    //     if (selectedEmpID !== "") {
+    //         // Use AJAX to filter sections based on the selected Product ID
+    //         $.ajax({
+    //             type: "GET",
+    //             url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
+    //             data: { selectedEmpID: selectedEmpID },
+    //             success: function (filteredproduct) {
+    //                 console.log(filteredproduct)
+    //                 // Add filtered sections to the dropdown
+    //                 filteredproduct.forEach(function (product) {
+    //                     $("#ProductIDDefect").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+    //                 });
+    //             },
+    //             error: function (error) {
+    //                 console.log("Error filtering product: " + error);
+    //             }
+    //         });
+    //     }
+    // }
 
 
 
-    function filterProductBy
-    () {
+    function filterProductBy() {
         // Clear previous options
         $("#ProductIDFG").empty();
         // Add a default option
@@ -850,37 +849,7 @@
 
 
 
-    function filterProductByEmployeeSpecial() {
-        // Clear previous options
-        $("#ProductIDMinus").empty();
-        // Add a default option
-        $("#ProductIDMinus").append("<option value='' default selected>Please Select ..</option>");
-
-        // Get the selected Product ID
-
-        var selectedEmpID = $("#EmployeeIDMinus").val().toString();
-        // var selectedLineID = $("#ModalLineName").val().toString();
-
-        // Check if a product is selected
-        if (selectedEmpID !== "") {
-            // Use AJAX to filter sections based on the selected Product ID
-            $.ajax({
-                type: "GET",
-                url: "/Working/FilterProductByEmployeeMinus", // Update the URL to your controller action
-                data: { selectedEmpID: selectedEmpID },
-                success: function (filteredproduct) {
-                    console.log(filteredproduct)
-                    // Add filtered sections to the dropdown
-                    filteredproduct.forEach(function (product) {
-                        $("#ProductIDMinus").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
-                    });
-                },
-                error: function (error) {
-                    console.log("Error filtering product: " + error);
-                }
-            });
-        }
-    }
+  
 
 
     
@@ -918,4 +887,111 @@
 
 
     ///////////////////////////////////////////////////////////////////////////////
+</script>
+<script>
+
+    function filterProductByEmployeeClockin() {
+        // Clear previous options
+        $("#ProductIDFG").empty();
+        // Add a default option
+        $("#ProductIDFG").append("<option value='' default selected>Please Select ..</option>");
+
+        // Get the selected Product ID
+
+        var selectedEmpID = $("#EmployeeIDFG").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+
+        // Check if a product is selected
+        if (selectedEmpID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
+                data: { selectedEmpID: selectedEmpID },
+                success: function (filteredproduct) {
+                    console.log(filteredproduct)
+                    // Add filtered sections to the dropdown
+                    filteredproduct.forEach(function (product) {
+                        $("#ProductIDFG").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
+
+
+
+    function filterSectionsByProductEdit() {
+
+        // Clear previous options
+        $("#ProductIDDefect").empty();
+        // Add a default option
+        $("#ProductIDDefect").append("<option value='' default selected> Please Select ..</option>");
+
+        // Get the selected Product ID
+
+        var selectedEmpID = $("#EmployeeIDDefect").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+
+        // Check if a product is selected
+        if (selectedEmpID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
+                data: { selectedEmpID: selectedEmpID },
+                success: function (filteredproduct) {
+                    // console.log(filteredproduct)
+                    // Add filtered sections to the dropdown
+                    filteredproduct.forEach(function (product) {
+                        $("#ProductIDDefect").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
+
+      function filterProductByEmployeeSpecial() {
+        // Clear previous options
+        $("#ProductIDMinus").empty();
+        // Add a default option
+        $("#ProductIDMinus").append("<option value='' default selected>Please Select ..</option>");
+
+        // Get the selected Product ID
+
+        var selectedEmpID = $("#EmployeeIDMinus").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+
+        // Check if a product is selected
+        if (selectedEmpID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Working/FilterProductByEmployeeMinus", // Update the URL to your controller action
+                data: { selectedEmpID: selectedEmpID },
+                success: function (filteredproduct) {
+                    console.log(filteredproduct)
+                    // Add filtered sections to the dropdown
+                    filteredproduct.forEach(function (product) {
+                        $("#ProductIDMinus").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
 </script>
