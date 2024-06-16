@@ -33,6 +33,6 @@
         public decimal DiffYield { get; set; } //View_EFFReport => YieldDefect - PercentYield
         public decimal TotalDefect { get; set; } //View_EFFReport => Defect
 
-
+     
     }
 }

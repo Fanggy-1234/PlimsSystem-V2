@@ -293,11 +293,12 @@ namespace Plims.Controllers
                 ViewBag.DefaultEndDate = DateTime.Now.ToString("dd-MM-yyyy");
 
 
-                if (model.filter == 0)
+                if (model.filter == 0 || model.StartDate == DateTime.MinValue || model.EndDate == DateTime.MinValue)
                 {
                     model.StartDate = DateTime.Now;
                     model.EndDate = DateTime.Now;
                 }
+
 
                 var varYear = from a in db.View_EFFReport
                               group a by new { a.TransactionDate.Year } into g
@@ -360,10 +361,21 @@ namespace Plims.Controllers
                                };
                 ViewBag.varPoint = new SelectList(varPoint, "Value", "Text");
 
-             
+
                 /////////////////// 1 Product Overview
                 ///
-                var resultGrpProductOverviewcheck = (from summary in db.View_EFFReport
+               
+                //var resultGrpProductOverviewcheck = (from summary in db.View_EFFReport
+                //                                where (model.FilterYear == 0 || summary.TransactionDate.Year == model.FilterYear) &&
+                //                                      (model.FilterMonth == 0 || summary.TransactionDate.Month == model.FilterMonth) &&
+                //                                      (model.FilterLine == null || summary.LineID == model.FilterLine) &&
+                //                                      (model.FilterProduct == null || summary.ProductID == model.FilterProduct) &&
+                //                                      (model.FilterPoint == null || summary.SectionID == model.FilterPoint) &&
+                //                                      (model.StartDate == DateTime.MinValue || summary.TransactionDate >= model.StartDate) &&
+                //                                      (model.EndDate == DateTime.MinValue || summary.TransactionDate <= model.EndDate) &&
+                //                                       (summary.PlantID == PlantID) select(summary.CountQRCode)).ToString();
+
+                var resultGrpProductOverview = (from summary in db.View_EFFReport
                                                 where (model.FilterYear == 0 || summary.TransactionDate.Year == model.FilterYear) &&
                                                       (model.FilterMonth == 0 || summary.TransactionDate.Month == model.FilterMonth) &&
                                                       (model.FilterLine == null || summary.LineID == model.FilterLine) &&
@@ -371,49 +383,78 @@ namespace Plims.Controllers
                                                       (model.FilterPoint == null || summary.SectionID == model.FilterPoint) &&
                                                       (model.StartDate == DateTime.MinValue || summary.TransactionDate >= model.StartDate) &&
                                                       (model.EndDate == DateTime.MinValue || summary.TransactionDate <= model.EndDate) &&
-                                                       (summary.PlantID == PlantID) select(summary.CountQRCode)).ToString();
+                                                      (summary.PlantID == PlantID)
+                                                group summary by new { summary.ProductID, summary.ProductName, summary.SectionID, summary.SectionName } into grouped
+                                                select new ResultGrpProductOverviewModel
+                                                {
+                                                    //Display Box
+                                                    SumEmp = grouped.Sum(x => x.CountQRCode),
+                                                    SumFG = grouped.Sum(x => x.FinishGood),
+                                                    CapHr = grouped.Sum(x => x.EFF1) != 0 ? grouped.Sum(x => x.FinishGood) / grouped.Sum(x => x.EFF1) : 0,
+                                                    EFFhr1 = grouped.Average(x => x.EFFhr1),
+                                                    EFFhr2 = grouped.Average(x => x.EFFhr2),
+                                                    EFFhr3 = grouped.Average(x => x.EFFhr3),
+                                                    TotalDefect = grouped.Sum(x => x.TotalDefect),
 
-               
-                
-                    var resultGrpProductOverview = (from summary in db.View_EFFReport
-                                                    where (model.FilterYear == 0 || summary.TransactionDate.Year == model.FilterYear) &&
-                                                          (model.FilterMonth == 0 || summary.TransactionDate.Month == model.FilterMonth) &&
-                                                          (model.FilterLine == null || summary.LineID == model.FilterLine) &&
-                                                          (model.FilterProduct == null || summary.ProductID == model.FilterProduct) &&
-                                                          (model.FilterPoint == null || summary.SectionID == model.FilterPoint) &&
-                                                          (model.StartDate == DateTime.MinValue || summary.TransactionDate >= model.StartDate) &&
-                                                          (model.EndDate == DateTime.MinValue || summary.TransactionDate <= model.EndDate) &&
-                                                           (summary.PlantID == PlantID)
-                                                    group summary by new { summary.ProductID, summary.ProductName, summary.SectionID, summary.SectionName } into grouped
-                                                    select new ResultGrpProductOverviewModel
-                                                    {
-                                                        //Display Box
-                                                        SumEmp = grouped.Sum(x => x.CountQRCode),
-                                                        SumFG = grouped.Sum(x => x.FinishGood),
-                                                        CapHr = grouped.Sum(x => x.FinishGood) / grouped.Sum(x => x.EFF1),
-                                                        EFFhr1 = grouped.Average(x => x.EFFhr1),
-                                                        EFFhr2 = grouped.Average(x => x.EFFhr2),
-                                                        EFFhr3 = grouped.Average(x => x.EFFhr3),
-                                                        TotalDefect = grouped.Sum(x => x.TotalDefect),
+                                                    //1st Graph
+                                                    EffSTD = grouped.Average(x => x.STD),
+                                                    EffLine = grouped.Sum(x => x.ValueEFF3),
 
-                                                        //1st Graph
-                                                        EffSTD = grouped.Average(x => x.STD),
-                                                        EffLine = grouped.Sum(x => x.EFF3),
+                                                    //2nd Graph
+                                                    YieldSTD = grouped.Average(x => x.PercentYield),
+                                                    YieldDefect = grouped.Sum(x => x.YieldDefect),
 
-                                                        //2nd Graph
-                                                        YieldSTD = grouped.Average(x => x.PercentYield),
-                                                        YieldDefect = grouped.Sum(x => x.YieldDefect),
+                                                    //Table
+                                                    ProductName = grouped.Key.ProductName,
+                                                    SectionName = grouped.Key.SectionName,
+                                                    EffTarget = grouped.Max(x => x.EFFSTD),
+                                                    EffAct = grouped.Sum(x => x.ValueEFF3),
+                                                    DiffEff = grouped.Sum(x => x.ValueEFF3) - grouped.Max(x => x.EFFSTD),
+                                                    YieldTarget = grouped.Max(x => x.PercentYield),
+                                                    YieldActual = grouped.Sum(x => x.YieldDefect),
+                                                    DiffYield = grouped.Sum(x => x.YieldDefect) - grouped.Max(x => x.PercentYield) //YieldActual - YieldTarget
+                                                }).ToList();
 
-                                                        //Table
-                                                        ProductName = grouped.Key.ProductName,
-                                                        SectionName = grouped.Key.SectionName,
-                                                        EffTarget = grouped.Average(x => x.STD),
-                                                        EffAct = grouped.Sum(x => x.EFFhr3),
-                                                        DiffEff = (grouped.Sum(x => x.EFFhr3)) - (grouped.Average(x => x.STD)),
-                                                        YieldTarget = grouped.Average(x => x.PercentYield),
-                                                        YieldActual = grouped.Sum(x => x.YieldDefect),
-                                                        DiffYield = (grouped.Sum(x => x.YieldDefect)) - (grouped.Average(x => x.PercentYield)) //YieldActual - YieldTarget
-                                                    }).ToList();
+
+                //var resultGrpProductOverview = (from summary in db.View_EFFReport
+                //                                    where (model.FilterYear == 0 || summary.TransactionDate.Year == model.FilterYear) &&
+                //                                          (model.FilterMonth == 0 || summary.TransactionDate.Month == model.FilterMonth) &&
+                //                                          (model.FilterLine == null || summary.LineID == model.FilterLine) &&
+                //                                          (model.FilterProduct == null || summary.ProductID == model.FilterProduct) &&
+                //                                          (model.FilterPoint == null || summary.SectionID == model.FilterPoint) &&
+                //                                          (model.StartDate == DateTime.MinValue || summary.TransactionDate >= model.StartDate) &&
+                //                                          (model.EndDate == DateTime.MinValue || summary.TransactionDate <= model.EndDate) &&
+                //                                           (summary.PlantID == PlantID)
+                //                                    group summary by new { summary.ProductID, summary.ProductName, summary.SectionID, summary.SectionName } into grouped
+                //                                    select new ResultGrpProductOverviewModel
+                //                                    {
+                //                                        //Display Box
+                //                                        SumEmp = grouped.Sum(x => x.CountQRCode),
+                //                                        SumFG = grouped.Sum(x => x.FinishGood),
+                //                                        CapHr = grouped.Sum(x => x.FinishGood) / grouped.Sum(x => x.EFF1),
+                //                                        EFFhr1 = grouped.Average(x => x.EFFhr1),
+                //                                        EFFhr2 = grouped.Average(x => x.EFFhr2),
+                //                                        EFFhr3 = grouped.Average(x => x.EFFhr3),
+                //                                        TotalDefect = grouped.Sum(x => x.TotalDefect),
+
+                //                                        //1st Graph
+                //                                        EffSTD = grouped.Average(x => x.STD),
+                //                                        EffLine = grouped.Sum(x => x.EFF3),
+
+                //                                        //2nd Graph
+                //                                        YieldSTD = grouped.Average(x => x.PercentYield),
+                //                                        YieldDefect = grouped.Sum(x => x.YieldDefect),
+
+                //                                        //Table
+                //                                        ProductName = grouped.Key.ProductName,
+                //                                        SectionName = grouped.Key.SectionName,
+                //                                        EffTarget = grouped.Average(x => x.STD),
+                //                                        EffAct = grouped.Sum(x => x.EFFhr3),
+                //                                        DiffEff = (grouped.Sum(x => x.EFFhr3)) - (grouped.Average(x => x.STD)),
+                //                                        YieldTarget = grouped.Average(x => x.PercentYield),
+                //                                        YieldActual = grouped.Sum(x => x.YieldDefect),
+                //                                        DiffYield = (grouped.Sum(x => x.YieldDefect)) - (grouped.Average(x => x.PercentYield)) //YieldActual - YieldTarget
+                //                                    }).ToList();
 
 
                 if (resultGrpProductOverview.Count() == 0)
@@ -476,8 +517,8 @@ namespace Plims.Controllers
                                                  LineName = grouped.Key.LineName,
 
                                                  //1st Graph
-                                                 EffSTD = grouped.Average(x => x.STD),
-                                                 EffLine = grouped.Sum(x => x.EFF3),
+                                                 EffSTD = grouped.Average(x => x.EFFSTD),
+                                                 EffLine = grouped.Sum(x => x.ValueEFF3),
 
                                                  //2nd Graph
                                                  YieldSTD = grouped.Average(x => x.PercentYield),
@@ -550,6 +591,7 @@ namespace Plims.Controllers
                     FilterPoint = model.FilterPoint,
                     ResultGrpProductOverviewModel = resultGrpProductOverview
                 };
+
 
                 ViewBag.VBRoleEmployeeDashBaord = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(23)).Select(x => x.RoleAction).FirstOrDefault();
 

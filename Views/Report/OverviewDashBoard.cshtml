@@ -106,7 +106,7 @@
                     <tr>
                         <td style="background-color:cornflowerblue;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.SumEFFhr3.ToString("#,##0.00") </h3>Eff.hr 3</td>
                     </tr>
-                <td style="background-color:gray;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.DefectAll.ToString("#,##0.00") </h3>Defect All</td>
+                <td style="background-color:red;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.DefectAll.ToString("#,##0.00") </h3>Defect All</td>
                 </tr>
                 </tbody>
             </table>
@@ -114,13 +114,13 @@
         <div class="col-md-10">
             <div class="row">
                 <div class="col-md-6">
-                   <div id="container_eff" style="width: 90%; height: 250%;"></div>
+                   <div id="container_eff" style="width: 90%; height: 270%;"></div>
                 </div>
                 <div class="col-md-6">
-                    <div id="container_yield" style="width: 90%; height: 250%;"></div>
+                    <div id="container_yield" style="width: 90%; height: 270%;"></div>
                 </div>
             </div>
-            <div class="row" style="height:35%;">
+            <div class="row" style="height:40%;">
                 <br />&nbsp;<br /> <br />&nbsp;<br />
             </div>
             <div class="row">
@@ -138,24 +138,27 @@
                                 <th style="font-weight:bold;text-align: center;">% Yield (Target)</th>
                                 <th style="font-weight:bold;text-align: center;">% Actual</th>
                                 <th style="font-weight:bold;text-align: center;">% Diff</th>
-                                <th style="font-weight:bold;text-align: center;background-color:white"></th>
+                                <th style="font-weight:bold;text-align: center;"></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @{
-                                decimal totalStd = 0;
-                                decimal totalActual = 0;
-                                decimal totalDiff = 0;
-                                decimal totalYieldStd = 0;
-                                decimal totalYieldActual = 0;
-                                decimal totalYieldDiff = 0;
+            @{
+                decimal totalStd = 0;
+                decimal totalActual = 0;
+                decimal totalDiff = 0;
+                decimal totalYieldStd = 0;
+                decimal totalYieldActual = 0;
+                decimal totalYieldDiff = 0;
 
-                                decimal totalAvgDiff = 0;
-                                decimal totalAvgYieldDiff = 0;
+                decimal totalAvgDiff = 0;
+                decimal totalAvgYieldDiff = 0;
+                decimal totalScan = 0 ;
+                decimal totaldefect = 0;
+                decimal totalactYield = 0;
 
-                                int itemCount = Model.ResultGrpProductOverviewModel.Count; // Get the count of items
+                int itemCount = Model.ResultGrpProductOverviewModel.Count; // Get the count of items
 
-                            }
+              }
                             @foreach (var item in Model.ResultGrpProductOverviewModel)
                             {
                                 <tr style="text-align: center;font-size:28px">
@@ -182,16 +185,22 @@
                                     {
                                         <td style="background-color:indianred; text-align: right;">@item.DiffYield.ToString("#,##0")</td>
                                     }
-                                </tr>
+                </tr>
 
-                                totalActual += item.EffAct;
-                                totalDiff += item.DiffEff;
-                                totalYieldStd += item.YieldTarget;
-                                totalYieldActual += item.YieldActual;
-                                totalYieldDiff += item.DiffYield;
+                totalActual += item.EffAct;
+                totalDiff += item.DiffEff;
+                totalYieldStd += item.YieldTarget;
+                totalYieldActual += item.YieldActual;
+                totalYieldDiff += item.DiffYield;
+                totalScan += item.SumFG;
+                totaldefect += item.TotalDefect;
 
-                            }
 
+            }
+            @if (totalScan != 0)
+            {
+                totalactYield = (totalScan - totaldefect) / totalScan * 100;
+            }
                             @*  // {
                             // Calculate averages
                             // decimal totalAvgDiff = itemCount > 0 ? totalDiff / itemCount : 0;
@@ -205,13 +214,14 @@
                                 <td style="font-weight:bold;text-align: right;">@totalAvgDiff.ToString("#,##0")</td>
                                 <td></td>
                                 <td style="font-weight:bold;text-align: right;">@totalYieldStd.ToString("#,##0.00")</td>
-                                <td style="font-weight:bold;text-align: right;">@totalYieldActual.ToString("#,##0.00")</td>
+                            @*     <td style="font-weight:bold;text-align: right;">@totalYieldActual.ToString("#,##0.00")</td> *@
+                                <td style="font-weight:bold;text-align: right;">@totalactYield.ToString("#,##0.00")  </td>
                                 <td style="font-weight:bold;text-align: right;">@totalAvgYieldDiff.ToString("#,##0")</td>
                                 <td></td>
                             </tr>
                         </tbody>
                     </table>
-                    <label style="font-size:26px;color:black">Data of @formattedDate</label>
+                    <label style="font-size:16px;color:black">Data of @formattedDate</label>
                 </div>
             </div>
         </div>
