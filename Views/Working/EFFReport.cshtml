@@ -141,14 +141,14 @@
             <div class="row">
                 <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Start Date:</label></div>
                 <div class="col-3">
-                    <input class="form-control StartDate" type="Date" name="StartDate" id="StartDate" value="@ViewBag.SelectedStartDate" style="width:100%">  @* max="@DateTime.Now.ToString("yyyy-MM-dd")" *@
+                    <input class="form-control StartDate" type="Date" name="StartDate" id="StartDate" value="@ViewBag.SelectedStartDate" style="width:100%" required>  @* max="@DateTime.Now.ToString("yyyy-MM-dd")" *@
                 </div>
 
             
                 <div class="col-1"></div>
                 <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  End Date:</label></div>
                 <div class="col-3">
-                    <input class="form-control EndDate" type="Date" name="EndDate" id="EndDate" value="@ViewBag.SelectedEndDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%">
+                    <input class="form-control EndDate" type="Date" name="EndDate" id="EndDate" value="@ViewBag.SelectedEndDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%" required>
                 </div>
 
             </div>

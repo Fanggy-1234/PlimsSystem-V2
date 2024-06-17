@@ -203,9 +203,10 @@ namespace Plims.Controllers
                                       select new ResultGrpGradeModel
                                       {
                                           Grade = grouped.Key,
-                                          //PcsPerHr = 0,
-                                          PcsPerHr = Math.Round(grouped.Sum(g => g.PcsPerHr), 2),
+                                          //PcsPerHr = 0,                      
                                           Cnt = grouped.Count(),
+                                          PcsPerHr = Math.Round(grouped.Sum(g => g.PcsPerHr), 2),  
+                                          //PcsPerHr = grouped.Count() != 0 ? (grouped.Sum(g => g.FGQty) / sumEmployeeDict.Count() ) : 0,
                                           Percent = Math.Round((grouped.Count() / (double)sumOfCounts) * 100.00, 2)
                                       }).ToList();
 

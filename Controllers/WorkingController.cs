@@ -1153,6 +1153,8 @@ namespace Plims.Controllers
 
                 //};
 
+                ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
+                ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd"); 
                 mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x=> x.TransactionDate == DateTime.Today);
             
                 return View(mymodel);
@@ -1199,6 +1201,8 @@ namespace Plims.Controllers
                                           .Select(x => x.RoleAction)
                                           .FirstOrDefault();
 
+            ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
+            ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
             mymodel.view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.TransactionDate.Equals(DateTime.Today)).ToList();
             return View("DailyReport", mymodel);
 
@@ -3204,6 +3208,9 @@ namespace Plims.Controllers
             else
             {
 
+
+                ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
+                ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
                 mymodel.view_EFFReport = db.View_EFFReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
                 return View(mymodel);
             }
@@ -3239,8 +3246,10 @@ namespace Plims.Controllers
                                             .FirstOrDefault();
 
 
-         
-                mymodel.view_EFFReport = db.View_EFFReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
+            ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
+            ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
+
+            mymodel.view_EFFReport = db.View_EFFReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
                 return View("EFFReport",mymodel);
             
 
