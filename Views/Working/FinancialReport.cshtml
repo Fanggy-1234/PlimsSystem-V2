@@ -67,7 +67,7 @@
 
     .dataTables_scrollHeadInner,
     .table {
-        width: 100% ;
+        width: 100%;
     }
 
 </style>
@@ -84,7 +84,6 @@
             fixedHeader: true,
             ordering: false,
             searching: false,
-            scrollX: true,
             scrollCollapse: true,
             select: {
                 style: 'os',
@@ -100,33 +99,6 @@
         // Adjust column width calculations
         table.columns.adjust().draw();
     });
-
-//     $(document).ready(function () {
-//     $('#btnExport').click(function () {
-//         var $table = $('#table_id');
-//         var pageCount = $table.DataTable().page.info().pages; // Get total number of pages
-
-//         var $clonedTable = $('<table>').append($table.find('thead').clone()); // Clone the table header
-
-//         // Iterate through all pages
-//         for (var i = 0; i < pageCount; i++) {
-//             $table.DataTable().page(i).draw('page'); // Go to the specific page
-//             var $pageRows = $table.find('tbody tr').clone(); // Clone the rows of the current page
-//             $clonedTable.append($pageRows); // Append cloned rows to the cloned table
-//         }
-
-//         // Export the cloned table with all pages
-//         $clonedTable.table2excel({
-//             exclude: ".noExl", // Exclude elements with class "noExl"
-//             name: "Worksheet Name",
-//             filename: "Financial-Report"
-//         });
-
-//         // Reset DataTable to the initial page
-//         $table.DataTable().page(0).draw('page');
-//     });
-// });
-
 
 
 </script>
@@ -221,13 +193,14 @@
 
     @*//////////////////////////////////////Diaplay data tabel ////////////////////////////////////////*@
     <table id="table_id" class="table table-hover">
-        <thead style="background-color:lightgrey">
+        <thead style="background-color:lightgrey;width:100%">
             <tr style="width:100%">
                 <th rowspan="2" style="width:150px">Employee ID</th>
                 <th rowspan="2" style="width:200px">Employee Name</th>
 
                 <!-- Set colspan for the date range -->
                 <th colspan="@((ViewBag.DateRange as List<DateTime>).Count)" style="text-align:center">สิทธิเงินพิเศษ</th>
+
 
                 <th rowspan="2" style="width:100px">จำนวนเงิน</th>
                 <th rowspan="2" style="width:150px">จุดงาน</th>
@@ -241,7 +214,7 @@
                     }
             </tr>
         </thead>
-        <tbody>
+        <tbody style="width:100%">
             @if (Model.groupedData != null && Model.groupedData.Any())
             {
                 var groupedByEmployeeAndSection = Model.groupedData.GroupBy(x => new { x.QRCode , x.SectionName });
@@ -269,11 +242,16 @@
                 }
             }
             else
-            {
+            {@* 
                 <tr style="width:100%">
-                    <td >No data available.</td>
-                   @*  <td colspan="100%">No data available.</td> *@
-                </tr>
+                <td colspan="100%">No data available.</td> 
+                </tr> *@
+
+                 <tr style="width:100%">
+                <td colspan="@(4 + (ViewBag.DateRange as List<DateTime>).Count)">No data available.</td>
+            </tr>
+
+
             }
         </tbody>
     </table>
