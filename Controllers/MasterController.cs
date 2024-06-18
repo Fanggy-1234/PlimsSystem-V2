@@ -3489,7 +3489,8 @@ namespace Plims.Controllers
                                 x.PlantID.Equals(PlantID) &&
                                 x.LineID.Equals(LineIDDb) &&
                                 x.ProductID.Equals(ProductIDDb) &&
-                                x.SectionID.Equals(SectionIDDb)
+                                x.SectionID.Equals(SectionIDDb) &&
+                                x.Status.Equals(1)
                                 ).SingleOrDefault();
 
                                 if (PLPSData == null)
@@ -7397,7 +7398,8 @@ namespace Plims.Controllers
                                 var PLPSData = db.TbPLPS.Where(x =>
                                 x.PlantID.Equals(PlantID) &&
                                 x.LineID.Equals(LineDb) &&
-                                x.SectionID.Equals(SectionDb)
+                                x.SectionID.Equals(SectionDb) &&
+                                x.Status.Equals(1)
                                 ).ToList();
                                 
                                 if (PLPSData.Count == 0)

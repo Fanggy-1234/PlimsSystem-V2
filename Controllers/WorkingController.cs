@@ -152,6 +152,7 @@ namespace Plims.Controllers
                                     LineID = objEmp.Line,
                                     SectionID = objEmp.Section,
                                     ProductID = productId,
+                                    FormularID = objPLPS.FormularID,
                                     QRCode = employeeId,
                                     Qty = 1,
                                     QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
@@ -318,6 +319,7 @@ namespace Plims.Controllers
                     LineID = objEmp.Line,
                     SectionID = objEmp.Section,
                     ProductID = productID,
+                    FormularID = objPLPS.FormularID,
                     QRCode = employeeID,
                     Qty = obj.Qty,
                     QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
@@ -402,6 +404,7 @@ namespace Plims.Controllers
                     LineID = objEmp.LineID,
                     SectionID = objEmp.SectionID,
                     ProductID = productID,
+                    FormularID = objPLPS.FormularID,
                     Prefix = objEmp.Prefix,
                     QRCode = employeeID,
                     Qty = obj.Qty,
@@ -500,6 +503,7 @@ namespace Plims.Controllers
                     LineID = objEmp.Line,
                     SectionID = objEmp.Section,
                     ProductID = productID,
+                    FormularID = objPLPS.FormularID,
                     QRCode = employeeID,
                     Qty = obj.Qty,
                     QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
@@ -823,25 +827,54 @@ namespace Plims.Controllers
                 Sheet.Cells["A1"].Value = "TransactionDate";
                 Sheet.Cells["B1"].Value = "PlantID";
                 Sheet.Cells["C1"].Value = "LineID";
+
                 Sheet.Cells["D1"].Value = "SectionID";
                 Sheet.Cells["E1"].Value = "ProductID";
-                Sheet.Cells["F1"].Value = "QRCode";
-                Sheet.Cells["G1"].Value = "Qty";
-                Sheet.Cells["H1"].Value = "QtyPerQR";
-                Sheet.Cells["I1"].Value = "EmployeeRef";
+                Sheet.Cells["F1"].Value = "Formular";
+
+                Sheet.Cells["G1"].Value = "Prefix";
+                Sheet.Cells["H1"].Value = "QRCode";
+                Sheet.Cells["I1"].Value = "Qty";
+
+                Sheet.Cells["J1"].Value = "QtyPerQR";
+                Sheet.Cells["K1"].Value = "EmployeeRef";
+                Sheet.Cells["L1"].Value = "DataType";
+
+                Sheet.Cells["M1"].Value = "Reason";
+                Sheet.Cells["N1"].Value = "GroupRef";
+                Sheet.Cells["O1"].Value = "Note";
+
                 int row = 2;
+
+
                 foreach (var item in collection)
                 {
                     Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
                     // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
                     Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
                     Sheet.Cells[string.Format("C{0}", row)].Value = "000001";
+
                     Sheet.Cells[string.Format("D{0}", row)].Value = PlantID+"000001";
                     Sheet.Cells[string.Format("E{0}", row)].Value = "000001";
-                    Sheet.Cells[string.Format("F{0}", row)].Value = "xxxxxxx";
-                    Sheet.Cells[string.Format("G{0}", row)].Value = "1";
-                    Sheet.Cells[string.Format("H{0}", row)].Value = "1";
-                    Sheet.Cells[string.Format("I{0}", row)].Value = "xxxxxxx";
+                    Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+
+                    Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
+                    Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                    Sheet.Cells[string.Format("I{0}", row)].Value = "1";
+
+                    Sheet.Cells[string.Format("J{0}", row)].Value = "1";
+                    Sheet.Cells[string.Format("K{0}", row)].Value = "";
+                    Sheet.Cells[string.Format("L{0}", row)].Value = "Count";
+
+                    Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                    Sheet.Cells[string.Format("N{0}", row)].Value = "";
+                    Sheet.Cells[string.Format("O{0}", row)].Value = "";
+
+
+
+
+
+
                     row++;
                 }
                 Sheet.Cells["A:AZ"].AutoFitColumns();
@@ -864,25 +897,47 @@ namespace Plims.Controllers
                 Sheet.Cells["A1"].Value = "TransactionDate";
                 Sheet.Cells["B1"].Value = "PlantID";
                 Sheet.Cells["C1"].Value = "LineID";
+
                 Sheet.Cells["D1"].Value = "SectionID";
                 Sheet.Cells["E1"].Value = "ProductID";
-                Sheet.Cells["F1"].Value = "QRCode";
-                Sheet.Cells["G1"].Value = "Qty";
-                Sheet.Cells["H1"].Value = "QtyPerQR";
-                Sheet.Cells["I1"].Value = "EmployeeRef";
+                Sheet.Cells["F1"].Value = "Formular";
+
+                Sheet.Cells["G1"].Value = "Prefix";
+                Sheet.Cells["H1"].Value = "QRCode";
+                Sheet.Cells["I1"].Value = "Qty";
+
+                Sheet.Cells["J1"].Value = "QtyPerQR";
+                Sheet.Cells["K1"].Value = "EmployeeRef";
+                Sheet.Cells["L1"].Value = "DataType";
+
+                Sheet.Cells["M1"].Value = "Reason";
+                Sheet.Cells["N1"].Value = "GroupRef";
+                Sheet.Cells["O1"].Value = "Note";
                 int row = 2;
                 foreach (var item in collection)
                 {
+
                     Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
                     // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
                     Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
                     Sheet.Cells[string.Format("C{0}", row)].Value = "000001";
+
                     Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "000001";
                     Sheet.Cells[string.Format("E{0}", row)].Value = "000001";
-                    Sheet.Cells[string.Format("F{0}", row)].Value = "xxxxxxx";
-                    Sheet.Cells[string.Format("G{0}", row)].Value = "1";
-                    Sheet.Cells[string.Format("H{0}", row)].Value = "1";
-                    Sheet.Cells[string.Format("I{0}", row)].Value = "xxxxxxx";
+                    Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+
+                    Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
+                    Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                    Sheet.Cells[string.Format("I{0}", row)].Value = "1";
+
+                    Sheet.Cells[string.Format("J{0}", row)].Value = "1";
+                    Sheet.Cells[string.Format("K{0}", row)].Value = "";
+                    Sheet.Cells[string.Format("L{0}", row)].Value = "Count";
+
+                    Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                    Sheet.Cells[string.Format("N{0}", row)].Value = "";
+                    Sheet.Cells[string.Format("O{0}", row)].Value = "";
+
                     row++;
                 }
                 Sheet.Cells["A:AZ"].AutoFitColumns();
@@ -932,13 +987,14 @@ namespace Plims.Controllers
                             string LineVar = worksheet.Cells[row, 3].Text;
                             string SectionVar = worksheet.Cells[row, 4].Text;
                             string ProductVar = worksheet.Cells[row, 5].Text;
-                            string EmployeeVar = worksheet.Cells[row, 6].Text;
-                            string EmployeeRefVar = worksheet.Cells[row, 9].Text;
+                            string EmployeeVar = worksheet.Cells[row, 8].Text;
+                            string EmployeeRefVar = worksheet.Cells[row, 11].Text;
 
                             var LineIDDb = db.TbLine.Where(x => x.LineID.Equals(LineVar)).Select(x => x.LineID).SingleOrDefault();
                             var ProductIDDb = db.TbProduct.Where(x => x.ProductID.Equals(ProductVar)).Select(x => x.ProductID).SingleOrDefault();
                             var SectionIDDb = db.TbSection.Where(x => x.SectionID.Equals(SectionVar)).Select(x => x.SectionID).SingleOrDefault();
                             var EmployeeIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeVar)).Select(x => x.EmployeeID).SingleOrDefault();
+                            var PLPSIDDb = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb)).Select(x => x.FormularID).SingleOrDefault();
                             var EmployeeRefIDDb = "";
 
                             if (EmployeeRefVar != "")
@@ -978,15 +1034,16 @@ namespace Plims.Controllers
                                     LineID = LineIDDb,
                                     SectionID = SectionIDDb,
                                     ProductID = ProductIDDb,
+                                    FormularID = PLPSIDDb,
                                     QRCode = EmployeeIDDb,
                                     Qty = Convert.ToInt32(worksheet.Cells[row, 7].Text),
                                     QtyPerQR = Convert.ToInt32(worksheet.Cells[row, 8].Text),
-                                    DataType = "Count",
-                                    Reason = "",
-                                    Note = "",
+                                    DataType = worksheet.Cells[row, 12].Text,
+                                    Reason = worksheet.Cells[row, 13].Text,
+                                    Note = worksheet.Cells[row, 15].Text,
                                     PackageRef = 1,
-                                    GroupRef = "",
-                                    EmployeeRef = worksheet.Cells[row, 9].Text,
+                                    GroupRef = worksheet.Cells[row, 14].Text,
+                                    EmployeeRef = worksheet.Cells[row, 11].Text,
                                         CreateDate = DateTime.Now,
                                         CreateBy = EmpID,
                                         UpdateDate = DateTime.Now,
@@ -1708,9 +1765,10 @@ namespace Plims.Controllers
                                                 SectionID = objEmp.SectionID,
                                                 ProductID = productId,
                                                 Prefix = objEmp.Prefix,
+                                                FormularID = objPLPS.FormularID,
                                                 QRCode = employeeId,
                                                 Qty = 1,
-                                               QtyPerQR = objPLPS.QTYPerQRCode,//Get from PLPS
+                                                QtyPerQR = objPLPS.QTYPerQRCode,//Get from PLPS
                                                // QtyPerQR = Convert.ToInt16(objPLPS.QTYPerQRCode),//Get from PLPS
                                                 DataType = "Count",
                                                 Reason = "",
@@ -1756,11 +1814,24 @@ namespace Plims.Controllers
                     {
 
                         //select group
-                        var objgroup = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(employeeId)).ToList();
+                        var objgroup = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(employeeId) && x.PlantID.Equals(PlantID)).ToList();
                         foreach (var item in objgroup)
                         {
 
                             //Select EmployeeTransaction
+                            var objEmpcount = db.View_ClockTime
+                            .Where(x => x.EmployeeID.Equals(item.EmployeeID) &&
+                                         (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) &&
+                                         x.ClockOut == "" &&
+                                        x.PlantID.Equals(PlantID))
+                            .ToList();
+
+                            if(objEmpcount.Count == 0) 
+                             {
+                                var sectionvalalert = "Check Clock in time";
+                                return Json(sectionvalalert);
+                            }
+
                             var objEmp = db.View_ClockTime
                             .Where(x => x.EmployeeID.Equals(item.EmployeeID) &&
                                          (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) &&
@@ -1770,13 +1841,13 @@ namespace Plims.Controllers
 
 
 
-                   //         var objEmp = db.View_ClockTime
-                   //.Where(x => x.EmployeeID.Equals(employeeId) &&
-                   //            x.TransactionDate.Date == currentDate &&
-                   //            x.Plant.Equals(PlantID) &&
-                   //            (((x.ClockOut == null || x.ClockOut == "") && x.Remark == "") ||
-                   //               ((x.ClockOut != null || x.ClockOut != "") && x.Remark == "Adjust")))
-                   //.FirstOrDefault();
+                            //         var objEmp = db.View_ClockTime
+                            //.Where(x => x.EmployeeID.Equals(employeeId) &&
+                            //            x.TransactionDate.Date == currentDate &&
+                            //            x.Plant.Equals(PlantID) &&
+                            //            (((x.ClockOut == null || x.ClockOut == "") && x.Remark == "") ||
+                            //               ((x.ClockOut != null || x.ClockOut != "") && x.Remark == "Adjust")))
+                            //.FirstOrDefault();
 
 
 
@@ -1815,6 +1886,7 @@ namespace Plims.Controllers
                                             LineID = objEmp.LineID,
                                             SectionID = objEmp.SectionID,
                                             ProductID = productId,
+                                            FormularID = objPLPS.FormularID,
                                             Prefix = objEmp.Prefix,
                                             QRCode = objEmp.EmployeeID,
                                             Qty = 1,
@@ -1971,6 +2043,7 @@ namespace Plims.Controllers
                                             LineID = objEmp.LineID,
                                             SectionID = objEmp.SectionID,
                                             ProductID = productId,
+                                            FormularID = objPLPS.FormularID,
                                             QRCode = employeeId,
                                             Qty = 1,
                                             QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
@@ -2078,6 +2151,7 @@ namespace Plims.Controllers
                                                 LineID = objEmp.LineID,
                                                 SectionID = objEmp.SectionID,
                                                 ProductID = productId,
+                                                FormularID = objPLPS.FormularID,
                                                 QRCode = objEmp.EmployeeID,
                                                 Qty = 1,
                                                 QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
@@ -2489,6 +2563,7 @@ namespace Plims.Controllers
                     LineID = objEmp.LineID,
                     SectionID = objEmp.SectionID,
                     ProductID = productID,
+                    FormularID = objPLPS.FormularID,
                     Prefix = objEmp.Prefix,
                     QRCode = employeeID,
                     Qty = obj.Qty,
@@ -2578,6 +2653,7 @@ namespace Plims.Controllers
                     LineID = objEmp.LineID,
                     SectionID = objEmp.SectionID,
                     ProductID = productID,
+                    FormularID = objPLPS.FormularID,
                     Prefix = objEmp.Prefix,
                     QRCode = employeeID,
                     Qty = obj.Qty,
@@ -3828,6 +3904,11 @@ namespace Plims.Controllers
             {
                 Productplandb.SizeMax = obj.SizeMax;
             }
+            if (obj.Weight != null)
+            {
+                Productplandb.Weight = obj.Weight;
+            }
+
             //if (obj.QTY != null)
             //{
             //    Productplandb.QTY = obj.QTY;
@@ -3837,10 +3918,10 @@ namespace Plims.Controllers
                 Productplandb.QRcodeperday = obj.QRcodeperday;
             }
 
-            if (obj.TotalPiecePerDay != null)
-            {
-                Productplandb.TotalPiecePerDay = obj.TotalPiecePerDay;
-            }
+            //if (obj.TotalPiecePerDay != null)
+            //{
+            //    Productplandb.TotalPiecePerDay = obj.TotalPiecePerDay;
+            //}
 
 
             Productplandb.UpdateBy = EmpID;// User.Identity.Name;
@@ -3890,7 +3971,7 @@ namespace Plims.Controllers
                     SizeMin = obj.SizeMin,
                     SizeMax = obj.SizeMax,
                     Weight = obj.Weight,
-                    QTY = obj.QTY,
+                    QRcodeperday = obj.QRcodeperday,
                     CreateDate = DateTime.Today,
                     CreateBy = EmpID,//User.Identity.Name,
                     UpdateDate = DateTime.Today,
@@ -3967,9 +4048,9 @@ namespace Plims.Controllers
                 Sheet.Cells["F1"].Value = "SectionID";
                 Sheet.Cells["G1"].Value = "Size-Min";
                 Sheet.Cells["H1"].Value = "Size-Max";
-                Sheet.Cells["I1"].Value = "QRcodeperday";
-                Sheet.Cells["J1"].Value = "TotalPiecePerDay";
-                Sheet.Cells["K1"].Value = "QTY";
+                Sheet.Cells["I1"].Value = "Piece-Qty";
+                Sheet.Cells["J1"].Value = "Weight-Qty";
+                //Sheet.Cells["K1"].Value = "QTY";
                 int row = 2;
                 foreach (var item in collection)
                 {
@@ -3983,8 +4064,8 @@ namespace Plims.Controllers
                     Sheet.Cells[string.Format("G{0}", row)].Value = item.SizeMin;
                     Sheet.Cells[string.Format("H{0}", row)].Value = item.SizeMax;
                     Sheet.Cells[string.Format("I{0}", row)].Value = item.QRcodeperday;
-                    Sheet.Cells[string.Format("I{0}", row)].Value = item.TotalPiecePerDay;
-                    Sheet.Cells[string.Format("J{0}", row)].Value = item.TotalPiecePerDay / item.QRcodeperday;
+                    Sheet.Cells[string.Format("I{0}", row)].Value = item.Weight;
+                    //Sheet.Cells[string.Format("J{0}", row)].Value = item.TotalPiecePerDay / item.QRcodeperday;
                     row++;
                 }
                 Sheet.Cells["A:AZ"].AutoFitColumns();
@@ -4011,9 +4092,9 @@ namespace Plims.Controllers
                 Sheet.Cells["F1"].Value = "SectionID";
                 Sheet.Cells["G1"].Value = "Size-Min";
                 Sheet.Cells["H1"].Value = "Size-Max";
-                Sheet.Cells["I1"].Value = "QRcodeperday";
-                Sheet.Cells["J1"].Value = "TotalPiecePerDay";
-                Sheet.Cells["K1"].Value = "QTY";
+                Sheet.Cells["I1"].Value = "Piece-Qty";
+                Sheet.Cells["J1"].Value = "Weight-Qty";
+                //Sheet.Cells["K1"].Value = "QTY";
                 int row = 2;
                 foreach (var item in collection)
                 {
@@ -4028,8 +4109,8 @@ namespace Plims.Controllers
                     Sheet.Cells[string.Format("G{0}", row)].Value = item.SizeMin;
                     Sheet.Cells[string.Format("H{0}", row)].Value = item.SizeMax;
                     Sheet.Cells[string.Format("I{0}", row)].Value = item.QRcodeperday;
-                    Sheet.Cells[string.Format("J{0}", row)].Value = item.TotalPiecePerDay;
-                    Sheet.Cells[string.Format("K{0}", row)].Value = item.TotalPiecePerDay/ item.QRcodeperday;
+                    Sheet.Cells[string.Format("J{0}", row)].Value = item.Weight;
+                    //Sheet.Cells[string.Format("K{0}", row)].Value = item.TotalPiecePerDay/ item.QRcodeperday;
                     row++;
                 }
 

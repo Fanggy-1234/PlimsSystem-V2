@@ -231,7 +231,7 @@
                         {
                             var matchingTransaction = group.FirstOrDefault(x => x.TransactionDate.Date == date.Date);
                             @* <td>@(matchingTransaction != null ? matchingTransaction.TotalIncentive.ToString("0.00") : "")</td> *@
-                            <td>@(matchingTransaction != null ? matchingTransaction.TotalIncentive.ToString() : "")</td>
+                            <td>@(matchingTransaction != null ? matchingTransaction.TotalIncentive.ToString("0.00") : "")</td>
                             totalIncentive += matchingTransaction != null ? matchingTransaction.TotalIncentive : 0;
                         }
                     

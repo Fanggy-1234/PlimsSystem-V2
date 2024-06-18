@@ -7,7 +7,7 @@
 }
 
 
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+@* <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script> *@
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
 <link href="~/css/datatable2.2.0.css" rel="stylesheet" />
 
@@ -72,7 +72,7 @@
             ordering: false,
             searching: false,
             scrollX: true,
-            scrollY: true,
+            scrollY: false,
             // order: [[1, 'asc']],
             lengthMenu: [10, 25, 50, 75, 100],
             pageLength: 20, // Default page length
@@ -81,7 +81,21 @@
 
     });
 
-    
+
+    // $(document).ready(function () {
+    //     var table = $('#tablesubcreate_id').DataTable({
+    //         dom: 'Bfrtip',
+    //         ordering: false,
+    //         searching: false,
+    //         scrollX: false,
+    //         scrollY: false,
+    //         // order: [[1, 'asc']],
+    //        // lengthMenu: [10, 25, 50, 75, 100],
+    //        // pageLength: 20, // Default page length
+    //         paging: false, // Enable paging
+    //     });
+
+    // });
 
 </script>
 
@@ -343,7 +357,7 @@
 <div class="modal fade bd-example-modal-lg" id="CreateModal" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form method="get" asp-controller="Master" asp-action="EmployeeGroupeCreate">
+            <form method="post" asp-controller="Master" asp-action="EmployeeGroupeCreate">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Employee Group Create</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -408,7 +422,7 @@
                     <div class="row" style="height:20px"></div>
                     @*  // Display table *@
                     <div class="row">
-                        <table id="tablesubcreate_id" class="page-table" style="width:100%">
+                        <table id="tablesubcreate_id"  style="width:100%">
                             <thead style="background-color:gainsboro;">
                                 <tr>
 
@@ -843,58 +857,58 @@
 
 
 
-    // Attach click event to the "Add" button  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    $('#AddEmpCreate').on('click', function () {
-        addRowCreate();
-    });
+//     // Attach click event to the "Add" button  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//     $('#AddEmpCreate').on('click', function () {
+//         addRowCreate();
+//     });
 
-    // Function to add a new row to DataTable Modal Create
-    function addRowCreate() {
+//     // Function to add a new row to DataTable Modal Create
+//     function addRowCreate() {
 
-        var employeeID = $("#EmployeeIDCreate").val(); // Get the selected value from the dropdown
+//         var employeeID = $("#EmployeeIDCreate").val(); // Get the selected value from the dropdown
 
-        // Check for duplicates
-        var duplicate = false;
-        $('#tablesubcreate_id tbody tr').each(function () {
-            var existingEmployeeID = $(this).find('td:first').text().trim(); // Assuming employeeID is the first column
-            if (employeeID === existingEmployeeID) {
-                duplicate = true;
-                return false; // Exit the loop early since we found a duplicate
-            }
-        });
+//         // Check for duplicates
+//         var duplicate = false;
+//         $('#tablesubcreate_id tbody tr').each(function () {
+//             var existingEmployeeID = $(this).find('td:first').text().trim(); // Assuming employeeID is the first column
+//             if (employeeID === existingEmployeeID) {
+//                 duplicate = true;
+//                 return false; // Exit the loop early since we found a duplicate
+//             }
+//         });
 
-        if (duplicate) {
-            // Handle duplicate entry
-            alert('Duplicate entry found.');
-            return; // Exit the function to prevent adding duplicate rows
-        }
+//         if (duplicate) {
+//             // Handle duplicate entry
+//             alert('Duplicate entry found.');
+//             return; // Exit the function to prevent adding duplicate rows
+//         }
 
 
-        // Make an AJAX request to fetch the employeeName
-        $.ajax({
-            url: '/Master/GetEmployeeName', // Replace with your actual route
-            type: 'GET',
-            data: { employeeID: employeeID },
-            success: function (employeeName) {
-               // console.log(employeeName);
-                var tableBody = $('#tablesubcreate_id tbody');
-                var row = $('<tr>');
-                row.append('<td>' + employeeID + '</td>');
-                row.append('<td>' + employeeName + '</td>');
-              //  row.append('<td  class="page-table-data"><a href="#" class="delete-link delete-row" data-employee-id="' + employeeID + '">Delete</a></td>');
-                row.append('<td><a href="#" class="delete-link delete-row" data-employee-id="' + employeeID + '">Delete</a></td>');
-                tableBody.append(row);
-                // class="page-table-data"
-               // GroupIDCreate
-                // Redraw DataTable after adding a new row
-                $('#tablesubcreate_id').DataTable().draw();
-            },
-            error: function (error) {
-                console.log(error);
-            }
-        });
-    }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//         // Make an AJAX request to fetch the employeeName
+//         $.ajax({
+//             url: '/Master/GetEmployeeName', // Replace with your actual route
+//             type: 'GET',
+//             data: { employeeID: employeeID },
+//             success: function (employeeName) {
+//                 console.log(employeeName);
+//                 var tableBody = $('#tablesubcreate_id tbody');
+//                 var row = $('<tr>');
+//                 row.append('<td class="page-table-data">' + employeeID + '</td>');
+//                 row.append('<td class="page-table-data">' + employeeName + '</td>');
+//               //  row.append('<td  class="page-table-data"><a href="#" class="delete-link delete-row" data-employee-id="' + employeeID + '">Delete</a></td>');
+//                 row.append('<td class="page-table-data"><a href="#" class="delete-link delete-row" data-employee-id="' + employeeID + '">Delete</a></td>');
+//                 tableBody.append(row);
+//                 // class="page-table-data"
+//                // GroupIDCreate
+//                 // Redraw DataTable after adding a new row
+//                 $('#tablesubcreate_id').DataTable().draw();
+//             },
+//             error: function (error) {
+//                 console.log(error);
+//             }
+//         });
+//     }
+// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     $(document).ready(function () {
         // Function to handle click event for delete links
@@ -1130,3 +1144,55 @@
     ///////////////////////////////////
 </script>
 
+<script>
+    // Attach click event to the "Add" button  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    $('#AddEmpCreate').on('click', function () {
+        addRowCreate();
+    });
+
+    // Function to add a new row to DataTable Modal Create
+    function addRowCreate() {
+
+        var employeeID = $("#EmployeeIDCreate").val(); // Get the selected value from the dropdown
+
+        // Check for duplicates
+        var duplicate = false;
+        $('#tablesubcreate_id tbody tr').each(function () {
+            var existingEmployeeID = $(this).find('td:first').text().trim(); // Assuming employeeID is the first column
+            if (employeeID === existingEmployeeID) {
+                duplicate = true;
+                return false; // Exit the loop early since we found a duplicate
+            }
+        });
+
+        if (duplicate) {
+            // Handle duplicate entry
+            alert('Duplicate entry found.');
+            return; // Exit the function to prevent adding duplicate rows
+        }
+
+
+        // Make an AJAX request to fetch the employeeName
+        $.ajax({
+            url: '/Master/GetEmployeeName', // Replace with your actual route
+            type: 'GET',
+            data: { employeeID: employeeID },
+            success: function (employeeName) {
+                // console.log(employeeName);
+                var tableBody = $('#tablesubcreate_id tbody');
+                var row = $('<tr>');
+                row.append('<td >' + employeeID + '</td>');
+                row.append('<td >' + employeeName + '</td>');
+                row.append('<td ><a href="#" class="delete-link delete-row" data-employee-id="' + employeeID + '">Delete</a></td>');
+                tableBody.append(row);
+
+                $('#tablesubcreate_id').DataTable().draw();
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                </script>

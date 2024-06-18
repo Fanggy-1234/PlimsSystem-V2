@@ -12,6 +12,7 @@ namespace Plims.Models
         public string SectionID { get; set; }
         //public int ProdID { get; set; }
         public string ProductID { get; set; }
+        public int FormularID { get; set; }
         public string Prefix { get; set; }
         public string QRCode { get; set; }
         public int Qty { get; set; }

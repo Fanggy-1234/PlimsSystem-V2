@@ -66,8 +66,8 @@
             dom: 'Bfrtip',
             ordering: false,
             searching: false,
-            scrollX: true,
-            scrollY: true,
+            scrollX: false,
+            scrollY: false,
             // order: [[1, 'asc']],
             lengthMenu: [10, 25, 50, 75, 100],
             pageLength: 20, // Default page length
@@ -227,13 +227,15 @@
                     Size-Max
                 </th>
                 <th>
-                    Piece per QRcode
+                    Piece-Qty
                 </th>
-                <th>
+
+               @*  <th>
                     Total piece per day
-                </th>
+                </th> *@
+
                 <th>
-                    QTY
+                    Wight-QTY
                 </th>
                 <th>
                     Action
@@ -268,17 +270,20 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.SizeMax)
                     </td>
-            @*        
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Weight)
-                    </td> *@
+            
                        <td>
                         @Html.DisplayFor(modelItem => item.QRcodeperday)
                     </td>
-                    <td>
+
+                        <td>
+                        @Html.DisplayFor(modelItem => item.Weight)
+                        </td> 
+
+                  @*   <td>
                         @Html.DisplayFor(modelItem => item.TotalPiecePerDay)
-                    </td>
-                    <td>
+                    </td> 
+
+                     <td>
                         @if (item.TotalPiecePerDay != 0)
                         {
                             @((decimal)item.TotalPiecePerDay / (decimal)item.QRcodeperday)
@@ -286,8 +291,8 @@
                         else
                         {
                             @:0
-                        }
-                    </td>
+                        } 
+                    </td>*@
                    
                     <td>
                         @if (ViewBag.VBRoleProductionPlan == "Full")
@@ -452,17 +457,19 @@
                     </div>
 
                      <div class="mb-3">
-                        <label class="col-form-label">QRCodePerDay:</label>
+                        <label class="col-form-label">Piece-Qty:</label>
                         <input type="text" class="form-control" id="CreatQRcodeperday" Name="QRcodeperday" required>
                     </div>
-                    <div class="mb-3">
+
+
+                   @*  <div class="mb-3">
                         <label class="col-form-label">TotalPiecePerDay:</label>
                         <input type="text" class="form-control" id="CreateTotalPiecePerDay" Name="TotalPiecePerDay" required>
-                    </div>
-                  @*   <div class="mb-3">
-                        <label class="col-form-label">Qty:</label>
-                        <input type="text" class="form-control" id="CreateQty" Name="Qty" required>
                     </div> *@
+                    <div class="mb-3">
+                        <label class="col-form-label">Weight-Qty:</label>
+                        <input type="text" class="form-control" id="CreateWeightQty" Name="Qty" required>
+                    </div> 
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -570,17 +577,17 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="col-form-label">QRcodeperday:</label>
+                        <label class="col-form-label">Piece Qty:</label>
                         <input type="text" class="form-control" id="ModalQRcodeperday" Name="QRcodeperday" required>
                     </div>
-                    <div class="mb-3">
+                    @* <div class="mb-3">
                         <label class="col-form-label">TotalPiecePerDay:</label>
                         <input type="text" class="form-control" id="ModalTotalPiecePerDay" Name="TotalPiecePerDay" required>
-                    </div>
-                 @*    <div class="mb-3">
-                        <label class="col-form-label">Qty:</label>
-                        <input type="text" class="form-control" id="ModalQty" Name="Qty" required>
                     </div> *@
+                    <div class="mb-3">
+                        <label class="col-form-label">Wieight-Qty:</label>
+                        <input type="text" class="form-control" id="ModalWeightQty" Name="Qty" required>
+                    </div> 
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -663,9 +670,9 @@
                     $('#ModalSectionName').val(response.sectionID).trigger('change');
                     $('#ModalSizeMAX').val(response.sizeMin);
                     $('#ModalSizeMIN').val(response.sizeMax);
-                    // $('#ModalWeight').val(response.weight);
+                    $('#ModalWeightQty').val(response.weight);
                     $('#ModalQRcodeperday').val(response.qRcodeperday);
-                    $('#ModalTotalPiecePerDay').val(response.totalPiecePerDay);
+                    // $('#ModalTotalPiecePerDay').val(response.totalPiecePerDay);
                     $('#ModalQty').val(response.qty);
                     $('#EditModal').modal('show');
 
