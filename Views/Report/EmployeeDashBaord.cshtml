@@ -39,7 +39,10 @@
     <link href="~/dashboard/css/font-awesome.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-
+        #container {
+            width: 100%;
+            height: 600px;
+        }
     </style>
 </head>
 
@@ -86,7 +89,7 @@
 
         <div class="col-lg-12" id="dataContainer">
             <div class="row column1">
-                <div class="col-lg-4">
+                <div class="col-lg-3">
 
                     <div class="white_shd full margin_bottom_30" style="height:100%">
                         <div class="full graph_head">
@@ -101,18 +104,18 @@
                     </div>
 
                 </div>
-                <div class="col-lg-8">
+                <div class="col-lg-9">
                     <div class="row column1">
                         <div class="col-lg-12">
                             <div class="white_shd full margin_bottom_30">
                                 <div class="full graph_head">
-                                    <div class="heading1 margin_0" style="color: black;font-size:26px">
+                                    <div class="heading1 margin_0" style="color: black;font-size:28px">
                                         <h3>ตารางแสดงข้อมูล Eff Pcs/Man/Hr</h3>
                                     </div>
                                 </div>
                                 <div class="map_section padding_infor_info">
-                                    <table class="table table-bordered" style="color: black;font-size:24px">
-                                        <thead style="background-color:gray">
+                                    <table class="table table-bordered" style="color: black;font-size:28px">
+                                        <thead style="background-color:lightgray">
                                             <tr class="table-Primary">
                                                 <th style="font-weight:bold;text-align: center;">Product</th>
                                                 <th style="font-weight:bold;text-align: center;">Section</th>
@@ -163,15 +166,15 @@
                         <div class="col-lg-12">
                             <div class="white_shd full margin_bottom_30">
                                 <div class="full graph_head">
-                                    <div class="heading1 margin_0" style="color: black;font-size:26px">
+                                    <div class="heading1 margin_0" style="color: black;font-size:28px">
                                         <h3>Grade พนักงาน</h3>
                                     </div>
                                 </div>
 
                                 <div class="table_section padding_infor_info">
                                     <div class="table-responsive-sm">
-                                        <table class="table table-bordered" style="color: black;font-size:24px">
-                                            <thead style="background-color:gray">
+                                        <table class="table table-bordered" style="color: black;font-size:28px">
+                                            <thead style="background-color:lightgray">
                                                 <tr class="table-Primary">
                                                     <th style="font-weight:bold;text-align: center;">เกรด</th>
                                                     <th style="font-weight:bold;text-align: center;">จำนวนชิ้นเฉลี่ย</th>
@@ -514,8 +517,8 @@
                 chart.container("container");
 
                 // Set the size of the chart
-                chart.width("150%"); // Set width
-                chart.height("150%"); // Set height
+                chart.width("120%"); // Set width
+                chart.height("120%"); // Set height
 
                 // Initiate chart drawing
                 chart.draw();
