@@ -62,8 +62,11 @@ namespace Plims.Controllers
 
                 if (model.filter == 0)
                 {
-                    model.StartDate = DateTime.Now;
-                    model.EndDate = DateTime.Now;
+                    //model.StartDate = DateTime.Now;
+                    //model.EndDate = DateTime.Now;
+                    model.StartDate = DateTime.Today;
+                    model.EndDate = DateTime.Today;
+
                 }
 
                 var varYear = from a in db.View_DailyReportSummary
@@ -272,8 +275,21 @@ namespace Plims.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Filter(ViewModelReport mymodel)
         {
-            mymodel.filter = 1;
-            return RedirectToAction("EmployeeDashBaord", mymodel);
+           
+            if (mymodel.StartDate != DateTime.MinValue || mymodel.EndDate != DateTime.MinValue || mymodel.FilterYear != 0 || mymodel.FilterMonth != 0 || mymodel.FilterLine != null || mymodel.FilterProduct != null || mymodel.FilterPoint != null)
+            {
+                mymodel.filter = 1;
+                return RedirectToAction("EmployeeDashBaord", mymodel);
+            }
+            else
+            {
+                mymodel.StartDate = DateTime.Today;
+                mymodel.EndDate = DateTime.Today;
+                return RedirectToAction("EmployeeDashBaord", mymodel);
+
+            }
+
+
         }
 
         [HttpGet]
@@ -290,14 +306,14 @@ namespace Plims.Controllers
             else
             {
 
-                ViewBag.DefaultStartDate = DateTime.Now.ToString("dd-MM-yyyy");
-                ViewBag.DefaultEndDate = DateTime.Now.ToString("dd-MM-yyyy");
+                ViewBag.DefaultStartDate = DateTime.Today.ToString("dd-MM-yyyy");
+                ViewBag.DefaultEndDate = DateTime.Today.ToString("dd-MM-yyyy");
 
 
                 if (model.filter == 0 || model.StartDate == DateTime.MinValue || model.EndDate == DateTime.MinValue)
                 {
-                    model.StartDate = DateTime.Now;
-                    model.EndDate = DateTime.Now;
+                    model.StartDate = DateTime.Today;
+                    model.EndDate = DateTime.Today;
                 }
 
 
@@ -615,8 +631,20 @@ namespace Plims.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult FilterOverview(ViewModelReport mymodel)
         {
-            mymodel.filter = 1;
-            return RedirectToAction("OverviewDashBoard", mymodel);
+
+            if(mymodel.StartDate != DateTime.MinValue || mymodel.EndDate != DateTime.MinValue || mymodel.FilterYear !=0 || mymodel.FilterMonth !=0 || mymodel.FilterLine != null || mymodel.FilterProduct != null || mymodel.FilterPoint != null)
+            {
+                mymodel.filter = 1;
+                return RedirectToAction("OverviewDashBoard", mymodel);
+            }
+            else
+            {
+                mymodel.StartDate = DateTime.Today;
+                mymodel.EndDate = DateTime.Today;
+                return RedirectToAction("OverviewDashBoard", mymodel);
+
+            }
+
 
         }
     }

@@ -5140,28 +5140,37 @@ namespace Plims.Controllers
                    
                     if (sumQRCodeEmp != 0)
                     {
-                        var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
 
-                        foreach (string item in EmpIDtran)
+                        int datacnt = TransactionID.Count();
+                        for (int i = 0; i < datacnt; ++i)
                         {
-                            // Update Table : TbProductionTransaction column QTYPerQR
-                            var ProdUpdate = db.TbProductionTransaction
-                                 .Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) &&
-                                             x.PlantID.Equals(PlantID) &&
-                                             x.LineID.Equals(FGLine) &&
-                                             x.SectionID.Equals(FGSection) &&
-                                             x.Prefix.Equals(FGShift) &&
-                                             x.QRCode.Equals(item) &&
-                                             x.DataType.Equals("Count"))
-                                 .ToList();
 
-                            foreach (var transaction in ProdUpdate)
+                            int empid = TransactionID[i];
+                            var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionID.Equals(empid)).Select(x => x.QRCode).ToList();
+
+                            foreach (string item in EmpIDtran)
                             {
-                                transaction.Note = "Replace : " + transaction.QtyPerQR;
-                                transaction.QtyPerQR = QRPerAdjustinsert;
-                                transaction.UpdateBy = EmpID; // User.Identity.Name;
-                                transaction.UpdateDate = DateTime.Now;
+                                // Update Table : TbProductionTransaction column QTYPerQR
+                                var ProdUpdate = db.TbProductionTransaction
+                                     .Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) &&
+                                                 x.PlantID.Equals(PlantID) &&
+                                                 x.LineID.Equals(FGLine) &&
+                                                 x.SectionID.Equals(FGSection) &&
+                                                 x.Prefix.Equals(FGShift) &&
+                                                 x.QRCode.Equals(item) &&
+                                                 x.DataType.Equals("Count"))
+                                     .ToList();
+
+                                foreach (var transaction in ProdUpdate)
+                                {
+                                    transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                    transaction.QtyPerQR = QRPerAdjustinsert;
+                                    transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                    transaction.UpdateDate = DateTime.Now;
+                                }
                             }
+
+                        
                         }
                         db.SaveChanges();
 

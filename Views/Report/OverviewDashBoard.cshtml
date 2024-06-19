@@ -67,7 +67,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <form asp-action="FilterOverview" asp-controller="Report" method="post">
+                            <form asp-action="FilterOverview" asp-controller="Report" method="post" id="filterForm">
                             <tr>
                                 <td style="font-weight:bold;text-align: center;"><h3></h3></td>
                                 <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;" } })</td>

@@ -250,7 +250,7 @@
                     @Html.HiddenFor(modelItem => item.TransactionID)
                    
                     <td>
-                        @Html.DisplayFor(modelItem => item.PlanDate)
+                        @Html.DisplayFor(modelItem => item.PlanDate.Date)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Prefix) 
@@ -468,7 +468,7 @@
                     </div> *@
                     <div class="mb-3">
                         <label class="col-form-label">Weight-Qty:</label>
-                        <input type="text" class="form-control" id="CreateWeightQty" Name="Qty" required>
+                        <input type="text" class="form-control" id="CreateWeightQty" Name="Weight" required>
                     </div> 
 
                     <div class="modal-footer">
@@ -586,7 +586,7 @@
                     </div> *@
                     <div class="mb-3">
                         <label class="col-form-label">Wieight-Qty:</label>
-                        <input type="text" class="form-control" id="ModalWeightQty" Name="Qty" required>
+                        <input type="text" class="form-control" id="ModalWeightQty" Name="Weight" required>
                     </div> 
 
                     <div class="modal-footer">
