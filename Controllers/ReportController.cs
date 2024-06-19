@@ -254,11 +254,11 @@ namespace Plims.Controllers
                 int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
                 ViewBag.SetTime = Valuesetup * 60000; //Change minute to millisecond
 
-                //Set Refrsh Time
-                //int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
+                // Set Refrsh Time
+                // int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
                 // ViewBag.SetTime = Valuesetup * 60; //Change minute to millisecond
                 // String Refreshtime = Convert.ToString(Valuesetup * 60000);
-                //  Response.Headers.Add("Refresh", Refreshtime);
+                // Response.Headers.Add("Refresh", Refreshtime);
 
 
                 return View(mymodel);
@@ -271,8 +271,19 @@ namespace Plims.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Filter(ViewModelReport mymodel)
         {
-            mymodel.filter = 1;
-            return RedirectToAction("EmployeeDashBaord", mymodel);
+			//if (ModelState.IsValid)
+			if (mymodel.StartDate != DateTime.MinValue || mymodel.EndDate != DateTime.MinValue || mymodel.FilterYear != 0 || mymodel.FilterMonth != 0 || mymodel.FilterLine != null || mymodel.FilterProduct != null || mymodel.FilterPoint != null)
+
+			{
+				mymodel.filter = 1;
+				return RedirectToAction("EmployeeDashBaord", mymodel);
+			}
+			else
+			{
+				mymodel.StartDate = DateTime.Now;
+				mymodel.EndDate = DateTime.Now;
+				return RedirectToAction("EmployeeDashBaord", mymodel);
+			}
         }
 
         [HttpGet]
@@ -293,7 +304,7 @@ namespace Plims.Controllers
                 ViewBag.DefaultEndDate = DateTime.Now.ToString("dd-MM-yyyy");
 
 
-                if (model.filter == 0)
+                 if (model.filter == 0)
                 {
                     model.StartDate = DateTime.Now;
                     model.EndDate = DateTime.Now;
@@ -403,12 +414,25 @@ namespace Plims.Controllers
                                                 }).ToList();
 
 
-                ViewBag.SumEmployee = resultGrpProductOverview.Sum(x => x.SumEmp);
-                ViewBag.AvgCapHr = resultGrpProductOverview.Average(x => x.CapHr);
-                ViewBag.AvgEFFhr1 = resultGrpProductOverview.Average(x => x.EFFhr1);
-                ViewBag.AvgEFFhr2 = resultGrpProductOverview.Average(x => x.EFFhr2);
-                ViewBag.AvgEFFhr3 = resultGrpProductOverview.Average(x => x.EFFhr3);
-                ViewBag.DefectAll = resultGrpProductOverview.Average(x => x.TotalDefect);
+                if (resultGrpProductOverview.Count() != 0)
+                {
+                    ViewBag.SumEmployee = resultGrpProductOverview.Sum(x => x.SumEmp);
+                    ViewBag.AvgCapHr = resultGrpProductOverview.Average(x => x.CapHr);
+                    ViewBag.AvgEFFhr1 = resultGrpProductOverview.Average(x => x.EFFhr1);
+                    ViewBag.AvgEFFhr2 = resultGrpProductOverview.Average(x => x.EFFhr2);
+                    ViewBag.AvgEFFhr3 = resultGrpProductOverview.Average(x => x.EFFhr3);
+                    ViewBag.DefectAll = resultGrpProductOverview.Average(x => x.TotalDefect);
+                }
+                else
+                {
+                    ViewBag.SumEmployee = 0;
+                    ViewBag.AvgCapHr = 0;
+                    ViewBag.AvgEFFhr1 = 0;
+                    ViewBag.AvgEFFhr2 = 0;
+                    ViewBag.AvgEFFhr3 = 0;
+                    ViewBag.DefectAll = 0;
+                }
+               
 
                 /////////////////// 2 Group Bar Chart Line Overview
                 var resultGrpLineOverview = (from summary in db.View_EFFReport
@@ -517,6 +541,7 @@ namespace Plims.Controllers
                 //Response.Headers.Add("Refresh", Refreshtime);
 
                 return View(mymodel);
+
             }
         }
 
@@ -524,8 +549,21 @@ namespace Plims.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult FilterOverview(ViewModelReport mymodel)
         {
-            mymodel.filter = 1;
-            return RedirectToAction("OverviewDashBoard", mymodel);
+            
+			//if (ModelState.IsValid)
+			if(mymodel.StartDate != DateTime.MinValue || mymodel.EndDate != DateTime.MinValue || mymodel.FilterYear != 0 || mymodel.FilterMonth != 0 || mymodel.FilterLine != null || mymodel.FilterProduct != null || mymodel.FilterPoint != null)
+
+            {
+				mymodel.filter = 1;
+				return RedirectToAction("OverviewDashBoard", mymodel);
+			}
+			else
+			{
+				mymodel.StartDate = DateTime.Now;
+				mymodel.EndDate = DateTime.Now;
+				return RedirectToAction("OverviewDashBoard", mymodel);
+			}
+
 
         }
     }

@@ -63,7 +63,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <form asp-action="Filter" asp-controller="Report" method="post">
+                        <form asp-action="Filter" asp-controller="Report" method="post" id="filterForm">
                         <tr>
                             <td style="font-weight:bold;text-align: center;"><h3>Efficiency</h3></td>
                             <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;color: black" } })</td>
@@ -73,7 +73,7 @@
                             <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterLine, (IEnumerable<SelectListItem>)ViewBag.varLine as SelectList, ":: All Line ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
                             <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterProduct, (IEnumerable<SelectListItem>)ViewBag.varProduct as SelectList, ":: All Product ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
                             <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterPoint, (IEnumerable<SelectListItem>)ViewBag.varPoint as SelectList, ":: All Point ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
-                            <td style="font-weight:bold;text-align: center;"><button type="submit" class="btn cur-p btn-primary" id="fetchDataButton">&nbsp;&nbsp;  Filter  &nbsp;&nbsp;</button></td>
+                            <td style="font-weight:bold;text-align: center;"><button type="submit" class="btn cur-p btn-primary" id="filterButton">&nbsp;&nbsp;  Filter  &nbsp;&nbsp;</button></td>
                             <td style="font-weight:bold;text-align: center;font-size:26px">จำนวนพนักงาน</td>
                         </tr>
                         </form>
@@ -268,39 +268,41 @@
             });
         </script>
 
+        @* @ViewBag.SetTime *@
+
         <script>
-            // Function to fetch data
+            // Function to fetch data and submit the form
             function fetchData() {
-                console.log('Fetching data...'); // Log a message to verify if fetchData() is called
-                // Place your code here to fetch data
-                var newData = "Example data fetched at " + new Date().toLocaleTimeString();
-                document.getElementById("dataContainer").innerText = newData;
+                console.log('Fetching data and submitting form...');
+                // Optionally, you can add any pre-submit logic here
+                document.getElementById("filterForm").submit(); // Submit the form programmatically
             }
 
             // Start triggering button click event after page load
             window.addEventListener("load", function () {
-                //var interval = parseInt(document.getElementById("intervalInput").value); // Get the interval value from the input field
-                var interval = @ViewBag.SetTime
-                    triggerButtonClick(interval); // Start triggering button click event with the specified interval
+                // Ensure @ViewBag.SetTime is properly rendered as a valid integer
+                var interval = @ViewBag.SetTime;
+                console.log('Initial interval:', interval); // Log the interval value to verify
+                triggerButtonClick(interval); // Start triggering button click event with the specified interval
             });
 
             // Function to trigger button click event periodically
             function triggerButtonClick(interval) {
-                console.log('Triggering button click event with interval:', interval); // Log the interval value
+                console.log('Triggering button click event with interval:', interval);
 
                 // Trigger button click event periodically
                 var intervalId = setInterval(function () {
-                    document.getElementById("fetchDataButton").click(); // Automatically click the button
+                    fetchData(); // Call fetchData directly to submit the form
                 }, interval);
 
-                // If you want to stop the interval after a certain amount of time (e.g., after 1 hour)
+                // Optional: Stop the interval after a certain amount of time
                 // setTimeout(function () {
                 //     clearInterval(intervalId); // Stop the interval
-                //     console.log('Interval stopped.'); // Log a message
+                //     console.log('Interval stopped.');
                 // }, 3600000); // 1 hour = 3600 seconds = 3600000 milliseconds
             }
-
         </script>
+
 
         <script>
             anychart.onDocumentReady(function () {
