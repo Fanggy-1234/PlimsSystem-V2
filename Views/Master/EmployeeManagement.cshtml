@@ -122,7 +122,7 @@
                 {
                     var dataitem = item.First(); // Take the first item in the group
                     <option value="@dataitem.EmployeeID" selected="@(dataitem.EmployeeID == ViewBag.SelectedEmployeeID ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => dataitem.EmployeeID)
+                        @Html.DisplayFor(modelItem => dataitem.EmployeeID) :  @Html.DisplayFor(modelItem => dataitem.EmployeeName)  @Html.DisplayFor(modelItem => dataitem.EmployeeLastName)
                     </option>
 
                 }
@@ -150,7 +150,7 @@
                 {
                     var dataitem = item.First(); // Take the first item in the group
                     <option value="@dataitem.SectionName" selected="@(dataitem.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => dataitem.SectionName)
+                      @Html.DisplayFor(modelItem => dataitem.SectionID)  : @Html.DisplayFor(modelItem => dataitem.SectionName)
                     </option>
 
                 }
@@ -181,7 +181,7 @@
                 {
                     var dataitem = item.First(); // Take the first item in the group
                     <option value="@dataitem.LineName" selected="@(dataitem.LineName == ViewBag.SelectedLineName ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => dataitem.LineName)
+                         @Html.DisplayFor(modelItem => dataitem.LineID) : @Html.DisplayFor(modelItem => dataitem.LineName)
                     </option>
 
                 }
@@ -209,7 +209,7 @@
                 {
                     var dataitem = item.First(); // Take the first item in the group
                     <option value="@dataitem.ShiftName" selected="@(dataitem.ShiftName == ViewBag.SelectedShiftName ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => dataitem.ShiftName)
+                        @Html.DisplayFor(modelItem => dataitem.ShiftID) : @Html.DisplayFor(modelItem => dataitem.ShiftName)
                     </option>
 
                 }
@@ -345,13 +345,13 @@
                     @Html.DisplayFor(modelItem => item.PlantName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.LineName)
+                   @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.SectionName)
+                      @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ShiftName)
+                   @Html.DisplayFor(modelItem => item.ShiftID) :  @Html.DisplayFor(modelItem => item.ShiftName)
                 </td>
 
                 @if (item.Status == 1)

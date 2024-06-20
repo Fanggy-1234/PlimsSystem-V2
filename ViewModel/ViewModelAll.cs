@@ -82,6 +82,8 @@ namespace Plims.ViewModel
 
         public IEnumerable<View_ClockTime> view_ClockTime { get; set; }
 
+        public IEnumerable<View_EmployeeClockTimeTest> view_EmployeeClockTimeTest { get; set; }
+
         public IEnumerable<View_ProductionTransactionAdjust> view_ProductionTransactionAdjust { get; set; }
 
         public IEnumerable<TbProductionTransactionAdjust> tbProductionTransactionAdjust { get; set; }

@@ -20,6 +20,8 @@ namespace Plims.Models
         public string LineID { get; set; }
         public string SectionID { get; set; }
         public string SectionName { get; set; }
+
+        public string Prefix { get; set; }
         public string ShiftName { get; set; }
         public int ShiftID { get; set; }
 

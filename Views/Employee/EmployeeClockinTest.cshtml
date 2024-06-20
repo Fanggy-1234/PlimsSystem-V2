@@ -1,7 +1,7 @@
 ﻿@model Plims.ViewModel.ViewModelAll
 
 @{
-    ViewBag.Title = "Employee Clock-In";
+    ViewBag.Title = "Employee Clock-In-TEST";
 }
 
 
@@ -14,7 +14,7 @@
 
     .form-control {
         width: 100%;
-        height:80%;
+        height: 80%;
         padding: 8px 15px;
         margin: 8px 0;
         display: inline-block;
@@ -227,10 +227,10 @@
                     alert("This data can't id" + EmployeeID)
                 }
                 else {
-                    
+
                     console.log('AJAX request successful:', response);
                     var transactionDate = new Date(response.transactionDate);
-                 //   var formattedDate = transactionDate.ToString("yyyy-MM-dd");
+                    //   var formattedDate = transactionDate.ToString("yyyy-MM-dd");
                     var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed .ToString("yyyy-MM-dd")
                     console.log('AJAX request successful:', transactionDate)
                     $('#ModalEmployeeID').val(response.employeeID);
@@ -281,19 +281,19 @@
         <a href="@Url.Action("EmployeeBreakAdjust", "Employee")" class="break-time-button break-time-button-text">Break time</a>
     </div>
     <div class="col-2">
-    <a href="@Url.Action("EmployeeLeaveHoliday", "Employee")" class="leave-holiday-button leave-holiday-button-text">Leave/Holiday</a>
+        <a href="@Url.Action("EmployeeLeaveHoliday", "Employee")" class="leave-holiday-button leave-holiday-button-text">Leave/Holiday</a>
     </div>
     <div class="col-2">
-    <a href="@Url.Action("ServicesClockIn", "Employee")" class="service-clock-in-button service-clock-in-button-text">Service clock in</a>
+        <a href="@Url.Action("ServicesClockIn", "Employee")" class="service-clock-in-button service-clock-in-button-text">Service clock in</a>
     </div>
     <div class="col-2">
-    <a href="@Url.Action("ServicesClockOut", "Employee")" class="service-clock-out-button service-clock-out-button-text">Service clock out</a>
+        <a href="@Url.Action("ServicesClockOut", "Employee")" class="service-clock-out-button service-clock-out-button-text">Service clock out</a>
     </div>
 </div>
 
 
 <div class="row" style="height:10px"></div>
-<form method="get" asp-controller="Employee" >
+<form method="get" asp-controller="Employee">
     <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;">
 
         <div class="col left" style="border: solid 1px #d5d5d5; margin-left:2em;">
@@ -315,11 +315,12 @@
                             {
 
                                 <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
-                                    @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName) </option>
+                                    @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
+                                </option>
                             }
                         </select>
 
-                       
+
                     </div>
 
                 </div>
@@ -334,14 +335,15 @@
                 <div class="col">
                     <!-- Employee ID -->
                     <div class="mb-3">
-                        
+
                         <select class="selectfillter form-control" list="EmployeeID" name="EmployeeID" id="EmployeeID" style="width:100%">
                             <option value="" default selected></option>
                             @foreach (var item in Model.tbEmployeeMaster)
                             {
 
                                 <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">
-                                    @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName) </option>
+                                    @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
+                                </option>
                             }
                         </select>
                     </div>
@@ -350,7 +352,7 @@
 
             </div>
 
-               <div class="row" style="padding-left:2em ; padding-right:2em">
+            <div class="row" style="padding-left:2em ; padding-right:2em">
                 <div class="col-3 label">
                     <label for="recipient-name" class="col-form-label">  Section Name:</label>
                 </div>
@@ -368,7 +370,7 @@
                             }
                         </select>
 
-                       
+
                     </div>
 
                 </div>
@@ -377,20 +379,37 @@
             </div>
 
 
-@* 
-            <div class="row" style="height:40px ;">
-                <div class="col-4"></div>
-                <div class="col-4">
-                    <button class="clear-button" type="submit" action="EmployeeClockIn">
-                        Clear
-                    </button>
+              <div class="row" style="padding-left:2em ; padding-right:2em">
+                <div class="col-3 label">
+                    <label for="recipient-name" class="col-form-label">  TransactionDate:</label>
+                </div>
+                <div class="col">
+                    <!-- Line Name -->
+                    <div class="mb-3">
+                        <input type="date" class="form-control" name="TransactionDate" id="TransactionDateFillter" style="width:100%" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+
                 </div>
 
-                <div class="col-4">
-                    <button class="search-button" type="submit" action="EmployeeClockIn">
-                        Search
-                    </button>
-                </div>
+
+            </div>
+
+
+
+            @*
+            <div class="row" style="height:40px ;">
+            <div class="col-4"></div>
+            <div class="col-4">
+            <button class="clear-button" type="submit" action="EmployeeClockIn">
+            Clear
+            </button>
+            </div>
+
+            <div class="col-4">
+            <button class="search-button" type="submit" action="EmployeeClockIn">
+            Search
+            </button>
+            </div>
 
             </div> *@
             <div class="row" style="height:20px;"></div>
@@ -405,7 +424,7 @@
             </div>
 
             <div class="row" style="padding-left:2em ; padding-right:2em">
-               <div class="col-3 label">
+                <div class="col-3 label">
                     <label for="recipient-name" class="col-form-label">Clock In Time:</label>
                 </div>
 
@@ -416,7 +435,7 @@
                     </div>
 
                 </div>
-               
+
 
             </div>
 
@@ -427,23 +446,23 @@
                 <div class="col">
                     <!-- Transaction Date -->
                     <div class="mb-3">
-             
-                       @*  <input type="date" class="form-control" name="TransactionDate" id="TransactionDate" value="@DateTime.Now.Date" disabled> *@
+
+                        @*  <input type="date" class="form-control" name="TransactionDate" id="TransactionDate" value="@DateTime.Now.Date" disabled> *@
                         <input type="date" class="form-control" name="TransactionDate" id="TransactionDate" style="width:100%">@* value="@DateTime.Now.ToString("yyyy-MM-dd")" *@
 
                     </div>
                 </div>
 
-             
+
             </div>
 
-         @*   <div class="row" style="height:40px ;">
-                <div class="col-8"></div>
-                <div class="col-4">
+            @*   <div class="row" style="height:40px ;">
+            <div class="col-8"></div>
+            <div class="col-4">
 
-                    <button type="submit" class="clear-button"  onclick="return confirm('Are you sure?')">Create</button>
+            <button type="submit" class="clear-button"  onclick="return confirm('Are you sure?')">Create</button>
 
-                </div>
+            </div>
 
             </div> *@
             <div class="row" style="height:20px;"></div>
@@ -480,7 +499,7 @@
 
                     @if (ViewBag.VBRoleEmpClockIn == "Full")
                     {
-                        <button type="submit" class="clear-button"  asp-action="EmployeeClockInsave" onclick="return confirm('Are you sure?')">Create</button>
+                        <button type="submit" class="clear-button" asp-action="EmployeeClockInsave" onclick="return confirm('Are you sure?')">Create</button>
                     }
                     else
                     {
@@ -500,29 +519,29 @@
     </div>
 
     @*Diaplay data*@
-    <table id ="table_id" class="table table-hover" style="width:100%">
+    <table id="table_id" class="table table-hover" style="width:100%">
         <thead style="background-color:lightgrey;width:100%">
             <tr>
-                <th ><input type="checkbox" id="checkall" /></th>
+                <th><input type="checkbox" id="checkall" /></th>
                 <th>
                     Employee ID
                 </th>
-                <th >
+                <th>
                     Employee Name
                 </th>
-                <th >
+                <th>
                     Line
                 </th>
-                <th >
+                <th>
                     Section
                 </th>
-                <th >
+                <th>
                     Date
                 </th>
                 <th>
                     Start Time
                 </th>
-                <th >
+                <th>
                     End Time
                 </th>
                 <th>
@@ -531,13 +550,13 @@
                 <th>
                     Working Status
                 </th>
-                <th >
+                <th>
                     Action
                 </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.view_EmployeeClocktime)
+            @foreach (var item in Model.view_EmployeeClockTimeTest)
             {
                 <tr>
                     @* @Html.HiddenFor(modelItem => item.ID) *@
@@ -550,11 +569,11 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.EmployeeID)
                     </td>
-                    <td >
+                    <td>
                         @Html.DisplayFor(modelItem => item.EmployeeName)
                     </td>
 
-                    <td >
+                    <td>
                         @Html.DisplayFor(modelItem => item.LineName)
                     </td>
                     <td>
@@ -578,7 +597,7 @@
                     </td>
 
 
-                    <td >
+                    <td>
                         @if (@item.ClockIn == "")
                         {
                             <a href="#" id="btnEdit">Edit</a>
@@ -639,25 +658,25 @@
                     <!-- Transaction Date -->
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Clock In Date:</label>
-                        <input type="date" class="form-control" name="TransactionDate" id="ModalTransactionDate" >
+                        <input type="date" class="form-control" name="TransactionDate" id="ModalTransactionDate">
                     </div>
 
 
-                 @*    <!-- WorkingStatus -->
+                    @*    <!-- WorkingStatus -->
                     <div class="mb-3">
-                        <label for="recipient-name" class="col-form-label">Working Status:</label>
-                        <select class="form-control" name="WorkingStatus" id="ModalWorkingStatus">
-                            <option value="Working">Working</option>
-                            <option value="Break">Break</option>
-                            <option value="Holiday/Leave">Holiday/Leave</option>
-                        </select>
+                    <label for="recipient-name" class="col-form-label">Working Status:</label>
+                    <select class="form-control" name="WorkingStatus" id="ModalWorkingStatus">
+                    <option value="Working">Working</option>
+                    <option value="Break">Break</option>
+                    <option value="Holiday/Leave">Holiday/Leave</option>
+                    </select>
                     </div> *@
 
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="Submit" class="btn btn-primary" id="save" >Submit</button>
+                    <button type="Submit" class="btn btn-primary" id="save">Submit</button>
                 </div>
 
             </div>

@@ -94,7 +94,7 @@ namespace Plims.Data
 
         public DbSet<View_ClockTime> View_ClockTime { get; set; }
 
-
+        public DbSet<View_EmployeeClockTimeTest> View_EmployeeClockTimeTest { get; set; }
 
         public DbSet<View_ProductionTransactionAdjust> View_ProductionTransactionAdjust { get; set; }
 
