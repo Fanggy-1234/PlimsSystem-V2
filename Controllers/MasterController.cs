@@ -448,28 +448,24 @@ namespace Plims.Controllers
                 {
                     mymodel.tbLine = db.TbLine.Where(x => x.LineName == obj.LineName).ToList();
                     ViewBag.SelectedLineName = obj.LineName;
-                }
+                        ViewBag.InactiveStatus = true;
+                    }
                 if (!string.IsNullOrEmpty(obj.LineID))
                 {
                     mymodel.tbLine = mymodel.tbLine.Where(x => x.LineID == obj.LineID).ToList();
                     ViewBag.SelectedLineID = obj.LineID;
-                }
-               
-                    if (inactivestatus == true)
-                    {
-                        mymodel.tbLine = mymodel.tbLine.ToList();
-                      ViewBag.InactiveStatus = true;
-                }
-                    else
-                    {
-                        mymodel.tbLine = mymodel.tbLine.Where(x => x.Status == 1).ToList();
-                    ViewBag.InactiveStatus = false;
-                }
-                  
-               
+                        ViewBag.InactiveStatus = true;
+                    }
 
-                // mymodel.tbLine = db.TbLine.Where(p => p.LineName.Equals(obj.LineName) || p.LineID.Equals(obj.LineID)).OrderByDescending(x => x.Status);
-                return View(mymodel);
+                    if (inactivestatus == false)
+                    {
+                        mymodel.tbLine = mymodel.tbLine.Where(x => x.Status == 1).OrderByDescending(x => x.Status).ToList();
+                        ViewBag.InactiveStatus = false;
+                    }
+
+
+                    // mymodel.tbLine = db.TbLine.Where(p => p.LineName.Equals(obj.LineName) || p.LineID.Equals(obj.LineID)).OrderByDescending(x => x.Status);
+                    return View(mymodel);
             }
             else
             {
@@ -1024,21 +1020,18 @@ namespace Plims.Controllers
                 {
                     mymodel.tbProduct = mymodel.tbProduct.Where(p => p.ProductName.Equals(obj.ProductName));
                     ViewBag.SelectedProductName = obj.ProductName;
+                    ViewBag.InactiveStatus = true;
                 }
                 if (!string.IsNullOrEmpty(obj.ProductID))
                 {
                     mymodel.tbProduct = mymodel.tbProduct.Where(x => x.ProductID == obj.ProductID);
                     ViewBag.SelectedProductID = obj.ProductID;
-                }
-
-                if (inactivestatus == true)
-                {
-                    mymodel.tbProduct = mymodel.tbProduct.ToList();
                     ViewBag.InactiveStatus = true;
                 }
-                else
+
+                if (inactivestatus == false)
                 {
-                    mymodel.tbProduct = mymodel.tbProduct.Where(x => x.Status == 1).ToList();
+                    mymodel.tbProduct = mymodel.tbProduct.Where(x => x.Status == 1).OrderByDescending(x => x.Status).ToList();
                     ViewBag.InactiveStatus = false;
                 }
 

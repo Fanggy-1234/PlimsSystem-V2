@@ -4896,8 +4896,9 @@ namespace Plims.Controllers
                                 ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                                 mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                                 ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                                return View("ProductionTransactionAdjust", mymodel);
-                            }
+                               return View("ProductionTransactionAdjust", mymodel);
+                      
+                    }
                             // Calculate FG/Count for QTYPerQR
                             decimal QRPerAdjust = Math.Round((decimal)FGQTY / ProductionTrand, 8);
                 
@@ -4972,8 +4973,9 @@ namespace Plims.Controllers
                                 ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                                 mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                                 ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                                return View("ProductionTransactionAdjustByEmployee", mymodel);
-                            }
+                           return View("ProductionTransactionAdjustByEmployee", mymodel);
+                      
+                    }
                             // Calculate FG/Count for QTYPerQR
                             decimal QRPerAdjustinsert = Math.Round((decimal)FGQTY / ProductionTrandinsert, 8);
                  
@@ -5013,9 +5015,10 @@ namespace Plims.Controllers
                         mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                         ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
+              
 
 
-                         // END All FG Adjust
+                // END All FG Adjust
             }
             else 
             {
@@ -5049,6 +5052,7 @@ namespace Plims.Controllers
                         mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                         ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
+                   
                     }
 
                     // Calculate FG/Count for QTYPerQR
@@ -5139,6 +5143,7 @@ namespace Plims.Controllers
                         mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                         ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
+                
                     }
                     // Calculate FG/Count for QTYPerQR
                     decimal QRPerAdjustinsert = Math.Round((decimal)FGQTY / sumQRCodeEmp, 8);
@@ -5186,6 +5191,7 @@ namespace Plims.Controllers
                 ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                 mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
 
+          
                 return View("ProductionTransactionAdjustByEmployee", mymodel);
 
                 // END Employee Adjust

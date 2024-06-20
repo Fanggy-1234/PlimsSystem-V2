@@ -194,32 +194,35 @@ namespace Plims.Controllers
                 {
                     Mymodel.view_User = db.View_User.Where(x => x.UserEmpID == obj.UserEmpID).OrderByDescending(x => x.Status).ToList();
                     ViewBag.SelectedUserEmpID = obj.UserEmpID;
+                    ViewBag.InactiveStatus = true;
                 }
                 if(!string.IsNullOrEmpty(obj.UserName))
                 {
                     Mymodel.view_User = Mymodel.view_User.Where(x => x.UserName == obj.UserName).OrderByDescending(x => x.Status).ToList();
                     ViewBag.SelectedUserName = obj.UserName;
+                    ViewBag.InactiveStatus = true;
                 }
                 if (!string.IsNullOrEmpty(obj.UserLastName))
                 {
                     Mymodel.view_User = Mymodel.view_User.Where(x => x.UserLastName == obj.UserLastName).OrderByDescending(x => x.Status).ToList();
                     ViewBag.SelectedUserLastName = obj.UserLastName;
+                    ViewBag.InactiveStatus = true;
                 }
                 if (!string.IsNullOrEmpty(obj.RoleName))
                 {
                     Mymodel.view_User = Mymodel.view_User.Where(x => x.RoleName == obj.RoleName).OrderByDescending(x => x.Status).ToList();
                     ViewBag.SelectedRoleName = obj.RoleName;
                 }
-                if (inactivestatus == true)
+                if (inactivestatus == false)
                 {
-                    Mymodel.view_User = Mymodel.view_User.ToList();
-                    ViewBag.InactiveStatus = true;
-                }
-                else
-                {
-                    Mymodel.view_User = Mymodel.view_User.Where(x => x.Status == 1).ToList();
+                    Mymodel.view_User = Mymodel.view_User.Where(x => x.Status == 1).OrderByDescending(x => x.Status).ToList();
                     ViewBag.InactiveStatus = false;
                 }
+                //else
+                //{
+                //    Mymodel.view_User = Mymodel.view_User.Where(x => x.Status == 1).ToList();
+                //    ViewBag.InactiveStatus = false;
+                //}
 
 
 

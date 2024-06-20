@@ -39,17 +39,17 @@
  */
     table.dataTable {
         border-collapse: collapse;
-        border: 1px solid grey; /* Replace 'yourColor' with your desired color code or name */
+        border: 1px solid grey; 
     }
 
         /* Change header border color */
         table.dataTable thead th {
-            border: 1px solid grey; /* Replace 'yourColor' with your desired color code or name */
+            border: 1px solid grey; 
         }
 
         /* Change body border color */
         table.dataTable tbody td {
-            border: 1px solid grey; /* Replace 'yourColor' with your desired color code or name */
+            border: 1px solid grey; 
         }
 </style>
 
@@ -283,8 +283,6 @@
      
     });
 
-
-
     $(document).ready(function () {
        
    
@@ -303,9 +301,7 @@
                     // Hide the create button
                     $("#btncreaterole").hide();
                     $("#btncanclerole").hide();
-                    console.log(data);
-                   
-                    // You can update your UI or take other actions based on the response
+                    //console.log(data);
                 },
                 error: function (error) {
                     console.error(error);
@@ -340,9 +336,6 @@
                 permissions.push(permission);
             });
 
-            // Log the permissions array to the console (for testing)
-            //   console.log("test1" , permissions);
-
 
                 // AJAX call to the controller action
                 $.ajax({
@@ -351,10 +344,7 @@
                 contentType: 'application/json', // Set content type to JSON
                 data: JSON.stringify({ permissions: permissions, RoleID: RoleID, RoleName: RoleName }), // Convert the array to a JSON string
                 success: function (response) {
-                        // Handle the response from the server
                     location.reload();
-                    console.log(response);
-                        // You can update your UI or take other actions based on the response
                     },
                     error: function (error) {
                         console.error(error);
@@ -478,7 +468,7 @@
       
         // Submit the form using AJAX
         $.ajax({
-            url: '/Home/RoleEditSave', // Use the correct URL
+            url: '/Home/RoleEditSave', 
             type: 'POST',
             data:  $('#permissionsForm').serialize(), // Serialize the form data
             success: function (response) {
