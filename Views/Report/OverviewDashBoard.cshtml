@@ -62,7 +62,7 @@
                                 <th style="font-weight:bold;text-align: center;">Month:</th>
                                 <th style="font-weight:bold;text-align: center;">Line:</th>
                                 <th style="font-weight:bold;text-align: center;">Product:</th>
-                                <th style="font-weight:bold;text-align: center;">Point:</th>
+                                <th style="font-weight:bold;text-align: center;">Section:</th>
                                 <th style="font-weight:bold;text-align: center;"></th>
                             </tr>
                         </thead>
@@ -200,23 +200,26 @@
             @if (totalScan != 0)
             {
                 totalactYield = (totalScan - totaldefect) / totalScan * 100;
+             
             }
-                            @*  // {
+                            @{
                             // Calculate averages
-                            // decimal totalAvgDiff = itemCount > 0 ? totalDiff / itemCount : 0;
-                            // decimal totalAvgYieldDiff = itemCount > 0 ? totalYieldDiff / itemCount : 0;
+                            totalAvgDiff = itemCount > 0 ? totalDiff / itemCount : 0;
+                              totalAvgYieldDiff = itemCount > 0 ? totalYieldDiff / itemCount : 0;
 
-                            // } *@
+                            } 
 
                             <tr style="font-size:28px">
-                                <td colspan="3" style="font-weight:bold;text-align: center;">Total</td>
+                                <td colspan="2" style="font-weight:bold;text-align: center;">Total</td>
+                                <td style="font-weight:bold;text-align: right;"></td>
                                 <td style="font-weight:bold;text-align: right;">@totalActual.ToString("#,##0.00")</td>
-                                <td style="font-weight:bold;text-align: right;">@totalAvgDiff.ToString("#,##0")</td>
+                                <td style="font-weight:bold;text-align: right;">@totalAvgDiff.ToString("#,##0.00")</td>
                                 <td></td>
-                                <td style="font-weight:bold;text-align: right;">@totalYieldStd.ToString("#,##0.00")</td>
+                               @*  <td style="font-weight:bold;text-align: right;">@totalYieldStd.ToString("#,##0.00")</td> *@
+                                <td style="font-weight:bold;text-align: center;"></td>
                             @*     <td style="font-weight:bold;text-align: right;">@totalYieldActual.ToString("#,##0.00")</td> *@
                                 <td style="font-weight:bold;text-align: right;">@totalactYield.ToString("#,##0.00")  </td>
-                                <td style="font-weight:bold;text-align: right;">@totalAvgYieldDiff.ToString("#,##0")</td>
+                                <td style="font-weight:bold;text-align: right;">@totalAvgYieldDiff.ToString("#,##0.00")</td>
                                 <td></td>
                             </tr>
                         </tbody>

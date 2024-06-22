@@ -143,10 +143,12 @@ namespace Plims.Controllers
         [HttpGet]
         public ActionResult UserInformation(View_PermissionMaster users)
         {
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             var mymodel = new ViewModelAll
             {
                 tbUser = db.TbUser.ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x=>x.PlantID.Equals(PlantID)).ToList(),
                 view_User =  db.View_User.ToList(),
                 tbRole = db.TbRole.ToList()
 

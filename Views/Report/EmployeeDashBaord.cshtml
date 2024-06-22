@@ -41,7 +41,10 @@
     <style>
         #container {
             width: 100%;
-            height: 600px;
+            height: 500px;           
+        top: 50px;  /* Adjust the top position */
+        left: 1px; /* Adjust the left position */
+
         }
     </style>
 </head>
@@ -53,16 +56,16 @@
                 <table class="table" style="color: black">
                     <thead>
                         <tr>
-                            <th style="font-weight:bold;text-align: center;"><img src="~/Picture/Thai-union-logo.png" width="80px" height="60px" /></th>
+                            <th style="font-weight:bold;text-align: center;"><img src="~/Picture/Thai-union-logo.png" width="80px" height="50px" /></th>
                             <th style="font-weight:bold;text-align: center;">Starting Date:</th>
                             <th style="font-weight:bold;text-align: center;">Ending Date:</th>
                             <th style="font-weight:bold;text-align: center;">Year:</th>
                             <th style="font-weight:bold;text-align: center;">Month:</th>
                             <th style="font-weight:bold;text-align: center;">Line:</th>
                             <th style="font-weight:bold;text-align: center;">Product:</th>
-                            <th style="font-weight:bold;text-align: center;">Point:</th>
+                            <th style="font-weight:bold;text-align: center;">Section:</th>
                             <th style="font-weight:bold;text-align: center;"></th>
-                            <th style="font-weight:bold;text-align: center;font-size:32px"><h3 style="font-weight:bold;text-align: center;font-size:32px"><i class="fa fa-user blue1_color"></i> @ViewBag.SumEmployee</h3></th>
+                            <th style="font-weight:bold;text-align: center;font-size:30px"><h3 style="font-weight:bold;text-align: center;font-size:30px"><i class="fa fa-user blue1_color"></i> @ViewBag.SumEmployee</h3></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -500,25 +503,25 @@
                 let chart = anychart.pie(dataSet.mapAs({ name: 0, value: 1, abbr: 2 }));
 
                 // Configure the labels
-                chart.labels().format("{%abbr}  {%value}%").fontSize(26).position("outside");
-
+               // chart.labels().format("{%abbr}  {%value}%").fontSize(12).position("Left-Top");
+            chart.labels().format("{%abbr}  {%value}%").fontSize(12).position("outside");
                 // Configure the legend position
-                chart.legend().position('top');
+              
 
                 // Format the tooltip
                 chart.tooltip().format("Percent of total grade: {%PercentValue}{decimalsCount: 1}%");
 
                 // Set chart title text settings
                 chart.title().enabled(true).useHtml(true).text("Grade");
-                chart.title().fontSize(28);  // set font size for the title
+                chart.title().fontSize(22);  // set font size for the title
                 chart.title().fontColor("#333333");  // set font color for the title
 
                 // Set container id for the chart
                 chart.container("container");
+            chart.width("110%"); // Set width
+            chart.height("100%"); // Set height
 
-                // Set the size of the chart
-                chart.width("100%"); // Set width
-                chart.height("100%"); // Set height
+                chart.position
 
                 // Initiate chart drawing
                 chart.draw();

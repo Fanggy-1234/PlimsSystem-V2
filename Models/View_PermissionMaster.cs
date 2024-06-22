@@ -12,6 +12,7 @@ namespace Plims.Models
         public string UserName { get; set; }
         public string UserLastName { get; set; }
         public string UserPassword { get; set; }
+        [Key]
         public int ID { get; set; }
         public string UserEmail { get; set; }
         public int RoleID { get; set; }

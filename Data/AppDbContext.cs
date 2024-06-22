@@ -171,7 +171,7 @@ namespace Plims.Data
 
 
             modelBuilder.Entity<View_PermissionMaster>()
- .HasKey(v => new { v.PageID, v.PlantID });
+ .HasKey(v => new { v.PageID, v.PlantID ,v.UserEmpID,v.ID});
 
             modelBuilder.Entity<View_PagePermission>()
 .HasKey(v => new { v.PermissionID, v.PlantID });

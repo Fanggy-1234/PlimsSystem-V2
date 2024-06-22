@@ -787,11 +787,8 @@ namespace Plims.Controllers
             }
             var mymodel = new ViewModelAll
             {
-                //tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                //tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                //tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                //view_ProductionPlan = db.View_ProductionPlan.Where(x => x.PlantID == PlantID).ToList(),
                 view_PLPS = db.View_PLPS.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 tbProductionTransaction = db.TbProductionTransaction.Where(p => p.PlantID.Equals(PlantID)).ToList()
 
