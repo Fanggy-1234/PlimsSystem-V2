@@ -14,6 +14,7 @@ using static System.Collections.Specialized.BitVector32;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Razor;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
 
 namespace Plims.Controllers
 {
@@ -542,21 +543,34 @@ namespace Plims.Controllers
             //    .Where(x => x.EmployeeID.Equals(EmplID) && x.TransactionDate.Date.Equals(parsedTodayDate.Date) && (x.Remark == null || x.Remark == "") && x.WorkingStatus.Equals("Working"))
             //    .SingleOrDefault();
 
-            var EmpsCount = db.TbEmployeeTransaction
-             .Where(x => x.EmployeeID.Equals(EmplID) &&
-             ((x.TransactionDate.Date.Equals(parsedTodayDate.Date) && (x.Remark == null || x.Remark == "") && x.ClockOut == "" &&
-             x.WorkingStatus.Equals("Working")) || (x.TransactionDate.Date.Equals(parsedTodayDateBefore.Date) && (x.Remark == null || x.Remark == "") && x.ClockOut == "" && x.WorkingStatus.Equals("Working"))))
-             .ToList();
-            if(EmpsCount.Count > 1)
-            {
-                return Json(new { success = false, message = "Please contact IT some data not clock out.Please check. : " });
+            var EmpsCount = db.View_EmployeeClocktime
+             .Where(x => x.ID.Equals(ID)).SingleOrDefault();
 
-            }
+
+            //var EmpsCount = db.TbEmployeeTransaction
+            //.Where(x => x.EmployeeID.Equals(EmplID) &&
+            //((x.TransactionDate.Date.Equals(parsedTodayDate.Date) && (x.Remark == null || x.Remark == "") && x.ClockOut == "" &&
+            //x.WorkingStatus.Equals("Working")) || (x.TransactionDate.Date.Equals(parsedTodayDateBefore.Date) && (x.Remark == null || x.Remark == "") && x.ClockOut == "" && x.WorkingStatus.Equals("Working"))))
+            //.ToList();
+
+            //if (EmpsCount.Count > 1)
+            //{
+            //    return Json(new { success = false, message = "Please contact IT some data not clock out.Please check. : " });
+
+            //}
+
+            //var Emps = db.TbEmployeeTransaction
+            // .Where(x => x.EmployeeID.Equals(EmplID) &&
+            // ((x.TransactionDate.Date.Equals(parsedTodayDate.Date) && (x.Remark == null || x.Remark == "") && x.ClockOut == "" &&
+            // x.WorkingStatus.Equals("Working")) || (x.TransactionDate.Date.Equals(parsedTodayDateBefore.Date) && (x.Remark == null || x.Remark == "") && x.ClockOut == "" && x.WorkingStatus.Equals("Working"))))
+            // .SingleOrDefault();
+
+
+
             var Emps = db.TbEmployeeTransaction
-               .Where(x => x.EmployeeID.Equals(EmplID) && 
-               ( (x.TransactionDate.Date.Equals(parsedTodayDate.Date) && (x.Remark == null || x.Remark == "") &&  x.ClockOut == "" &&
-               x.WorkingStatus.Equals("Working")) || (x.TransactionDate.Date.Equals(parsedTodayDateBefore.Date) && (x.Remark == null || x.Remark == "") && x.ClockOut == "" && x.WorkingStatus.Equals("Working"))))
-               .SingleOrDefault();
+               .Where(x => x.EmployeeID.Equals(EmpsCount.EmployeeID) && x.TransactionNo.Equals(EmpsCount.TransactionNo)).SingleOrDefault();
+
+
             return Json(Emps);
         }
 
@@ -576,11 +590,11 @@ namespace Plims.Controllers
 
             var Empdb = new TbEmployeeTransaction();
 
-            var EmpTran = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionDate == DateTime.Today.Date).ToList();
+            var EmpTran = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionDate == obj.TransactionDate).ToList();
             if (EmpTran.Count() != 0)
             {
                 //Update Transaction
-                Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == obj.EmployeeID && x.TransactionDate == DateTime.Today.Date).SingleOrDefault();
+                Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == obj.EmployeeID && x.TransactionDate == obj.TransactionDate).SingleOrDefault();
                 if (obj.TransactionDate != DateTime.MinValue)
                 {
                     Empdb.TransactionDate = obj.TransactionDate;
@@ -783,7 +797,7 @@ namespace Plims.Controllers
                     {
                         DateTime datefillter = Convert.ToDateTime(TransactionDateFillter);
                         ViewBag.SelectedTransactionDate = TransactionDateFillter;
-                        Employee.view_EmployeeClockTimeTest = Employee.view_EmployeeClockTimeTest.Where(p => p.TransactionDate.Equals(datefillter)).ToList();
+                        Employee.view_EmployeeClocktime = Employee.view_EmployeeClocktime.Where(p => p.TransactionDate.Equals(datefillter)).ToList();
                     }
                     return View(Employee);
 
@@ -1348,20 +1362,26 @@ namespace Plims.Controllers
 
 
 
-            var EmpsCount = db.TbServicesTransaction
-                  .Where(x => x.EmployeeID.Equals(EmplID) && x.SectionID.Equals(SectionID) && x.ServicesID.Equals(ServicesID) && (x.TransactionDate.Date.Equals(parsedTodayDate.Date) && x.ClockOut == "" || x.TransactionDate.Date.Equals(parsedTodayDate.Date.AddDays(-1)) && x.ClockOut == ""))
-                  .ToList();
+            //var EmpsCount = db.TbServicesTransaction
+            //      .Where(x => x.EmployeeID.Equals(EmplID) && x.SectionID.Equals(SectionID) && x.ServicesID.Equals(ServicesID) && (x.TransactionDate.Date.Equals(parsedTodayDate.Date) && x.ClockOut == "" || x.TransactionDate.Date.Equals(parsedTodayDate.Date.AddDays(-1)) && x.ClockOut == ""))
+            //      .ToList();
 
 
-            if (EmpsCount.Count > 1)
-            {
-                return Json(new { success = false, message = "Please contact IT some data not clock out.Please check. : " });
+            //if (EmpsCount.Count > 1)
+            //{
+            //    return Json(new { success = false, message = "Please contact IT some data not clock out.Please check. : " });
 
-            }
+            //}
 
-        var Emps = db.TbServicesTransaction
-                .Where(x => x.EmployeeID.Equals(EmplID) && x.SectionID.Equals(SectionID) && x.ServicesID.Equals(ServicesID) && ( x.TransactionDate.Date.Equals(parsedTodayDate.Date) && x.ClockOut == "" || x.TransactionDate.Date.Equals(parsedTodayDate.Date.AddDays(-1)) && x.ClockOut == ""))
-                .SingleOrDefault();
+            //var Emps = db.TbServicesTransaction
+            //        .Where(x => x.EmployeeID.Equals(EmplID) && x.SectionID.Equals(SectionID) && x.ServicesID.Equals(ServicesID) && ( x.TransactionDate.Date.Equals(parsedTodayDate) && x.ClockOut == "" || x.TransactionDate.Date.Equals(parsedTodayDate.Date.AddDays(-1)) && x.ClockOut == ""))
+            //        .SingleOrDefault();
+
+            var ServiceIDdb = db.View_ServicesClocktime.Where(x => x.ID.Equals(ID)).SingleOrDefault();
+
+            var Emps = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(ServiceIDdb.EmployeeID) && x.TransactionNo.Equals(ServiceIDdb.TransactionNo)).SingleOrDefault();
+
+
 
 
             return Json(Emps);
@@ -1384,7 +1404,7 @@ namespace Plims.Controllers
             // 1. check TbEmployeeTransaction == Null ?
             var Empdb = new TbServicesTransaction();
 
-            var EmpTran = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionDate == DateTime.Today.Date).ToList();
+            var EmpTran = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionDate == obj.TransactionDate).ToList();
             if (EmpTran.Count() != 0)
             {
                 //Update TbServicesTransaction
@@ -1516,9 +1536,9 @@ namespace Plims.Controllers
            
      
                    // var EmpClockView = db.TbEmployeeMaster.Where(x => x.ID.Equals(Convert.ToInt32(empid))).Select(x => x.EmployeeID).SingleOrDefault();
-                    var ViewEmpTran = db.View_ServicesClocktime.Where(x => x.TransactionNo.Equals(Convert.ToInt32(empid)) && (x.TransactionDate == TransactionDateVar || (x.TransactionDate == TransactionDateVar.AddDays(-1) && x.ClockOut == ""))).First();
+                    var ViewEmpTran = db.View_ServicesClocktime.Where(x => x.TransactionNo.Equals(Convert.ToInt32(empid))).First();
 
-                    var EmpTran = db.TbServicesTransaction.Where(x => x.TransactionNo.Equals(Convert.ToInt32(empid)) && x.SectionID.Equals(ViewEmpTran.SectionID)  && (x.TransactionDate == TransactionDateVar || (x.TransactionDate == TransactionDateVar.AddDays(-1) && x.ClockOut == "")) ).SingleOrDefault();
+                    var EmpTran = db.TbServicesTransaction.Where(x => x.TransactionNo.Equals(Convert.ToInt32(empid))).SingleOrDefault();
                         // check clockout beofre endtime?
                         var EmpMaster = db.View_EmployeeMaster.Where(x => x.EmployeeID.Equals(EmpTran.EmployeeID) && x.PlantID.Equals(PlantID)).SingleOrDefault();
 
@@ -1593,9 +1613,6 @@ namespace Plims.Controllers
             var Emps = db.TbServicesTransaction
                 .Where(x => x.TransactionNo.Equals(ID))
                 .SingleOrDefault();
-
-
-
 
             return Json(Emps);
         }

@@ -222,10 +222,21 @@
                     alert("This data can't id!" + id)
                 }
                 else {
-                    console.log('AJAX request successful:', response);
-                    var transactionDate = new Date(response.transactionDate);
-                    var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed
-                    console.log('AJAX request successful:', transactionDate)
+                    // console.log('AJAX request successful:', response);
+                    // var transactionDate = new Date(response.transactionDate);
+                    // var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed
+                    // console.log('AJAX request successful:', transactionDate)
+
+                            var transactionDate = new Date(response.transactionDate);
+                var year = transactionDate.getFullYear();
+                var month = ('0' + (transactionDate.getMonth() + 1)).slice(-2);
+                var day = ('0' + transactionDate.getDate()).slice(-2);
+                var formattedDate = `${year}-${month}-${day}`;
+
+
+
+
+
                     $('#ModaltransactionNo').val(response.transactionNo);
                     $('#ModalEmployeeID').val(response.employeeID);
                     $('#ModalClockOut').val(response.clockOut);
