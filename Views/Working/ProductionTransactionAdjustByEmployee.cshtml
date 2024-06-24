@@ -337,7 +337,7 @@
 
                 <div class="modal-body">
                     <div class="mb-3">
-                        <input class="form-control" type="text" name="FGPlanDate" id="FGPlanDate" style="background-color:beige" readonly>
+                        <input class="form-control" type="datetime" name="FGPlanDate" id="FGPlanDate" style="background-color:beige" readonly>
                     </div>
 
                     <div class="mb-3">
@@ -387,7 +387,7 @@
 
                     <div class="mb-3">
                         <label class="col-form-label">Production Date:</label>
-                        <input class="form-control" type="text" name="DefectPlanDate" id="DefectPlanDate" style="background-color:beige" readonly>
+                        <input class="form-control" type="datetime" name="DefectPlanDate" id="DefectPlanDate" style="background-color:beige" readonly>
                         @*   <input class="form-control" type="date" name="PlanDate" id="CreatePlanDate" required> *@
                     </div>
                     <div class="mb-3">
@@ -448,6 +448,13 @@
         var allCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]');
         var checkAllCheckbox = document.querySelector('#tableForm input[name="checkall"]');
 
+         function formatDate(dateStr) {
+        var dateParts = dateStr.split('/');
+        var formattedDate = dateParts[1] + '/' + dateParts[0] + '/' + dateParts[2];
+        return formattedDate;
+    }
+
+
         if (selectedCheckboxes.length > 1 && selectedCheckboxes.length < allCheckboxes.length) {
             if (confirm('You have selected more than one item but not all. Do you want to proceed?')) {
                 // Set modal data and highlight first row if confirmed
@@ -464,9 +471,10 @@
                 var lineName = selectedRow.cells[3].innerText;
                 var sectionName = selectedRow.cells[4].innerText;
                 var prefix = selectedRow.cells[6].innerText;
-               
- 
-                document.getElementById('FGPlanDate').value = transactionDate.toString("dd/MM/yyyy");
+
+                console.log('1');
+                console.log(transactionDate);
+                document.getElementById('FGPlanDate').value = Date(transactionDate).toString("dd/MM/yyyy");
                 document.getElementById('FGLine').value = lineName;
                 document.getElementById('FGSection').value = sectionName;
                 document.getElementById('FGShift').value = prefix;
@@ -492,8 +500,9 @@
             var sectionName = selectedRow.cells[4].innerText;
             var prefix = selectedRow.cells[6].innerText;
 
-            console.log(sectionName.Text);
-            document.getElementById('FGPlanDate').value = transactionDate.toString("dd/MM/yyyy");
+            console.log('2');
+            console.log(transactionDate);
+            document.getElementById('FGPlanDate').value = formatDate(transactionDate);
             document.getElementById('FGLine').value = lineName;
             document.getElementById('FGSection').value = sectionName;
             document.getElementById('FGShift').value = prefix;
@@ -632,6 +641,14 @@
         var allCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]');
         var checkAllCheckbox = document.querySelector('#tableForm input[name="checkall"]');
 
+
+        function formatDate(dateStr) {
+            var dateParts = dateStr.split('/');
+            var formattedDate = dateParts[1] + '/' + dateParts[0] + '/' + dateParts[2];
+            return formattedDate;
+        }
+
+
         if (selectedCheckboxes.length > 1 && selectedCheckboxes.length < allCheckboxes.length) {
             if (confirm('You have selected more than one item but not all. Do you want to proceed?')) {
                 // Set modal data and highlight first row if confirmed
@@ -650,7 +667,7 @@
                 var prefix = selectedRow.cells[6].innerText;
 
                 
-                document.getElementById('DefectPlanDate').value = transactionDate.toString("dd/MM/yyyy");
+                document.getElementById('DefectPlanDate').value = formatDate(transactionDate);
                 document.getElementById('DefectLine').value = lineName;
                 document.getElementById('DefectSection').value = sectionName;
                 document.getElementById('DefectShift').value = prefix;
@@ -677,7 +694,7 @@
             var prefix = selectedRow.cells[6].innerText;
 
             console.log(sectionName.Text);
-            document.getElementById('DefectPlanDate').value = transactionDate.toString("dd/MM/yyyy");
+            document.getElementById('DefectPlanDate').value = formatDate(transactionDate);
             document.getElementById('DefectLine').value = lineName;
             document.getElementById('DefectSection').value = sectionName;
             document.getElementById('DefectShift').value = prefix;

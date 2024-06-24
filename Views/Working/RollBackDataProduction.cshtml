@@ -132,7 +132,7 @@
                 </div>
                 <div class="col">
                     <!-- Transaction Date -->
-                    <input type="date" class="form-control" name="ProductionDate" id="ProductionDate" style="width:100%" value="@DateTime.Now.Date">
+                    <input type="date" class="form-control" name="ProductionDate" id="ProductionDate" style="width:100%" value="@ViewBag.SelectedProductionDate" >
                 </div>
 
 
@@ -360,7 +360,7 @@
                         <input type="checkbox" id="@item.RunningNumber" value="@item.RunningNumber" class="checkthis" Name="Productchk" />
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ProductionDate)
+                        @Html.DisplayFor(modelItem => item.ProductionDate.Date)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.QRCode)

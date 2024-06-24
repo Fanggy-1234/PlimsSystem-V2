@@ -40,6 +40,9 @@ builder.Services.AddCors(options =>
 });
 
 
+
+
+
 //VAREEWAN : Add for User Authen
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 builder.Services.AddAuthorization(options =>

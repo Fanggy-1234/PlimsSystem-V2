@@ -619,7 +619,7 @@ namespace Plims.Controllers
                 view_PLPS = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                View_RollBackData = db.View_RollBackData.Where(x => x.PlantID.Equals(PlantID) && x.ProductionDate == DateTime.Today).ToList()
+                View_RollBackData = db.View_RollBackData.Where(x => x.PlantID.Equals(PlantID) ).ToList()
         };
 
             ViewBag.VBRoleRollBackDataProduction = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(29)).Select(x => x.RoleAction).FirstOrDefault();
@@ -650,11 +650,13 @@ namespace Plims.Controllers
 
                     if (obj.ProductionDate != DateTime.MinValue)
                     {
-                        ViewBag.SelectedProductionDate = obj.ProductionDate;
+                        ////////
+                        ViewBag.SelectedProductionDate = obj.ProductionDate.ToString("yyyy-MM-dd");
                         mymodel.View_RollBackData = mymodel.View_RollBackData.Where(p => p.ProductionDate == obj.ProductionDate).ToList();
                     }
                     return View(mymodel);
                 }
+                mymodel.View_RollBackData.Where(x => x.PlantID.Equals(PlantID) && x.ProductionDate.Date.Equals(DateTime.Today.Date)).ToList();
               //  mymodel.View_RollBackData = db.View_RollBackData.Where(x => x.PlantID.Equals(PlantID) && x.ProductionDate == DateTime.Today).ToList();
 
                 return View(mymodel);
@@ -1144,7 +1146,7 @@ namespace Plims.Controllers
                          .Where(x => x.TransactionDate >= StartDate)
                          .ToList();
 
-                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd"); ;
+                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd"); 
                 }
                 else if (EndDate != DateTime.MinValue)
                 {
@@ -1152,7 +1154,7 @@ namespace Plims.Controllers
                      .Where(x => x.TransactionDate <= EndDate)
                      .ToList();
 
-                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd"); ;
+                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd"); 
                 }
 
                 return View(mymodel);
@@ -2560,7 +2562,7 @@ namespace Plims.Controllers
                 db.TbProductionTransaction.Add(new TbProductionTransaction()
                 {
                     // TransactionNo = db.TbProductionTransaction.Count() + 1,
-                    TransactionDate = objEmp.TransactionDate,
+                    TransactionDate = objEmp.TransactionDate.Date,
                     PlantID = PlantID,
                     LineID = objEmp.LineID,
                     SectionID = objEmp.SectionID,
@@ -2650,7 +2652,7 @@ namespace Plims.Controllers
                 db.TbProductionTransaction.Add(new TbProductionTransaction()
                 {
                     // TransactionNo = db.TbProductionTransaction.Count() + 1,
-                    TransactionDate = objEmp.TransactionDate,
+                    TransactionDate = objEmp.TransactionDate.Date,
                     PlantID = PlantID,
                     LineID = objEmp.LineID,
                     SectionID = objEmp.SectionID,
@@ -4681,7 +4683,7 @@ namespace Plims.Controllers
 
 
 
-        public IActionResult ProductionTransactionAdjustDefectByEmployee(string DefectPlanDate, String DefectLine, String DefectSection, String DefectShift, int DefectQTY, string[] TransactionID)
+        public IActionResult ProductionTransactionAdjustDefectByEmployee(DateTime DefectPlanDate, String DefectLine, String DefectSection, String DefectShift, int DefectQTY, string[] TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -4846,7 +4848,7 @@ namespace Plims.Controllers
 
 
         
-        public IActionResult ProductionTransactionAdjustFGByEmployee(string FGPlanDate, string FGLine, string FGSection, string FGShift, int FGQTY, List<int> TransactionID)
+        public IActionResult ProductionTransactionAdjustFGByEmployee(DateTime FGPlanDate, string FGLine, string FGSection, string FGShift, int FGQTY, List<int> TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -4867,10 +4869,17 @@ namespace Plims.Controllers
 
             };
 
-            DateTime transactionDate = DateTime.Parse(FGPlanDate);
+           // DateTime transactionDate;
+           // bool isValidDate = DateTime.TryParse(FGPlanDate, out transactionDate);
+            //if (!isValidDate)
+            //{
+            //    // Handle the error, maybe return a view with an error message
+            //    ModelState.AddModelError("FGPlanDate", "Invalid date format.");
+            //    return View(mymodel);
+            //}
 
             //Check ALL , Employee , Employee > 1
-            int checkPrdAdjust = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(transactionDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).ToList().Count();
+            int checkPrdAdjust = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(FGPlanDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).ToList().Count();
             if (checkPrdAdjust == TransactionID.Count()) 
             {
                 // All FG Adjust
@@ -4878,9 +4887,9 @@ namespace Plims.Controllers
                         //Check Duplicate
                         int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).ToList().Count();
                         if (checkDuplicate > 0)
-                        {
-
+                        { 
                             //Update  TbProductionTransactionAdjust      
+
                             var TranFGAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).SingleOrDefault();
                             TranFGAdjust.QTY = FGQTY;
                             db.SaveChanges();
@@ -4893,18 +4902,27 @@ namespace Plims.Controllers
                                 ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                                 mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                                 ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                               return View("ProductionTransactionAdjust", mymodel);
+                               return View("ProductionTransactionAdjustByEmployee", mymodel);
                       
-                    }
+                            }
                             // Calculate FG/Count for QTYPerQR
                             decimal QRPerAdjust = Math.Round((decimal)FGQTY / ProductionTrand, 8);
                 
-                    string[] note;
+                            string[] note;
                             if (ProductionTrand != 0)
                             {
-                                var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                                //Check Clockout
+                                 var EmpIDtrancheck = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                                var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "").ToList();
 
-                                foreach (string item in EmpIDtran)
+                                if (checkClockout.Count() >= 1)
+                                {
+
+                                    TempData["AlertMessage"] = "Please Clockout First!";
+                                    return View("ProductionTransactionAdjustByEmployee", mymodel);
+                                }
+
+                        foreach (string item in EmpIDtrancheck)
                                 {
                                     // Update Table : TbProductionTransaction column QTYPerQR
                                     var ProdUpdate = db.TbProductionTransaction
@@ -4942,22 +4960,33 @@ namespace Plims.Controllers
                             }
                         }
                         else
-                        {
+                        { // Insert New Adjust Transaction
+
+                    //Check Clockout
+                    var EmpIDtrancheck = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                    var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "").ToList();
+
+                    if (checkClockout.Count() >= 1)
+                    {
+
+                        TempData["AlertMessage"] = "Please Clockout First!";
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+                    }
 
 
-                            // Table : TbProductionTransactionAdjust  Create
-                            db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
-                            {
-                                TransactionDate = Convert.ToDateTime(FGPlanDate),
-                                PlantID = PlantID,
-                                LineID = FGLine,
-                                SectionID = FGSection,
-                                Prefix = FGShift,
-                                Type = "FG",
-                                QTY = FGQTY,
-                                CreateDate = DateTime.Now,
-                                CreateBy = EmpID
-                            });
+                    // Table : TbProductionTransactionAdjust  Create
+                    db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                                {
+                                    TransactionDate = Convert.ToDateTime(FGPlanDate),
+                                    PlantID = PlantID,
+                                    LineID = FGLine,
+                                    SectionID = FGSection,
+                                    Prefix = FGShift,
+                                    Type = "FG",
+                                    QTY = FGQTY,
+                                    CreateDate = DateTime.Now,
+                                    CreateBy = EmpID
+                                });
                             //  db.SaveChanges();
 
 
@@ -5034,7 +5063,18 @@ namespace Plims.Controllers
                     //CountQRCode
                     decimal sumQRCodeEmp = 0;
 
-                    foreach(int item in TransactionID)
+                    //Check Clockout
+                    var EmpIDtrancheck = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                    var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "").ToList();
+
+                    if (checkClockout.Count() >= 1)
+                    {
+
+                        TempData["AlertMessage"] = "Please Clockout First!";
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+                    }
+
+                    foreach (int item in TransactionID)
                     {
                         var QREmp = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.TransactionID.Equals(item)).Select(x=>x.QRCode).SingleOrDefault();
                         int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp) && x.DataType.Equals("Count")).Count();
@@ -5103,6 +5143,16 @@ namespace Plims.Controllers
                 else
                 {
 
+                    //Check Clockout Employee
+                    var EmpIDtrancheck = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                    var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "").ToList();
+
+                    if (checkClockout.Count() >= 1)
+                    {
+
+                        TempData["AlertMessage"] = "Please Clockout First!";
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+                    }
 
                     // Table : TbProductionTransactionAdjust  Create
                     db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
