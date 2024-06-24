@@ -656,7 +656,10 @@ namespace Plims.Controllers
                     }
                     return View(mymodel);
                 }
-                mymodel.View_RollBackData.Where(x => x.PlantID.Equals(PlantID) && x.ProductionDate.Date.Equals(DateTime.Today.Date)).ToList();
+
+          
+                ViewBag.SelectedProductionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                mymodel.View_RollBackData =  mymodel.View_RollBackData.Where(x => x.ProductionDate == DateTime.Today).ToList();
               //  mymodel.View_RollBackData = db.View_RollBackData.Where(x => x.PlantID.Equals(PlantID) && x.ProductionDate == DateTime.Today).ToList();
 
                 return View(mymodel);
@@ -670,7 +673,7 @@ namespace Plims.Controllers
                     //select 
                     long runningno = Convert.ToInt64(Productchk[i]);
                     var selectview = db.View_RollBackData.Where(x => x.RunningNumber == runningno).SingleOrDefault();
-                    var TransactiodbUpdate = db.TbProductionTransaction.Where(p => p.PlantID.Equals(PlantID) && p.TransactionDate.Date == DateTime.Today && p.LineID.Equals(selectview.LineID) && p.SectionID.Equals(selectview.SectionID) && p.ProductID.Equals(selectview.ProductID) && p.QRCode.Equals(selectview.QRCode)).ToList();
+                    var TransactiodbUpdate = db.TbProductionTransaction.Where(p => p.PlantID.Equals(PlantID) && p.TransactionDate.Date == selectview.ProductionDate && p.LineID.Equals(selectview.LineID) && p.SectionID.Equals(selectview.SectionID) && p.ProductID.Equals(selectview.ProductID) && p.QRCode.Equals(selectview.QRCode)).ToList();
 
                     //Check PLPS
 
@@ -683,6 +686,9 @@ namespace Plims.Controllers
                     {
                         // Apply changes to the list
                         product.ProductID = ProductTo; // Apply a 10% discount
+                        product.QtyPerQR = product.QtyPerQR;
+                        product.UpdateDate = DateTime.Now;
+                        product.UpdateBy = EmpID;
                     }
 
                     db.SaveChanges();
