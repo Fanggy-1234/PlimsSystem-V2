@@ -42,7 +42,7 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-        public ActionResult EmployeeClockIn(View_EmployeeClocktime obj, string[] EmployeeIDchk , string TransactionDate)
+        public ActionResult EmployeeClockIn(View_EmployeeClocktime obj, string[] EmployeeIDchk , string TransactionDate, string TransactionDateFillter)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -75,7 +75,7 @@ namespace Plims.Controllers
             if (EmployeeIDchk.Length == 0)
             {
                
-                if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName))
+                if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(TransactionDateFillter))
                 {
                     
                         if (!string.IsNullOrEmpty(obj.EmployeeID))
@@ -93,13 +93,26 @@ namespace Plims.Controllers
                             ViewBag.SelectedSectionName = obj.SectionName;
                             mymodel.view_EmployeeClocktime = mymodel.view_EmployeeClocktime.Where(p => p.SectionID == obj.SectionName).ToList();
                         }
+                    if (!string.IsNullOrEmpty(TransactionDateFillter))
+                    {
+                        //DateTime datefillter = Convert.ToDateTime(TransactionDateFillter);
+                        //ViewBag.SelectedTransactionDate = datefillter.ToString("yyyy-MM-dd");
+                        //Employee.view_EmployeeClocktime = Employee.view_EmployeeClocktime.Where(p => p.TransactionDate.Equals(ViewBag.SelectedTransactionDate)).ToList();
 
+                        if (DateTime.TryParse(TransactionDateFillter, out DateTime dateFilter))
+                        {
+                            ViewBag.SelectedTransactionDate = dateFilter.ToString("yyyy-MM-dd");
+                            mymodel.view_EmployeeClocktime = mymodel.view_EmployeeClocktime.Where(p => p.TransactionDate.Date == dateFilter.Date).ToList();
+                        }
+                    }
                     return View(mymodel);
 
                 }
                 else
                 {
-                 
+                    ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                    mymodel.view_EmployeeClocktime = mymodel.view_EmployeeClocktime.Where(p => p.TransactionDate.Equals(DateTime.Today) || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
+
                     return View(mymodel);
                 }
 
@@ -281,7 +294,8 @@ namespace Plims.Controllers
                 }
                 else
                 {
-                    mymodel.view_EmployeeClockTimeTest = mymodel.view_EmployeeClockTimeTest.Where(p => p.TransactionDate == DateTime.Today || p.TransactionDate.Equals(null)).ToList();
+                    ViewBag.SelectedTransactionDate = DateTime.Today;
+                    mymodel.view_EmployeeClockTimeTest = mymodel.view_EmployeeClockTimeTest.Where(p => p.TransactionDate == DateTime.Today || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
                     return View(mymodel);
                 }
 
@@ -522,7 +536,7 @@ namespace Plims.Controllers
         //Function Employee Clock in Edit Transaction : ฟังก์ชั่นนี้ใช่ร่วมกับ Update function
 
         [HttpGet]
-        public JsonResult EmployeeClockInEdit(int ID)
+        public JsonResult EmployeeClockInEdit(int ID , DateTime TranDate)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -534,7 +548,7 @@ namespace Plims.Controllers
             }
 
             var todayDate = DateTime.Today.ToString("yyyy-MM-dd");  // Use the format "yyyy-MM-dd" to match the expected format
-            var EmplID = db.View_EmployeeClocktime.Where(x => x.ID.Equals(ID)).Select(x => x.EmployeeID).SingleOrDefault();
+            var EmplID = db.TbEmployeeMaster.Where(x => x.ID.Equals(ID)).Select(x => x.EmployeeID).SingleOrDefault();
 
             DateTime parsedTodayDate = DateTime.ParseExact(todayDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
             DateTime parsedTodayDateBefore = DateTime.ParseExact(todayDate, "yyyy-MM-dd", CultureInfo.InvariantCulture).AddDays(-1);
@@ -542,9 +556,10 @@ namespace Plims.Controllers
             //var Emps = db.TbEmployeeTransaction
             //    .Where(x => x.EmployeeID.Equals(EmplID) && x.TransactionDate.Date.Equals(parsedTodayDate.Date) && (x.Remark == null || x.Remark == "") && x.WorkingStatus.Equals("Working"))
             //    .SingleOrDefault();
+          //  DateTime trandate = ViewBag.SelectedTransactionDate;
 
             var EmpsCount = db.View_EmployeeClocktime
-             .Where(x => x.ID.Equals(ID)).SingleOrDefault();
+             .Where(x => x.ID.Equals(ID) && x.EmployeeID.Equals(EmplID) && x.TransactionDate.Equals(TranDate)).SingleOrDefault();
 
 
             //var EmpsCount = db.TbEmployeeTransaction
@@ -568,7 +583,7 @@ namespace Plims.Controllers
 
 
             var Emps = db.TbEmployeeTransaction
-               .Where(x => x.EmployeeID.Equals(EmpsCount.EmployeeID) && x.TransactionNo.Equals(EmpsCount.TransactionNo)).SingleOrDefault();
+               .Where(x => x.EmployeeID.Equals(EmplID) && x.TransactionNo.Equals(EmpsCount.TransactionNo)).SingleOrDefault();
 
 
             return Json(Emps);
@@ -663,6 +678,9 @@ namespace Plims.Controllers
                 view_PermissionMaster = db.View_PermissionMaster.ToList()
                 //view_Employee = db.View_Employee.Where(x => x.PlantID.Equals(PlantID)).ToList()
             };
+            ViewBag.SelectedTransactionDate = DateTime.Today;
+            Employee.view_EmployeeClocktime = Employee.view_EmployeeClocktime.Where(p => p.TransactionDate == DateTime.Today || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
+
             return View("EmployeeClockIn", Employee);
 
         }
@@ -793,19 +811,27 @@ namespace Plims.Controllers
                         ViewBag.SelectedSectionName = obj.SectionName;
                         Employee.view_EmployeeClocktime = Employee.view_EmployeeClocktime.Where(p => p.SectionID == obj.SectionName).ToList();
                     }
-                    if (TransactionDateFillter != null)
+                    if (!string.IsNullOrEmpty(TransactionDateFillter))
                     {
-                        DateTime datefillter = Convert.ToDateTime(TransactionDateFillter);
-                        ViewBag.SelectedTransactionDate = TransactionDateFillter;
-                        Employee.view_EmployeeClocktime = Employee.view_EmployeeClocktime.Where(p => p.TransactionDate.Equals(datefillter)).ToList();
+                        //DateTime datefillter = Convert.ToDateTime(TransactionDateFillter);
+                        //ViewBag.SelectedTransactionDate = datefillter.ToString("yyyy-MM-dd");
+                        //Employee.view_EmployeeClocktime = Employee.view_EmployeeClocktime.Where(p => p.TransactionDate.Equals(ViewBag.SelectedTransactionDate)).ToList();
+
+                        if (DateTime.TryParse(TransactionDateFillter, out DateTime dateFilter))
+                        {
+                            ViewBag.SelectedTransactionDate = dateFilter.ToString("yyyy-MM-dd");
+                            Employee.view_EmployeeClocktime = Employee.view_EmployeeClocktime.Where(p => p.TransactionDate.Date == dateFilter.Date).ToList();
+                        }
                     }
+
                     return View(Employee);
 
                 }
                 else
                 {
 
-                    //Employee.view_EmployeeClockTimeTest = Employee.view_EmployeeClockTimeTest.Where(p => p.TransactionDate == DateTime.Today || p.TransactionDate.Equals(null)).ToList();
+                    ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                    Employee.view_EmployeeClocktime = Employee.view_EmployeeClocktime.Where(p => p.TransactionDate.Equals(DateTime.Today) || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
                     return View(Employee);
                 }
 
@@ -828,7 +854,12 @@ namespace Plims.Controllers
                     string empid = EmployeeIDchk[i];
                     var EmpClockView = db.TbEmployeeMaster.Where(x => x.ID.Equals(Convert.ToInt32(empid))).Select(x => x.EmployeeID).SingleOrDefault();
                     //  var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(EmpClockView) && (x.TransactionDate == TransactionDateVar || (x.TransactionDate == TransactionDateVar.AddDays(-1) && x.ClockOut == "")) && (x.Remark == null || x.Remark == "") && x.WorkingStatus == "Working").ToList();
-                    var EmpClockNo = db.View_EmployeeClocktime.Where(x => x.ID.Equals(Convert.ToInt32(empid))).Select(x => x.TransactionNo).SingleOrDefault();
+                    
+
+                        DateTime dateFilter = DateTime.Parse(TransactionDateFillter);
+                        var EmpClockNo = db.View_EmployeeClocktime.Where(x => x.ID.Equals(Convert.ToInt32(empid)) && x.TransactionDate.Equals(dateFilter)).Select(x => x.TransactionNo).SingleOrDefault();
+
+
                     var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(EmpClockNo) ).ToList();
 
                     if (EmpTrancheck.Count() == 1)
@@ -999,7 +1030,7 @@ namespace Plims.Controllers
 
         //3.  Function Employee Clock in Edit Transaction : ฟังก์ชั่นนี้ใช่ร่วมกับ Update function
         [HttpGet]
-        public JsonResult EmployeeClockOutEdit(int ID)
+        public JsonResult EmployeeClockOutEdit(int ID, DateTime TranDate)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -1010,12 +1041,12 @@ namespace Plims.Controllers
                 return Json("Login", "Home");
             }
             var todayDate = DateTime.Today.ToString("yyyy-MM-dd");  // Use the format "yyyy-MM-dd" to match the expected format
-            var EmplID = db.View_EmployeeClocktime.Where(x => x.ID.Equals(ID)).Select(x => x.EmployeeID).SingleOrDefault();
+            var EmplID = db.TbEmployeeMaster.Where(x => x.ID.Equals(ID)).Select(x => x.EmployeeID).Max();
 
             DateTime parsedTodayDate = DateTime.ParseExact(todayDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
             var Emps = db.TbEmployeeTransaction
-                .Where(x => x.TransactionNo.Equals(ID) && x.TransactionDate.Date.Equals(parsedTodayDate.Date))
+                .Where(x => x.TransactionNo.Equals(ID) && x.TransactionDate.Date.Equals(TranDate))
                 .SingleOrDefault();
 
 
@@ -1080,11 +1111,13 @@ namespace Plims.Controllers
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now && x.Plant.Equals(PlantID)),
+                tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x =>  x.Plant.Equals(PlantID)),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 view_Employee = db.View_Employee.ToList()
 
             };
+            ViewBag.SelectedTransactionDate = DateTime.Today;
+            Employee.view_EmployeeClocktime = Employee.view_EmployeeClocktime.Where(p => p.TransactionDate.Equals(DateTime.Today) || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
             return RedirectToAction("EmployeeClockOut");
 
         }

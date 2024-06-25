@@ -148,6 +148,11 @@ namespace Plims.Data
                   .HasKey(v => new { v.ID, v.SectionID, v.LineID , v.PlantID });
 
 
+            modelBuilder.Entity<View_EmployeeClocktime>()
+    .HasKey(v => new { v.ID, v.TransactionNo });
+
+
+
             modelBuilder.Entity<View_ServicesClocktime>()
            .HasKey(v => new { v.ID, v.SectionID, v.ServicesID });
 

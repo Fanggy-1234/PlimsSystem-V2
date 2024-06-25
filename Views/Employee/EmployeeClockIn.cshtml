@@ -211,12 +211,13 @@
 
     //Edit to modal
     function EditFn(ID) {
-
+        var TranDate = $("#TransactionDateFillter").val();
         $.ajax({
             url: '/Employee/EmployeeClockInEdit/' + ID,
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
+            data: { ID: ID, TranDate: TranDate },
             success: function (response) {
                 if (response == null || response == undefined) {
 
@@ -384,7 +385,20 @@
 
 
             </div>
+            <div class="row" style=" padding-left:2em ;padding-right:2em">
+                <div class="col-3 label">
+                    <label for="recipient-name" class="col-form-label">  TransactionDate:</label>
+                </div>
+                <div class="col">
+                    <!-- Line Name -->
+                    <div class="mb-3">
+                        <input type="date" class="form-control" name="TransactionDateFillter" id="TransactionDateFillter" style="width:100%" value="@ViewBag.SelectedTransactionDate" />
+                    </div>
 
+                </div>
+
+
+            </div>
 
 @* 
             <div class="row" style="height:40px ;">
@@ -570,7 +584,14 @@
                         @Html.DisplayFor(modelItem => item.SectionName)
                     </td>
                     <td style="color:darkblue">
-                        @Html.DisplayFor(modelItem => item.TransactionDate)
+                        @if (item.TransactionDate == DateTime.MinValue)
+                        {
+                            <!-- Display a placeholder or leave empty -->
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.TransactionDate)
+                        }
 
                     </td>
                     <td>
@@ -601,7 +622,7 @@
                             }
                             else
                             {
-                                <a href="#" id="btnEdit">Edit</a>
+                                <a href="#" id="btnEdit">Edits</a>
                             }
 
 

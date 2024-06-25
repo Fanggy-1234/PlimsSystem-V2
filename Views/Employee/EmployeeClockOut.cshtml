@@ -261,7 +261,7 @@
                 <div class="col">
                     <!-- Line Name -->
                     <div class="mb-3">
-                        <input type="date" class="form-control" name="TransactionDateFillter" id="TransactionDateFillter" style="width:100%" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        <input type="date" class="form-control" name="TransactionDateFillter" id="TransactionDateFillter" style="width:100%" value="@ViewBag.SelectedTransactionDate" />
                     </div>
 
                 </div>
@@ -419,7 +419,7 @@
                 </th>
                 <th>
                     Action
-                </th>
+                </th> 
             </tr>
         </thead>
         <tbody>
@@ -443,7 +443,14 @@
                         @Html.DisplayFor(modelItem => item.SectionName)
                     </td>
                     <td style="color:darkblue">
-                        @Html.DisplayFor(modelItem => item.TransactionDate)
+                        @if (item.TransactionDate == DateTime.MinValue)
+                        {
+                            <!-- Display a placeholder or leave empty -->
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.TransactionDate)
+                        }
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.StartTime)
@@ -481,7 +488,7 @@
 
                             }
                         }
-                    </td>
+                    </td> 
                 </tr>
             }
         </tbody>
@@ -492,7 +499,7 @@
 
 
 
-@*Modal Edit*@
+@* Modal Edit *@
 <div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <form method="post" action="EmployeeClockOutUpdate" controller="Employee">
@@ -537,11 +544,6 @@
 
 
 <script>
-
-
-
-
-
 
     // function eventFired(type) {
     //     let n = document.querySelector('#demo_info');
@@ -600,12 +602,13 @@
 
     //Edit to modal
     function EditFn(ID) {
-
+        var TranDate = $("#TransactionDateFillter").val();
         $.ajax({
             url: '/Employee/EmployeeClockOutEdit/' + ID,
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
+            data: { ID: ID, TranDate: TranDate },
             success: function (response) {
                 if (response == null || response == undefined) {
 

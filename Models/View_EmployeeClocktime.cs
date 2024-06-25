@@ -4,9 +4,10 @@ namespace Plims.Models
 {
     public class View_EmployeeClocktime
     {
+       
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public Nullable<System.DateTime> TransactionDate { get; set; }
-
+        public DateTime TransactionDate { get; set; }
+        [Key]
         public Nullable<int> TransactionNo { get; set; }
 
         [Key]

@@ -1411,7 +1411,7 @@ namespace Plims.Controllers
                         Sheet.Cells[string.Format("I{0}", row)].Value = item.CountQty;
                         sumTotalCount = sumTotalCount + item.CountQty;
 
-                        Sheet.Cells[string.Format("J{0}", row)].Value = item.FGQty;
+                        Sheet.Cells[string.Format("J{0}", row)].Value = item.FGQty.ToString("#,###.00");
                         sumTotalPeice = sumTotalPeice + item.FGQty;
 
                         Sheet.Cells[string.Format("K{0}", row)].Value = item.DefectQty;
@@ -1420,20 +1420,20 @@ namespace Plims.Controllers
                         Sheet.Cells[string.Format("L{0}", row)].Value = item.TotalDefect;  //Total defect adjust
                         sumTotalDefectAll = sumTotalDefectAll + item.TotalDefect;
 
-                        Sheet.Cells[string.Format("M{0}", row)].Value = item.ActualFG;  //Actual FG
+                        Sheet.Cells[string.Format("M{0}", row)].Value = item.ActualFG.ToString("#,###.00");   //Actual FG
                         sumTotalActualFG = sumTotalActualFG + item.ActualFG;
 
-                        Sheet.Cells[string.Format("N{0}", row)].Value = item.FGAdjust;  //Total Piece
-                        sumTotalFGAdjust = sumTotalFGAdjust + 0;
+                        Sheet.Cells[string.Format("N{0}", row)].Value = item.FGAdjust.ToString("#,###.00");   //Total Piece
+                        sumTotalFGAdjust = sumTotalFGAdjust + item.FGAdjust;
 
 
                         Sheet.Cells[string.Format("O{0}", row)].Value = item.DiffHours;
                         sumTotalHr = sumTotalHr + item.DiffHours;
 
                         Sheet.Cells[string.Format("P{0}", row)].Value = item.YieldDefect;
-                        Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr;
+                        Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr.ToString("#,###.00"); 
 
-                        Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD;
+                        Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD.ToString("#,###.00");
                         Sheet.Cells[string.Format("S{0}", row)].Value = item.Grade;
                         Sheet.Cells[string.Format("T{0}", row)].Value = item.wage;
                         sumTotalWage = sumTotalWage + item.wage;
@@ -1442,16 +1442,16 @@ namespace Plims.Controllers
                     }
 
                     Sheet.Cells[string.Format("H{0}", row)].Value = "Total";
-                    Sheet.Cells[string.Format("I{0}", row)].Value = sumTotalCount;
-                    Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice;
-                    Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect;
-                    Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll;
-                    Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG;
-                    Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust;
+                    Sheet.Cells[string.Format("I{0}", row)].Value = sumTotalCount.ToString("#,###.00"); 
+                    Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice.ToString("#,###.00"); 
+                    Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect.ToString("#,###.00"); 
+                    Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll.ToString("#,###.00"); 
+                    Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG.ToString("#,###.00"); 
+                    Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust.ToString("#,###.00"); 
 
-                    Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr;//DiffHours
+                    Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr.ToString("#,###.00"); ;//DiffHours
                     Sheet.Cells[string.Format("P{0}", row)].Value = (sumTotalPeice- sumTotalDefect) / sumTotalPeice *100; //YieldDefect
-                    Sheet.Cells[string.Format("Q{0}", row)].Value = sumTotalPeice/ sumTotalHr; // PiecePerHr
+                    Sheet.Cells[string.Format("Q{0}", row)].Value = (sumTotalPeice/ sumTotalHr).ToString("#,###.00"); // PiecePerHr
                     Sheet.Cells[string.Format("T{0}", row)].Value = sumTotalWage;//WAGE
 
                     for (char col = 'H'; col <= 'T'; col++)
@@ -1537,31 +1537,31 @@ namespace Plims.Controllers
                             Sheet.Cells[string.Format("I{0}", row)].Value = item.CountQty;
                             sumTotalCount = sumTotalCount + item.CountQty;
 
-                            Sheet.Cells[string.Format("J{0}", row)].Value = item.FGQty;
+                            Sheet.Cells[string.Format("J{0}", row)].Value =item.FGQty.ToString("#,###.00");
                             sumTotalPeice = sumTotalPeice + item.FGQty;
 
-                            Sheet.Cells[string.Format("K{0}", row)].Value = item.DefectQty;
+                            Sheet.Cells[string.Format("K{0}", row)].Value = item.DefectQty.ToString("#,###.00");
                             sumTotalDefect = sumTotalDefect + item.DefectQty;
 
-                            Sheet.Cells[string.Format("L{0}", row)].Value = item.TotalDefect;  //Total defect adjust
+                            Sheet.Cells[string.Format("L{0}", row)].Value = item.TotalDefect.ToString("#,###.00");  //Total defect adjust
                             sumTotalDefectAll = sumTotalDefectAll + item.TotalDefect;
 
-                            Sheet.Cells[string.Format("M{0}", row)].Value = item.ActualFG;  //ActualFG
+                            Sheet.Cells[string.Format("M{0}", row)].Value = item.ActualFG.ToString("#,###.00");  //ActualFG
                             sumTotalActualFG = sumTotalActualFG + item.ActualFG;
 
-                            Sheet.Cells[string.Format("N{0}", row)].Value = item.FGAdjust;  //Total Piece
+                            Sheet.Cells[string.Format("N{0}", row)].Value = item.FGAdjust.ToString("#,###.00");  //Total Piece
                             sumTotalFGAdjust = sumTotalFGAdjust + item.FGAdjust;
 
 
-                            Sheet.Cells[string.Format("O{0}", row)].Value = item.DiffHours;
+                            Sheet.Cells[string.Format("O{0}", row)].Value = item.DiffHours.ToString("#,###.00");
                             sumTotalHr = sumTotalHr + item.DiffHours;
 
-                            Sheet.Cells[string.Format("P{0}", row)].Value = item.YieldDefect;
+                            Sheet.Cells[string.Format("P{0}", row)].Value = item.YieldDefect.ToString("#,###.00");
                             SumPercentYield = SumPercentYield + item.YieldDefect;
 
-                            Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr;
+                            Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr.ToString("#,###.00");
 
-                            Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD;
+                            Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD.ToString("#,###.00");
                             Sheet.Cells[string.Format("S{0}", row)].Value = item.Grade;
                             Sheet.Cells[string.Format("T{0}", row)].Value = item.wage;
                             sumTotalWage = sumTotalWage + item.wage;
@@ -1573,16 +1573,16 @@ namespace Plims.Controllers
 
 
                         Sheet.Cells[string.Format("H{0}", row)].Value = "Total";
-                        Sheet.Cells[string.Format("I{0}", row)].Value = sumTotalCount;
-                        Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice;
-                        Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect;
-                        Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll;
-                        Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG;
-                        Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust;
+                        Sheet.Cells[string.Format("I{0}", row)].Value = sumTotalCount.ToString("#,###.00");
+                        Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice.ToString("#,###.00");
+                        Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect.ToString("#,###.00");
+                        Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll.ToString("#,###.00");
+                        Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG.ToString("#,###.00");
+                        Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust.ToString("#,###.00");
 
-                        Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr;//DiffHours
+                        Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr.ToString("#,###.00");//DiffHours
                         Sheet.Cells[string.Format("P{0}", row)].Value = (sumTotalPeice - sumTotalDefect) / sumTotalPeice * 100; //YieldDefect
-                        Sheet.Cells[string.Format("Q{0}", row)].Value = sumTotalPeice / sumTotalHr; // PiecePerHr
+                        Sheet.Cells[string.Format("Q{0}", row)].Value = (sumTotalPeice / sumTotalHr).ToString("#,###.00"); // PiecePerHr
                         Sheet.Cells[string.Format("T{0}", row)].Value = sumTotalWage;//WAGE
 
                         for (char col = 'H'; col <= 'T'; col++)
