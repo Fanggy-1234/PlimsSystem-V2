@@ -151,10 +151,12 @@ namespace Plims.Data
             modelBuilder.Entity<View_EmployeeClocktime>()
     .HasKey(v => new { v.ID, v.TransactionNo });
 
-
-
             modelBuilder.Entity<View_ServicesClocktime>()
-           .HasKey(v => new { v.ID, v.SectionID, v.ServicesID });
+    .HasKey(v => new { v.ID, v.TransactionNo });
+
+
+           // modelBuilder.Entity<View_ServicesClocktime>()
+           //.HasKey(v => new { v.ID, v.SectionID, v.ServicesID });
 
             modelBuilder.Entity<View_DailyReportSummary>()
         .HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID, v.QRCode,v.ProductID, v.SectionID });

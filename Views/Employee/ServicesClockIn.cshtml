@@ -215,12 +215,12 @@
     // console.log("Section ID: " + sectionID);
     // console.log("Service ID: " + serviceID);
 
-
+        var TranDate = $("#TransactionDateFillter").val();
         $.ajax({
             url: '/Employee/SericesClockInEdit/' + ID,
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
-            data: { ID: ID, ServicesID: serviceID, SectionID: sectionID },
+            data: { ID: ID, ServicesID: serviceID, SectionID: sectionID, TranDate: TranDate },
             dataType: 'json',
             success: function (response) {
                 if (response == null || response == undefined) {
@@ -512,8 +512,24 @@
 
             </div>
 
-            <div class="row" style="height:10px"></div>
-           
+              <div class="row" style="padding-right:2em">
+                <div class="col-3 label">
+                    <label for="recipient-name" class="col-form-label">  TransactionDate:</label>
+                </div>
+                <div class="col">
+                    <!-- Line Name -->
+                    <div class="mb-3">
+                        <input type="date" class="form-control" name="TransactionDateFillter" id="TransactionDateFillter" style="width:100%" value="@ViewBag.SelectedTransactionDate" />
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+          @*   <div class="row" style="height:10px"></div>
+            *@
 
 
         </div>
@@ -758,16 +774,25 @@
                         @Html.DisplayFor(modelItem => item.EmployeeName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.LineName)
+                       @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.SectionName)
+                        @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ServicesName)
+                        @Html.DisplayFor(modelItem => item.ServicesID) :  @Html.DisplayFor(modelItem => item.ServicesName)
                     </td>
                     <td style="color:darkblue">
-                        @Html.DisplayFor(modelItem => item.TransactionDate)
+                           @if (item.TransactionDate == DateTime.MinValue)
+                        {
+                            <!-- Display a placeholder or leave empty -->
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.TransactionDate)
+                        }
+
+                
                     </td>
                     <td >
                         @Html.DisplayFor(modelItem => item.StartTime)
@@ -794,7 +819,7 @@
                             @if (ViewBag.VBRoleServicesClockIn == "Full")
                             {
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" data-section-id="@item.SectionID" data-service-id="@item.ServicesID" onclick="EditFn(@item.ID)">Edit</a>
-
+                              
                             }
                             else
                             {

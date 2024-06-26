@@ -332,7 +332,7 @@
                         @Html.DisplayFor(modelItem => item.PlantName)
                     </td>
                     <td id="LineID">
-                        @Html.DisplayFor(modelItem => item.LineName)
+                        @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName)
                     </td>
                     <td id="TransactionDate">
                         @Html.DisplayFor(modelItem => item.TransactionDate)
@@ -341,7 +341,7 @@
                         @Html.DisplayFor(modelItem => item.ShiftName)
                     </td>
                     <td id="ProductName">
-                        @Html.DisplayFor(modelItem => item.ProductName)
+                        @Html.DisplayFor(modelItem => item.ProductID) :   @Html.DisplayFor(modelItem => item.ProductName)
                     </td>
                     <td id="EmployeeID">
                         @Html.DisplayFor(modelItem => item.QRCode)
@@ -350,7 +350,7 @@
                         @Html.DisplayFor(modelItem => item.EmployeeName)
                     </td>
                     <td id="SectionName">
-                        @Html.DisplayFor(modelItem => item.SectionName)
+                        @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
                     </td>
                     <td id="CountQty" style="text-align:center">
                         @* Total Piece *@

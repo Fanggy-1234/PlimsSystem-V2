@@ -251,8 +251,8 @@
              @foreach (var item in Model.view_EFFReport)
         {
             <tr>
-                <td> @Html.DisplayFor(modelItem => item.LineName)</td>
-                    <td> @Html.DisplayFor(modelItem => item.SectionID)</td>
+                    <td> @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName)</td>
+                    <td> @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)</td>
                 <td> @Html.DisplayFor(modelItem => item.ProductID)</td>
                  <td> @Html.DisplayFor(modelItem => item.ProductName)</td>
                     <td> @Html.DisplayFor(modelItem => item.Unit)</td>
