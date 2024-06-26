@@ -1399,15 +1399,15 @@ namespace Plims.Controllers
                     {
 
                         Sheet.Cells[string.Format("A{0}", row)].Value = item.PlantID;
-                        Sheet.Cells[string.Format("B{0}", row)].Value = item.LineName;
+                        Sheet.Cells[string.Format("B{0}", row)].Value = item.LineID  + " : " +  item.LineName;
                         Sheet.Cells[string.Format("C{0}", row)].Value = item.TransactionDate;
 
                         Sheet.Cells[string.Format("D{0}", row)].Value = item.ShiftName;
-                        Sheet.Cells[string.Format("E{0}", row)].Value = item.ProductName;
+                        Sheet.Cells[string.Format("E{0}", row)].Value = item.ProductID +" : "+ item.ProductName;
                         Sheet.Cells[string.Format("F{0}", row)].Value = item.QRCode;
 
                         Sheet.Cells[string.Format("G{0}", row)].Value = item.EmployeeName;
-                        Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionName;
+                        Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionID + " : " +  item.SectionName;
                         Sheet.Cells[string.Format("I{0}", row)].Value = item.CountQty;
                         sumTotalCount = sumTotalCount + item.CountQty;
 
@@ -1525,15 +1525,14 @@ namespace Plims.Controllers
                         foreach (var item in collection)
                         {
                             Sheet.Cells[string.Format("A{0}", row)].Value = item.PlantID;
-                            Sheet.Cells[string.Format("B{0}", row)].Value = item.LineName;
+                            Sheet.Cells[string.Format("B{0}", row)].Value = item.LineID + " : " + item.LineName;
                             Sheet.Cells[string.Format("C{0}", row)].Value = item.TransactionDate;
 
-                            Sheet.Cells[string.Format("D{0}", row)].Value = item.ShiftName;
-                            Sheet.Cells[string.Format("E{0}", row)].Value = item.ProductName;
+                            Sheet.Cells[string.Format("D{0}", row)].Value = item.ProductID + " : " +  item.ProductName;
                             Sheet.Cells[string.Format("F{0}", row)].Value = item.QRCode;
 
                             Sheet.Cells[string.Format("G{0}", row)].Value = item.EmployeeName;
-                            Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionName;
+                            Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionID + " : " +  item.SectionName;
                             Sheet.Cells[string.Format("I{0}", row)].Value = item.CountQty;
                             sumTotalCount = sumTotalCount + item.CountQty;
 
@@ -2543,9 +2542,10 @@ namespace Plims.Controllers
 
                 if (empsectioncount.Count() > 1)
                 {
+                    TempData["AlertMessage"] = "Please contact IT some data not clock out.Please check. : " + employeeID;
+                    return View("WorkingFunctionCreateWithRef", mymodel);
 
-                    return Json(new { success = false, message = "Please contact IT some data not clock out.Please check. : " + employeeID });
-                }
+                 }
 
 
 
@@ -2592,7 +2592,7 @@ namespace Plims.Controllers
                 db.SaveChanges();
 
 
-                return View("WorkingFunction", mymodel);
+                return View("WorkingFunctionCreateWithRef", mymodel);
             }
             catch (Exception ex)
             {
@@ -3466,9 +3466,9 @@ namespace Plims.Controllers
                         foreach (var item in collection)
                     {
 
-                            worksheet.Cells[row,1].Value = item.LineName;
-                            worksheet.Cells[row, 2].Value = item.SectionName;
-                            worksheet.Cells[row, 3].Value = item.ProductID;
+                            worksheet.Cells[row,1].Value = item.LineID + " : " + item.LineName;
+                            worksheet.Cells[row, 2].Value = item.SectionID +" : "+ item.SectionName;
+                            worksheet.Cells[row, 3].Value = item.ProductID ;
 
                             worksheet.Cells[row, 4].Value = item.ProductName;
                             worksheet.Cells[row, 5].Value = item.Unit;
@@ -3634,8 +3634,8 @@ namespace Plims.Controllers
                         {
 
 
-                            worksheet.Cells[row, 1].Value = item.LineName;
-                            worksheet.Cells[row, 2].Value = item.SectionName;
+                            worksheet.Cells[row, 1].Value = item.LineID + " : " + item.LineName;
+                            worksheet.Cells[row, 2].Value = item.SectionID + " : " + item.SectionName;
                             worksheet.Cells[row, 3].Value = item.ProductID;
 
                             worksheet.Cells[row, 4].Value = item.ProductName;
@@ -4298,18 +4298,38 @@ namespace Plims.Controllers
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             // Replace this with your logic to filter products based on the lineId
 
-           // var emp = db.View_EmployeeClocktime.Where(x=>x.EmployeeID == selectedEmpID && x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today ).ToList();
+            if (PlantID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            // var emp = db.View_EmployeeClocktime.Where(x=>x.EmployeeID == selectedEmpID && x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today ).ToList();
 
             // Query with time-based filtering in addition to date and other conditions
-            var empsection = db.View_EmployeeClocktime
+            var empsectioncheck = db.View_EmployeeClocktime
                 .Where(x => x.EmployeeID == selectedEmpID
                             && x.PlantID.Equals(PlantID)
                             && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
                             && x.ClockIn != ""
                             && x.ClockOut == "")
-                .SingleOrDefault();
+                .ToList();
 
+            if(empsectioncheck.Count() == 0 )
+            {
 
+                //TempData["AlertMessage"] = "Data haven't clockin or Data already clock out. : " + selectedEmpID ;
+                //return View("WorkingFunction", mymodel);
+
+                return Json(new { success = false, message = "Data haven't clockin or Data already clock out. " });
+
+            }
+
+            var empsection = db.View_EmployeeClocktime
+               .Where(x => x.EmployeeID == selectedEmpID
+                           && x.PlantID.Equals(PlantID)
+                           && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
+                           && x.ClockIn != ""
+                           && x.ClockOut == "")
+               .SingleOrDefault();
 
             var groupedProducts = db.View_PLPS
                  .Where(x => x.SectionID.Equals(empsection.SectionID) && x.LineID.Equals(empsection.LineID))
@@ -4330,6 +4350,10 @@ namespace Plims.Controllers
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             // Replace this with your logic to filter products based on the lineId
 
+            if (PlantID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             // var emp = db.View_EmployeeClocktime.Where(x=>x.EmployeeID == selectedEmpID && x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today ).ToList();
 
             // Query with time-based filtering in addition to date and other conditions
@@ -4342,10 +4366,10 @@ namespace Plims.Controllers
                            && x.ClockOut == "")
                .ToList();
 
-            if(empsectioncount.Count() > 1)
+            if(empsectioncount.Count() == 0)
             {
 
-                return Json(new { success = false, message = "Please contact IT some data not clock out.Please check. : " + selectedEmpID });
+                return Json(new { success = false, message = "Data haven't clockin or Data already clock out. " });
             }
 
             var empsection = db.View_EmployeeClocktime

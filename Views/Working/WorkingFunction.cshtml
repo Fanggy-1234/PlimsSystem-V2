@@ -423,7 +423,7 @@
         <div class="modal-content">
             <form method="post" asp-controller="Working" asp-action="ProductQtySpeialMinus">
                 <div class="modal-header" style="background-color:blue">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">เรียงสุก FinalProdcess</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">เรียงสุก Final Process</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -672,14 +672,18 @@
                 type: "GET",
                 url: "/Working/FilterReasonByProduct", // Update the URL to your controller action
                 data: { selectedProductID: selectedProductID },
-                success: function (filteredDefect) {
-                   // console.log(filteredDefect)
-                    // Add filtered products to the dropdown
-                    filteredDefect.forEach(function (defect) {
-                        //$("#ReasonDefect").append("<option value='" + defect.productID + "'>" + defect.productID + " : " + defect.productName + "</option>");
-                        $("#ReasonDefect").append("<option value='" + defect.reasonID + "'>" + defect.reasonID + " : " + defect.reasonName + "</option>");
+                success: function (data) {
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        alert(data.message);
 
-                    });
+                    } else {
+                        data.forEach(function (defect) {
+                            //$("#ReasonDefect").append("<option value='" + defect.productID + "'>" + defect.productID + " : " + defect.productName + "</option>");
+                            $("#ReasonDefect").append("<option value='" + defect.reasonID + "'>" + defect.reasonID + " : " + defect.reasonName + "</option>");
+
+                        });
+                    }
                 },
                 error: function (error) {
                     console.log("Error filtering products: " + error);
@@ -718,12 +722,16 @@
                 type: "GET",
                 url: "/Working/FilterDefectByProductMinus", // Update the URL to your controller action
                 data: { productID: productID },
-                success: function (filteredDefect) {
-                    console.log(filteredDefect)
-                    // Add filtered sections to the dropdown
-                    filterfilteredDefectedproduct.forEach(function (defect) {
-                        $("#ReasonDefect").append("<option value='" + defect.reasonID + "'>" + defect.reasonID + " : " + defect.reasonName + "</option>");
-                    });
+                success: function (data) {
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        alert(data.message);
+
+                    } else {
+                        data.forEach(function (defect) {
+                            $("#ReasonDefect").append("<option value='" + defect.reasonID + "'>" + defect.reasonID + " : " + defect.reasonName + "</option>");
+                        });
+                    }
                 },
                 error: function (error) {
                     console.log("Error filtering product: " + error);
@@ -759,12 +767,18 @@
                 type: "GET",
                 url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
                 data: { selectedEmpID: selectedEmpID },
-                success: function (filteredproduct) {
-                    console.log(filteredproduct)
-                    // Add filtered sections to the dropdown
-                    filteredproduct.forEach(function (product) {
-                        $("#ProductIDFG").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
-                    });
+                success: function (data) {
+                    console.log(data);
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        alert(data.message);
+
+                    } else {
+                        // Add filtered products to the dropdown if the response indicates success
+                        data.forEach(function (product) {
+                            $("#ProductIDFG").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                        });
+                    }
                 },
                 error: function (error) {
                     console.log("Error filtering product: " + error);
@@ -796,12 +810,17 @@
                 type: "GET",
                 url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
                 data: { selectedEmpID: selectedEmpID },
-                success: function (filteredproduct) {
-                    // console.log(filteredproduct)
-                    // Add filtered sections to the dropdown
-                    filteredproduct.forEach(function (product) {
-                        $("#ProductIDDefect").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
-                    });
+                success: function (data) {
+                   
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        alert(data.message);
+
+                    } else {
+                        filteredproduct.forEach(function (product) {
+                            $("#ProductIDDefect").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                        });
+                    }
                 },
                 error: function (error) {
                     console.log("Error filtering product: " + error);
@@ -830,12 +849,16 @@
                 type: "GET",
                 url: "/Working/FilterProductByEmployeeMinus", // Update the URL to your controller action
                 data: { selectedEmpID: selectedEmpID },
-                success: function (filteredproduct) {
-                    console.log(filteredproduct)
-                    // Add filtered sections to the dropdown
-                    filteredproduct.forEach(function (product) {
-                        $("#ProductIDMinus").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
-                    });
+                success: function (data) {
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        alert(data.message);
+
+                    } else {
+                        data.forEach(function (product) {
+                            $("#ProductIDMinus").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                        });
+                    }
                 },
                 error: function (error) {
                     console.log("Error filtering product: " + error);
@@ -843,6 +866,5 @@
             });
         }
     }
-    FANG15
   
 </script>

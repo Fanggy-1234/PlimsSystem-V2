@@ -6532,7 +6532,7 @@ namespace Plims.Controllers
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
 
             string qrCodeText = employeeID.Trim();
-            string labelText = $"Employee: {employeeID.Trim()}";
+            string labelText = $"{employeeID.Trim()}";
 
             // Generate the QR code
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
@@ -6544,12 +6544,12 @@ namespace Plims.Controllers
             using (Graphics g = Graphics.FromImage(qrBitmap))
             {
                 g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                Font font = new Font("Arial", 22, FontStyle.Bold);
+                Font font = new Font("Arial", 30, FontStyle.Bold);
                 SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                 // Calculate where to draw the text
-                float x = 10; // Left margin
-                float y = qrBitmap.Height - 30; // Position at the bottom
+                float x = 150; // Left margin
+                float y = qrBitmap.Height - 40; // Position at the bottom
 
                 g.DrawString(labelText, font, brush, new System.Drawing.PointF(x, y)); // Draw the label
             }
@@ -6675,13 +6675,13 @@ namespace Plims.Controllers
             }
 
             var Employeevar = db.TbEmployeeMaster
-                .Where(x => x.Status.Equals(1) && PlantID.Equals(PlantID))
+                .Where(x => x.Status.Equals(1) && x.PlantID.Equals(PlantID))
                 .ToList();
 
             foreach (var item in Employeevar)
             {
                 string qrCodeText = item.EmployeeID.Trim();
-                string labelText = $"Employee: {item.EmployeeID.Trim()}";
+                string labelText = $"{item.EmployeeID.Trim()}";
 
                 // Generate the QR code
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
@@ -6693,12 +6693,12 @@ namespace Plims.Controllers
                 using (Graphics g = Graphics.FromImage(qrBitmap))
                 {
                     g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                    Font font = new Font("Arial", 22, FontStyle.Bold);
+                    Font font = new Font("Arial", 30, FontStyle.Bold);
                     SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                     // Calculate where to draw the text
-                    float x = 10; // Left margin
-                    float y = qrBitmap.Height - 30; // Position at the bottom
+                    float x =150; // Left margin
+                    float y = qrBitmap.Height - 40; // Position at the bottom
 
                     g.DrawString(labelText, font, brush, new System.Drawing.PointF(x, y)); // Draw the label
                 }
@@ -8688,7 +8688,7 @@ namespace Plims.Controllers
             // string qrCodeText = employeeID.Trim();
             int qrCodeTextFirst = Convert.ToInt16(db.TbEmployeeGroupQR.Select(x => x.GroupID).Max() )+ 1;
             string qrCodeText = Convert.ToString(qrCodeTextFirst).PadLeft(5, '0');
-            string labelText = $"Employee: {qrCodeText}";
+            string labelText = $"{qrCodeText}";
 
             // Generate the QR code
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
@@ -8700,7 +8700,7 @@ namespace Plims.Controllers
             using (Graphics g = Graphics.FromImage(qrBitmap))
             {
                 g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                Font font = new Font("Arial", 22, FontStyle.Bold);
+                Font font = new Font("Arial", 26, FontStyle.Bold);
                 SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                 // Calculate where to draw the text

@@ -506,11 +506,11 @@
                         
                         <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineNameCreate" onchange="filterSectionByLine()" required>
                             <option value="" default selected></option>
-                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
+                            @foreach (var dataGroup in Model.view_PLPS.GroupBy(x => x.LineID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
                                 <option value="@dataFrist.LineID">
-                                    @Html.DisplayFor(modelItem => dataFrist.LineName)
+                                    @Html.DisplayFor(modelItem => dataFrist.LineID) : @Html.DisplayFor(modelItem => dataFrist.LineName)
                                 </option>
 
                             }
@@ -535,14 +535,17 @@
 
                         <select class="selectfillter form-control" style="width:100%" name="SectionID" id="SectionNameCreate" required>
                             <option value="" default selected></option>
-                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
+                            @foreach (var dataGroup in Model.view_PLPS.GroupBy(x => x.SectionID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
                                 <option value="@dataFrist.SectionID">
-                                 @Html.DisplayFor(modelItem => dataFrist.SectionID)  @Html.DisplayFor(modelItem => dataFrist.SectionName)
+                                 @Html.DisplayFor(modelItem => dataFrist.SectionID) : @Html.DisplayFor(modelItem => dataFrist.SectionName)
                                 </option>
 
                             }
+
+                         
+
                         </select>
 
 
