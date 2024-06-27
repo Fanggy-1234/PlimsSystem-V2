@@ -817,7 +817,7 @@
                         alert(data.message);
 
                     } else {
-                        filteredproduct.forEach(function (product) {
+                        data.forEach(function (product) {
                             $("#ProductIDDefect").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
                         });
                     }
