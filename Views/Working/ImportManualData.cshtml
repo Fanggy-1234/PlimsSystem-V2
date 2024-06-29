@@ -95,7 +95,8 @@
     });
 </script> *@
  
-<form method="post" asp-controller="Working"  enctype="multipart/form-data">
+<form method="post" asp-controller="Working" enctype="multipart/form-data">
+   @*   *@
 
     <div class="row" style="height:50px"> </div>
     <div class="row" style="height:80px">
@@ -126,19 +127,19 @@
         <div class="col" style="width:15% ">
             @if (ViewBag.VBRoleManualImport == "Full")
             {
-                <button class="search-button" id="btnExport" type="button" value="export" type="Submit" asp-action="ImportManualExport">Export</button>
+                <button class="search-button" id="btnExport"  value="export" type="Submit" asp-action="ImportManualExport">Export</button>
 
             }
             else
             {
-                <button type="button" class="search-button">Export</button>
+                <button type="button" class="search-button">Exports</button>
             }
         </div>
         <div class="col" style="width:15% ">
             @if (ViewBag.VBRoleManualImport == "Full")
             {
 
-                <button type="submit" class="clear-button" id="btnSelectFile" asp-action="ImportManualUpload">Import</button>
+                <button type="Submit" class="clear-button" id="btnSelectFile" asp-action="ImportManualUpload">Import</button>
 
             }
             else

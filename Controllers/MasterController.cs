@@ -6470,6 +6470,7 @@ namespace Plims.Controllers
             }
             else
             {
+
                 ViewBag.InactiveStatus = true;
                 return View(mymodel);
             }
@@ -7047,14 +7048,8 @@ namespace Plims.Controllers
             }
             var mymodel = new ViewModelAll()
             {
-                //view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                //tbPlants = db.TbPlant.ToList(),
-                //tbLine = db.TbLine.ToList(),
-                //tbSection = db.TbSection.ToList(),
-                //tbShift = db.TbShift.ToList(),
+
                 tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
-                //view_EmployeeMaster = db.View_EmployeeMaster.ToList(),
-                //view_PLPS = db.View_PLPS.ToList()
 
             };
 
@@ -7062,16 +7057,7 @@ namespace Plims.Controllers
             // Check Admin
             if (PlantID != 0)
             {
-
-
-                //mymodel.tbPlants = mymodel.tbPlants.Where(x => x.PlantID.Equals(PlantID)).ToList();
-                //mymodel.tbLine = mymodel.tbLine.Where(x => x.PlantID.Equals(PlantID)).ToList();
-                //mymodel.tbShift = mymodel.tbShift.Where(x => x.PlantID.Equals(PlantID)).ToList();
-                //mymodel.tbSection = mymodel.tbSection.Where(x => x.PlantID.Equals(PlantID)).ToList();
-
-                //mymodel.view_PLPS = mymodel.view_PLPS.Where(x => x.PlantID.Equals(PlantID));
                 mymodel.tbEmployeeMaster = mymodel.tbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID));
-                // mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.Where(x => x.PlantID.Equals(PlantID));
             }
             var Employeedb = db.TbEmployeeMaster.Where(p => p.ID.Equals(id)).SingleOrDefault();
             if (Employeedb != null)
@@ -7900,23 +7886,6 @@ namespace Plims.Controllers
             }
 
 
-            //var empGroupToDelete = db.TbEmployeeGroupQR
-            // .Where(x => x.GroupID == groupID && x.Status.Equals(1))
-            // .ToList();
-
-            ////Inactive old data
-            //foreach (var items in empGroupToDelete)
-            //{
-            //    items.Status = 0;
-            //    items.UpdateDate = DateTime.Today;
-            //    items.UpdateBy = EmpID;
-            //    db.SaveChanges();
-            //}
-
-
-            ///case 1 ลบที่มีอยู่
-            ///case 2 เพิ่ม
-            ///case 3 ลบ + เพิ่ม
             
             var empgroupdata = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(groupID)).ToList();
             foreach (var items in empgroupdata)

@@ -535,7 +535,7 @@
 
                         <select class="selectfillter form-control" style="width:100%" name="SectionID" id="SectionNameCreate" required>
                             <option value="" default selected></option>
-                            @foreach (var dataGroup in Model.view_PLPS.GroupBy(x => x.SectionID))
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
                                 <option value="@dataFrist.SectionID">
@@ -543,11 +543,9 @@
                                 </option>
 
                             }
-
-                         
-
                         </select>
 
+                  
 
                     </div>
 

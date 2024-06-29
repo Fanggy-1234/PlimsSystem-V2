@@ -240,7 +240,7 @@
                             {
 
                                 <option value="@item.SectionID" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
-                                    @Html.DisplayFor(modelItem => item.SectionName) :  @Html.DisplayFor(modelItem => item.SectionName)
+                                    @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
                                 </option>
                             }
                         </select>
@@ -352,7 +352,7 @@
                 </div>
 
                 <div class="col-3">
-                    <button class="search-button" type="submit" asp-action="EmployeeClockOut">
+                    <button class="search-button" type="submit" asp-action="EmployeeClockOut" name="action" value="Search">
                         Search
                     </button>
                 </div>
@@ -365,7 +365,7 @@
                 <div class="col-3">
                         @if (ViewBag.VBRoleEmpClockOut == "Full")
                         {
-                           <button type="submit" class="clear-button" onclick="return confirm('Are you sure?')">Create</button>
+                        <button type="submit" class="clear-button" name="action" value="Save" onclick="return confirm('Are you sure?')">Create</button>
                             }
                             else
                             {
@@ -437,10 +437,10 @@
                         @Html.DisplayFor(modelItem => item.EmployeeName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.LineName)
+                        @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.SectionName)
+                        @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
                     </td>
                     <td style="color:darkblue">
                         @if (item.TransactionDate == DateTime.MinValue)

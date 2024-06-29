@@ -15,7 +15,9 @@ namespace Plims.Models
         public string UpdateBy { get; set; }
         public string PlantName { get; set; }
         public int PlantID { get; set; }
+        public string LineID { get; set; }
         public string LineName { get; set; }
+        public string SectionID { get; set; }
         public string SectionName { get; set; }
         public string ShiftName { get; set; }
         public string StartTime { get; set; }

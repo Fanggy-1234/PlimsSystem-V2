@@ -401,7 +401,7 @@
                             {
 
                                 <option value="@item.SectionID" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
-                                    @Html.DisplayFor(modelItem => item.SectionName) :  @Html.DisplayFor(modelItem => item.SectionName)
+                                    @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
                                 </option>
                             }
                         </select>
@@ -600,7 +600,7 @@
                         @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ServicesName)
+                         @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.ServicesName)
                     </td>
                     <td style="color:darkblue">
                            @if (item.TransactionDate == DateTime.MinValue)

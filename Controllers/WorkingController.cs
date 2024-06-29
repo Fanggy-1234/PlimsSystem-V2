@@ -782,7 +782,7 @@ namespace Plims.Controllers
 
         
 
-       [HttpGet]
+       [HttpPost]
         public ActionResult ImportManualExport(View_ProductionPlan obj)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -852,8 +852,8 @@ namespace Plims.Controllers
                 int row = 2;
 
 
-                foreach (var item in collection)
-                {
+                //foreach (var item in collection)
+                //{
                     Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
                     // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
                     Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
@@ -880,8 +880,8 @@ namespace Plims.Controllers
 
 
 
-                    row++;
-                }
+                 //   row++;
+              //  }
                 Sheet.Cells["A:AZ"].AutoFitColumns();
                 Response.Clear();
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -889,6 +889,7 @@ namespace Plims.Controllers
                 Response.Body.WriteAsync(Ep.GetAsByteArray());
 
 
+                ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
 
                 return RedirectToAction("ImportManualData", mymodel);
 
@@ -919,8 +920,8 @@ namespace Plims.Controllers
                 Sheet.Cells["N1"].Value = "GroupRef";
                 Sheet.Cells["O1"].Value = "Note";
                 int row = 2;
-                foreach (var item in collection)
-                {
+                //foreach (var item in collection)
+                //{
 
                     Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
                     // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
@@ -943,14 +944,15 @@ namespace Plims.Controllers
                     Sheet.Cells[string.Format("N{0}", row)].Value = "";
                     Sheet.Cells[string.Format("O{0}", row)].Value = "";
 
-                    row++;
-                }
+                //    row++;
+               //}
                 Sheet.Cells["A:AZ"].AutoFitColumns();
                 Response.Clear();
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                 Response.Headers.Add("content-disposition", "attachment; filename=ImportManualData.xlsx"); // Fix typo ':' should be ';'
                 Response.Body.WriteAsync(Ep.GetAsByteArray());
 
+                ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
 
                 //ViewBag.InactiveStatus = true;
                 return RedirectToAction("ImportManualData", mymodel);
@@ -973,6 +975,8 @@ namespace Plims.Controllers
                     tbProductionTransaction = db.TbProductionTransaction.Where(p => p.PlantID.Equals(PlantID)).ToList()
                 };
 
+                ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
+
                 ViewBag.Error = "Please select a valid Excel file.";
                 return View("ImportManualData", mymodel);
             }
@@ -988,18 +992,28 @@ namespace Plims.Controllers
                     {
                         if (worksheet.Cells[row, 2].Value != null)
                         {
-
+                            DateTime TransactionDateVar = Convert.ToDateTime(worksheet.Cells[row, 1].Text);
                             string LineVar = worksheet.Cells[row, 3].Text;
                             string SectionVar = worksheet.Cells[row, 4].Text;
                             string ProductVar = worksheet.Cells[row, 5].Text;
+                            string Prefixvar = worksheet.Cells[row, 7].Text;
                             string EmployeeVar = worksheet.Cells[row, 8].Text;
                             string EmployeeRefVar = worksheet.Cells[row, 11].Text;
 
-                            var LineIDDb = db.TbLine.Where(x => x.LineID.Equals(LineVar)).Select(x => x.LineID).SingleOrDefault();
-                            var ProductIDDb = db.TbProduct.Where(x => x.ProductID.Equals(ProductVar)).Select(x => x.ProductID).SingleOrDefault();
-                            var SectionIDDb = db.TbSection.Where(x => x.SectionID.Equals(SectionVar)).Select(x => x.SectionID).SingleOrDefault();
-                            var EmployeeIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeVar)).Select(x => x.EmployeeID).SingleOrDefault();
-                            var PLPSIDDb = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb)).Select(x => x.FormularID).SingleOrDefault();
+                            //Check Employee Clockin
+                            var ClockinDb = db.View_ClockTime.Where(x => x.TransactionDate == TransactionDateVar && x.EmployeeID.Equals(EmployeeVar) && x.ClockIn != null).ToList();
+                            if(ClockinDb.Count == 0)
+                            {
+                                int rowerror = row - 1;
+                                TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Please Clockin ";
+                                return RedirectToAction("ImportManualData");
+                            }
+
+                            var LineIDDb = db.TbLine.Where(x => x.LineID.Equals(LineVar) && x.Status.Equals(1)).Select(x => x.LineID).SingleOrDefault();
+                            var ProductIDDb = db.TbProduct.Where(x => x.ProductID.Equals(ProductVar) && x.Status.Equals(1)).Select(x => x.ProductID).SingleOrDefault();
+                            var SectionIDDb = db.TbSection.Where(x => x.SectionID.Equals(SectionVar) && x.Status.Equals(1)).Select(x => x.SectionID).SingleOrDefault();
+                            var EmployeeIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeVar) && x.Status.Equals(1)).Select(x => x.EmployeeID).SingleOrDefault();
+                            var PLPSIDDb = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb) && x.Status.Equals(1)).Select(x => x.FormularID).SingleOrDefault();
                             var EmployeeRefIDDb = "";
 
                             if (EmployeeRefVar != "")
@@ -1040,9 +1054,10 @@ namespace Plims.Controllers
                                     SectionID = SectionIDDb,
                                     ProductID = ProductIDDb,
                                     FormularID = PLPSIDDb,
+                                    Prefix = Prefixvar,
                                     QRCode = EmployeeIDDb,
-                                    Qty = Convert.ToInt32(worksheet.Cells[row, 7].Text),
-                                    QtyPerQR = Convert.ToInt32(worksheet.Cells[row, 8].Text),
+                                    Qty = Convert.ToInt32(worksheet.Cells[row, 9].Text),
+                                    QtyPerQR = Convert.ToInt32(worksheet.Cells[row, 10].Text),
                                     DataType = worksheet.Cells[row, 12].Text,
                                     Reason = worksheet.Cells[row, 13].Text,
                                     Note = worksheet.Cells[row, 15].Text,

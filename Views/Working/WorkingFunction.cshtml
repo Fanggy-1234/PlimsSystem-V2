@@ -202,7 +202,7 @@
                         }
                     </select>
                 </div>
-                <div class="col-2"></div>
+                 <div class="col-2"></div> 
             </div>
             <div class="row" style="height:20px"></div>
             @*  Get Section from EmployeeClock-In *@
@@ -220,7 +220,7 @@
             <div class="row" style="height:80px">
                 <div class="col-2" style=" align-content: center;"><label class="FillterLabel"> QR Code :</label> </div>
                 <div class="col-8">
-                    <input class="form-control" name="EmployeeID" id="EmployeeID" style="width:100%" placeholder="Scan QR Code">
+                    <input class="form-control" name="EmployeeID" id="EmployeeID" style="width:100%" placeholder="Scan QR Code" >
                 </div>
                 <div class="col-2">
                 </div>
@@ -531,7 +531,7 @@
         // Listen for 'keypress' to handle "Enter" or "Tab"
         $('#EmployeeID').on('keyup', function (event) {
             var key = event.which || event.keyCode;
-            if (key === 13 || key === 9) { // 13 for "Enter", 9 for "Tab"
+            if (key === 13 || key === 9 || key === 7) { // 13 for "Enter", 9 for "Tab"
                 event.preventDefault();
                 processInput(); // Trigger AJAX request
             }

@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Razor;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Plims.Controllers
 {
@@ -42,7 +43,7 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-        public ActionResult EmployeeClockIn(View_EmployeeClocktime obj, string[] EmployeeIDchk , string TransactionDate, string TransactionDateFillter)
+        public ActionResult EmployeeClockIn(View_EmployeeClocktime obj, string[] EmployeeIDchk , string TransactionDate, string TransactionDateFillter)//, string action
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -72,7 +73,7 @@ namespace Plims.Controllers
           
 
             ViewBag.VBRoleEmpClockIn = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
-            if (EmployeeIDchk.Length == 0)
+            if(EmployeeIDchk.Count() == 0) //(action == "Search" || action == "EmployeeClockIn")
             {
                
                 if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(TransactionDateFillter))
@@ -758,7 +759,7 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-        public ActionResult EmployeeClockOut(View_EmployeeClocktime obj, string[] EmployeeIDchk, string TransactionDateFillter)
+        public ActionResult EmployeeClockOut(View_EmployeeClocktime obj, string[] EmployeeIDchk, string TransactionDateFillter)/*,string action*/
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -788,7 +789,7 @@ namespace Plims.Controllers
 
 
             ViewBag.VBRoleEmpClockOut = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
-            if (EmployeeIDchk.Length == 0)
+            if(EmployeeIDchk.Count() == 0 ) //(action == "Search" || action == "EmployeeClockOut")
             {
 
                 if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName) | TransactionDateFillter != null)
@@ -1137,7 +1138,7 @@ namespace Plims.Controllers
         /// 
 
         [HttpGet]
-        public ActionResult ServicesClockIn(View_ServicesClocktime obj, string[] EmployeeIDchk , string TableData, string LineID, string SectionSelect ,string TransactionDateFillter)
+        public ActionResult ServicesClockIn(View_ServicesClocktime obj, string[] EmployeeIDchk , string TableData, string LineID, string SectionSelect ,string TransactionDateFillter) //  , string action
         {
 
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -1163,7 +1164,8 @@ namespace Plims.Controllers
             };
             ViewBag.VBRoleServicesClockIn = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(18)).Select(x => x.RoleAction).FirstOrDefault();
 
-                if (EmployeeIDchk.Length == 0)
+            if  (EmployeeIDchk.Count() == 0)  //(action == "Search" || action == "ServicesClockIn")
+
             {
 
                 if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(TransactionDateFillter))
@@ -1521,7 +1523,7 @@ namespace Plims.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult ServicesClockOut(View_ServicesClocktime obj, string[] EmployeeIDchk, string[] ID, string[]  EmployeeIDlist , string TransactionDateFillter)
+        public ActionResult ServicesClockOut(View_ServicesClocktime obj, string[] EmployeeIDchk, string[] ID, string[]  EmployeeIDlist , string TransactionDateFillter , string action)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -1545,7 +1547,7 @@ namespace Plims.Controllers
                 view_Employee = db.View_Employee.ToList()
             };
             ViewBag.VBRoleServicesClockOut = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(19)).Select(x => x.RoleAction).FirstOrDefault();
-            if (EmployeeIDchk.Length == 0)
+            if (action == "Search" || action == "ServicesClockOut")
             {
 
                 if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(TransactionDateFillter))
@@ -2084,7 +2086,7 @@ namespace Plims.Controllers
             if (EmployeeIDchk.Length == 0)
             {
 
-                if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || obj.TransactionDate != null)
+                if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || obj.TransactionDate != DateTime.MinValue)
                 {
 
                     if (!string.IsNullOrEmpty(obj.EmployeeID))
@@ -2102,7 +2104,7 @@ namespace Plims.Controllers
                         ViewBag.SelectedSectionID = obj.SectionID;
                         Employee.view_EmployeeAdjustLine = Employee.view_EmployeeAdjustLine.Where(p => p.SectionID == obj.SectionID).ToList();
                     }
-                    if (obj.TransactionDate != null)
+                    if (obj.TransactionDate != DateTime.MinValue)
                     {
                         ViewBag.SelectedTransactionDate = obj.TransactionDate;
                         Employee.view_EmployeeAdjustLine = Employee.view_EmployeeAdjustLine.Where(p => p.TransactionDate == obj.TransactionDate).ToList();

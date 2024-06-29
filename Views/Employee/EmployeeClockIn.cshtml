@@ -373,7 +373,7 @@
                             {
 
                                 <option value="@item.SectionName" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
-                                    @Html.DisplayFor(modelItem => item.SectionName) :  @Html.DisplayFor(modelItem => item.SectionName)
+                                    @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
                                 </option>
                             }
                         </select>
@@ -443,7 +443,7 @@
 
             </div>
 
-            <div class="row" style=" padding-right:2em">
+            <div class="row">
                 <div class="col-3 label">
                     <label for="recipient-name" class="col-form-label">Clock In Date:</label>
                 </div>
@@ -489,7 +489,7 @@
                 </div>
 
                 <div class="col-3">
-                    <button class="search-button" type="submit" asp-action="EmployeeClockIn">
+                    <button class="search-button" type="submit" asp-action="EmployeeClockIn" name="action" value="Search">
                         Search
                     </button>
                 </div>
@@ -503,7 +503,7 @@
 
                     @if (ViewBag.VBRoleEmpClockIn == "Full")
                     {
-                        <button type="submit" class="clear-button"  asp-action="EmployeeClockInsave" onclick="return confirm('Are you sure?')">Create</button>
+                        <button type="submit" class="clear-button" name="action" value="Save"  asp-action="EmployeeClockInsave" onclick="return confirm('Are you sure?')">Create</button>
                     }
                     else
                     {
@@ -578,10 +578,10 @@
                     </td>
 
                     <td >
-                        @Html.DisplayFor(modelItem => item.LineName)
+                        @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.SectionName)
+                        @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
                     </td>
                     <td style="color:darkblue">
                         @if (item.TransactionDate == DateTime.MinValue)
