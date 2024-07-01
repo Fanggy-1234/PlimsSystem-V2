@@ -863,7 +863,7 @@ namespace Plims.Controllers
             }
             else
             {
-                if (obj.ClockOut == null || obj.ClockOut == "" || Convert.ToDateTime(obj.TransactionDate) == DateTime.MinValue)
+                if (obj.ClockOut == null || obj.ClockOut == "" )
                 {
                     TempData["AlertMessage"] = "Please fill data Date/Time! Clockout";
                     return RedirectToAction("EmployeeClockOut", "Employee");

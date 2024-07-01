@@ -323,6 +323,7 @@ namespace Plims.Controllers
             }
             if (obj.UserPassword != null)
             {
+
                 Userdb.UserPassword = obj.UserPassword;
             }
             if (obj.UserPermission != 0)
@@ -364,6 +365,18 @@ namespace Plims.Controllers
             var userdb = db.TbUser.Where(x => x.UserEmpID.Equals(obj.UserEmpID) && x.PlantID.Equals(PlantID));
             string plantname = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).Select(x => x.PlantName).SingleOrDefault();
             int cnt = db.TbUser.Where(x => x.PlantID.Equals(PlantID)).Count();
+            //Check Password
+            if(!isValidpassword(obj.UserPassword))
+            {
+
+                TempData["AlertMessage"] = "- รหัสผ่านไม่ควรมีช่องว่าง <br/>" +
+                                "- รหัสผ่านควรมีอย่างน้อยหนึ่งหลัก (0-9) <br/>" +
+                                "- ความยาวของรหัสผ่านควรอยู่ระหว่าง 8 ถึง 15 ตัวอักษร <br/>" +
+                                "- รหัสผ่านควรมีอักษรตัวพิมพ์เล็กอย่างน้อยหนึ่งตัว (az) <br/>" +
+                                "- รหัสผ่านควรมีอักษรตัวพิมพ์ใหญ่ (AZ) อย่างน้อยหนึ่งตัว <br/>" +
+                                "- รหัสผ่านควรมีอักขระพิเศษอย่างน้อยหนึ่งตัว ( @, #, %, &, !, $, ฯลฯ...)";
+                return RedirectToAction("UserManagement");
+            }
            // var roledb = db.TbRole.Where(x => x.RoleName == obj.RoleName.Trim()).SingleOrDefault();
             if (userdb.Count() == 0)
             {
@@ -396,6 +409,114 @@ namespace Plims.Controllers
             }
             return RedirectToAction("UserManagement");
         }
+
+
+        // A utility function to check
+        // whether a password is valid or not
+        public static bool isValidpassword(String password)
+        {
+
+            // for checking if password length
+            // is between 8 and 15
+            if (!((password.Length >= 8)
+                && (password.Length <= 15)))
+            {
+                return false;
+            }
+
+            // to check space
+            if (password.Contains(" "))
+            {
+                return false;
+            }
+            if (true)
+            {
+                int count = 0;
+
+                // check digits from 0 to 9
+                for (int i = 0; i <= 9; i++)
+                {
+
+                    // to convert int to string
+                    String str1 = i.ToString();
+
+                    if (password.Contains(str1))
+                    {
+                        count = 1;
+                    }
+                }
+                if (count == 0)
+                {
+                    return false;
+                }
+            }
+
+            // for special characters
+            if (!(password.Contains("@") || password.Contains("#")
+                || password.Contains("!") || password.Contains("~")
+                || password.Contains("$") || password.Contains("%")
+                || password.Contains("^") || password.Contains("&")
+                || password.Contains("*") || password.Contains("(")
+                || password.Contains(")") || password.Contains("-")
+                || password.Contains("+") || password.Contains("/")
+                || password.Contains(":") || password.Contains(".")
+                || password.Contains(", ") || password.Contains("<")
+                || password.Contains(">") || password.Contains("?")
+                || password.Contains("|")))
+            {
+                return false;
+            }
+
+            if (true)
+            {
+                int count = 0;
+
+                // checking capital letters
+                for (int i = 65; i <= 90; i++)
+                {
+
+                    // type casting
+                    char c = (char)i;
+
+                    String str1 = c.ToString();
+                    if (password.Contains(str1))
+                    {
+                        count = 1;
+                    }
+                }
+                if (count == 0)
+                {
+                    return false;
+                }
+            }
+
+            if (true)
+            {
+                int count = 0;
+
+                // checking small letters
+                for (int i = 97; i <= 122; i++)
+                {
+
+                    // type casting
+                    char c = (char)i;
+                    String str1 = c.ToString();
+
+                    if (password.Contains(str1))
+                    {
+                        count = 1;
+                    }
+                }
+                if (count == 0)
+                {
+                    return false;
+                }
+            }
+
+            // if all conditions fails
+            return true;
+        }
+
 
 
         // User Add New

@@ -418,14 +418,21 @@
         }
     </tbody>
 </table>
-<div class="row" style="height:10px">
+@* <div class="row" style="height:10px">
     @if (TempData.ContainsKey("AlertMessage"))
     {
         <script>
             alert('@TempData["AlertMessage"]');
         </script>
     }
-</div>
+</div> *@
+
+@if (TempData["AlertMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @Html.Raw(TempData["AlertMessage"].ToString())
+    </div>
+}
 
 
 
@@ -453,7 +460,6 @@
                     </div>
                     <div class="mb-3">
                         <label for="RoleName" class="col-form-label">Role:</label>
-
                         <select class="selectfillter form-control" style="width:100%" name="RoleID" id="RoleNamecreate">
                         <option value="" default selected></option>
                             @foreach (var item in Model.tbRole.Where(x=>x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
@@ -464,9 +470,7 @@
                             </option>
 
                             }
-
-
-            </select>
+                             </select>
 
 
                     </div>
