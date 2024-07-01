@@ -393,18 +393,14 @@
     });
 
 
-
-
-
-
 </script>
 
 
-<div class="row" style="height:10px"></div>
+ <div class="row" style="height:10px"></div>
 <h2 class="page-name">Incentive Management</h2>
 
 @* Textbox for search *@
-<form method="GET" asp-controller="Master" asp-action="Incentive">
+<form method="get" asp-controller="Master" asp-action="Incentive">
    
     @* <div style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;"> *@
         <div class="row">
@@ -819,28 +815,48 @@
                         <input type="text" class="form-control" id="STDCreate" Name="STD" required>
                     </div>
 
-
-                    <div class="mb-3">
+                      <div class="mb-3">
                         <div class="row">
-                            <div class="col-6">
-                                <label for="recipient-MIN" class="col-form-label">MIN:</label>
-                                <input type="text" class="form-control" id="MINCreate" Name="MIN" required>
-                            </div>
-                            <div class="col-6">
-                                <label for="recipient-MAX" class="col-form-label">MAX:</label>
-                                <input type="text" class="form-control" id="MAXCreate" Name="MAX" required>
-                            </div>
+                        <div class="col-6">
+                                <label for="recipient-Rate" class="col-form-label">MIN:</label>
+                        </div>
+                        <div class="col-6">
+                                <label for="recipient-Greade" class="col-form-label">MAX:</label>
+                        </div>
                         </div>
                     </div>
 
+
                     <div class="mb-3">
                         <div class="row">
                             <div class="col-6">
-                                <label for="recipient-Rate" class="col-form-label">Rate:</label>
+                             @*    <label for="recipient-MIN" class="col-form-label">MIN:</label> *@
+                                <input type="text" class="form-control" id="MINCreate" Name="MIN" required>
+                            </div>
+                            <div class="col-6">
+                                @* <label for="recipient-MAX" class="col-form-label">MAX:</label> *@
+                                <input type="text" class="form-control" id="MAXCreate" Name="MAX" required>
+                            </div> 
+                            </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="row">
+                        <div class="col-6">
+                            <label for="recipient-Rate" class="col-form-label">Rate:</label>
+                        </div>
+                        <div class="col-6">
+                            <label for="recipient-Greade" class="col-form-label">Grade:</label>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                              @*   <label for="recipient-Rate" class="col-form-label">Rate:</label> *@
                                 <input type="text" class="form-control" id="RateCreate" Name="Rate" required>
                             </div>
                             <div class="col-6">
-                                <label for="recipient-Greade" class="col-form-label">Grade:</label>
+                                @* <label for="recipient-Greade" class="col-form-label">Grade:</label> *@
                                 <input type="text" class="form-control" id="GradeCreate" Name="Grade" required>
                             </div>
                         </div>

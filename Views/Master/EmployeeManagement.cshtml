@@ -88,6 +88,15 @@
 </style>
 
 
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
+
+
+
 @* @if (ViewBag.MessageAlert != null)
     {  
         <script type="text/javascript">  

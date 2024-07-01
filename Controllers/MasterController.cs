@@ -7460,10 +7460,10 @@ namespace Plims.Controllers
                 }
 
             }
-         
-           
-            ViewBag.Success = "Data imported and updated successfully!";
-            return RedirectToAction("EmployeeManagement");
+            return Json(new { success = true, message = "Data imported and updated successfully!" });
+          //  TempData["AlertMessage"] = "Data imported and updated successfully!";
+          //  ViewBag.Success = "Data imported and updated successfully!";
+          //  return RedirectToAction("EmployeeManagement");
 
         }
 
