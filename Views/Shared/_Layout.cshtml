@@ -194,8 +194,9 @@
      
 
         <div>
+           
             <a href="@Url.Action("UserInformation", "Home")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
-                <img class="nav-images" src="~/picture/flaticon-user-management-white.png" alt="User management photo"> User Information
+                <img class="nav-images" src="~/picture/home-icon-white.png" alt="User management photo"> User Information
             </a>
         </div>
 
@@ -370,7 +371,7 @@
         {
             ViewBag.VBRoleProducttionTransactionAjust = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
             <a href="@Url.Action("ProductionTransactionAdjustByEmployee", "Working")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
-                <img src="~/Picture/flaticon-pd-incentive-scan-white.png" class="nav-images" alt="PD Adjust"> Production Transaction Adjust
+                <img src="~/Picture/edit-icon-white.png" class="nav-images" alt="PD Adjust"> Production Transaction Adjust
             </a>
         }
 

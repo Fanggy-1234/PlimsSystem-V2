@@ -210,14 +210,14 @@
 
 
     //Edit to modal
-    function EditFn(ID) {
-        var TranDate = $("#TransactionDateFillter").val();
+    function EditFn(ID, transactionDate,transactionNo) {
+      
         $.ajax({
             url: '/Employee/EmployeeClockInEdit/' + ID,
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            data: { ID: ID, TranDate: TranDate },
+            data: { ID: ID, TranDate: transactionDate, TransactionNo: transactionNo },
             success: function (response) {
                 if (response == null || response == undefined) {
 
@@ -229,7 +229,7 @@
                 }
                 else {
                     
-                    console.log('AJAX request successful:', response);
+                   // console.log('AJAX request successful:', response);
                     //var transactionDate = new Date(response.transactionDate);
                  //   var formattedDate = transactionDate.ToString("yyyy-MM-dd");
 
@@ -242,7 +242,7 @@
 
 
                     //var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed .ToString("yyyy-MM-dd")
-                    console.log('AJAX request successful:', transactionDate)
+                   // console.log('AJAX request successful:', transactionDate)
                     $('#ModalEmployeeID').val(response.employeeID);
                     $('#ModalClockIn').val(response.clockIn);
                     $('#ModalTransactionDate').val(formattedDate);
@@ -483,7 +483,7 @@
             <div class="row" style="height:40px ;">
                 <div class="col-6"></div>
                 <div class="col-3">
-                    <button class="clear-button" type="submit" asp-action="EmployeeClockInClear">
+                    <button class="clear-button" type="submit" asp-action="EmployeeClockInClear" name="action" value="Clear">
                         Clear
                     </button>
                 </div>
@@ -618,7 +618,8 @@
                         {
                             @if (ViewBag.VBRoleEmpClockIn == "Full")
                             {
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.EmployeeID" onclick="EditFn(@item.ID)">Edit</a>
+                              @*   <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" data-transactiondate="@item.TransactionDate" onclick="EditFn('@item.ID')">Edit</a> *@
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" data-transactiondate="@item.TransactionDate" onclick="EditFn('@item.ID', '@item.TransactionDate' ,'@item.TransactionNo')">Edit</a>
                             }
                             else
                             {

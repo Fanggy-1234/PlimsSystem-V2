@@ -43,7 +43,7 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-        public ActionResult EmployeeClockIn(View_EmployeeClocktime obj, string[] EmployeeIDchk , string TransactionDate, string TransactionDateFillter)//, string action
+        public ActionResult EmployeeClockIn(View_EmployeeClocktime obj, string[] EmployeeIDchk , string TransactionDate, string TransactionDateFillter, string action)//
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -56,7 +56,7 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x=>x.EmployeeID).ToList(),
-                tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now && x.Plant.Equals(PlantID)),
+               // tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now && x.Plant.Equals(PlantID)),
                 view_PermissionMaster = db.View_PermissionMaster.ToList()
 
             };
@@ -70,8 +70,8 @@ namespace Plims.Controllers
           
 
             ViewBag.VBRoleEmpClockIn = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
-            if(EmployeeIDchk.Count() == 0) //(action == "Search" || action == "EmployeeClockIn")
-            {
+            //if(EmployeeIDchk.Count() == 0) //(action == "Search" || action == "EmployeeClockIn")
+            //{
                
                 if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(TransactionDateFillter))
                 {
@@ -129,303 +129,303 @@ namespace Plims.Controllers
                     return View(mymodel);
                 }
 
-            }
-            else
-            {
-                if (obj.ClockIn == null || obj.ClockIn == "" || Convert.ToDateTime(TransactionDate) == DateTime.MinValue)
-                {
-                    TempData["AlertMessage"] = "Please fill Time/Date Clockin";
-                    return RedirectToAction("EmployeeClockIn", "Employee");
-                }
+            //}
+            //else
+            //{
+            //    if (obj.ClockIn == null || obj.ClockIn == "" || Convert.ToDateTime(TransactionDate) == DateTime.MinValue)
+            //    {
+            //        TempData["AlertMessage"] = "Please fill Time/Date Clockin";
+            //        return RedirectToAction("EmployeeClockIn", "Employee");
+            //    }
 
-                // Create Function
+            //    // Create Function
 
-                int datacnt = EmployeeIDchk.Count();
-                for (int i = 0; i < datacnt; ++i)
-                {
+            //    int datacnt = EmployeeIDchk.Count();
+            //    for (int i = 0; i < datacnt; ++i)
+            //    {
 
-                    string empid = EmployeeIDchk[i];
-                    DateTime clockoutvar;
-                    DateTime clockinvar;
-                    var empdbcheck = db.TbServicesTransaction.Where(x => x.TransactionDate.Equals(TransactionDateVar) && x.EmployeeID.Equals(empid) && x.ClockOut == "").ToList();
-                    if (empdbcheck.Count() != 0)
-                    {
-                        TempData["AlertMessage"] = "Please Services Clock out Employee ID :" + empid;
-                        return RedirectToAction("EmployeeClockIn");
-                    }
-
-
-                    var EmpTrans = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.Plant.Equals(PlantID) && x.TransactionDate == TransactionDateVar && x.Remark == "" && x.WorkingStatus == "Working").ToList();
-                    if (EmpTrans.Count() != 0)
-                    {
-
-                        var Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.Plant.Equals(PlantID) && x.TransactionDate == TransactionDateVar).SingleOrDefault();
-                        Empdb.ClockIn = obj.ClockIn.ToString();
-                        Empdb.UpdateBy = EmpID;//User.Identity.Name;
-                        Empdb.UpdateDate = DateTime.Now;
-                        db.SaveChanges();
-
-                    }
-                    else
-                    {
-
-                        var empdetails = db.TbEmployeeMaster.Where(x => x.EmployeeID == empid.Trim() && x.PlantID.Equals(PlantID)).SingleOrDefault();
-
-                        if (!string.IsNullOrEmpty(obj.ClockOut))
-                        {
-                            var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.StartTime).SingleOrDefault();
-                            var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.EndTime).SingleOrDefault();
-                            var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
-
-                            //Case with clock out
-                            db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
-                            {
-                                TransactionDate = Convert.ToDateTime(TransactionDateVar),
-                                EmployeeID = empid,
-                                Shift = empdetails.ShiftID,
-                                StartTime = startt,
-                                EndTime = Endt,
-                                Plant = PlantID,
-                                Line = empdetails.LineID,//obj.LineName,
-                                Section = empdetails.SectionID,
-                                WorkingStatus = "Working",
-                                Prefix = Prefixt,
-                                BreakFlag = "",
-                                Remark = "",
-                                ClockIn = obj.ClockIn,
-                                CreateDate = DateTime.Now,
-                                CreateBy = EmpID,//User.Identity.Name,
-                                UpdateDate = DateTime.Now,
-                                UpdateBy = EmpID//User.Identity.Name,
-                            });
+            //        string empid = EmployeeIDchk[i];
+            //        DateTime clockoutvar;
+            //        DateTime clockinvar;
+            //        var empdbcheck = db.TbServicesTransaction.Where(x => x.TransactionDate.Equals(TransactionDateVar) && x.EmployeeID.Equals(empid) && x.ClockOut == "").ToList();
+            //        if (empdbcheck.Count() != 0)
+            //        {
+            //            TempData["AlertMessage"] = "Please Services Clock out Employee ID :" + empid;
+            //            return RedirectToAction("EmployeeClockIn");
+            //        }
 
 
-                        }
-                        else
-                        {
-                            var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.StartTime).SingleOrDefault();
-                            var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.EndTime).SingleOrDefault();
-                            var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
+            //        var EmpTrans = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.Plant.Equals(PlantID) && x.TransactionDate == TransactionDateVar && x.Remark == "" && x.WorkingStatus == "Working").ToList();
+            //        if (EmpTrans.Count() != 0)
+            //        {
 
-                            db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
-                            {
+            //            var Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.Plant.Equals(PlantID) && x.TransactionDate == TransactionDateVar).SingleOrDefault();
+            //            Empdb.ClockIn = obj.ClockIn.ToString();
+            //            Empdb.UpdateBy = EmpID;//User.Identity.Name;
+            //            Empdb.UpdateDate = DateTime.Now;
+            //            db.SaveChanges();
 
-                                TransactionDate = Convert.ToDateTime(TransactionDateVar),
-                                EmployeeID = empid,
-                                Plant = PlantID,
-                                Shift = empdetails.ShiftID,
-                                StartTime = startt,
-                                EndTime = Endt,
-                                Prefix = Prefixt,
-                                Line = empdetails.LineID,//obj.LineName,
-                                Section = empdetails.SectionID,
-                                ClockIn = obj.ClockIn,
-                                ClockOut = "",
-                                WorkingStatus = "Working",
-                                BreakFlag = "",
-                                Remark = "",
-                                CreateDate = DateTime.Now,
-                                CreateBy = EmpID,//User.Identity.Name,
-                                UpdateDate = DateTime.Now,
-                                UpdateBy = EmpID,//User.Identity.Name,
-                            });
+            //        }
+            //        else
+            //        {
+
+            //            var empdetails = db.TbEmployeeMaster.Where(x => x.EmployeeID == empid.Trim() && x.PlantID.Equals(PlantID)).SingleOrDefault();
+
+            //            if (!string.IsNullOrEmpty(obj.ClockOut))
+            //            {
+            //                var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.StartTime).SingleOrDefault();
+            //                var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.EndTime).SingleOrDefault();
+            //                var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
+
+            //                //Case with clock out
+            //                db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
+            //                {
+            //                    TransactionDate = Convert.ToDateTime(TransactionDateVar),
+            //                    EmployeeID = empid,
+            //                    Shift = empdetails.ShiftID,
+            //                    StartTime = startt,
+            //                    EndTime = Endt,
+            //                    Plant = PlantID,
+            //                    Line = empdetails.LineID,//obj.LineName,
+            //                    Section = empdetails.SectionID,
+            //                    WorkingStatus = "Working",
+            //                    Prefix = Prefixt,
+            //                    BreakFlag = "",
+            //                    Remark = "",
+            //                    ClockIn = obj.ClockIn,
+            //                    CreateDate = DateTime.Now,
+            //                    CreateBy = EmpID,//User.Identity.Name,
+            //                    UpdateDate = DateTime.Now,
+            //                    UpdateBy = EmpID//User.Identity.Name,
+            //                });
 
 
+            //            }
+            //            else
+            //            {
+            //                var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.StartTime).SingleOrDefault();
+            //                var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.EndTime).SingleOrDefault();
+            //                var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
 
-                        }
-                        db.SaveChanges();
+            //                db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
+            //                {
 
-                    }
-                }
-                return RedirectToAction("EmployeeClockIn");
-               // return View(mymodel);
-
-            }
-
-        }
-
-
-        [HttpGet]
-        public ActionResult EmployeeClockinTest(View_EmployeeClocktime obj, string[] EmployeeIDchk, string TransactionDateFillter)
-        {
-            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
-            string EmpID = HttpContext.Session.GetString("UserEmpID");
-
-            var TransactionDateVar = DateTime.Today;
-
-            var mymodel = new ViewModelAll
-            {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
-                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                //tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                view_EmployeeClockTimeTest = db.View_EmployeeClockTimeTest.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                //  tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now && x.Plant.Equals(PlantID)),
-                view_PermissionMaster = db.View_PermissionMaster.ToList()
-                //view_Employee = db.View_Employee.Where(x => x.PlantID.Equals(PlantID)).ToList()
-
-            };
+            //                    TransactionDate = Convert.ToDateTime(TransactionDateVar),
+            //                    EmployeeID = empid,
+            //                    Plant = PlantID,
+            //                    Shift = empdetails.ShiftID,
+            //                    StartTime = startt,
+            //                    EndTime = Endt,
+            //                    Prefix = Prefixt,
+            //                    Line = empdetails.LineID,//obj.LineName,
+            //                    Section = empdetails.SectionID,
+            //                    ClockIn = obj.ClockIn,
+            //                    ClockOut = "",
+            //                    WorkingStatus = "Working",
+            //                    BreakFlag = "",
+            //                    Remark = "",
+            //                    CreateDate = DateTime.Now,
+            //                    CreateBy = EmpID,//User.Identity.Name,
+            //                    UpdateDate = DateTime.Now,
+            //                    UpdateBy = EmpID,//User.Identity.Name,
+            //                });
 
 
 
-            if (EmpID == null)
-            {
-                return RedirectToAction("Login", "Home");
-            }
+            //            }
+            //            db.SaveChanges();
 
+            //        }
+            //    }
+            //    return RedirectToAction("EmployeeClockIn");
+            //   // return View(mymodel);
 
-            ViewBag.VBRoleEmpClockIn = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
-            if (EmployeeIDchk.Length == 0)
-            {
-
-                if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName) || TransactionDateFillter != null)
-                {
-
-                    if (!string.IsNullOrEmpty(obj.EmployeeID))
-                    {
-                        ViewBag.SelectedEmpID = obj.EmployeeID;
-                        mymodel.view_EmployeeClockTimeTest = mymodel.view_EmployeeClockTimeTest.Where(p => p.EmployeeID == obj.EmployeeID).ToList();
-                    }
-                    if (!string.IsNullOrEmpty(obj.LineName))
-                    {
-                        ViewBag.SelectedLineName = obj.LineName;
-                        mymodel.view_EmployeeClockTimeTest = mymodel.view_EmployeeClockTimeTest.Where(p => p.LineName == obj.LineName).ToList();
-                    }
-                    if (!string.IsNullOrEmpty(obj.SectionName))
-                    {
-                        ViewBag.SelectedSectionName = obj.SectionName;
-                        mymodel.view_EmployeeClockTimeTest = mymodel.view_EmployeeClockTimeTest.Where(p => p.SectionID == obj.SectionName).ToList();
-                    }
-                    if (TransactionDateFillter != null )
-                    {
-                        DateTime datefillter = Convert.ToDateTime(TransactionDateFillter);
-                        ViewBag.SelectedTransactionDate = TransactionDateFillter;
-                        mymodel.view_EmployeeClockTimeTest = mymodel.view_EmployeeClockTimeTest.Where(p => p.TransactionDate.Equals(datefillter)).ToList();
-                    }
-                    return View(mymodel);
-
-                }
-                else
-                {
-                    ViewBag.SelectedTransactionDate = DateTime.Today;
-                    mymodel.view_EmployeeClockTimeTest = mymodel.view_EmployeeClockTimeTest.Where(p => p.TransactionDate == DateTime.Today || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
-                    return View(mymodel);
-                }
-
-            }
-            else
-            {
-                if (obj.ClockIn == null || obj.ClockIn == "")
-                {
-                    return RedirectToAction("EmployeeClockIn", "Employee");
-                }
-
-                // Create Function
-
-                int datacnt = EmployeeIDchk.Count();
-                for (int i = 0; i < datacnt; ++i)
-                {
-
-                    string empid = EmployeeIDchk[i];
-                    DateTime clockoutvar;
-                    DateTime clockinvar;
-                    var empdbcheck = db.TbServicesTransaction.Where(x => x.TransactionDate.Equals(TransactionDateVar) && x.EmployeeID.Equals(empid) && x.ClockOut == "").ToList();
-                    if (empdbcheck.Count() != 0)
-                    {
-                        TempData["AlertMessage"] = "Please Services Clock out Employee ID :" + empid;
-                        return RedirectToAction("EmployeeClockIn");
-                    }
-
-
-                    var EmpTrans = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.Plant.Equals(PlantID) && x.TransactionDate == TransactionDateVar && x.Remark == "" && x.WorkingStatus == "Working").ToList();
-                    if (EmpTrans.Count() != 0)
-                    {
-
-                        var Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.Plant.Equals(PlantID) && x.TransactionDate == TransactionDateVar).SingleOrDefault();
-                        Empdb.ClockIn = obj.ClockIn.ToString();
-                        Empdb.UpdateBy = EmpID;//User.Identity.Name;
-                        Empdb.UpdateDate = DateTime.Now;
-                        db.SaveChanges();
-
-                    }
-                    else
-                    {
-
-                        var empdetails = db.TbEmployeeMaster.Where(x => x.EmployeeID == empid.Trim() && x.PlantID.Equals(PlantID)).SingleOrDefault();
-
-                        if (!string.IsNullOrEmpty(obj.ClockOut))
-                        {
-                            var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.StartTime).SingleOrDefault();
-                            var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.EndTime).SingleOrDefault();
-                            var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
-
-                            //Case with clock out
-                            db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
-                            {
-                                TransactionDate = Convert.ToDateTime(TransactionDateVar),
-                                EmployeeID = empid,
-                                Shift = empdetails.ShiftID,
-                                StartTime = startt,
-                                EndTime = Endt,
-                                Plant = PlantID,
-                                Line = empdetails.LineID,//obj.LineName,
-                                Section = empdetails.SectionID,
-                                WorkingStatus = "Working",
-                                Prefix = Prefixt,
-                                BreakFlag = "",
-                                Remark = "",
-                                ClockIn = obj.ClockIn,
-                                CreateDate = DateTime.Now,
-                                CreateBy = EmpID,//User.Identity.Name,
-                                UpdateDate = DateTime.Now,
-                                UpdateBy = EmpID//User.Identity.Name,
-                            });
-
-
-                        }
-                        else
-                        {
-                            var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.StartTime).SingleOrDefault();
-                            var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.EndTime).SingleOrDefault();
-                            var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
-
-                            db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
-                            {
-
-                                TransactionDate = Convert.ToDateTime(TransactionDateVar),
-                                EmployeeID = empid,
-                                Plant = PlantID,
-                                Shift = empdetails.ShiftID,
-                                StartTime = startt,
-                                EndTime = Endt,
-                                Prefix = Prefixt,
-                                Line = empdetails.LineID,//obj.LineName,
-                                Section = empdetails.SectionID,
-                                ClockIn = obj.ClockIn,
-                                ClockOut = "",
-                                WorkingStatus = "Working",
-                                BreakFlag = "",
-                                Remark = "",
-                                CreateDate = DateTime.Now,
-                                CreateBy = EmpID,//User.Identity.Name,
-                                UpdateDate = DateTime.Now,
-                                UpdateBy = EmpID,//User.Identity.Name,
-                            });
-
-
-
-                        }
-                        db.SaveChanges();
-
-                    }
-                }
-                return RedirectToAction("EmployeeClockIn");
-                // return View(mymodel);
-
-            }
+            //}
 
         }
+
+
+        //[HttpGet]
+        //public ActionResult EmployeeClockinTest(View_EmployeeClocktime obj, string[] EmployeeIDchk, string TransactionDateFillter)
+        //{
+        //    int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+        //    string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+        //    var TransactionDateVar = DateTime.Today;
+
+        //    var mymodel = new ViewModelAll
+        //    {
+        //        tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
+        //        tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+        //        tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+        //        //tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+        //        view_EmployeeClockTimeTest = db.View_EmployeeClockTimeTest.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+        //        //  tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+        //        tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now && x.Plant.Equals(PlantID)),
+        //        view_PermissionMaster = db.View_PermissionMaster.ToList()
+        //        //view_Employee = db.View_Employee.Where(x => x.PlantID.Equals(PlantID)).ToList()
+
+        //    };
+
+
+
+        //    if (EmpID == null)
+        //    {
+        //        return RedirectToAction("Login", "Home");
+        //    }
+
+
+        //    ViewBag.VBRoleEmpClockIn = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
+        //    if (EmployeeIDchk.Length == 0)
+        //    {
+
+        //        if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName) || TransactionDateFillter != null)
+        //        {
+
+        //            if (!string.IsNullOrEmpty(obj.EmployeeID))
+        //            {
+        //                ViewBag.SelectedEmpID = obj.EmployeeID;
+        //                mymodel.view_EmployeeClockTimeTest = mymodel.view_EmployeeClockTimeTest.Where(p => p.EmployeeID == obj.EmployeeID).ToList();
+        //            }
+        //            if (!string.IsNullOrEmpty(obj.LineName))
+        //            {
+        //                ViewBag.SelectedLineName = obj.LineName;
+        //                mymodel.view_EmployeeClockTimeTest = mymodel.view_EmployeeClockTimeTest.Where(p => p.LineName == obj.LineName).ToList();
+        //            }
+        //            if (!string.IsNullOrEmpty(obj.SectionName))
+        //            {
+        //                ViewBag.SelectedSectionName = obj.SectionName;
+        //                mymodel.view_EmployeeClockTimeTest = mymodel.view_EmployeeClockTimeTest.Where(p => p.SectionID == obj.SectionName).ToList();
+        //            }
+        //            if (TransactionDateFillter != null )
+        //            {
+        //                DateTime datefillter = Convert.ToDateTime(TransactionDateFillter);
+        //                ViewBag.SelectedTransactionDate = TransactionDateFillter;
+        //                mymodel.view_EmployeeClockTimeTest = mymodel.view_EmployeeClockTimeTest.Where(p => p.TransactionDate.Equals(datefillter)).ToList();
+        //            }
+        //            return View(mymodel);
+
+        //        }
+        //        else
+        //        {
+        //            ViewBag.SelectedTransactionDate = DateTime.Today;
+        //            mymodel.view_EmployeeClockTimeTest = mymodel.view_EmployeeClockTimeTest.Where(p => p.TransactionDate == DateTime.Today || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
+        //            return View(mymodel);
+        //        }
+
+        //    }
+        //    else
+        //    {
+        //        if (obj.ClockIn == null || obj.ClockIn == "")
+        //        {
+        //            return RedirectToAction("EmployeeClockIn", "Employee");
+        //        }
+
+        //        // Create Function
+
+        //        int datacnt = EmployeeIDchk.Count();
+        //        for (int i = 0; i < datacnt; ++i)
+        //        {
+
+        //            string empid = EmployeeIDchk[i];
+        //            DateTime clockoutvar;
+        //            DateTime clockinvar;
+        //            var empdbcheck = db.TbServicesTransaction.Where(x => x.TransactionDate.Equals(TransactionDateVar) && x.EmployeeID.Equals(empid) && x.ClockOut == "").ToList();
+        //            if (empdbcheck.Count() != 0)
+        //            {
+        //                TempData["AlertMessage"] = "Please Services Clock out Employee ID :" + empid;
+        //                return RedirectToAction("EmployeeClockIn");
+        //            }
+
+
+        //            var EmpTrans = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.Plant.Equals(PlantID) && x.TransactionDate == TransactionDateVar && x.Remark == "" && x.WorkingStatus == "Working").ToList();
+        //            if (EmpTrans.Count() != 0)
+        //            {
+
+        //                var Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.Plant.Equals(PlantID) && x.TransactionDate == TransactionDateVar).SingleOrDefault();
+        //                Empdb.ClockIn = obj.ClockIn.ToString();
+        //                Empdb.UpdateBy = EmpID;//User.Identity.Name;
+        //                Empdb.UpdateDate = DateTime.Now;
+        //                db.SaveChanges();
+
+        //            }
+        //            else
+        //            {
+
+        //                var empdetails = db.TbEmployeeMaster.Where(x => x.EmployeeID == empid.Trim() && x.PlantID.Equals(PlantID)).SingleOrDefault();
+
+        //                if (!string.IsNullOrEmpty(obj.ClockOut))
+        //                {
+        //                    var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.StartTime).SingleOrDefault();
+        //                    var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.EndTime).SingleOrDefault();
+        //                    var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
+
+        //                    //Case with clock out
+        //                    db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
+        //                    {
+        //                        TransactionDate = Convert.ToDateTime(TransactionDateVar),
+        //                        EmployeeID = empid,
+        //                        Shift = empdetails.ShiftID,
+        //                        StartTime = startt,
+        //                        EndTime = Endt,
+        //                        Plant = PlantID,
+        //                        Line = empdetails.LineID,//obj.LineName,
+        //                        Section = empdetails.SectionID,
+        //                        WorkingStatus = "Working",
+        //                        Prefix = Prefixt,
+        //                        BreakFlag = "",
+        //                        Remark = "",
+        //                        ClockIn = obj.ClockIn,
+        //                        CreateDate = DateTime.Now,
+        //                        CreateBy = EmpID,//User.Identity.Name,
+        //                        UpdateDate = DateTime.Now,
+        //                        UpdateBy = EmpID//User.Identity.Name,
+        //                    });
+
+
+        //                }
+        //                else
+        //                {
+        //                    var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.StartTime).SingleOrDefault();
+        //                    var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.EndTime).SingleOrDefault();
+        //                    var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
+
+        //                    db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
+        //                    {
+
+        //                        TransactionDate = Convert.ToDateTime(TransactionDateVar),
+        //                        EmployeeID = empid,
+        //                        Plant = PlantID,
+        //                        Shift = empdetails.ShiftID,
+        //                        StartTime = startt,
+        //                        EndTime = Endt,
+        //                        Prefix = Prefixt,
+        //                        Line = empdetails.LineID,//obj.LineName,
+        //                        Section = empdetails.SectionID,
+        //                        ClockIn = obj.ClockIn,
+        //                        ClockOut = "",
+        //                        WorkingStatus = "Working",
+        //                        BreakFlag = "",
+        //                        Remark = "",
+        //                        CreateDate = DateTime.Now,
+        //                        CreateBy = EmpID,//User.Identity.Name,
+        //                        UpdateDate = DateTime.Now,
+        //                        UpdateBy = EmpID,//User.Identity.Name,
+        //                    });
+
+
+
+        //                }
+        //                db.SaveChanges();
+
+        //            }
+        //        }
+        //        return RedirectToAction("EmployeeClockIn");
+        //        // return View(mymodel);
+
+        //    }
+
+        //}
 
 
 
@@ -442,12 +442,10 @@ namespace Plims.Controllers
                 tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                //tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now && x.Plant.Equals(PlantID)),
+              //  tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now && x.Plant.Equals(PlantID)),
                 view_PermissionMaster = db.View_PermissionMaster.ToList()
-                //view_Employee = db.View_Employee.Where(x => x.PlantID.Equals(PlantID)).ToList()
 
             };
 
@@ -468,8 +466,9 @@ namespace Plims.Controllers
             else
             {
 
-                if (ClockIn == null || ClockIn == "")
+                if (ClockIn == null || ClockIn == "" || Convert.ToDateTime(TransactionDate) == DateTime.MinValue)
                 {
+                    TempData["AlertMessage"] = "Please fill Time/Date Clockin";
                     return RedirectToAction("EmployeeClockIn", "Employee");
                 }
 
@@ -550,7 +549,7 @@ namespace Plims.Controllers
         //Function Employee Clock in Edit Transaction : ฟังก์ชั่นนี้ใช่ร่วมกับ Update function
 
         [HttpGet]
-        public JsonResult EmployeeClockInEdit(int ID , DateTime TranDate)
+        public JsonResult EmployeeClockInEdit(int ID , DateTime TranDate,int TransactionNo)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -561,19 +560,22 @@ namespace Plims.Controllers
                 return Json("Login", "Home");
             }
 
-            var todayDate = DateTime.Today.ToString("yyyy-MM-dd");  // Use the format "yyyy-MM-dd" to match the expected format
+           // var todayDate = DateTime.Today.ToString("yyyy-MM-dd");  // Use the format "yyyy-MM-dd" to match the expected format
             var EmplID = db.TbEmployeeMaster.Where(x => x.ID.Equals(ID)).Select(x => x.EmployeeID).SingleOrDefault();
 
-            DateTime parsedTodayDate = DateTime.ParseExact(todayDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            DateTime parsedTodayDateBefore = DateTime.ParseExact(todayDate, "yyyy-MM-dd", CultureInfo.InvariantCulture).AddDays(-1);
+            //  DateTime parsedTodayDate = DateTime.ParseExact(todayDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            //  DateTime parsedTodayDateBefore = DateTime.ParseExact(todayDate, "yyyy-MM-dd", CultureInfo.InvariantCulture).AddDays(-1);
 
-            //var Emps = db.TbEmployeeTransaction
-            //    .Where(x => x.EmployeeID.Equals(EmplID) && x.TransactionDate.Date.Equals(parsedTodayDate.Date) && (x.Remark == null || x.Remark == "") && x.WorkingStatus.Equals("Working"))
+          //  var Emps = db.TbEmployeeTransaction
+          //    .Where(x => x.EmployeeID.Equals(EmplID) && x.TransactionDate.Date.Equals(Convert.ToDateTime(TranDate.Date)) && (x.Remark == null || x.Remark == "") && x.WorkingStatus.Equals("Working")).SingleOrDefault();
+
+            //    var Emps = db.TbEmployeeTransaction
+            //       .Where(x => x.EmployeeID.Equals(EmplID) && x.TransactionDate.Date.Equals(parsedTodayDate.Date) && (x.Remark == null || x.Remark == "") && x.WorkingStatus.Equals("Working"))
             //    .SingleOrDefault();
-          //  DateTime trandate = ViewBag.SelectedTransactionDate;
-
-            var EmpsCount = db.View_EmployeeClocktime
-             .Where(x => x.ID.Equals(ID) && x.EmployeeID.Equals(EmplID) && x.TransactionDate.Equals(TranDate)).SingleOrDefault();
+            //  DateTime trandate = ViewBag.SelectedTransactionDate;
+    
+          //  var EmpsCount = db.View_EmployeeClocktime
+            //.Where(x => x.ID.Equals(ID) && x.PlantID.Equals(PlantID) && x.TransactionNo.Equals(TransactionNo) ).SingleOrDefault();
 
 
             //var EmpsCount = db.TbEmployeeTransaction
@@ -591,13 +593,14 @@ namespace Plims.Controllers
             //var Emps = db.TbEmployeeTransaction
             // .Where(x => x.EmployeeID.Equals(EmplID) &&
             // ((x.TransactionDate.Date.Equals(parsedTodayDate.Date) && (x.Remark == null || x.Remark == "") && x.ClockOut == "" &&
+            // ((x.TransactionDate.Date.Equals(parsedTodayDate.Date) && (x.Remark == null || x.Remark == "") && x.ClockOut == "" &&
             // x.WorkingStatus.Equals("Working")) || (x.TransactionDate.Date.Equals(parsedTodayDateBefore.Date) && (x.Remark == null || x.Remark == "") && x.ClockOut == "" && x.WorkingStatus.Equals("Working"))))
             // .SingleOrDefault();
 
 
 
             var Emps = db.TbEmployeeTransaction
-               .Where(x => x.EmployeeID.Equals(EmplID) && x.TransactionNo.Equals(EmpsCount.TransactionNo)).SingleOrDefault();
+             .Where(x => x.EmployeeID.Equals(EmplID)  && x.Plant.Equals(PlantID) && x.TransactionNo.Equals(TransactionNo)).SingleOrDefault();
 
 
             return Json(Emps);
@@ -802,8 +805,8 @@ namespace Plims.Controllers
 
 
             ViewBag.VBRoleEmpClockOut = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
-            if(EmployeeIDchk.Count() == 0 ) //(action == "Search" || action == "EmployeeClockOut")
-            {
+            //if(EmployeeIDchk.Count() == 0 ) //(action == "Search" || action == "EmployeeClockOut")
+            //{
 
                 if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName) | TransactionDateFillter != null)
                 {
@@ -860,13 +863,117 @@ namespace Plims.Controllers
                     return View(Employee);
                 }
 
+            //}
+            //else
+            //{
+            //    if (obj.ClockOut == null || obj.ClockOut == "" )
+            //    {
+            //        TempData["AlertMessage"] = "Please fill data Date/Time! Clockout";
+            //        return RedirectToAction("EmployeeClockOut", "Employee");
+            //    }
+
+            //    // Create Function
+            //    int datacnt = EmployeeIDchk.Count();
+            //    for (int i = 0; i < datacnt; ++i)
+            //    {
+
+            //        // 1. check TbEmployeeTransaction == Null ?
+            //        var Empdb = new TbEmployeeTransaction();
+            //        //var Emp = db.TbEmployeeMasters.Where(x => x.EmployeeID.Equals(EmployeeID[i]));
+            //        string empid = EmployeeIDchk[i];
+            //        var EmpClockView = db.TbEmployeeMaster.Where(x => x.ID.Equals(Convert.ToInt32(empid))).Select(x => x.EmployeeID).SingleOrDefault();
+            //        //  var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(EmpClockView) && (x.TransactionDate == TransactionDateVar || (x.TransactionDate == TransactionDateVar.AddDays(-1) && x.ClockOut == "")) && (x.Remark == null || x.Remark == "") && x.WorkingStatus == "Working").ToList();
+                    
+
+            //         //   DateTime dateFilter = DateTime.Parse(TransactionDateFillter);&& x.TransactionDate.Equals(dateFilter)//
+            //            var EmpClockNo = db.View_EmployeeClocktime.Where(x => x.ID.Equals(Convert.ToInt32(empid))&& x.ClockOut == "" ).Select(x => x.TransactionNo).SingleOrDefault();
+
+
+            //        var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(EmpClockNo) ).ToList();
+
+            //        if (EmpTrancheck.Count() == 1)
+            //        {
+            //            var EmpTran = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(EmpClockNo)).SingleOrDefault();
+
+
+            //            if (EmpTran != null)
+            //            {
+            //                //Update Transaction
+            //                // Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(EmpClockView) && x.TransactionDate == TransactionDateVar && (x.Remark == null || x.Remark == "") && x.WorkingStatus.Equals("Working")).SingleOrDefault();
+            //                EmpTran.ClockOut = obj.ClockOut.ToString();
+            //                EmpTran.UpdateBy = EmpID;//User.Identity.Name;
+            //                EmpTran.UpdateDate = DateTime.Now;
+            //                db.SaveChanges();
+
+            //            }
+            //            else
+            //            {
+
+            //                TempData["AlertMessage"] = "Please Clock In !";
+
+            //            }
+
+            //        }
+            //        else
+            //        {
+            //            TempData["AlertMessage"] = "Please Contact IT : Check data in database some transaction not clock out!";
+            //            return RedirectToAction("EmployeeClockOut");
+
+            //        }
+            //    }
+
+
+            //}
+           // return RedirectToAction("EmployeeClockOut");
+
+        }
+
+
+
+
+        [HttpGet]
+        public ActionResult EmployeeClockOutSave(View_EmployeeClocktime obj, string[] EmployeeIDchk, string TransactionDateFillter)/*,string action*/
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            //var TransactionDateVar = obj.TransactionDate;
+            var TransactionDateVar = DateTime.Today;
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var Employee = new ViewModelAll
+            {
+                tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x => x.EmployeeID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.Plant.Equals(PlantID)).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_Employee = db.View_Employee.ToList()
+
+            };
+
+
+
+
+
+            ViewBag.VBRoleEmpClockOut = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
+            if (EmployeeIDchk.Length == 0)
+            {
+                return View(Employee);
+
             }
             else
             {
+
                 if (obj.ClockOut == null || obj.ClockOut == "" )
                 {
-                    TempData["AlertMessage"] = "Please fill data Date/Time! Clockout";
-                    return RedirectToAction("EmployeeClockOut", "Employee");
+                    TempData["AlertMessage"] = "Please fill Time/Date Clockin";
+                    return RedirectToAction("EmployeeClockIn", "Employee");
                 }
 
                 // Create Function
@@ -880,13 +987,13 @@ namespace Plims.Controllers
                     string empid = EmployeeIDchk[i];
                     var EmpClockView = db.TbEmployeeMaster.Where(x => x.ID.Equals(Convert.ToInt32(empid))).Select(x => x.EmployeeID).SingleOrDefault();
                     //  var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(EmpClockView) && (x.TransactionDate == TransactionDateVar || (x.TransactionDate == TransactionDateVar.AddDays(-1) && x.ClockOut == "")) && (x.Remark == null || x.Remark == "") && x.WorkingStatus == "Working").ToList();
-                    
-
-                        DateTime dateFilter = DateTime.Parse(TransactionDateFillter);
-                        var EmpClockNo = db.View_EmployeeClocktime.Where(x => x.ID.Equals(Convert.ToInt32(empid)) && x.TransactionDate.Equals(dateFilter)).Select(x => x.TransactionNo).SingleOrDefault();
 
 
-                    var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(EmpClockNo) ).ToList();
+                    //   DateTime dateFilter = DateTime.Parse(TransactionDateFillter);&& x.TransactionDate.Equals(dateFilter)//
+                    var EmpClockNo = db.View_EmployeeClocktime.Where(x => x.ID.Equals(Convert.ToInt32(empid)) && x.ClockOut == "").Select(x => x.TransactionNo).SingleOrDefault();
+
+
+                    var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(EmpClockNo)).ToList();
 
                     if (EmpTrancheck.Count() == 1)
                     {
@@ -919,11 +1026,13 @@ namespace Plims.Controllers
                     }
                 }
 
-
             }
+          
             return RedirectToAction("EmployeeClockOut");
 
         }
+
+
 
 
 
@@ -953,7 +1062,7 @@ namespace Plims.Controllers
 
         //    };
 
-         
+
 
 
 
@@ -1041,7 +1150,7 @@ namespace Plims.Controllers
 
         //            }
         //        }
-                
+
 
         //    }return RedirectToAction("EmployeeClockOut");
 
@@ -1056,7 +1165,7 @@ namespace Plims.Controllers
 
         //3.  Function Employee Clock in Edit Transaction : ฟังก์ชั่นนี้ใช่ร่วมกับ Update function
         [HttpGet]
-        public JsonResult EmployeeClockOutEdit(int ID, DateTime TranDate)
+        public JsonResult EmployeeClockOutEdit(int ID, int TransactionNo)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -1066,14 +1175,13 @@ namespace Plims.Controllers
             {
                 return Json("Login", "Home");
             }
-            var todayDate = DateTime.Today.ToString("yyyy-MM-dd");  // Use the format "yyyy-MM-dd" to match the expected format
+        //    var todayDate = DateTime.Today.ToString("yyyy-MM-dd");  // Use the format "yyyy-MM-dd" to match the expected format
             var EmplID = db.TbEmployeeMaster.Where(x => x.ID.Equals(ID)).Select(x => x.EmployeeID).Max();
 
-            DateTime parsedTodayDate = DateTime.ParseExact(todayDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+         //   DateTime parsedTodayDate = DateTime.ParseExact(todayDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
             var Emps = db.TbEmployeeTransaction
-                .Where(x => x.TransactionNo.Equals(ID) && x.TransactionDate.Date.Equals(TranDate))
-                .SingleOrDefault();
+                .Where(x => x.TransactionNo.Equals(TransactionNo)).SingleOrDefault();
 
 
             return Json(Emps);
@@ -1189,9 +1297,9 @@ namespace Plims.Controllers
             };
             ViewBag.VBRoleServicesClockIn = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(18)).Select(x => x.RoleAction).FirstOrDefault();
 
-            if  (EmployeeIDchk.Count() == 0)  //(action == "Search" || action == "ServicesClockIn")
+            //if  (EmployeeIDchk.Count() == 0)  //(action == "Search" || action == "ServicesClockIn")
 
-            {
+            //{
 
                 if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(TransactionDateFillter))
                 {
@@ -1238,12 +1346,228 @@ namespace Plims.Controllers
 
                     return View(Employee);
                 }
-            }
-            else
+            //}
+            //else
+            //{
+            //    // Create Function
+            //    int datacnt = EmployeeIDchk.Count();
+            //   // decimal rateservicecheck = 0.0;
+
+            //    List<TableDataRow> tableRows = JsonConvert.DeserializeObject<List<TableDataRow>>(TableData);
+            //    var distinctServices = new HashSet<decimal>();
+            //    int j = 0;
+            //    //check service rate before Add
+            //    foreach (var itmservice in tableRows)
+            //    {
+            //        var servicesplit = itmservice.Service.Split(":");
+            //        var servicerate = db.TbService.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineID) && x.ServicesID.Equals(servicesplit[0])).Select(x => x.ServicesRate).SingleOrDefault();
+            //        decimal rate = Convert.ToDecimal(servicerate);
+            //        if (servicesplit.Length > 0)
+            //        {
+            //            // Add the first part of the service split to the HashSet
+            //            distinctServices.Add(rate);
+            //        }
+
+            //        j++;
+            //    }
+
+            //    if(distinctServices.Count > 1 )
+            //    {
+            //        TempData["AlertMessage"] = "Rate Differnence !";
+            //        return View(Employee);
+            //    }
+
+
+            //        for (int i = 0; i < datacnt; ++i)
+            //    {
+                 
+            //        foreach (var itmservice in tableRows)
+            //        {
+            //            var Empdb = new TbServicesTransaction();
+            //            string empid = EmployeeIDchk[i];
+
+            //            var sectionsplit = itmservice.Section.Split(":");
+            //            var servicesplit = itmservice.Service.Split(":");
+            //            var remark = "";
+            //            if (SectionSelect == "ALL")
+            //            {
+            //                remark = "ALL";
+            //            }
+            //            else
+            //            {
+            //                remark = "";
+            //            }
+
+            //            ////////////////////////// select service normal case //////////////////////////////////
+
+            //            var empdbcheck = db.TbEmployeeTransaction
+            //            .Where(x => x.TransactionDate.Equals(TransactionDateVar) &&
+            //              (!string.IsNullOrEmpty(x.ClockIn) ||
+            //               !string.IsNullOrEmpty(x.ClockOut)) && x.EmployeeID.Equals(empid))
+            //            .ToList();
+            //            if (empdbcheck.Count() != 0)
+            //            {
+            //                foreach (var itm in empdbcheck)
+            //                {
+            //                    var empidvar = itm.EmployeeID;
+            //                    var clockinvar = Convert.ToDateTime(itm.ClockIn);
+            //                    if (itm.ClockOut == "")
+            //                    {
+            //                        TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empidvar;
+            //                        return RedirectToAction("ServicesClockIn");
+            //                    }
+            //                    var clockoutvar = Convert.ToDateTime(itm.ClockOut);
+            //                    var empdb = db.View_Employee.FirstOrDefault(x => x.EmployeeID.Equals(empidvar));
+
+            //                    if (empdb != null)
+            //                    {
+            //                        var startTime = Convert.ToDateTime(empdb.StartTime);
+            //                        var endTime = Convert.ToDateTime(empdb.EndTime);
+
+            //                        // Calculate time span
+            //                        TimeSpan timeSpan = endTime - startTime;
+            //                        TimeSpan timeclockspan = clockoutvar - clockinvar;
+            //                        // Now you have the time span, you can use it as needed
+
+
+            //                        // var durationInHours = timeSpan.TotalHours;
+            //                        var durationInMinutes = timeSpan.TotalMinutes;
+            //                        // var durationInHours = timeSpan.TotalHours;
+            //                        var durationInMinutesclock = timeclockspan.TotalMinutes;
+            //                        if (durationInMinutesclock > durationInMinutes)
+            //                        {
+            //                            // Filter out the EmployeeID from view_EmployeeClocktime
+            //                            Employee.view_ServicesClocktime = Employee.view_ServicesClocktime
+            //                                .Where(x => !x.EmployeeID.Equals(empidvar))
+            //                                .ToList();
+            //                        }
+            //                    }
+
+            //                }
+
+            //            }
+            //            /////////////////////////////////////////////////////////////////////////////////////////
+            //            ///
+
+
+            //        var EmpTran = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == TransactionDateVar && x.Line.Equals(obj.LineID) && x.SectionID.Equals(sectionsplit[0].Trim()) && x.ServicesID.Equals(servicesplit[0].Trim())).ToList();
+            //        // check TbServicesTransaction == Null ?
+
+            //        if (EmpTran.Count() != 0)
+            //        {
+            //            //Update Transaction
+            //            Empdb = db.TbServicesTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == TransactionDateVar && x.SectionID.Equals(sectionsplit[0].Trim()) && x.ServicesID.Equals(servicesplit[0].Trim())).SingleOrDefault();
+            //            Empdb.ClockIn = obj.ClockIn.ToString();
+            //            Empdb.UpdateBy = EmpID;
+            //            Empdb.UpdateDate = DateTime.Now;
+            //            db.SaveChanges();
+                        
+            //        }
+            //        else
+            //        {
+             
+            //            var empdetails = db.TbEmployeeMaster.Where(x => x.EmployeeID == empid.Trim() && x.PlantID.Equals(PlantID)).SingleOrDefault();
+                            
+            //            // Insert new Line               
+            //            if (!string.IsNullOrEmpty(obj.ClockIn))
+            //            {
+            //                    var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.StartTime).SingleOrDefault();
+            //                    var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.EndTime).SingleOrDefault();
+            //                    var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
+
+            //                    db.TbServicesTransaction.Add(new TbServicesTransaction()
+            //                {
+            //                    TransactionDate = Convert.ToDateTime(TransactionDateVar),
+            //                    EmployeeID = empid,
+            //                    Plant = PlantID,
+            //                    Shift = empdetails.ShiftID,
+            //                    Prefix = Prefixt,
+            //                    StartTime = startt,
+            //                    EndTime = Endt,
+            //                     Line = obj.LineID,//obj.LineName,
+            //                    SectionID = sectionsplit[0].Trim(),
+            //                    SectionName = sectionsplit[1].Trim(),
+            //                        ServicesID = servicesplit[0].Trim(),
+            //                    ServicesName = servicesplit[1].Trim(),  
+            //                    WorkingStatus = "Working",
+            //                    ClockIn = obj.ClockIn,
+            //                    ClockOut = "",
+            //                    Remark = remark,
+            //                    BreakFlag = "",
+            //                    StatusClocktime = "",
+            //                        CreateDate = DateTime.Now,
+            //                    CreateBy = EmpID,//User.Identity.Name,
+            //                    UpdateDate = DateTime.Now,
+            //                    UpdateBy = EmpID//User.Identity.Name,
+            //                }); 
+
+
+            //            }
+            //            else
+            //            {
+            //                    var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.StartTime).SingleOrDefault();
+            //                    var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.EndTime).SingleOrDefault();
+            //                    db.TbServicesTransaction.Add(new TbServicesTransaction()
+            //                {
+            //                  //  TransactionNo = db.TbServicesTransaction.Count() + 1,
+            //                    TransactionDate = Convert.ToDateTime(TransactionDateVar),
+            //                    EmployeeID = empid,
+            //                    Shift = empdetails.ShiftID,
+            //                        StartTime = startt,
+            //                        EndTime = Endt,
+            //                        Line = obj.LineID,//obj.LineName,
+            //                    ClockIn = obj.ClockIn,
+            //                        CreateDate = DateTime.Now,
+            //                    CreateBy = EmpID,//User.Identity.Name,
+            //                    UpdateDate = DateTime.Now,
+            //                    UpdateBy = EmpID,//User.Identity.Name,
+            //                });
+
+
+
+            //            }
+            //            db.SaveChanges();
+            //            }
+            //        }
+            //    }
+            //    return RedirectToAction("ServicesClockIn");
+
+            //}         
+
+        }
+
+
+
+        [HttpGet]
+        public ActionResult ServicesClockInSave(View_ServicesClocktime obj, string[] EmployeeIDchk, string TableData, string LineID, string SectionSelect, string TransactionDateFillter) //  , string action
+        {
+
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            //var TransactionDateVar = obj.TransactionDate;
+            var TransactionDateVar = DateTime.Today;
+
+            if (EmpID == null)
             {
+                return RedirectToAction("Login", "Home");
+            }
+            var Employee = new ViewModelAll
+            {
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                view_ServicesClocktime = db.View_ServicesClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x => x.EmployeeID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbServicesTransaction = db.TbServicesTransaction.Where(x => x.Plant.Equals(PlantID)),
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_Employee = db.View_Employee.ToList()
+            };
+            ViewBag.VBRoleServicesClockIn = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(18)).Select(x => x.RoleAction).FirstOrDefault();
+
                 // Create Function
                 int datacnt = EmployeeIDchk.Count();
-               // decimal rateservicecheck = 0.0;
+                // decimal rateservicecheck = 0.0;
 
                 List<TableDataRow> tableRows = JsonConvert.DeserializeObject<List<TableDataRow>>(TableData);
                 var distinctServices = new HashSet<decimal>();
@@ -1263,16 +1587,16 @@ namespace Plims.Controllers
                     j++;
                 }
 
-                if(distinctServices.Count > 1 )
+                if (distinctServices.Count > 1)
                 {
                     TempData["AlertMessage"] = "Rate Differnence !";
-                    return View(Employee);
+                    return View("ServicesClockIn",Employee);
                 }
 
 
-                    for (int i = 0; i < datacnt; ++i)
+                for (int i = 0; i < datacnt; ++i)
                 {
-                 
+
                     foreach (var itmservice in tableRows)
                     {
                         var Empdb = new TbServicesTransaction();
@@ -1342,101 +1666,102 @@ namespace Plims.Controllers
                         ///
 
 
-                    var EmpTran = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == TransactionDateVar && x.Line.Equals(obj.LineID) && x.SectionID.Equals(sectionsplit[0].Trim()) && x.ServicesID.Equals(servicesplit[0].Trim())).ToList();
-                    // check TbServicesTransaction == Null ?
+                        var EmpTran = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == TransactionDateVar && x.Line.Equals(obj.LineID) && x.SectionID.Equals(sectionsplit[0].Trim()) && x.ServicesID.Equals(servicesplit[0].Trim())).ToList();
+                        // check TbServicesTransaction == Null ?
 
-                    if (EmpTran.Count() != 0)
-                    {
-                        //Update Transaction
-                        Empdb = db.TbServicesTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == TransactionDateVar && x.SectionID.Equals(sectionsplit[0].Trim()) && x.ServicesID.Equals(servicesplit[0].Trim())).SingleOrDefault();
-                        Empdb.ClockIn = obj.ClockIn.ToString();
-                        Empdb.UpdateBy = EmpID;
-                        Empdb.UpdateDate = DateTime.Now;
-                        db.SaveChanges();
-                        
-                    }
-                    else
-                    {
-             
-                        var empdetails = db.TbEmployeeMaster.Where(x => x.EmployeeID == empid.Trim() && x.PlantID.Equals(PlantID)).SingleOrDefault();
-                            
-                        // Insert new Line               
-                        if (!string.IsNullOrEmpty(obj.ClockIn))
+                        if (EmpTran.Count() != 0)
                         {
+                            //Update Transaction
+                            Empdb = db.TbServicesTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == TransactionDateVar && x.SectionID.Equals(sectionsplit[0].Trim()) && x.ServicesID.Equals(servicesplit[0].Trim())).SingleOrDefault();
+                            Empdb.ClockIn = obj.ClockIn.ToString();
+                            Empdb.UpdateBy = EmpID;
+                            Empdb.UpdateDate = DateTime.Now;
+                            db.SaveChanges();
+
+                        }
+                        else
+                        {
+
+                            var empdetails = db.TbEmployeeMaster.Where(x => x.EmployeeID == empid.Trim() && x.PlantID.Equals(PlantID)).SingleOrDefault();
+
+                            // Insert new Line               
+                            if (!string.IsNullOrEmpty(obj.ClockIn))
+                            {
                                 var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.StartTime).SingleOrDefault();
                                 var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.EndTime).SingleOrDefault();
                                 var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
 
                                 db.TbServicesTransaction.Add(new TbServicesTransaction()
-                            {
-                                TransactionDate = Convert.ToDateTime(TransactionDateVar),
-                                EmployeeID = empid,
-                                Plant = PlantID,
-                                Shift = empdetails.ShiftID,
-                                Prefix = Prefixt,
-                                StartTime = startt,
-                                EndTime = Endt,
-                                 Line = obj.LineID,//obj.LineName,
-                                SectionID = sectionsplit[0].Trim(),
-                                SectionName = sectionsplit[1].Trim(),
-                                    ServicesID = servicesplit[0].Trim(),
-                                ServicesName = servicesplit[1].Trim(),  
-                                WorkingStatus = "Working",
-                                ClockIn = obj.ClockIn,
-                                ClockOut = "",
-                                Remark = remark,
-                                BreakFlag = "",
-                                StatusClocktime = "",
-                                    CreateDate = DateTime.Now,
-                                CreateBy = EmpID,//User.Identity.Name,
-                                UpdateDate = DateTime.Now,
-                                UpdateBy = EmpID//User.Identity.Name,
-                            }); 
-
-
-                        }
-                        else
-                        {
-                                var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.StartTime).SingleOrDefault();
-                                var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.EndTime).SingleOrDefault();
-                                db.TbServicesTransaction.Add(new TbServicesTransaction()
-                            {
-                              //  TransactionNo = db.TbServicesTransaction.Count() + 1,
-                                TransactionDate = Convert.ToDateTime(TransactionDateVar),
-                                EmployeeID = empid,
-                                Shift = empdetails.ShiftID,
+                                {
+                                    TransactionDate = Convert.ToDateTime(TransactionDateVar),
+                                    EmployeeID = empid,
+                                    Plant = PlantID,
+                                    Shift = empdetails.ShiftID,
+                                    Prefix = Prefixt,
                                     StartTime = startt,
                                     EndTime = Endt,
                                     Line = obj.LineID,//obj.LineName,
-                                ClockIn = obj.ClockIn,
+                                    SectionID = sectionsplit[0].Trim(),
+                                    SectionName = sectionsplit[1].Trim(),
+                                    ServicesID = servicesplit[0].Trim(),
+                                    ServicesName = servicesplit[1].Trim(),
+                                    WorkingStatus = "Working",
+                                    ClockIn = obj.ClockIn,
+                                    ClockOut = "",
+                                    Remark = remark,
+                                    BreakFlag = "",
+                                    StatusClocktime = "",
                                     CreateDate = DateTime.Now,
-                                CreateBy = EmpID,//User.Identity.Name,
-                                UpdateDate = DateTime.Now,
-                                UpdateBy = EmpID,//User.Identity.Name,
-                            });
+                                    CreateBy = EmpID,//User.Identity.Name,
+                                    UpdateDate = DateTime.Now,
+                                    UpdateBy = EmpID//User.Identity.Name,
+                                });
+
+
+                            }
+                            else
+                            {
+                                var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.StartTime).SingleOrDefault();
+                                var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.EndTime).SingleOrDefault();
+                                db.TbServicesTransaction.Add(new TbServicesTransaction()
+                                {
+                                    //  TransactionNo = db.TbServicesTransaction.Count() + 1,
+                                    TransactionDate = Convert.ToDateTime(TransactionDateVar),
+                                    EmployeeID = empid,
+                                    Shift = empdetails.ShiftID,
+                                    StartTime = startt,
+                                    EndTime = Endt,
+                                    Line = obj.LineID,//obj.LineName,
+                                    ClockIn = obj.ClockIn,
+                                    CreateDate = DateTime.Now,
+                                    CreateBy = EmpID,//User.Identity.Name,
+                                    UpdateDate = DateTime.Now,
+                                    UpdateBy = EmpID,//User.Identity.Name,
+                                });
 
 
 
-                        }
-                        db.SaveChanges();
+                            }
+                            db.SaveChanges();
                         }
                     }
                 }
                 return RedirectToAction("ServicesClockIn");
 
-            }         
+           
 
         }
 
 
+
         //2.  Function service Clock in Edit Transaction : ฟังก์ชั่นนี้ใช่ร่วมกับ Update function
         [HttpGet]
-        public JsonResult SericesClockInEdit(int ID,string ServicesID , string SectionID,DateTime TranDate)
+        public JsonResult SericesClockInEdit(int ID,string ServicesID , string SectionID,int TransactionNo)
         {
 
 
             //var todayDate = DateTime.Today.ToString("yyyy-MM-dd");  // Use the format "yyyy-MM-dd" to match the expected format
-            var EmplID = db.View_ServicesClocktime.Where(x => x.ID == ID && x.SectionID.Equals(SectionID) && x.TransactionDate.Equals(TranDate) && x.ServicesID.Equals(ServicesID)).Select(x => x.EmployeeID).SingleOrDefault();
+           // var EmplID = db.View_ServicesClocktime.Where(x => x.ID == ID && x.SectionID.Equals(SectionID) && x.TransactionDate.Equals(TranDate) && x.ServicesID.Equals(ServicesID)).Select(x => x.EmployeeID).SingleOrDefault();
 
           //  DateTime parsedTodayDate = DateTime.ParseExact(todayDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
@@ -1458,9 +1783,9 @@ namespace Plims.Controllers
             //        .Where(x => x.EmployeeID.Equals(EmplID) && x.SectionID.Equals(SectionID) && x.ServicesID.Equals(ServicesID) && ( x.TransactionDate.Date.Equals(parsedTodayDate) && x.ClockOut == "" || x.TransactionDate.Date.Equals(parsedTodayDate.Date.AddDays(-1)) && x.ClockOut == ""))
             //        .SingleOrDefault();
 
-            var ServiceIDdb = db.View_ServicesClocktime.Where(x => x.ID.Equals(ID) && x.SectionID.Equals(SectionID) && x.TransactionDate.Equals(TranDate) && x.ServicesID.Equals(ServicesID)).SingleOrDefault();
+          //  var ServiceIDdb = db.View_ServicesClocktime.Where(x => x.ID.Equals(ID) && x.SectionID.Equals(SectionID) && x.TransactionDate.Equals(TranDate) && x.ServicesID.Equals(ServicesID)).SingleOrDefault();
 
-            var Emps = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(EmplID)  && x.TransactionDate.Equals(TranDate) && x.TransactionNo.Equals(ServiceIDdb.TransactionNo)).SingleOrDefault();
+            var Emps = db.TbServicesTransaction.Where(x => x.TransactionNo.Equals(TransactionNo) ).SingleOrDefault();
 
 
 
@@ -1700,7 +2025,7 @@ namespace Plims.Controllers
 
         //2.  Function service Clock in Edit Transaction : ฟังก์ชั่นนี้ใช่ร่วมกับ Update function
         [HttpGet]
-        public JsonResult ServicesClockOutEdit(int ID, string ServicesID, string SectionID,DateTime TranDate)
+        public JsonResult ServicesClockOutEdit(int ID, string ServicesID, string SectionID,int TransactionNo)
         {
 
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -1715,11 +2040,11 @@ namespace Plims.Controllers
             //var EmplID = db.View_ServicesClocktime.Where(x => x.TransactionNo == ID ).Select(x => x.EmployeeID).SingleOrDefault();
 
             //DateTime parsedTodayDate = DateTime.ParseExact(todayDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            var EmplID = db.View_ServicesClocktime.Where(x => x.ID == ID && x.SectionID.Equals(SectionID) && x.TransactionDate.Equals(TranDate) && x.ServicesID.Equals(ServicesID)).Select(x => x.EmployeeID).SingleOrDefault();
+          //  var EmplID = db.View_ServicesClocktime.Where(x => x.ID == ID && x.SectionID.Equals(SectionID) && x.TransactionDate.Equals(TranDate) && x.ServicesID.Equals(ServicesID)).Select(x => x.EmployeeID).SingleOrDefault();
 
-            var ServiceIDdb = db.View_ServicesClocktime.Where(x => x.ID.Equals(ID) && x.SectionID.Equals(SectionID) && x.TransactionDate.Equals(TranDate) && x.ServicesID.Equals(ServicesID)).SingleOrDefault();
+          //  var ServiceIDdb = db.View_ServicesClocktime.Where(x => x.ID.Equals(ID) && x.SectionID.Equals(SectionID) && x.TransactionDate.Equals(TranDate) && x.ServicesID.Equals(ServicesID)).SingleOrDefault();
 
-            var Emps = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(EmplID) && x.TransactionDate.Equals(TranDate) && x.TransactionNo.Equals(ServiceIDdb.TransactionNo)).SingleOrDefault();
+            var Emps = db.TbServicesTransaction.Where(x =>  x.TransactionNo.Equals(TransactionNo)).SingleOrDefault();
 
 
             //var Emps = db.TbServicesTransaction

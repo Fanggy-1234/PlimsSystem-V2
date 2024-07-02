@@ -205,27 +205,28 @@
 
 
     //Edit to modal
-    function EditFn(ID) {
+
+    function EditFn(ID, transactionNo) {
 
         var sectionID = $('#btnEdit[data-id="' + ID + '"]').data('section-id');
         var serviceID = $('#btnEdit[data-id="' + ID + '"]').data('service-id');
 
     // Use the retrieved data as needed, for example:
-    // console.log("Employee ID: " + ID);
+        
     // console.log("Section ID: " + sectionID);
     // console.log("Service ID: " + serviceID);
 
-        var TranDate = $("#TransactionDateFillter").val();
+       // var TranDate = $("#TransactionDateFillter").val();
         $.ajax({
             url: '/Employee/SericesClockInEdit/' + ID,
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
-            data: { ID: ID, ServicesID: serviceID, SectionID: sectionID, TranDate: TranDate },
+            data: { ID: ID, ServicesID: serviceID, SectionID: sectionID, TransactionNo: transactionNo },
             dataType: 'json',
             success: function (response) {
                 if (response == null || response == undefined) {
 
-                    alert("This data can't read1!")
+                    alert("This data can't read!")
                 }
                 else if (response.length == 0) {
 
@@ -696,7 +697,7 @@
                     <div class="col-3">
                     @if (ViewBag.VBRoleServicesClockIn == "Full")
                     {
-                        <button type="submit" class="clear-button" action="ServicesClockIn" onclick="return confirm('Are you sure?')">save</button>
+                        <button type="submit" class="clear-button" asp-action="ServicesClockInSave" onclick="return confirm('Are you sure?')">save</button>
 
                     }
                         else
@@ -818,8 +819,9 @@
                         {
                             @if (ViewBag.VBRoleServicesClockIn == "Full")
                             {
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" data-section-id="@item.SectionID" data-service-id="@item.ServicesID" onclick="EditFn(@item.ID)">Edit</a>
-                              
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" data-section-id="@item.SectionID" data-service-id="@item.ServicesID" onclick="EditFn('@item.ID','@item.TransactionNo')">Edit</a>
+                              @*   <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" data-transactiondate="@item.TransactionDate" onclick="EditFn('@item.ID', '@item.TransactionDate' ,'@item.TransactionNo')">Edit</a>
+ *@
                             }
                             else
                             {

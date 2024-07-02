@@ -148,6 +148,66 @@
     });
 
 </script>
+<script>
+
+    function EditFn(ID, transactionNo) {
+        //var TranDate = $("#TransactionDateFillter").val();
+
+        $.ajax({
+            url: '/Employee/EmployeeClockOutEdit/' + ID,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: { ID: ID, TransactionNo: transactionNo },
+            success: function (response) {
+                if (response == null || response == undefined) {
+
+                    alert("This data no clock in time")
+                }
+                else if (response.length == 0) {
+
+                    alert("This data can't id" + EmployeeID)
+                }
+                else {
+
+                    // console.log('AJAX request successful:', response);
+                    // var transactionDate = new Date(response.transactionDate);
+                    // var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed
+
+                //        var transactionDate = new Date(response.transactionDate);
+                // var year = transactionDate.getFullYear();
+                // var month = ('0' + (transactionDate.getMonth() + 1)).slice(-2);
+                // var day = ('0' + transactionDate.getDate()).slice(-2);
+                // var formattedDate = `${year}-${month}-${day}`;
+
+
+                    var transactionDate = new Date(response.transactionDate);
+                    var year = transactionDate.getFullYear();
+                    var month = ('0' + (transactionDate.getMonth() + 1)).slice(-2);
+                    var day = ('0' + transactionDate.getDate()).slice(-2);
+                    var formattedDate = `${year}-${month}-${day}`;
+
+                    console.log('AJAX request successful:', response)
+                    $('#ModalEmployeeID').val(response.employeeID);
+                    $('#ModalClockOut').val(response.clockOut);
+                    $('#ModalTransactionDate').val(formattedDate);
+                    $('#EditModal').modal('show');
+
+
+                }
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+
+        });
+    }
+
+
+
+
+</script>
+
 
 <div class="row" style="height:10px"></div>
 <h2 class="page-name">Employee Clock-Out Function</h2>
@@ -365,7 +425,7 @@
                 <div class="col-3">
                         @if (ViewBag.VBRoleEmpClockOut == "Full")
                         {
-                        <button type="submit" class="clear-button" name="action" value="Save" onclick="return confirm('Are you sure?')">Create</button>
+                        <button type="submit" class="clear-button" name="action" value="Save" asp-action="EmployeeClockOutsave" onclick="return confirm('Are you sure?')">Create</button>
                             }
                             else
                             {
@@ -471,14 +531,16 @@
                     <td>
                         @if (string.IsNullOrEmpty(item.ClockOut))
                         {
-                            <a href="#" id="btnEdit" data-id="@item.EmployeeID" data-section-id="@item.EmployeeID" data-service-id="@item.EmployeeID">Edit</a>
+                            <a href="#" id="btnEdit" data-id="@item.ID" data-section-id="@item.ID" data-service-id="@item.ID">Edit</a>
+                           
+
                         }
                         else
                         {
                          
                                 @if (ViewBag.VBRoleEmpClockOut == "Full")
                             {
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.EmployeeID" data-section-id="@item.EmployeeID" data-service-id="@item.EmployeeID" onclick="EditFn(@item.TransactionNo)">Edit</a>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.EmployeeID" data-section-id="@item.EmployeeID" data-service-id="@item.EmployeeID" onclick="EditFn('@item.ID','@item.TransactionNo')">Edit</a>
 
                             }
                             else
@@ -543,6 +605,7 @@
 </div>
 
 
+
 <script>
 
     // function eventFired(type) {
@@ -596,61 +659,5 @@
 
     //     });
     // });
-
-
-
-
-    //Edit to modal
-    function EditFn(ID) {
-        var TranDate = $("#TransactionDateFillter").val();
-        $.ajax({
-            url: '/Employee/EmployeeClockOutEdit/' + ID,
-            type: 'GET',
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            data: { ID: ID, TranDate: TranDate },
-            success: function (response) {
-                if (response == null || response == undefined) {
-
-                    alert("This data no clock in time")
-                }
-                else if (response.length == 0) {
-
-                    alert("This data can't id" + EmployeeID)
-                }
-                else {
-
-                    // console.log('AJAX request successful:', response);
-                    // var transactionDate = new Date(response.transactionDate);
-                    // var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed
-
-                            var transactionDate = new Date(response.transactionDate);
-                var year = transactionDate.getFullYear();
-                var month = ('0' + (transactionDate.getMonth() + 1)).slice(-2);
-                var day = ('0' + transactionDate.getDate()).slice(-2);
-                var formattedDate = `${year}-${month}-${day}`;
-
-
-
-
-
-                    console.log('AJAX request successful:', transactionDate)
-                    $('#ModalEmployeeID').val(response.employeeID);
-                    $('#ModalClockOut').val(response.clockOut);
-                    $('#ModalTransactionDate').val(formattedDate);
-                    $('#EditModal').modal('show');
-
-
-                }
-            },
-            error: function (response) {
-                alert(response.responseText);
-            }
-
-        });
-    }
-
-
-
 
 </script>

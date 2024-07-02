@@ -4,7 +4,7 @@ namespace Plims.Models
 {
     public class View_EmployeeClocktime
     {
-       
+        [Key]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime TransactionDate { get; set; }
         [Key]

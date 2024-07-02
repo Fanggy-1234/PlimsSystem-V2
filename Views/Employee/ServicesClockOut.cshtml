@@ -206,17 +206,17 @@
 
 
     //Edit to modal
-    function EditFn(ID) {
+    function EditFn(ID, transactionNo) {
         var sectionID = $('#btnEdit[data-id="' + ID + '"]').data('section-id');
         var serviceID = $('#btnEdit[data-id="' + ID + '"]').data('service-id');
-        var TranDate = $("#TransactionDateFillter").val();
-        console.log(sectionID);
+        //var TranDate = $("#TransactionDateFillter").val();
+        //console.log(sectionID);
         $.ajax({
             url: '/Employee/ServicesClockOutEdit/' + ID,
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            data: { ID: ID, ServicesID: serviceID, SectionID: sectionID, TranDate: TranDate },
+            data: { ID: ID, ServicesID: serviceID, SectionID: sectionID, TransactionNo: transactionNo },
             success: function (response) {
                 if (response == null || response == undefined) {
 
@@ -232,7 +232,7 @@
                     // var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed
                     // console.log('AJAX request successful:', transactionDate)
 
-                            var transactionDate = new Date(response.transactionDate);
+                var transactionDate = new Date(response.transactionDate);
                 var year = transactionDate.getFullYear();
                 var month = ('0' + (transactionDate.getMonth() + 1)).slice(-2);
                 var day = ('0' + transactionDate.getDate()).slice(-2);
@@ -642,7 +642,7 @@
 
                             @if (ViewBag.VBRoleServicesClockOut == "Full")
                             {
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" data-section-id="@item.SectionID" data-service-id="@item.ServicesID" onclick="EditFn(@item.ID)">Edit</a>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" data-section-id="@item.SectionID" data-service-id="@item.ServicesID" onclick="EditFn('@item.ID','@item.TransactionNo')">Edit</a>
 
                             }
                             else

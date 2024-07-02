@@ -601,7 +601,7 @@
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(function () {
 
-            if (e.keyCode === 13 || e.which === 9) {
+            if (e.keyCode === 13 || e.which === 9 || e.which === 7) {
                 return false;
             } else {
                 var employeeId = $('#EmployeeID').val();

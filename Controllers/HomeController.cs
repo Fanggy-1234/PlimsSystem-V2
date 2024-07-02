@@ -323,6 +323,18 @@ namespace Plims.Controllers
             }
             if (obj.UserPassword != null)
             {
+                //Check Password
+                if (!isValidpassword(obj.UserPassword))
+                {
+
+                    TempData["AlertMessage"] = "- รหัสผ่านไม่ควรมีช่องว่าง <br/>" +
+                                    "- รหัสผ่านควรมีอย่างน้อยหนึ่งหลัก (0-9) <br/>" +
+                                    "- ความยาวของรหัสผ่านควรอยู่ระหว่าง 8 ถึง 15 ตัวอักษร <br/>" +
+                                    "- รหัสผ่านควรมีอักษรตัวพิมพ์เล็กอย่างน้อยหนึ่งตัว (az) <br/>" +
+                                    "- รหัสผ่านควรมีอักษรตัวพิมพ์ใหญ่ (AZ) อย่างน้อยหนึ่งตัว <br/>" +
+                                    "- รหัสผ่านควรมีอักขระพิเศษอย่างน้อยหนึ่งตัว ( @, #, %, &, !, $, ฯลฯ...)";
+                    return RedirectToAction("UserManagement");
+                }
 
                 Userdb.UserPassword = obj.UserPassword;
             }
@@ -351,6 +363,39 @@ namespace Plims.Controllers
             obj.UpdateDate = DateTime.Now;
             db.SaveChanges();
             return RedirectToAction("UserManagement");
+        }
+
+
+
+        [HttpPost]
+        public ActionResult PasswordEdit(TbUser obj)
+        {
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            var Userdb = db.TbUser.Where(x => x.UserEmpID == obj.UserEmpID && x.PlantID.Equals(PlantID)).SingleOrDefault();
+          
+            if (obj.UserPassword != null)
+            {
+                //Check Password
+                if (!isValidpassword(obj.UserPassword))
+                {
+
+                    TempData["AlertMessage"] = "- รหัสผ่านไม่ควรมีช่องว่าง <br/>" +
+                                    "- รหัสผ่านควรมีอย่างน้อยหนึ่งหลัก (0-9) <br/>" +
+                                    "- ความยาวของรหัสผ่านควรอยู่ระหว่าง 8 ถึง 15 ตัวอักษร <br/>" +
+                                    "- รหัสผ่านควรมีอักษรตัวพิมพ์เล็กอย่างน้อยหนึ่งตัว (az) <br/>" +
+                                    "- รหัสผ่านควรมีอักษรตัวพิมพ์ใหญ่ (AZ) อย่างน้อยหนึ่งตัว <br/>" +
+                                    "- รหัสผ่านควรมีอักขระพิเศษอย่างน้อยหนึ่งตัว ( @, #, %, &, !, $, ฯลฯ...)";
+                    return RedirectToAction("UserInformation");
+                }
+
+                Userdb.UserPassword = obj.UserPassword;
+            }
+
+            Userdb.UpdateBy = EmpID;
+            obj.UpdateDate = DateTime.Now;
+            db.SaveChanges();
+            return RedirectToAction("UserInformation");
         }
 
 
