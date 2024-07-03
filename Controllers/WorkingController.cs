@@ -396,7 +396,7 @@ namespace Plims.Controllers
                 if(objEmp == null)
                 {
                     TempData["AlertMessage"] = "Please check Clockin";
-                    return View("WorkingFunctionWithPackage", mymodel);
+                    return View("WorkingFunction", mymodel);
                 }
                 var objPLPS = db.View_PLPS
                            .Where(x => x.PlantID.Equals(PlantID) &&
@@ -433,7 +433,7 @@ namespace Plims.Controllers
                 db.SaveChanges();
 
 
-                return View("WorkingFunctionWithPackage", mymodel);
+                return View("WorkingFunction", mymodel);
             }
             catch (Exception ex)
             {
@@ -1712,9 +1712,9 @@ namespace Plims.Controllers
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+              //  tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+               // tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+               // tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                 tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
             //    view_Employee = db.View_Employee.ToList(),
                 tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList(),
@@ -2584,9 +2584,9 @@ namespace Plims.Controllers
                 if (empsectioncount.Count() > 1)
                 {
                     TempData["AlertMessage"] = "Please contact IT some data not clock out.Please check. : " + employeeID;
-                    return View("WorkingFunctionCreateWithRef", mymodel);
+                    return View("WorkingFunction", mymodel);
 
-                 }
+                }
 
 
 
@@ -2633,7 +2633,7 @@ namespace Plims.Controllers
                 db.SaveChanges();
 
 
-                return View("WorkingFunctionCreateWithRef", mymodel);
+                return View("WorkingFunction", mymodel);
             }
             catch (Exception ex)
             {
