@@ -29,7 +29,8 @@ namespace Plims.Models
         public string WorkingStatus { get; set; }
         //  public Nullable<int> QRCodePerUnit { get; set; }
         public Nullable<int> QRCodePerEmployee { get; set; }
-        public Nullable<int> TransactionNo { get; set; }
+        [Key]
+        public int TransactionNo { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public Nullable<System.DateTime> TransactionDate { get; set; }
     }

@@ -147,6 +147,10 @@ namespace Plims.Data
             modelBuilder.Entity<View_EmployeeAdjustLine>()
                   .HasKey(v => new { v.ID, v.SectionID, v.LineID , v.PlantID });
 
+            modelBuilder.Entity<View_EmployeeAdjustBreak>()
+               .HasKey(v => new { v.ID, v.TransactionNo });
+
+
 
             modelBuilder.Entity<View_EmployeeClocktime>()
     .HasKey(v => new { v.ID, v.TransactionNo , v.TransactionDate });

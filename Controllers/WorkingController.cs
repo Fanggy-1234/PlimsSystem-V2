@@ -1,45 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Plims.Data;
 using Plims.Models;
 using Plims.ViewModel;
 using System.Data;
-using System.Data.Common;
-using System.Reflection.Metadata.Ecma335;
-using System.Web.WebPages;
-using Microsoft.EntityFrameworkCore;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Text;
 using OfficeOpenXml;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using DocumentFormat.OpenXml.Drawing;
-using QRCoder;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.IO.Pipelines;
 
 namespace Plims.Controllers
 {
     public class WorkingController : Controller
     {
-        private readonly AppDbContext db;
+        //Connect database
+        private readonly AppDbContext db;   
         public WorkingController(AppDbContext _db)
         {
             db = _db;
         }
-
-
-
         public IActionResult Index()
         {
             return View();
         }
 
+
+        /// <summary>
+        // Working Fuction [ Scan And Key ] 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult WorkingFunction(TbProductionTransaction obj)
         {
@@ -63,7 +50,6 @@ namespace Plims.Controllers
                     tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                     view_Employee = db.View_Employee.ToList(),
                     tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList()
-                    //  tbProductionTransaction = db.TbProductionTransaction.ToList()
                 };
                 return View(mymodel);
             }
@@ -94,7 +80,6 @@ namespace Plims.Controllers
                 tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                 view_Employee = db.View_Employee.ToList(),
                 tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList()
-                //  tbProductionTransaction = db.TbProductionTransaction.ToList()
             };
 
             // check QRcode in system
@@ -199,7 +184,12 @@ namespace Plims.Controllers
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             var currentDateTime = DateTime.Now;
             var currentDate = currentDateTime.Date;
+     
 
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
 
             // Query your database or data source to retrieve section and unit based on employeeID and productID
             // For demonstration purposes, let's assume you have a method to get section and unit
@@ -237,6 +227,11 @@ namespace Plims.Controllers
             var currentDate = currentDateTime.Date;
 
 
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             // Query your database or data source to retrieve section and unit based on employeeID and productID
             // For demonstration purposes, let's assume you have a method to get section and unit
             var objEmp = db.TbEmployeeTransaction
@@ -271,6 +266,14 @@ namespace Plims.Controllers
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             var currentDateTime = DateTime.Now;
             var currentDate = currentDateTime.Date;
+
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
@@ -357,6 +360,13 @@ namespace Plims.Controllers
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             var currentDateTime = DateTime.Now;
             var currentDate = currentDateTime.Date;
+
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
@@ -437,6 +447,15 @@ namespace Plims.Controllers
         public IActionResult FilterReasonByProduct(string selectedProductID)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+
             // Replace this with your logic to filter products based on the lineId
             var groupedProducts = db.TbReason
                  .Where(x => x.ProductID.Equals(selectedProductID) && x.PlantID.Equals(PlantID))
@@ -458,6 +477,13 @@ namespace Plims.Controllers
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             var currentDateTime = DateTime.Now;
             var currentDate = currentDateTime.Date;
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
@@ -759,11 +785,8 @@ namespace Plims.Controllers
             }
             var mymodel = new ViewModelAll
             {
-                //tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                //tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                //tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                //view_ProductionPlan = db.View_ProductionPlan.Where(x => x.PlantID == PlantID).ToList(),
                 view_PLPS = db.View_PLPS.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 tbProductionTransaction = db.TbProductionTransaction.Where(p => p.PlantID.Equals(PlantID)).ToList()
 
@@ -967,6 +990,14 @@ namespace Plims.Controllers
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+
             if (FileUpload == null || FileUpload.Length <= 0)
             {
                 var mymodel = new ViewModelAll
@@ -1712,16 +1743,7 @@ namespace Plims.Controllers
                     if(db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)).Count() != 0) // case Employee
                     {
 
-                        //Check EmployeeClockin
-                     
-                       //var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) &&
-                       //                                                       (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) &&
-                       //                                                       x.PlantID.Equals(PlantID) &&
-                       //                                                        (((x.ClockOut == null || x.ClockOut == "") && x.Remark == "") ||
-                       //                                                        ((x.ClockOut != null || x.ClockOut != "") && x.Remark == "Adjust") 
-                                                                               
-                       //                                                        )).ToList();
-
+                        //Check EmployeeClockin                    
                         var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
                                                         (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
                                                         ((x.ClockOut != null || x.ClockOut != "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate )
@@ -1862,17 +1884,6 @@ namespace Plims.Controllers
                                          x.ClockOut == "" &&
                                         x.PlantID.Equals(PlantID))
                             .FirstOrDefault();
-
-
-
-                            //         var objEmp = db.View_ClockTime
-                            //.Where(x => x.EmployeeID.Equals(employeeId) &&
-                            //            x.TransactionDate.Date == currentDate &&
-                            //            x.Plant.Equals(PlantID) &&
-                            //            (((x.ClockOut == null || x.ClockOut == "") && x.Remark == "") ||
-                            //               ((x.ClockOut != null || x.ClockOut != "") && x.Remark == "Adjust")))
-                            //.FirstOrDefault();
-
 
 
                             if (objEmp != null)
@@ -2457,6 +2468,10 @@ namespace Plims.Controllers
             var currentDateTime = DateTime.Now;
             var currentDate = currentDateTime.Date;
 
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
 
             // Query your database or data source to retrieve section and unit based on employeeID and productID
             // For demonstration purposes, let's assume you have a method to get section and unit
@@ -2493,6 +2508,10 @@ namespace Plims.Controllers
             var currentDateTime = DateTime.Now;
             var currentDate = currentDateTime.Date;
 
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
 
             // Query your database or data source to retrieve section and unit based on employeeID and productID
             // For demonstration purposes, let's assume you have a method to get section and unit
@@ -2528,6 +2547,13 @@ namespace Plims.Controllers
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             var currentDateTime = DateTime.Now;
             var currentDate = currentDateTime.Date;
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
@@ -2624,6 +2650,14 @@ namespace Plims.Controllers
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             var currentDateTime = DateTime.Now;
             var currentDate = currentDateTime.Date;
+
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
@@ -2708,8 +2742,6 @@ namespace Plims.Controllers
         }
 
 
-
-        //DateTime startDate, DateTime endDate,
         [HttpGet]
         public async Task<IActionResult> FinancialReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
         {
@@ -2776,22 +2808,7 @@ namespace Plims.Controllers
                     ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd"); 
 
                 }
-                //else if (StartDate != DateTime.MinValue)
-                //{
-                //    mymodel.view_FinancialReport = mymodel.view_FinancialReport
-                //         .Where(x => x.TransactionDate >= StartDate)
-                //         .ToList();
-
-                //    ViewBag.SelectedStartDate = StartDate;
-                //}
-                //else if (EndDate != DateTime.MinValue)
-                //{
-                //    mymodel.view_FinancialReport = mymodel.view_FinancialReport
-                //     .Where(x => x.TransactionDate <= EndDate)
-                //     .ToList();
-
-                //    ViewBag.SelectedEndDate = EndDate;
-                //}
+       
 
                 var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date,x.LineID, x.QRCode,x.SectionID})
                    .Select(g => new GroupedFinancialData // Use the correct model type here

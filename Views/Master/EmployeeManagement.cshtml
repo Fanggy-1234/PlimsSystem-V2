@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "EmployeeManagement";
+    string PlantID = Context.Session.GetString("PlantID");
 }
 @* 
 <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
@@ -639,7 +640,7 @@
                             </div>
                         </div>
 
-                       <div class="col-3" style="max-width: 100px; max-height: 100px;">
+                       <div class="col-3" style="max-width: 150px; max-height: 120px;">
                             <img alt="QRImg" id="modalImage" style="width: 100%; height: auto;" />
                         </div>
 
@@ -766,8 +767,8 @@
             dom: 'Bfrtip',
             ordering: false,
             searching: false,
-            scrollX: true,
-            scrollY: true,
+            // scrollX: true,
+            // scrollY: true,
             // order: [[1, 'asc']],
             lengthMenu: [10, 25, 50, 75, 100],
             pageLength: 20, // Default page length
@@ -835,8 +836,8 @@
             var employeeID = $('#ModalEmployeeID').val();
 
             // Construct the URL for the QR code image
-            var qrCodeUrl = '@Url.Content("~/qrcodes/")' + employeeID + '_QRCode.png';
-
+            var qrCodeUrl = '@Url.Content("~/qrcodes/")' + @PlantID +"/" + employeeID + '_QRCode.png';
+            Console.log(qrCodeUrl);
             // Set the src attribute of the img tag to the constructed URL
             $('#modalImage').attr('src', qrCodeUrl);
         });
@@ -993,7 +994,7 @@
                         alert("This data can't id!" + id)
                     }
                     else {
-                        console.log('AJAX request successful:', response);
+                      //  console.log('AJAX request successful:', response);
                         $('#ModalEmployeeID').val(response.employeeID);
                         $('#ModalEmployeeName').val(response.employeeName)
                               $('#ModalEmployeeLastName').val(response.employeeLastName)
@@ -1017,7 +1018,7 @@
                            var employeeID = $('#ModalEmployeeID').val();
 
                          // Construct the URL for the QR code image
-                            var qrCodeUrl = '@Url.Content("~/qrcodes/")' + employeeID + '_QRCode.png';
+                            var qrCodeUrl = '@Url.Content("~/qrcodes/")' + @PlantID + "/"+ employeeID + '_QRCode.png';
                              console.log('QR path : ' + qrCodeUrl)
                         // Set the src attribute of the img tag to the constructed URL
                         $('#modalImage').attr('src', qrCodeUrl);
