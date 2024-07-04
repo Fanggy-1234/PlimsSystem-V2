@@ -479,7 +479,7 @@
                         @foreach (var item in Model.tbEmployeeMaster)
                         {
 
-                            <option value="@item.EmployeeID" selected="@(item.EmployeeName == ViewBag.SelectedEmpID ? "selected" : null)">@Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName) </option>
+                            <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">@Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName) </option>
                         }
                     </select>
                 </div>
@@ -499,7 +499,7 @@
                             @foreach (var item in Model.tbSection)
                             {
 
-                                <option value="@item.SectionID" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                                <option value="@item.SectionID" selected="@(item.SectionID == ViewBag.SelectedSectionName ? "selected" : null)">
                                     @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
                                 </option>
                             }
@@ -702,7 +702,7 @@
                     }
                         else
                     {
-                        <button type="button" class="clear-button" >save</button>
+                        <button type="button" class="clear-button" >saves</button>
 
                     }
                     </div>

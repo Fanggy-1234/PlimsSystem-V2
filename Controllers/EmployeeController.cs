@@ -58,7 +58,7 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x=>x.EmployeeID).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList()
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
 
             };
 
@@ -114,7 +114,7 @@ namespace Plims.Controllers
                     {
 
                         //ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                         //mymodel.view_EmployeeClocktime = mymodel.view_EmployeeClocktime.Where(p => p.TransactionDate.Equals(DateTime.MinValue) || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
+                        mymodel.view_EmployeeClocktime = mymodel.view_EmployeeClocktime.Where(p => p.TransactionDate.Equals(DateTime.MinValue)).ToList();
 
                     }
 
@@ -446,7 +446,7 @@ namespace Plims.Controllers
                 view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
               //  tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now && x.Plant.Equals(PlantID)),
-                view_PermissionMaster = db.View_PermissionMaster.ToList()
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
 
             };
 
@@ -691,7 +691,7 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x => x.EmployeeID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                 view_PermissionMaster = db.View_PermissionMaster.ToList()
+                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
             };
 
             Employee.view_EmployeeClocktime = Employee.view_EmployeeClocktime.Where(p => p.TransactionDate == DateTime.Today || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
@@ -785,14 +785,14 @@ namespace Plims.Controllers
             }
             var Employee = new ViewModelAll
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x => x.EmployeeID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 //tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.Plant.Equals(PlantID)).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 //view_Employee = db.View_Employee.ToList()
 
             };
@@ -949,7 +949,7 @@ namespace Plims.Controllers
                 view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x => x.EmployeeID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                // tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.Plant.Equals(PlantID)).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                // view_Employee = db.View_Employee.ToList()
 
             };
@@ -1243,7 +1243,7 @@ namespace Plims.Controllers
                 view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                // tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x =>  x.Plant.Equals(PlantID)),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                // view_Employee = db.View_Employee.ToList()
 
             };
@@ -1289,7 +1289,7 @@ namespace Plims.Controllers
                 view_ServicesClocktime = db.View_ServicesClocktime.Where(x=>x.PlantID.Equals(PlantID)).OrderBy(x => x.EmployeeID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                // tbServicesTransaction = db.TbServicesTransaction.Where(x => x.Plant.Equals(PlantID)),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                // view_Employee = db.View_Employee.ToList()
             };
             ViewBag.VBRoleServicesClockIn = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(18)).Select(x => x.RoleAction).FirstOrDefault();
@@ -1332,14 +1332,15 @@ namespace Plims.Controllers
                     }
                     else
                     {
-                      
-                    }
-                    return View(Employee);
+                    Employee.view_ServicesClocktime = Employee.view_ServicesClocktime.Where(p => p.TransactionDate.Equals(DateTime.MinValue)).ToList();
+
+                }
+                return View(Employee);
                 }
                 else
                 {
                     //ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                    Employee.view_ServicesClocktime = Employee.view_ServicesClocktime.Where(p => p.TransactionDate.Equals(DateTime.Today) || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
+                    Employee.view_ServicesClocktime = Employee.view_ServicesClocktime.Where(p =>  p.TransactionDate.Equals(DateTime.MinValue)).ToList();
 
                     return View(Employee);
                 }
@@ -1554,11 +1555,11 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                view_ServicesClocktime = db.View_ServicesClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x => x.EmployeeID).ToList(),
+                view_ServicesClocktime = db.View_ServicesClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x => x.ID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                // tbServicesTransaction = db.TbServicesTransaction.Where(x => x.Plant.Equals(PlantID)),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-             //   view_Employee = db.View_Employee.ToList()
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                //   view_Employee = db.View_Employee.ToList()
             };
             ViewBag.VBRoleServicesClockIn = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(18)).Select(x => x.RoleAction).FirstOrDefault();
 
@@ -1852,16 +1853,17 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                view_ServicesClocktime = db.View_ServicesClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                view_ServicesClocktime = db.View_ServicesClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x => x.ID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
               //  tbServicesTransaction = db.TbServicesTransaction.Where(x => x.TransactionDate == DateTime.Now && x.Plant.Equals(PlantID)),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-              //  view_Employee = db.View_Employee.ToList()
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),    
+                //  view_Employee = db.View_Employee.ToList()
 
             };
 
            // ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
             Employee.view_ServicesClocktime = Employee.view_ServicesClocktime.Where(p => p.TransactionDate.Equals(DateTime.Today) || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
+            ViewBag.VBRoleServicesClockIn = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(18)).Select(x => x.RoleAction).FirstOrDefault();
 
             return View("ServicesClockIn", Employee);
 
@@ -1896,8 +1898,8 @@ namespace Plims.Controllers
                 view_ServicesClocktime = db.View_ServicesClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x => x.EmployeeID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                // tbServicesTransaction = db.TbServicesTransaction.Where(x =>  x.Plant.Equals(PlantID)).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-              //  view_Employee = db.View_Employee.ToList()
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                //  view_Employee = db.View_Employee.ToList()
             };
             ViewBag.VBRoleServicesClockOut = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(19)).Select(x => x.RoleAction).FirstOrDefault();
             if (EmployeeIDchk.Count() == 0)  //if (action == "Search" || action == "ServicesClockOut")
@@ -2114,12 +2116,13 @@ namespace Plims.Controllers
                 view_ServicesClocktime = db.View_ServicesClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
               //  tbServicesTransaction = db.TbServicesTransaction.Where(x => x.TransactionDate == DateTime.Now && x.Plant.Equals(PlantID)),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-               // view_Employee = db.View_Employee.ToList()
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                // view_Employee = db.View_Employee.ToList()
 
             };
+            ViewBag.VBRoleServicesClockOut = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(19)).Select(x => x.RoleAction).FirstOrDefault();
 
-           // ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+            // ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
             Employee.view_ServicesClocktime = Employee.view_ServicesClocktime.Where(p => p.TransactionDate.Equals(DateTime.Today) || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
 
             return View("ServicesClockOut", Employee);
@@ -2155,7 +2158,7 @@ namespace Plims.Controllers
                 view_EmployeeMaster = db.View_EmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x=>x.PlantID.Equals(PlantID)).ToList(),
                 tbEmployeeLeaveHoliday = db.TbEmployeeLeaveHoliday.Where(x=>x.PlantID.Equals(PlantID)).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EmployeeLeaveHolidayClocktime =  db.View_EmployeeLeaveHolidayClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
             };
             ViewBag.VBRoleEmployeeLeaveHoliday = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(21)).Select(x => x.RoleAction).FirstOrDefault();
@@ -2331,7 +2334,7 @@ namespace Plims.Controllers
                 view_EmployeeMaster = db.View_EmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbEmployeeLeaveHoliday = db.TbEmployeeLeaveHoliday.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EmployeeLeaveHolidayClocktime = db.View_EmployeeLeaveHolidayClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
             };
             ViewBag.VBRoleEmployeeLeaveHoliday = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(21)).Select(x => x.RoleAction).FirstOrDefault();
@@ -2434,8 +2437,8 @@ namespace Plims.Controllers
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-               // view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                // view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_Employee = db.View_Employee,
                 view_EmployeeAdjustLine = db.View_EmployeeAdjustLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                  view_PLPS = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList(),
@@ -2583,7 +2586,52 @@ namespace Plims.Controllers
 
             }
 
-       
+
+        public IActionResult FilterSectionsByLine(string lineId)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+
+
+            var mymodel = new ViewModelAll
+            {
+                view_Incentive = db.View_Incentive.ToList(),
+                view_PLPS = db.View_PLPS.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+
+            };
+
+            // Check Admin
+            if (PlantID != 0)
+            {
+                mymodel.view_Incentive = mymodel.view_Incentive.Where(x => x.PlantID.Equals(PlantID)).ToList();
+                mymodel.view_PLPS = mymodel.view_PLPS.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList();
+
+            }
+
+
+            //var filteredSections = mymodel.view_PLPS.Where(x => x.LineID.Equals(lineId))
+            //         .Select(x => new
+            //         {
+            //             SectionID = x.SectionID,
+            //             SectionName = x.SectionName
+
+            //         }).ToList();
+
+            var filteredSections = mymodel.view_PLPS
+    .Where(x => x.LineID.Equals(lineId))
+    .Select(x => new
+    {
+        SectionID = x.SectionID,
+        SectionName = x.SectionName
+    })
+    .GroupBy(x => new { x.SectionID, x.SectionName })
+    .Select(g => g.First())
+    .ToList();
+
+            return Json(filteredSections);
+        }
+
+
 
         // Function Services Edit Transaction : ฟังก์ชั่นนี้ใช่ร่วมกับ Update function
         [HttpGet]
@@ -2664,7 +2712,7 @@ namespace Plims.Controllers
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_Employee = db.View_Employee.ToList(),
                 view_EmployeeAdjustLine = db.View_EmployeeAdjustLine.Where(x => x.PlantID.Equals(PlantID)).ToList()
 
@@ -2697,7 +2745,7 @@ namespace Plims.Controllers
                 view_EmployeeAdjustBreak = db.View_EmployeeAdjustBreak.Where(x => x.PlantID.Equals(PlantID) ).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                // tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Today),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_PLPS = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).ToList(),
             };
@@ -2813,7 +2861,7 @@ namespace Plims.Controllers
                 view_EmployeeAdjustBreak = db.View_EmployeeAdjustBreak.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_PLPS = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).ToList(),
 
@@ -2841,14 +2889,14 @@ namespace Plims.Controllers
             var mymodel = new ViewModelAll
             {
 
-                tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EmployeeAdjustBreak = db.View_EmployeeAdjustBreak.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_PLPS = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList()
             };
 

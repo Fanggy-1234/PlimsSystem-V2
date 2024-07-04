@@ -174,7 +174,7 @@
             // Use AJAX to filter sections based on the selected Product ID
             $.ajax({
                 type: "GET",
-                url: "/Master/FilterSectionsByLine", // Update the URL to your controller action
+                url: "/Employee/FilterSectionsByLine", // Update the URL to your controller action
                 data: { lineId: selectedLineID },
                 success: function (filteredSections) {
                     console.log(filteredSections)
@@ -290,6 +290,10 @@
                                 </option>
                             }
                         </select>
+
+                       
+
+
                    
                 </div>
 
@@ -347,7 +351,7 @@
                     <!-- Employee ID -->
                     <select class="selectfillter form-control" name="ToSection" id="SectionID" style="width:100%">
                         <option value="" default selected></option>
-                        @foreach (var item in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
+                        @foreach (var item in Model.view_PLPS.GroupBy(x => x.SectionID))
                         {
                             var dataFrist = item.First();
                             <option value="@dataFrist.SectionID" selected="@(dataFrist.SectionID == ViewBag.SelectedSectionID ? "selected" : null)">
@@ -355,6 +359,7 @@
                             </option>
                         }
                     </select>
+
                 </div>
 
 
@@ -411,14 +416,14 @@
             <div class="row" style="height:40px ;">
                 <div class="col-9"></div>
                 <div class="col-3">
-                    @if (ViewBag.VBRoleEmployeeBreakAdjust == "Full")
+                    @if (ViewBag.VBRoleEmployeeAdjustLine == "Full")
                     {
                         
-                        <button type="submit" class="clear-button" onclick="return confirm('Are you sure?')">Adjust</button>
+                        <button type="submit" class="clear-button"  onclick="return confirm('Are you sure?')">Adjust</button>
                     }
                     else
                     {
-                        <button type="button" class="clear-button">Adjust</button>
+                        <button type="button" class="clear-button">Adjusts</button>
                     }
                     
                 </div>
