@@ -57,7 +57,7 @@ namespace Plims.Controllers
                 tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
-                view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x=>x.EmployeeID).ToList(),
+                view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today.AddDays(-1)).OrderBy(x=>x.EmployeeID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
 
             };
@@ -2083,7 +2083,7 @@ namespace Plims.Controllers
                     Empdb.TransactionDate = Convert.ToDateTime(obj.TransactionDate);
                 }
 
-                Empdb.ClockIn = obj.ClockOut;
+                Empdb.ClockOut = obj.ClockOut;
                 Empdb.UpdateBy = EmpID;//User.Identity.Name,
                 Empdb.UpdateDate = DateTime.Now;
                 db.SaveChanges();
