@@ -372,7 +372,7 @@ namespace Plims.Controllers
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
-            var Userdb = db.TbUser.Where(x => x.UserEmpID == obj.UserEmpID && x.PlantID.Equals(PlantID)).SingleOrDefault();
+            var Userdb = db.TbUser.Where(x => x.UserEmpID == EmpID && x.PlantID.Equals(PlantID)).SingleOrDefault();
           
             if (obj.UserPassword != null)
             {
@@ -388,8 +388,9 @@ namespace Plims.Controllers
                                     "- รหัสผ่านควรมีอักขระพิเศษอย่างน้อยหนึ่งตัว ( @, #, %, &, !, $, ฯลฯ...)";
                     return RedirectToAction("UserInformation");
                 }
+                string passwrd = obj.UserPassword.ToString();
 
-                Userdb.UserPassword = obj.UserPassword;
+                Userdb.UserPassword = passwrd;
             }
 
             Userdb.UpdateBy = EmpID;
