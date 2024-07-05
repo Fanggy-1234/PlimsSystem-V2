@@ -1540,7 +1540,7 @@ namespace Plims.Controllers
 
                         Sheet.Cells[string.Format("A{0}", row)].Value = item.PlantID;
                         Sheet.Cells[string.Format("B{0}", row)].Value = item.LineID  + " : " +  item.LineName;
-                        Sheet.Cells[string.Format("C{0}", row)].Value = item.TransactionDate;
+                        Sheet.Cells[string.Format("C{0}", row)].Value = ""+item.TransactionDate;
 
                         Sheet.Cells[string.Format("D{0}", row)].Value = item.ShiftName;
                         Sheet.Cells[string.Format("E{0}", row)].Value = item.ProductID +" : "+ item.ProductName;

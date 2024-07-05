@@ -523,10 +523,22 @@
 
     $(document).ready(function () {
 
+
+        var typingTimer;                // Timer identifier
+        var doneTypingInterval = 500;   // Time in ms (500ms = 0.5 seconds)
+
         // Listen for input changes to handle typing or pasting
         $('#EmployeeID').on('input', function () {
-            processInput(); // Trigger AJAX request
+            clearTimeout(typingTimer); // Clear the previous timer
+            typingTimer = setTimeout(processInput, doneTypingInterval); // Start a new timer
         });
+
+
+
+        // // Listen for input changes to handle typing or pasting
+        // $('#EmployeeID').on('input', function () {
+        //     processInput(); // Trigger AJAX request
+        // });
 
         // Listen for 'keypress' to handle "Enter" or "Tab"
         $('#EmployeeID').on('keyup', function (event) {
