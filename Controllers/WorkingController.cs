@@ -443,6 +443,100 @@ namespace Plims.Controllers
 
         }
 
+
+
+
+        [HttpPost]
+        public ActionResult ProductQtySpeialMinusFn(string EmployeeID, string ProductID, string SectionID, int QTY)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            var currentDateTime = DateTime.Now;
+            var currentDate = currentDateTime.Date;
+
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var mymodel = new ViewModelAll
+            {
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                view_Employee = db.View_Employee.ToList(),
+                tbProductionTransaction = db.TbProductionTransaction.ToList(),
+                tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList()
+            };
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            try
+            {
+
+                var objEmp = db.View_ClockTime
+                   .Where(x => x.EmployeeID.Equals(EmployeeID) &&
+                               x.TransactionDate.Date == currentDate &&
+                               x.PlantID.Equals(PlantID))
+                   .FirstOrDefault();
+
+
+                if (objEmp == null)
+                {
+                    TempData["AlertMessage"] = "Please check Clockin";
+                    return View("WorkingFunction", mymodel);
+                }
+                var objPLPS = db.View_PLPS
+                           .Where(x => x.PlantID.Equals(PlantID) &&
+                                       x.LineID.Equals(objEmp.LineID.ToString()) &&
+                                       x.ProductID.Equals(ProductID) &&
+                                       x.SectionID.Equals(objEmp.SectionID.ToString()))
+                           .FirstOrDefault();
+
+
+                db.TbProductionTransaction.Add(new TbProductionTransaction()
+                {
+                    // TransactionNo = db.TbProductionTransaction.Count() + 1,
+                    TransactionDate = DateTime.Now,
+                    PlantID = PlantID,
+                    LineID = objEmp.LineID,
+                    SectionID = objEmp.SectionID,
+                    ProductID = ProductID,
+                    FormularID = objPLPS.FormularID,
+                    Prefix = objEmp.Prefix,
+                    QRCode = EmployeeID,
+                    Qty = QTY,
+                    QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
+                    DataType = "Minus",
+                    Reason = "",
+                    Note = "",
+                    PackageRef = 0,
+                    EmployeeRef = "",
+                    GroupRef = "",
+                    CreateDate = DateTime.Today,
+                    CreateBy = EmpID,
+                    UpdateDate = DateTime.Today,
+                    UpdateBy = EmpID
+                });
+                db.SaveChanges();
+
+
+                return View("WorkingFunction", mymodel);
+            }
+            catch (Exception ex)
+            {
+                TempData["AlertMessage"] = "Working page had problem! please contact IT";
+                return RedirectToAction("Login");
+            }
+
+        }
+
+
         [HttpGet]
         public IActionResult FilterReasonByProduct(string selectedProductID)
         {
@@ -2490,7 +2584,7 @@ namespace Plims.Controllers
                        .FirstOrDefault();
 
 
-
+      
             string section = objEmp.Section;
             string unit = objPLPS.Unit;
 
@@ -2530,6 +2624,7 @@ namespace Plims.Controllers
                        .FirstOrDefault();
 
 
+       
 
             string section = objEmp.Section;
             string unit = objPLPS.Unit;
@@ -2553,6 +2648,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
+          
 
             var mymodel = new ViewModelAll
             {
@@ -2566,10 +2662,11 @@ namespace Plims.Controllers
                 tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList()
             };
 
-            if (EmpID == null)
-            {
-                return RedirectToAction("Login", "Home");
-            }
+            //if (obj.Qty == 0)
+            //{
+            //    return Json(new { success = true });
+            //}
+         
 
 
 
@@ -2604,7 +2701,7 @@ namespace Plims.Controllers
                            .FirstOrDefault();
 
 
-
+           
 
                 db.TbProductionTransaction.Add(new TbProductionTransaction()
                 {
@@ -2642,6 +2739,117 @@ namespace Plims.Controllers
             }
 
         }
+
+
+
+        public ActionResult ProductQTYPieceWithReffn( string EmployeeID, string ProductID, string SectionID, int QTY)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            var currentDateTime = DateTime.Now;
+            var currentDate = currentDateTime.Date;
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+
+
+            var mymodel = new ViewModelAll
+            {
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                view_Employee = db.View_Employee.ToList(),
+                tbProductionTransaction = db.TbProductionTransaction.ToList(),
+                tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList()
+            };
+
+            //if (obj.Qty == 0)
+            //{
+            //    return Json(new { success = true });
+            //}
+
+
+
+
+            try
+            {
+
+                var empsectioncount = db.View_ClockTime
+                 .Where(x => x.EmployeeID.Equals(EmployeeID) &&
+                              (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+                            x.PlantID.Equals(PlantID)).ToList();
+
+                if (empsectioncount.Count() > 1)
+                {
+                    TempData["AlertMessage"] = "Please contact IT some data not clock out.Please check. : " + EmployeeID;
+                    return View("WorkingFunction", mymodel);
+
+                }
+
+
+
+                var objEmp = db.View_ClockTime
+                   .Where(x => x.EmployeeID.Equals(EmployeeID) &&
+                                (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+                              x.PlantID.Equals(PlantID))
+                   .FirstOrDefault();
+
+                var objPLPS = db.View_PLPS
+                           .Where(x => x.PlantID.Equals(PlantID) &&
+                                       x.LineID.Equals(objEmp.LineID.ToString()) &&
+                                       x.ProductID.Equals(ProductID) &&
+                                       x.SectionID.Equals(objEmp.SectionID.ToString()))
+                           .FirstOrDefault();
+
+
+                if (objPLPS == null)
+                {
+                    return Json(new { success = true });
+
+                }
+
+                db.TbProductionTransaction.Add(new TbProductionTransaction()
+                {
+                    // TransactionNo = db.TbProductionTransaction.Count() + 1,
+                    TransactionDate = objEmp.TransactionDate.Date,
+                    PlantID = PlantID,
+                    LineID = objEmp.LineID,
+                    SectionID = objEmp.SectionID,
+                    ProductID = ProductID,
+                    FormularID = objPLPS.FormularID,
+                    Prefix = objEmp.Prefix,
+                    QRCode = EmployeeID,
+                    Qty = QTY,
+                    QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
+                    DataType = "FG",
+                    Reason = "",
+                    Note = "",
+                    GroupRef = "",
+                    EmployeeRef = "",
+                    PackageRef = 0,
+                    CreateDate = DateTime.Today,
+                    CreateBy = EmpID,
+                    UpdateDate = DateTime.Today,
+                    UpdateBy = EmpID
+                });
+                db.SaveChanges();
+
+
+                return View("WorkingFunction", mymodel);
+            }
+            catch (Exception ex)
+            {
+                TempData["AlertMessage"] = "Working page had problem! please contact IT";
+                return RedirectToAction("Login");
+            }
+
+        }
+
 
 
         public ActionResult ProductQtyDefectWithRef(TbProductionTransaction obj, string employeeID, string productID)
@@ -2741,6 +2949,103 @@ namespace Plims.Controllers
 
         }
 
+
+        public ActionResult ProductQtyDefectWithReffn(string EmployeeID, string ProductID, string SectionID, int QTY, string Reason)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            var currentDateTime = DateTime.Now;
+            var currentDate = currentDateTime.Date;
+
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+
+            var mymodel = new ViewModelAll
+            {
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                tbProductionTransaction = db.TbProductionTransaction.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList()
+            };
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            try
+            {
+
+                var empsectioncount = db.View_ClockTime
+               .Where(x => x.EmployeeID.Equals(EmployeeID) &&
+                            (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+                          x.PlantID.Equals(PlantID)).ToList();
+
+                if (empsectioncount.Count() > 1)
+                {
+
+                    return Json(new { success = false, message = "Please contact IT some data not clock out.Please check. : " + EmployeeID });
+                }
+
+                var objEmp = db.View_ClockTime
+                   .Where(x => x.EmployeeID.Equals(EmployeeID) &&
+                              (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+                               x.PlantID.Equals(PlantID))
+                   .FirstOrDefault();
+
+                var objPLPS = db.View_PLPS
+                           .Where(x => x.PlantID.Equals(PlantID) &&
+                                       x.LineID.Equals(objEmp.LineID.ToString()) &&
+                                       x.ProductID.Equals(ProductID) &&
+                                       x.SectionID.Equals(objEmp.SectionID.ToString()))
+                           .FirstOrDefault();
+
+
+
+
+
+                db.TbProductionTransaction.Add(new TbProductionTransaction()
+                {
+                    // TransactionNo = db.TbProductionTransaction.Count() + 1,
+                    TransactionDate = objEmp.TransactionDate.Date,
+                    PlantID = PlantID,
+                    LineID = objEmp.LineID,
+                    SectionID = objEmp.SectionID,
+                    ProductID = ProductID,
+                    FormularID = objPLPS.FormularID,
+                    Prefix = objEmp.Prefix,
+                    QRCode = EmployeeID,
+                    Qty = QTY,
+                    QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
+                    DataType = "Defect",
+                    Reason = Reason,
+                    Note = "",
+                    GroupRef = "",
+                    EmployeeRef = "",
+                    PackageRef = 0,
+                    CreateDate = DateTime.Today,
+                    CreateBy = EmpID,
+                    UpdateDate = DateTime.Today,
+                    UpdateBy = EmpID
+                });
+                db.SaveChanges();
+
+
+                return View("WorkingFunction", mymodel);
+            }
+            catch (Exception ex)
+            {
+                TempData["AlertMessage"] = "Working page had problem! please contact IT";
+                return RedirectToAction("Login");
+            }
+
+        }
 
         [HttpGet]
         public async Task<IActionResult> FinancialReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
