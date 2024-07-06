@@ -144,9 +144,9 @@ namespace Plims.Controllers
                                     DataType = "Count",
                                     Reason = "",
                                     Note = "",
-                                    CreateDate = DateTime.Today,
+                                    CreateDate = DateTime.Now,
                                     CreateBy = EmpID,
-                                    UpdateDate = DateTime.Today,
+                                    UpdateDate = DateTime.Now,
                                     UpdateBy = EmpID
                                 });
                                 db.SaveChanges();
@@ -332,9 +332,9 @@ namespace Plims.Controllers
                     PackageRef = 0,
                     EmployeeRef = "",
                     GroupRef = "",
-                    CreateDate = DateTime.Today,
+                    CreateDate = DateTime.Now,
                     CreateBy = EmpID,
-                    UpdateDate = DateTime.Today,
+                    UpdateDate = DateTime.Now,
                     UpdateBy = EmpID
                 });
                 db.SaveChanges();
@@ -425,9 +425,9 @@ namespace Plims.Controllers
                     PackageRef = 0,
                     EmployeeRef = "",
                     GroupRef = "",
-                    CreateDate = DateTime.Today,
+                    CreateDate = DateTime.Now,
                     CreateBy = EmpID,
-                    UpdateDate = DateTime.Today,
+                    UpdateDate = DateTime.Now,
                     UpdateBy = EmpID
                 });
                 db.SaveChanges();
@@ -518,9 +518,9 @@ namespace Plims.Controllers
                     PackageRef = 0,
                     EmployeeRef = "",
                     GroupRef = "",
-                    CreateDate = DateTime.Today,
+                    CreateDate = DateTime.Now,
                     CreateBy = EmpID,
-                    UpdateDate = DateTime.Today,
+                    UpdateDate = DateTime.Now,
                     UpdateBy = EmpID
                 });
                 db.SaveChanges();
@@ -633,9 +633,9 @@ namespace Plims.Controllers
                     PackageRef = 0,
                     EmployeeRef = "",
                     GroupRef = "",
-                    CreateDate = DateTime.Today,
+                    CreateDate = DateTime.Now,
                     CreateBy = EmpID,
-                    UpdateDate = DateTime.Today,
+                    UpdateDate = DateTime.Now,
                     UpdateBy = EmpID
                 });
                 db.SaveChanges();
@@ -2722,9 +2722,9 @@ namespace Plims.Controllers
                     GroupRef = "",
                     EmployeeRef ="",
                     PackageRef=0,
-                    CreateDate = DateTime.Today,
+                    CreateDate = DateTime.Now,
                     CreateBy = EmpID,
-                    UpdateDate = DateTime.Today,
+                    UpdateDate = DateTime.Now,
                     UpdateBy = EmpID
                 });
                 db.SaveChanges();
@@ -2832,9 +2832,9 @@ namespace Plims.Controllers
                     GroupRef = "",
                     EmployeeRef = "",
                     PackageRef = 0,
-                    CreateDate = DateTime.Today,
+                    CreateDate = DateTime.Now,
                     CreateBy = EmpID,
-                    UpdateDate = DateTime.Today,
+                    UpdateDate = DateTime.Now,
                     UpdateBy = EmpID
                 });
                 db.SaveChanges();
@@ -2931,9 +2931,9 @@ namespace Plims.Controllers
                     GroupRef = "",
                     EmployeeRef = "",
                     PackageRef = 0,
-                    CreateDate = DateTime.Today,
+                    CreateDate = DateTime.Now,
                     CreateBy = EmpID,
-                    UpdateDate = DateTime.Today,
+                    UpdateDate = DateTime.Now,
                     UpdateBy = EmpID
                 });
                 db.SaveChanges();
@@ -3029,9 +3029,9 @@ namespace Plims.Controllers
                     GroupRef = "",
                     EmployeeRef = "",
                     PackageRef = 0,
-                    CreateDate = DateTime.Today,
+                    CreateDate = DateTime.Now,
                     CreateBy = EmpID,
-                    UpdateDate = DateTime.Today,
+                    UpdateDate = DateTime.Now,
                     UpdateBy = EmpID
                 });
                 db.SaveChanges();
@@ -4319,9 +4319,9 @@ namespace Plims.Controllers
                     SizeMax = obj.SizeMax,
                     Weight = obj.Weight,
                     QRcodeperday = obj.QRcodeperday,
-                    CreateDate = DateTime.Today,
+                    CreateDate = DateTime.Now,
                     CreateBy = EmpID,//User.Identity.Name,
-                    UpdateDate = DateTime.Today,
+                    UpdateDate = DateTime.Now,
                     UpdateBy = EmpID,//User.Identity.Name,
                 });
                 db.SaveChanges();
