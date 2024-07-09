@@ -2583,7 +2583,10 @@ namespace Plims.Controllers
                                    x.SectionID.Equals(objEmp.Section.ToString()))
                        .FirstOrDefault();
 
-
+            if(objPLPS == null)
+            {
+                return Json(new { section = "Please check PLPS", unit = "" });
+            }
       
             string section = objEmp.Section;
             string unit = objPLPS.Unit;
@@ -3115,7 +3118,7 @@ namespace Plims.Controllers
                 }
        
 
-                var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date,x.LineID, x.QRCode,x.SectionID})
+                var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date,x.LineID, x.QRCode,x.SectionID  })
                    .Select(g => new GroupedFinancialData // Use the correct model type here
                    {
                        TransactionDate = g.Key.Date,

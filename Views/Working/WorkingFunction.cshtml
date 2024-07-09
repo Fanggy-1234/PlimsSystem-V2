@@ -279,7 +279,7 @@
 
                     <div class="mb-3">
                         <label class="FillterLabel">Product ID:</label>
-                        <select class="selectfillter form-control" style="width:100%" list="ProductID" name="productId" id="ProductIDFG">
+                        <select class="selectfillter form-control" style="width:100%" list="ProductID" name="productId" id="ProductIDFG" onchange="filterSectionsByProductEditFG()">
                             <option value="" default selected></option>
                             @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
@@ -352,7 +352,7 @@
 
                     <div class="mb-3">
                         <label class="FillterLabel">Product ID:</label>
-                        <select class="selectfillter form-control" style="width:100%" list="ProductID" name="productId" id="ProductIDDefect" onchange="filterReasonByProduct()">
+                        <select class="selectfillter form-control" style="width:100%" list="ProductID" name="productId" id="ProductIDDefect" onchange="filterSectionsByProductEditDefect()">
                             <option value="" default selected></option>
                             @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
@@ -470,51 +470,51 @@
 <script type="text/javascript">
 
     // Modal FG
-    $(document).ready(function () {
-        // Capture change event of ProductIDDefect dropdown
-        $('#ProductIDFG').change(function () {
-            var employeeID = $('#EmployeeIDFG').val();
-            var productID = $(this).val(); // Get the selected product ID from the dropdown
-            // Make AJAX request to fetch section and unit
-            $.ajax({
-                url: '/Working/GetSectionAndUnitWithRef',
-                type: 'POST',
-                data: { employeeID: employeeID, productID: productID },
-                success: function (response) {
-                    $('#SectionNameFG').val(response.section);
-                    $('#UnitFG').val(response.unit);
-                },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        });
-    });
+    // $(document).ready(function () {
+    //     // Capture change event of ProductIDDefect dropdown
+    //     $('#ProductIDFG').change(function () {
+    //         var employeeID = $('#EmployeeIDFG').val();
+    //         var productID = $(this).val(); // Get the selected product ID from the dropdown
+    //         // Make AJAX request to fetch section and unit
+    //         $.ajax({
+    //             url: '/Working/GetSectionAndUnitWithRef',
+    //             type: 'POST',
+    //             data: { employeeID: employeeID, productID: productID },
+    //             success: function (response) {
+    //                 $('#SectionNameFG').val(response.section);
+    //                 $('#UnitFG').val(response.unit);
+    //             },
+    //             error: function (xhr, status, error) {
+    //                 console.error(error);
+    //             }
+    //         });
+    //     });
+    // });
 
     // Modal Defect
-    $(document).ready(function () {
-        // Capture change event of Employee ID and Product ID fields
-        $('#ProductIDDefect').change(function () {
-            var employeeID = $('#EmployeeIDDefect').val();
-            var productID = $('#ProductIDDefect').val();
+    // $(document).ready(function () {
+    //     // Capture change event of Employee ID and Product ID fields
+    //     $('#ProductIDDefect').change(function () {
+    //         var employeeID = $('#EmployeeIDDefect').val();
+    //         var productID = $('#ProductIDDefect').val();
 
-            // Make AJAX request to fetch section and unit
-            $.ajax({
-                url: '/Working/GetSectionAndUnitDefectWithRef',
-                type: 'POST',
-                data: { employeeID: employeeID, productID: productID },
-                success: function (response) {
-                    $('#SectionNameDefect').val(response.section);
-                    $('#UnitDefect').val(response.unit);
-                },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        });
+    //         // Make AJAX request to fetch section and unit
+    //         $.ajax({
+    //             url: '/Working/GetSectionAndUnitDefectWithRef',
+    //             type: 'POST',
+    //             data: { employeeID: employeeID, productID: productID },
+    //             success: function (response) {
+    //                 $('#SectionNameDefect').val(response.section);
+    //                 $('#UnitDefect').val(response.unit);
+    //             },
+    //             error: function (xhr, status, error) {
+    //                 console.error(error);
+    //             }
+    //         });
+    //     });
 
 
-    });
+    // });
 
 
 </script>
@@ -792,7 +792,7 @@
                         // $('#FGForm')[0].reset();
                         $('#ProductIDFG').val('').focus();
                     } else {
-                        $('#ProductIDFG').val('').focus();
+                        $('#ProductIDFG').focus();
                         // Add filtered products to the dropdown if the response indicates success
                         data.forEach(function (product) {
                             $("#ProductIDFG").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
@@ -807,6 +807,75 @@
     }
 
 
+
+
+
+       function filterSectionsByProductEditFG() {
+           console.log('test');
+             var selectedEmpID = $("#EmployeeIDFG").val().toString();
+        var selectedProductIDFG = $("#ProductIDFG").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+        console.log(selectedEmpID);
+        console.log(selectedProductIDFG);
+        // Check if a product is selected
+        if (selectedProductIDFG !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "POST",
+                url: "/Working/GetSectionAndUnitWithRef", // Update the URL to your controller action
+                data: { employeeID : selectedEmpID, productID : selectedProductIDFG },
+                success: function (data) {
+                   
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        $('#SectionNameFG').val(data.section);
+
+                    } else {
+                        $('#SectionNameFG').val(data.section);
+                        //                 $('#UnitFG').val(response.unit);
+                    }
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
+
+    
+       function filterSectionsByProductEditDefect() {
+   
+        var selectedEmpID = $("#EmployeeIDDefect").val().toString();
+        var selectedProductIDDefect = $("#ProductIDDefect").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+
+        // Check if a product is selected
+        if (selectedProductIDDefect !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "POST",
+                url: "/Working/GetSectionAndUnitDefectWithRef", // Update the URL to your controller action
+                data: { employeeID: selectedEmpID, productID: selectedProductIDDefect },
+                success: function (data) {
+                   
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        $('#SectionNameDefect').val(data.section);
+                        //$('#UnitDefect').val(response.unit);
+
+                    } else {
+                        $('#SectionNameDefect').val(data.section);
+                        $('#UnitDefect').val(data.unit);
+                    }
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
 
 
     

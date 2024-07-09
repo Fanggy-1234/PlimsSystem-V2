@@ -51,6 +51,7 @@ namespace Plims.Models
         public decimal ShiftHour { get; set; }
 
         public decimal PiecePerHr { get; set; }
+        [Key]
         public string IncentiveID { get; set; }
         public string IncentiveName { get; set; }
         public decimal Rate { get; set; }

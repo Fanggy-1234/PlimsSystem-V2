@@ -15,7 +15,11 @@ namespace Plims.Controllers
         {
             db = _db;
         }
-        
+
+
+
+    
+
 
         // Get Action
         public IActionResult Login()
@@ -27,7 +31,8 @@ namespace Plims.Controllers
             }
             else
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("UserInformation");
+               // return RedirectToAction("Login");
             }
         }
 
@@ -802,6 +807,10 @@ namespace Plims.Controllers
             return RedirectToAction("RoleManagement");
 
         }
+
+
+ 
+
 
         /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*///
         /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*///

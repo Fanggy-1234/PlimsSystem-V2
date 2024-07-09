@@ -245,9 +245,9 @@ namespace Plims.Controllers
                     EndDate = model.EndDate,
                     FilterYear = model.FilterYear,
                     FilterMonth = model.FilterMonth,
-                    FilterLine = model.FilterLine,
-                    FilterProduct = model.FilterProduct,
-                    FilterPoint = model.FilterPoint,
+                    FilterLine = string.IsNullOrEmpty(model.FilterLine) ? null : model.FilterLine,
+                    FilterProduct = string.IsNullOrEmpty(model.FilterProduct) ? null : model.FilterProduct,
+                    FilterPoint = string.IsNullOrEmpty(model.FilterPoint) ? null : model.FilterPoint,
                     ResultGrpProduct = resultGrpProduct,
                     ResultGrpGrade = resultGrpGrade
                 };

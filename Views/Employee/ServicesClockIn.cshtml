@@ -297,11 +297,15 @@
                 newRow.append("<td>" + selectedService.text() + "</td>");
                 newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
                 tableBody.append(newRow);
+            
             }
 
             // Clear the selected options in the dropdowns
             document.getElementById("ServicesID").selectedIndex = 0;
             document.getElementById("SectionID").selectedIndex = 0;
+            $('#ServicesID').val(response.transactionNo);
+            $('#SectionID').val(response.employeeID);
+
 
             // Update the hidden input with the table data
             UpdateTableData();
@@ -403,6 +407,42 @@
         // Remove the row when the "Remove" button is clicked
         $(button).closest("tr").remove();
     }
+
+
+
+
+
+    
+    function filterSectionByLine() {
+
+        var SelectLineID = $("#LineID").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+
+        // Check if a product is selected
+        if (SelectLineID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Employee/FilterSectionByLine", // Update the URL to your controller action
+                data: { LineID: SelectLineID },
+                success: function (data) {
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        alert(data.message);
+
+                    } else {
+                        data.forEach(function (Section) {
+                            $("#SectionID").append("<option value='" + Section.SectionID + "'>" + Section.SectionID + " : " + Section.SectionName + "</option>");
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
 
 
 </script>
@@ -579,7 +619,7 @@
                     <label> Line :</label>
                 </div>
                 <div class="col">
-                    <select class="selectfillter form-control"name="LineID" id="LineID" style="width:100%">
+                    <select class="selectfillter form-control" name="LineID" id="LineID" style="width:100%" onchange="filterSectionByLine()">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
                         {
