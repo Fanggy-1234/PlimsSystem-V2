@@ -301,10 +301,10 @@
             }
 
             // Clear the selected options in the dropdowns
-            document.getElementById("ServicesID").selectedIndex = 0;
-            document.getElementById("SectionID").selectedIndex = 0;
-            $('#ServicesID').val(response.transactionNo);
-            $('#SectionID').val(response.employeeID);
+            // document.getElementById("ServicesID").selectedIndex = 0;
+            // document.getElementById("SectionID").selectedIndex = 0;
+            // $('#ServicesID').val(response.transactionNo);
+            // $('#SectionID').val(response.employeeID);
 
 
             // Update the hidden input with the table data
@@ -431,8 +431,12 @@
                         alert(data.message);
 
                     } else {
-                        data.forEach(function (Section) {
-                            $("#SectionID").append("<option value='" + Section.SectionID + "'>" + Section.SectionID + " : " + Section.SectionName + "</option>");
+                       
+                          $("#SectionID").empty();
+                        $("#SectionID").append("<option value='All'>All</option>");
+
+                        data.forEach(function (section) {
+                            $("#SectionID").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
                         });
                     }
                 },
@@ -642,11 +646,11 @@
                     <select class="selectfillter form-control" list="SectionID" name="SectionID" id="SectionID" style="width:100%">
                         <option value="" default selected></option>
                         <option value="ALL"> ALL</option>
-                        @foreach (var item in Model.tbSection.Where(x=>x.Status.Equals(1)))
+                       @*  @foreach (var item in Model.tbSection.Where(x=>x.Status.Equals(1)))
                         {
 
                             <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName) </option>
-                        }
+                        } *@
                     </select>
                     <input name="SectionSelect" id="SectionSelect" hidden />
                 </div>
