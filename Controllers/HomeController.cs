@@ -72,7 +72,7 @@ namespace Plims.Controllers
                     }
                     else
                     {
-                        ViewBag.Message = "User or Password mistake!!";
+                        ViewBag.Message = "User or Password mistake!";
                     }
                     
                     return View();
@@ -152,10 +152,10 @@ namespace Plims.Controllers
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             var mymodel = new ViewModelAll
             {
-                tbUser = db.TbUser.ToList(),
+                tbUser = db.TbUser.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x=>x.PlantID.Equals(PlantID)).ToList(),
                 view_User =  db.View_User.ToList(),
-                tbRole = db.TbRole.ToList()
+                tbRole = db.TbRole.Where(p => p.PlantID.Equals(PlantID)).ToList(),
 
             };
             string IDuser = HttpContext.Session.GetString("UserEmpID").ToString();
@@ -179,11 +179,11 @@ namespace Plims.Controllers
 
             var Mymodel = new ViewModelAll
             {
-                tbRole = db.TbRole.ToList(),
-                tbUser = db.TbUser.ToList(),
+                tbRole = db.TbRole.Where(p => p.PlantID.Equals(PlantID)).ToList(),
+                tbUser = db.TbUser.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 view_User = db.View_User.Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                tbPlants = db.TbPlant.ToList(),
+                tbPlants = db.TbPlant.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 //tbLine = db.TbLine.ToList(),
                 //tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
                 //view_Employee = db.View_Employee.ToList()
@@ -263,8 +263,8 @@ namespace Plims.Controllers
 
             var Mymodel = new ViewModelAll
             {
-                tbRole = db.TbRole.ToList(),
-                tbUser = db.TbUser.ToList(),
+                tbRole = db.TbRole.Where(p => p.PlantID.Equals(PlantID)).ToList(),
+                tbUser = db.TbUser.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 view_User = db.View_User.Where(p=>p.PlantID.Equals(PlantID)).ToList(),
 

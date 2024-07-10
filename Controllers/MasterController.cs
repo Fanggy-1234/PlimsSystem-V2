@@ -531,6 +531,7 @@ namespace Plims.Controllers
                 mymodel.tbLine = mymodel.tbLine.Where(x => x.PlantID.Equals(PlantID)).ToList();
             }
 
+            ViewBag.VBRoleLine = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(6)).Select(x => x.RoleAction).FirstOrDefault();
 
             ViewBag.InactiveStatus = true;
             return RedirectToAction("Line");
@@ -913,12 +914,13 @@ namespace Plims.Controllers
                                 if (worksheet.Cells[row, 2].Value != null)
                                 {
 
-                                    if (Convert.ToInt32(worksheet.Cells[row, 3].Text) != 1 || Convert.ToInt32(worksheet.Cells[row, 3].Text) != 0)
+                                    if (Convert.ToInt32(worksheet.Cells[row, 3].Text) != 1 && Convert.ToInt32(worksheet.Cells[row, 3].Text) != 0)
                                     {
                                         int rowerror = row - 1;
-                                        TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake please check Master ";
+                                        return Json(new { success = false, message = "Data Row : " + rowerror + " =>  Mistake please check Master " });
+                                        //TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake please check Master ";
                                         // ViewBag.Success = "Data Row : " + row + "=>  Mistake ";
-                                        return RedirectToAction("Section");
+                                       // return RedirectToAction("Line");
 
                                     }
 
