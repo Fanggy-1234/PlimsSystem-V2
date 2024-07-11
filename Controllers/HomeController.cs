@@ -456,7 +456,7 @@ namespace Plims.Controllers
             else
             {
                 TempData["AlertMessage"] = "User is Duplicate!";
-                ViewBag.Error = "User is Duplicate!";
+               // ViewBag.Error = "User is Duplicate!";
             }
             return RedirectToAction("UserManagement");
         }
@@ -705,7 +705,7 @@ namespace Plims.Controllers
             else
             {
                 TempData["AlertMessage"] = "Role is Duplicate!";
-                ViewBag.Error = "Role is Duplicate!";
+               // ViewBag.Error = "Role is Duplicate!";
             }
             // Return a response if needed
             return Json(new { success = true, message = "Operation successful" });

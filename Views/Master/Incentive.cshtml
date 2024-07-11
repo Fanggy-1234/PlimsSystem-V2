@@ -11,6 +11,13 @@
 <link href="~/css/datatable2.2.0.css" rel="stylesheet" />
 
 
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
+
 
 <style type="text/css">
 
@@ -451,7 +458,7 @@
                 @foreach (var sectionGroup in Model.view_Incentive.GroupBy(x => x.SectionID))
                 {
                     var sectiond = sectionGroup.First(); // Take the first item in the group
-                    <option value="@sectiond.SectionID" selected="@(sectiond.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                    <option value="@sectiond.SectionID" selected="@(sectiond.SectionID == ViewBag.SelectedSectionName ? "selected" : null)">
                         @Html.DisplayFor(modelItem => sectiond.SectionID) : @Html.DisplayFor(modelItem => sectiond.SectionName)
                     </option>
                

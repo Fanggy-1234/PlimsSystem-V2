@@ -3038,7 +3038,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
             //Check Duplicate
-            var plantdb = db.TbIncentiveMaster.Where(p => p.PlantID == tbincentive.PlantID && p.LineID == tbincentive.LineID && p.ProductID.Equals(tbincentive.ProductName) && p.SectionID == tbincentive.SectionID && p.Grade.Equals(tbincentive.Grade) && p.Status.Equals(1)).ToList();
+            var plantdb = db.TbIncentiveMaster.Where(p => p.PlantID.Equals(PlantID) && p.LineID.Equals(tbincentive.LineName) && p.ProductID.Equals(tbincentive.ProductName) && p.SectionID.Equals(tbincentive.SectionName) && p.Grade.Equals(tbincentive.Grade) && p.Status.Equals(1)).ToList();
             string maxIncentiveID = db.TbIncentiveMaster.Max(p => p.IncentiveID);
 
             // Increment the maximum IncentiveID for the new record
@@ -3077,7 +3077,7 @@ namespace Plims.Controllers
             else
             {
                 TempData["AlertMessage"] = "Incentive Duplicate! please Inactive old data";
-                ViewBag.Error = "Incentive Duplicate!";
+               // ViewBag.Error = "Incentive Duplicate!";
                 //  return PartialView("Plant",obj);
             }
             return RedirectToAction("Incentive");

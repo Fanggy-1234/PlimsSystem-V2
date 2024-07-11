@@ -1134,10 +1134,10 @@ namespace Plims.Controllers
                                 return RedirectToAction("ImportManualData");
                             }
 
-                            var LineIDDb = db.TbLine.Where(x => x.LineID.Equals(LineVar) && x.Status.Equals(1)).Select(x => x.LineID).SingleOrDefault();
-                            var ProductIDDb = db.TbProduct.Where(x => x.ProductID.Equals(ProductVar) && x.Status.Equals(1)).Select(x => x.ProductID).SingleOrDefault();
-                            var SectionIDDb = db.TbSection.Where(x => x.SectionID.Equals(SectionVar) && x.Status.Equals(1)).Select(x => x.SectionID).SingleOrDefault();
-                            var EmployeeIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeVar) && x.Status.Equals(1)).Select(x => x.EmployeeID).SingleOrDefault();
+                            var LineIDDb = db.TbLine.Where(x => x.LineID.Equals(LineVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.LineID).SingleOrDefault();
+                            var ProductIDDb = db.TbProduct.Where(x => x.ProductID.Equals(ProductVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.ProductID).SingleOrDefault();
+                            var SectionIDDb = db.TbSection.Where(x => x.SectionID.Equals(SectionVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.SectionID).SingleOrDefault();
+                            var EmployeeIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.EmployeeID).SingleOrDefault();
                             var PLPSIDDb = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb) && x.Status.Equals(1)).Select(x => x.FormularID).SingleOrDefault();
                             var EmployeeRefIDDb = "";
 
