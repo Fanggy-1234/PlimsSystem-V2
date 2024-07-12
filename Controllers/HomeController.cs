@@ -4,7 +4,9 @@ using Plims.Data;
 using Plims.Models;
 using Plims.ViewModel;
 using static QRCoder.PayloadGenerator.SwissQrCode;
-
+using Microsoft.Identity.Web;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Plims.Controllers
 {
@@ -18,7 +20,7 @@ namespace Plims.Controllers
 
 
 
-    
+
 
 
         // Get Action
@@ -32,7 +34,7 @@ namespace Plims.Controllers
             else
             {
                 return RedirectToAction("UserInformation");
-               // return RedirectToAction("Login");
+                // return RedirectToAction("Login");
             }
         }
 
@@ -42,52 +44,54 @@ namespace Plims.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(TbUser u)
         {
-            var mymodel = new ViewModelAll
-            {
-                tbUser = db.TbUser.ToList(),
-                view_User = db.View_User.ToList(),
-                tbPermission = db.TbPermission.ToList(),
-                tbPage = db.TbPage.ToList(),
-                tbRole = db.TbRole.ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList()
-            };
+            var redirectUrl = Url.Action(nameof(UserInformation));
+            return Challenge(
+                new AuthenticationProperties { RedirectUri = redirectUrl },
+                OpenIdConnectDefaults.AuthenticationScheme);
+            //var mymodel = new ViewModelAll
+            //{
+            //    tbUser = db.TbUser.ToList(),
+            //    view_User = db.View_User.ToList(),
+            //    tbPermission = db.TbPermission.ToList(),
+            //    tbPage = db.TbPage.ToList(),
+            //    tbRole = db.TbRole.ToList(),
+            //    view_PermissionMaster = db.View_PermissionMaster.ToList()
+            //};
 
-            if (HttpContext.Session.GetString("UserEmpID") == null)
-            {              
-                var obj = mymodel.view_User.Where(a => a.UserEmpID.Equals(u.UserEmpID) && a.UserPassword.Equals(u.UserPassword) && a.Status.Equals(1)).SingleOrDefault();
-                if (obj != null)
-                {
-                    HttpContext.Session.SetString("UserEmpID", obj.UserEmpID.ToString());
-                    HttpContext.Session.SetString("UserName", obj.UserName.ToString() + ' '+ obj.UserLastName.ToString());
-                    HttpContext.Session.SetString("PlantID", obj.PlantID.ToString());
-                    return RedirectToAction("UserInformation");
-                }
-                else
-                {
-                    var statusdata = mymodel.view_User.Where(a => a.UserEmpID.Equals(u.UserEmpID) && a.UserPassword.Equals(u.UserPassword)).SingleOrDefault();
-                    if(statusdata != null)
-                    {
-                        ViewBag.Message = "Inactive account, please contact your admin!!";
-                      
-                    }
-                    else
-                    {
-                        ViewBag.Message = "User or Password mistake!";
-                    }
-                    
-                    return View();
-                }
-                    
-            }
-            else
-            {
-               // TempData["AlertMessage"] = "ลงทะเบียนไม่สำเร็จ! กรุณาตรวจสอบข้อมูล!";
-                ViewBag.Message = "Connection loss please close and open program again!";
-                return View();
+            //if (HttpContext.Session.GetString("UserEmpID") == null)
+            //{              
+            //    var obj = mymodel.view_User.Where(a => a.UserEmpID.Equals(u.UserEmpID) && a.UserPassword.Equals(u.UserPassword) && a.Status.Equals(1)).SingleOrDefault();
+            //    if (obj != null)
+            //    {
+            //        HttpContext.Session.SetString("UserEmpID", obj.UserEmpID.ToString());
+            //        HttpContext.Session.SetString("UserName", obj.UserName.ToString() + ' '+ obj.UserLastName.ToString());
+            //        HttpContext.Session.SetString("PlantID", obj.PlantID.ToString());
+            //        return RedirectToAction("UserInformation");
+            //    }
+            //    else
+            //    {
+            //        var statusdata = mymodel.view_User.Where(a => a.UserEmpID.Equals(u.UserEmpID) && a.UserPassword.Equals(u.UserPassword)).SingleOrDefault();
+            //        if(statusdata != null)
+            //        {
+            //            ViewBag.Message = "Inactive account, please contact your admin!!";
 
-            }
-     
+            //        }
+            //        else
+            //        {
+            //            ViewBag.Message = "User or Password mistake!";
+            //        }
 
+            //        return View();
+            //    }
+
+            //}
+            //else
+            //{
+            //   // TempData["AlertMessage"] = "ลงทะเบียนไม่สำเร็จ! กรุณาตรวจสอบข้อมูล!";
+            //    ViewBag.Message = "Connection loss please close and open program again!";
+            //    return View();
+
+            //}
         }
 
         [HttpPost]
@@ -153,14 +157,14 @@ namespace Plims.Controllers
             var mymodel = new ViewModelAll
             {
                 tbUser = db.TbUser.Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.Where(x=>x.PlantID.Equals(PlantID)).ToList(),
-                view_User =  db.View_User.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                view_User = db.View_User.ToList(),
                 tbRole = db.TbRole.Where(p => p.PlantID.Equals(PlantID)).ToList(),
 
             };
             string IDuser = HttpContext.Session.GetString("UserEmpID").ToString();
-             mymodel.view_PermissionMaster = mymodel.view_PermissionMaster.Where(x => x.UserEmpID.Equals(IDuser)).ToList();
-           
+            mymodel.view_PermissionMaster = mymodel.view_PermissionMaster.Where(x => x.UserEmpID.Equals(IDuser)).ToList();
+
             return View(mymodel);
         }
 
@@ -170,7 +174,7 @@ namespace Plims.Controllers
         /// User Management
         /// </summary>
         /// <returns></returns>
-      
+
         [HttpGet]
         public ActionResult UserManagement(View_User obj, bool? inactivestatus)
         {
@@ -194,7 +198,7 @@ namespace Plims.Controllers
 
             if (!string.IsNullOrEmpty(obj.UserEmpID) || !string.IsNullOrEmpty(obj.UserName) || !string.IsNullOrEmpty(obj.UserLastName) || !string.IsNullOrEmpty(obj.RoleName) || inactivestatus != null)
             {
-              
+
 
                 // Where data filter
                 if (!string.IsNullOrEmpty(obj.UserEmpID))
@@ -203,7 +207,7 @@ namespace Plims.Controllers
                     ViewBag.SelectedUserEmpID = obj.UserEmpID;
                     ViewBag.InactiveStatus = true;
                 }
-                if(!string.IsNullOrEmpty(obj.UserName))
+                if (!string.IsNullOrEmpty(obj.UserName))
                 {
                     Mymodel.view_User = Mymodel.view_User.Where(x => x.UserName == obj.UserName).OrderByDescending(x => x.Status).ToList();
                     ViewBag.SelectedUserName = obj.UserName;
@@ -254,10 +258,10 @@ namespace Plims.Controllers
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
 
-            var users = db.View_User.Where(p=>p.ID.Equals(id)).SingleOrDefault();
+            var users = db.View_User.Where(p => p.ID.Equals(id)).SingleOrDefault();
             return Json(users);
         }
-          public ActionResult UserClear()
+        public ActionResult UserClear()
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
 
@@ -266,7 +270,7 @@ namespace Plims.Controllers
                 tbRole = db.TbRole.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 tbUser = db.TbUser.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                view_User = db.View_User.Where(p=>p.PlantID.Equals(PlantID)).ToList(),
+                view_User = db.View_User.Where(p => p.PlantID.Equals(PlantID)).ToList(),
 
             };
             ViewBag.InactiveStatus = true;
@@ -312,7 +316,7 @@ namespace Plims.Controllers
 
 
         [HttpPost]
-        public ActionResult UserUpdate(TbUser obj )
+        public ActionResult UserUpdate(TbUser obj)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -352,14 +356,14 @@ namespace Plims.Controllers
             {
                 Userdb.UserEmail = obj.UserEmail;
             }
-                if (obj.Status == 0)
-                {
-                    Userdb.Status = 0;
-                }
-                else
-                {
-                    Userdb.Status = 1;
-                }
+            if (obj.Status == 0)
+            {
+                Userdb.Status = 0;
+            }
+            else
+            {
+                Userdb.Status = 1;
+            }
 
 
 
@@ -378,7 +382,7 @@ namespace Plims.Controllers
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             var Userdb = db.TbUser.Where(x => x.UserEmpID == EmpID && x.PlantID.Equals(PlantID)).SingleOrDefault();
-          
+
             if (obj.UserPassword != null)
             {
                 //Check Password
@@ -417,7 +421,7 @@ namespace Plims.Controllers
             string plantname = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).Select(x => x.PlantName).SingleOrDefault();
             int cnt = db.TbUser.Where(x => x.PlantID.Equals(PlantID)).Count();
             //Check Password
-            if(!isValidpassword(obj.UserPassword))
+            if (!isValidpassword(obj.UserPassword))
             {
 
                 TempData["AlertMessage"] = "- รหัสผ่านไม่ควรมีช่องว่าง <br/>" +
@@ -428,7 +432,7 @@ namespace Plims.Controllers
                                 "- รหัสผ่านควรมีอักขระพิเศษอย่างน้อยหนึ่งตัว ( @, #, %, &, !, $, ฯลฯ...)";
                 return RedirectToAction("UserManagement");
             }
-           // var roledb = db.TbRole.Where(x => x.RoleName == obj.RoleName.Trim()).SingleOrDefault();
+            // var roledb = db.TbRole.Where(x => x.RoleName == obj.RoleName.Trim()).SingleOrDefault();
             if (userdb.Count() == 0)
             {
                 // Insert new Plant               
@@ -438,7 +442,7 @@ namespace Plims.Controllers
                     UserName = obj.UserName,
                     UserLastName = obj.UserLastName,
                     UserPassword = obj.UserPassword,
-                    UserEmpID = plantname+ cnt.ToString().PadLeft(5,'0'), // obj.UserEmpID,
+                    UserEmpID = plantname + cnt.ToString().PadLeft(5, '0'), // obj.UserEmpID,
                     UserEmail = obj.UserEmail,
                     UserPermission = obj.RoleID,
                     PlantID = PlantID,
@@ -456,7 +460,7 @@ namespace Plims.Controllers
             else
             {
                 TempData["AlertMessage"] = "User is Duplicate!";
-               // ViewBag.Error = "User is Duplicate!";
+                // ViewBag.Error = "User is Duplicate!";
             }
             return RedirectToAction("UserManagement");
         }
@@ -577,10 +581,10 @@ namespace Plims.Controllers
 
             if (ModelState.IsValid)
             {
-               
-                    db.TbUser.Add(user);
-                    db.SaveChanges();
-                    status = true;
+
+                db.TbUser.Add(user);
+                db.SaveChanges();
+                status = true;
 
             }
             return RedirectToAction("UserManagementsave");
@@ -605,7 +609,7 @@ namespace Plims.Controllers
             {
                 tbPage = db.TbPage.ToList(),
                 tbRole = db.TbRole.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                tbPermission = db.TbPermission.Where(x=>x.PlantID.Equals(PlantID)).ToList(),
+                tbPermission = db.TbPermission.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_PagePermission = db.View_PagePermission.Where(x => x.PlantID.Equals(PlantID)).ToList(),
 
@@ -623,7 +627,7 @@ namespace Plims.Controllers
             var role = new ViewModelAll
             {
                 tbPage = db.TbPage.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                tbRole = db.TbRole.Where(x=>x.PlantID.Equals(PlantID)).ToList(),
+                tbRole = db.TbRole.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbPermission = db.TbPermission.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_PagePermission = db.View_PagePermission.Where(x => x.PlantID.Equals(PlantID)).ToList(),
@@ -660,23 +664,23 @@ namespace Plims.Controllers
                 });
 
 
-                    for (int i = 1; i <= db.TbPageMaster.Count(); i++)
+                for (int i = 1; i <= db.TbPageMaster.Count(); i++)
                 {
-                        db.TbPermission.Add(new TbPermission()
-                        {
-                            RoleID = roleParm,
-                            PageID = i,
-                            RoleAction = "No",
-                            PlantID = PlantID,
-                            CreateDate = DateTime.Today,
-                            CreateBy = EmpID,//User.Identity.Name,
-                            UpdateDate = DateTime.Today,
-                            UpdateBy = EmpID,//User.Identity.Name
+                    db.TbPermission.Add(new TbPermission()
+                    {
+                        RoleID = roleParm,
+                        PageID = i,
+                        RoleAction = "No",
+                        PlantID = PlantID,
+                        CreateDate = DateTime.Today,
+                        CreateBy = EmpID,//User.Identity.Name,
+                        UpdateDate = DateTime.Today,
+                        UpdateBy = EmpID,//User.Identity.Name
 
-                        });
-                    }
+                    });
+                }
 
-                   // create plant
+                // create plant
                 //for (int i = 1; i <= db.TbPageMaster.Count(); i++)
                 //{
                 //    var pagenamevar = db.TbPageMaster.Where(x => x.PageID.Equals(i)).Select(x => x.PageName).ToString();
@@ -705,12 +709,12 @@ namespace Plims.Controllers
             else
             {
                 TempData["AlertMessage"] = "Role is Duplicate!";
-               // ViewBag.Error = "Role is Duplicate!";
+                // ViewBag.Error = "Role is Duplicate!";
             }
             // Return a response if needed
             return Json(new { success = true, message = "Operation successful" });
-          //  return RedirectToAction("RoleManagement");
-}
+            //  return RedirectToAction("RoleManagement");
+        }
 
 
 
@@ -720,7 +724,7 @@ namespace Plims.Controllers
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             foreach (var perm in request.Permissions)
-           {
+            {
 
                 if (perm.PermissionValue != "No")
                 {
@@ -735,9 +739,9 @@ namespace Plims.Controllers
                         permdb.UpdateBy = EmpID; //User.Identity.Name;
                         permdb.UpdateDate = DateTime.Now;
                     }
-               } 
-                    
-              // Console.WriteLine($"PageName: {permission.PageName}, PermissionValue: {permission.PermissionValue}");
+                }
+
+                // Console.WriteLine($"PageName: {permission.PageName}, PermissionValue: {permission.PermissionValue}");
             }
             db.SaveChanges();
             return RedirectToAction("RoleManagement");
@@ -767,10 +771,10 @@ namespace Plims.Controllers
         }
 
         [HttpPost]
-        public ActionResult RoleEditSave(ViewModelAll obj, string[] PageNames, string[] RoleActions , int RoleID , string RoleName)
+        public ActionResult RoleEditSave(ViewModelAll obj, string[] PageNames, string[] RoleActions, int RoleID, string RoleName)
         {
             int cntrole = 0;
-             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             var mymodel = new ViewModelAll
             {
@@ -785,21 +789,21 @@ namespace Plims.Controllers
             {
                 cntrole++;
                 var Roleperdb = db.TbPermission.Where(x => x.RoleID == RoleID && x.PageID == cntrole && x.PlantID.Equals(PlantID)).SingleOrDefault();
-                if(Roleperdb != null)
-                {    
-                Roleperdb.RoleAction = RoleActions[cntrole -1];
-                Roleperdb.UpdateBy = EmpID;// User.Identity.Name;
-                Roleperdb.UpdateDate = DateTime.Now;
+                if (Roleperdb != null)
+                {
+                    Roleperdb.RoleAction = RoleActions[cntrole - 1];
+                    Roleperdb.UpdateBy = EmpID;// User.Identity.Name;
+                    Roleperdb.UpdateDate = DateTime.Now;
 
                 }
                 else
                 {
-                   
+
 
                     return RedirectToAction("RoleManagement");
                 }
 
-                
+
             }
 
             db.SaveChanges();
@@ -809,7 +813,7 @@ namespace Plims.Controllers
         }
 
 
- 
+
 
 
         /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*///

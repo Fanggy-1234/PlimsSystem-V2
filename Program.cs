@@ -1,24 +1,20 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Plims.Data;
+using Microsoft.Identity.Web;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-
-// VAREEWAN : Add for connect database
+// Add for connect database
 builder.Services.AddDbContext<AppDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("TU1Connection"))
-    );
-//builder.Services.AddDbContext<AppDbContext_2>(
-//    options => options.UseSqlServer(builder.Configuration.GetConnectionString("TU2Connection"))
-//    );
-//builder.Services.AddDbContext<AppDbContext_3>(
-//    options => options.UseSqlServer(builder.Configuration.GetConnectionString("TU3Connection"))
-//    );
+);
 
-//VAREEWAN : Add for session
+// Add for session
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromSeconds(1800);
@@ -27,9 +23,7 @@ builder.Services.AddSession(options =>
     options.Cookie.Name = "MySesstionAndCokkie";
 });
 
-
-
-// In the ConfigureServices method
+// Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -39,12 +33,10 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
+// Add for User Authen using Azure AD
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
-
-
-
-//VAREEWAN : Add for User Authen
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy =>
@@ -62,28 +54,24 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 app.UseDeveloperExceptionPage();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication(); // Add this line to use authentication
 app.UseAuthorization();
-//VAREEWAN : Add for session
 app.UseSession();
-app.UseStaticFiles();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Login}/{id?}");
 
 app.Run();
-

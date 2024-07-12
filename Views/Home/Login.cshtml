@@ -188,6 +188,7 @@
         <div class="account-login">
 
             <form action="" class="login-form" method="post" >
+                <!--
                 <div class="form-group">
                     @* <input type="text" placeholder="User Name" class="form-control">*@
                     @Html.TextBoxFor(model => model.UserEmpID, new { @calss = "form-control", @PlaceHolder = "Username" })
@@ -196,7 +197,8 @@
                     @*<input type="password" placeholder="Password" class="form-control">*@
                     @Html.TextBoxFor(model => model.UserPassword, new { @calss = "form-control", @PlaceHolder = "Password", @type = "password" })
                 </div>
-                <button class="Submit">Login</button>
+                -->
+                <button class="Submit">Login with AzureAD</button>
                 <span class="text-danger" style="color:red ;font-size: 16px;">@ViewBag.Message</span>
 
             </form>
