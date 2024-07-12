@@ -139,7 +139,7 @@
                 @foreach (var sectionGroup in Model.tbService.GroupBy(x => x.ServicesID))
                 {
                     var sectiond = sectionGroup.First(); // Take the first item in the group
-                    <option value="@sectiond.ServicesName" selected="@(sectiond.ServicesName == ViewBag.SelectedServicesNamee ? "selected" : null)">
+                    <option value="@sectiond.ServicesName" selected="@(sectiond.ServicesName == ViewBag.SelectedServicesName ? "selected" : null)">
                         @Html.DisplayFor(modelItem => sectiond.ServicesID) : @Html.DisplayFor(modelItem => sectiond.ServicesName)
                     </option>
 
