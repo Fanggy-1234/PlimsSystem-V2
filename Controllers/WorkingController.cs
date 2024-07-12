@@ -1470,7 +1470,7 @@ namespace Plims.Controllers
                         mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.SectionID == SectionID).ToList();
                         ViewBag.SelectedSectionID = SectionID;
                     }
-                    else if (StartDate != DateTime.MinValue)
+                    if (StartDate != DateTime.MinValue)
                     {
                         mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
                              .Where(x => x.TransactionDate >= StartDate)
@@ -1478,7 +1478,7 @@ namespace Plims.Controllers
 
                         ViewBag.SelectedStartDate = StartDate;
                     }
-                    else if (EndDate != DateTime.MinValue)
+                    if (EndDate != DateTime.MinValue)
                     {
                         mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
                          .Where(x => x.TransactionDate <= EndDate)
