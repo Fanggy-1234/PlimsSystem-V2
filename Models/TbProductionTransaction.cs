@@ -6,6 +6,7 @@ namespace Plims.Models
     {
         [Key]
         public int TransactionNo { get; set; }
+        [Key]
         public DateTime TransactionDate { get; set; }
         public int PlantID { get; set; }
         public string LineID { get; set; }

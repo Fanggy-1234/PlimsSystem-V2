@@ -141,6 +141,9 @@ namespace Plims.Data
             modelBuilder.Entity<TbService>()
           .HasKey(v => new { v.ServicesID, v.PlantID });
 
+            modelBuilder.Entity<TbProductionTransaction>()
+          .HasKey(v => new { v.TransactionNo });
+
 
             //            modelBuilder.Entity<TbEmployeeMaster>()
             //.HasKey(v => new { v.ID, v.PlantID ,v.EmployeeID  });
@@ -174,6 +177,8 @@ namespace Plims.Data
 
             modelBuilder.Entity<View_ProductionTransactionAdjust>()
   .HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID, v.QRCode, v.ProductID, v.SectionID });
+
+          
 
             //            modelBuilder.Entity<View_EFFReport>()
             //.HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID,  v.ProductID, v.SectionID });
