@@ -99,6 +99,8 @@ namespace Plims.Data
         public DbSet<View_ProductionTransactionAdjust> View_ProductionTransactionAdjust { get; set; }
 
         public DbSet<TbProductionTransactionAdjust> TbProductionTransactionAdjust { get; set; }
+
+        public DbSet<View_ProductionTransactionAj> view_ProductionTransactionAj { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -176,9 +178,12 @@ namespace Plims.Data
 .HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID, v.EmployeeID, v.SectionID ,v.Type});
 
             modelBuilder.Entity<View_ProductionTransactionAdjust>()
-  .HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID, v.QRCode, v.ProductID, v.SectionID });
+  .HasKey(v => new { v.TransactionID,v.TransactionDate, v.PlantID, v.LineID, v.QRCode, v.ProductID, v.SectionID });
 
-          
+            modelBuilder.Entity<View_ProductionTransactionAj>()
+.HasKey(v => new { v.TransactionNo,v.TransactionDate, v.PlantID, v.LineID, v.QRCode, v.ProductID, v.SectionID });
+
+
 
             //            modelBuilder.Entity<View_EFFReport>()
             //.HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID,  v.ProductID, v.SectionID });

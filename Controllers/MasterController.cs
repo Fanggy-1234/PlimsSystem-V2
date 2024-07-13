@@ -1212,10 +1212,19 @@ namespace Plims.Controllers
                 mymodel.tbProduct = mymodel.tbProduct.Where(x => x.PlantID.Equals(PlantID)).ToList();
             }
 
+            //Check Duplication
+            var Productdbcheck = mymodel.tbProduct.Where(p =>  p.ProductName.Equals(obj.ProductName)).ToList();
+            if (Productdbcheck.Count == 0)
+            {
+                TempData["AlertMessage"] = "Data Duplicate!";
+                return RedirectToAction("Product");
+            }
+
 
             var Productdb = mymodel.tbProduct.Where(p => p.ProductID.Equals(obj.ProductID) && p.ProductName.Equals(obj.ProductName));
             int cnt = db.TbProduct.Count() + 1;
           
+            
                 // Insert new Product               
                 db.TbProduct.Add(new TbProduct()
                 {
