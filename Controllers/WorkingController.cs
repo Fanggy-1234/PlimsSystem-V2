@@ -5369,7 +5369,7 @@ namespace Plims.Controllers
 
 
                             //// Count Employee base on plant, line ,section, productiondate ,prefix
-                            int ProductionTrandinsert = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).ToList().Count();
+                            int ProductionTrandinsert = mymodel.view_ProductionTransactionAj.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate  && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).ToList().Count();
 
                             if (ProductionTrandinsert == 0)
                             {
