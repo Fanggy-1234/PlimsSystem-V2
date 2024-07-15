@@ -174,11 +174,11 @@
                     // var transactionDate = new Date(response.transactionDate);
                     // var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed
 
-                //        var transactionDate = new Date(response.transactionDate);
-                // var year = transactionDate.getFullYear();
-                // var month = ('0' + (transactionDate.getMonth() + 1)).slice(-2);
-                // var day = ('0' + transactionDate.getDate()).slice(-2);
-                // var formattedDate = `${year}-${month}-${day}`;
+                    //        var transactionDate = new Date(response.transactionDate);
+                    // var year = transactionDate.getFullYear();
+                    // var month = ('0' + (transactionDate.getMonth() + 1)).slice(-2);
+                    // var day = ('0' + transactionDate.getDate()).slice(-2);
+                    // var formattedDate = `${year}-${month}-${day}`;
 
 
                     var transactionDate = new Date(response.transactionDate);
@@ -260,8 +260,9 @@
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbLine)
                         {
-                               <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
-                            @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName) </option>
+                            <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
+                            </option>
                         }
                     </select>
                 </div>
@@ -280,32 +281,33 @@
                         {
 
                             <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">
-                                @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName) </option>
+                                @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
+                            </option>
                         }
                     </select>
                 </div>
 
             </div>
             <div class="row" style="height:10px"></div>
-             <div class="row" style="padding-right:2em">
+            <div class="row" style="padding-right:2em">
                 <div class="col-3 label">
                     <label>  Section Name:</label>
                 </div>
                 <div class="col">
                     <!-- Line Name -->
                     <div class="mb-3">
+                        
                         <select class="selectfillter form-control" list="SectionName" name="SectionName" id="SectionName" style="width:100%">
-                            <option value="" default selected></option>
+                            <option value="" selected>Choose Section Name</option>
                             @foreach (var item in Model.tbSection)
                             {
-
-                                <option value="@item.SectionID" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
-                                    @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
+                                <option value="@item.SectionID" selected=@(item.SectionID == ViewBag.SelectedSectionName ? "selected" : null)>
+                                    @Html.DisplayFor(modelItem => item.SectionName)
                                 </option>
                             }
                         </select>
 
-                       
+
                     </div>
 
                 </div>
@@ -313,7 +315,7 @@
 
             </div>
 
-            
+
             <div class="row" style=" padding-right:2em">
                 <div class="col-3 label">
                     <label for="recipient-name" class="col-form-label">  TransactionDate:</label>
@@ -328,21 +330,21 @@
 
 
             </div>
-@* 
+            @*
             <div class="row" style="height: 30px"></div> *@
             @* <div class="row" style="height:40px ;">
-                <div class="col-4"></div>
-                <div class="col-4">
-                    <button class="clear-button" type="submit" action="EmployeeClockOut">
-                        Clear
-                    </button>
-                </div>
+            <div class="col-4"></div>
+            <div class="col-4">
+            <button class="clear-button" type="submit" action="EmployeeClockOut">
+            Clear
+            </button>
+            </div>
 
-                <div class="col-4">
-                    <button class="clear-button" type="submit" action="EmployeeClockOut">
-                        Search
-                    </button>
-                </div>
+            <div class="col-4">
+            <button class="clear-button" type="submit" action="EmployeeClockOut">
+            Search
+            </button>
+            </div>
             </div> *@
 
             <div class="row" style="height:10px;"></div>
@@ -373,7 +375,7 @@
                     <label> Clock Out Date : </label>
                 </div>
                 <div class="col" style="height:80%">
-                   @*  <input class="form-control" type="Date" name="TransactionDate" id="TransactionDate"> *@
+                    @*  <input class="form-control" type="Date" name="TransactionDate" id="TransactionDate"> *@
                     <input type="date" class="form-control" name="TransactionDate" id="TransactionDate" style="width:100%" value="@DateTime.Now.ToString("yyyy-MM-dd")" disabled>
                 </div>
 
@@ -381,14 +383,14 @@
             </div>
 
 
-        @*     <div class="row" style="height:40px ;">
-                <div class="col-8"></div>
-                <div class="col-4">
+            @*     <div class="row" style="height:40px ;">
+            <div class="col-8"></div>
+            <div class="col-4">
 
-                    <button type="submit" class="clear-button" action="EmployeeClockOut" onclick="return confirm('Are you sure?')">Create</button>
+            <button type="submit" class="clear-button" action="EmployeeClockOut" onclick="return confirm('Are you sure?')">Create</button>
 
 
-                </div>
+            </div>
 
             </div> *@
 
@@ -423,15 +425,15 @@
             <div class="row" style="height:40px ;">
                 <div class="col-9"></div>
                 <div class="col-3">
-                        @if (ViewBag.VBRoleEmpClockOut == "Full")
-                        {
+                    @if (ViewBag.VBRoleEmpClockOut == "Full")
+                    {
                         <button type="submit" class="clear-button" name="action" value="Save" asp-action="EmployeeClockOutsave" onclick="return confirm('Are you sure?')">Create</button>
-                            }
-                            else
-                            {
-                            <button type="button" class="clear-button" >Create</button>
-                            }
-                 
+                    }
+                    else
+                    {
+                        <button type="button" class="clear-button">Create</button>
+                    }
+
                 </div>
             </div>
         </div>
@@ -479,16 +481,16 @@
                 </th>
                 <th>
                     Action
-                </th> 
+                </th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model.view_EmployeeClocktime)
             {
                 <tr>
-                  @*   @Html.HiddenFor(modelItem => item.ID) *@
+                    @*   @Html.HiddenFor(modelItem => item.ID) *@
                     <td>
-                       <input type="checkbox" id="@item.ID" value="@item.ID" class="checkthis" Name="EmployeeIDChk" />
+                        <input type="checkbox" id="@item.ID" value="@item.ID" class="checkthis" Name="EmployeeIDChk" />
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.EmployeeID, new { @class = "EmployeeID", Name = "EmployeeID" })
@@ -524,7 +526,7 @@
                     <td style="color:darkblue">
                         @Html.DisplayFor(modelItem => item.ClockOut)
                     </td>
-                    <td >
+                    <td>
                         @Html.DisplayFor(modelItem => item.WorkingStatus)
                     </td>
 
@@ -532,25 +534,25 @@
                         @if (string.IsNullOrEmpty(item.ClockOut))
                         {
                             <a href="#" id="btnEdit" data-id="@item.ID" data-section-id="@item.ID" data-service-id="@item.ID">Edit</a>
-                           
+
 
                         }
                         else
                         {
-                         
-                                @if (ViewBag.VBRoleEmpClockOut == "Full")
+
+                            @if (ViewBag.VBRoleEmpClockOut == "Full")
                             {
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.EmployeeID" data-section-id="@item.EmployeeID" data-service-id="@item.EmployeeID" onclick="EditFn('@item.ID','@item.TransactionNo')">Edit</a>
 
                             }
                             else
                             {
-                                <a href="#" id="btnEdit" data-id="@item.EmployeeID" >Edit</a>
+                                <a href="#" id="btnEdit" data-id="@item.EmployeeID">Edit</a>
 
 
                             }
                         }
-                    </td> 
+                    </td>
                 </tr>
             }
         </tbody>
@@ -589,7 +591,7 @@
                     <!-- Transaction Date -->
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Clock Out Date:</label>
-                        <input type="text" class="form-control" name="TransactionDate" id="ModalTransactionDate"  style="background-color:gainsboro" readonly>
+                        <input type="text" class="form-control" name="TransactionDate" id="ModalTransactionDate" style="background-color:gainsboro" readonly>
                     </div>
 
                 </div>
