@@ -404,9 +404,15 @@
                         </div>
                         <div class="col">
                             <div class="row" style="height:100%">
-                                <div class="col-6">
+                                <div class="container">
+                        @*     <img src="@ViewData["QrCodeUri"]" class="img-thumbnail" /> *@
+                            <img id="QRCodeImage" src="" class="img-thumbnail" style="display: none;" />
+                              
+                            </div>
+
+                              @*   <div class="col-6">
                                     <img id="QRCodeImage" src="" class="img-thumbnail" style="display: none; width:100% ; height:100%" />
-                                </div>
+                                </div> *@
                             </div>
 
                         </div>
@@ -489,7 +495,7 @@
                                 </select> *@
 
 
-                                <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="ModalEmployeeID" required>
+                                <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="ModalEmployeeID" >
                                     <option value="" default selected></option>
                                     @foreach (var dataGroup in Model.tbEmployeeMaster.GroupBy(x => x.EmployeeID))
                                     {
@@ -505,7 +511,7 @@
                         <div class="col">
                             <div class="row" style="height:100%">
                                 <div class="col-3">
-                                    <img alt="QRImg" id="modalImage" style="width: 100%; height: auto;" />
+                                    <img alt="QRCodeImage" id="QRCodeImage" style="width: 100%; height: auto;" />
                                     @* <img src="D:\PLIMS PROJECT\Plims_11\QRCode.png" id="ModalImgQRCode" alt="QR Code"> *@
                                 </div>
                             </div>
@@ -1131,13 +1137,16 @@
             success: function (response) {
                 console.log(response);
                 // Update the QR code image source
-                $('#QRCodeImage').attr('src', response.qrUri);
+                $('#QRCodeImage').attr('src', response);
                 // $('#EmployeeIDCreate').val(response.employeeID);
                 // Optionally, update other elements in the modal as needed
                 $('#QRCodeImage').show(); // Show the QR code image
-                $('#QrCodeUri').val(response.qrUri); // Set the QR code URI to a hidden input field
+                $('#QrCodeUri').val(response); // Set the QR code URI to a hidden input field
                 $('#generateButton').prop('disabled', true); // Disable the "Generate QR Code" button
                 // You can add more actions here based on your requirements
+
+
+
             }
         });
     }
