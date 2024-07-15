@@ -301,7 +301,7 @@
                             <option value="" selected>Choose Section Name</option>
                             @foreach (var item in Model.tbSection)
                             {
-                                <option value="@item.SectionID" selected=@(item.SectionID == ViewBag.SelectedSectionName ? "selected" : "")>
+                                <option value="@item.SectionID" selected=@(item.SectionID == ViewBag.SelectedSectionName ? "selected" : null)>
                                     @Html.DisplayFor(modelItem => item.SectionName)
                                 </option>
                             }
