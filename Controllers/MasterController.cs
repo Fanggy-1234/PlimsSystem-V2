@@ -484,7 +484,7 @@ namespace Plims.Controllers
 
                     if (inactivestatus == true)
                     {
-                        mymodel.tbLine = mymodel.tbLine.Where(x => x.Status == 0).OrderByDescending(x => x.Status).ToList();
+                        mymodel.tbLine = mymodel.tbLine.ToList();
                         ViewBag.InactiveStatus = true;
                     }
                     else
@@ -1062,7 +1062,7 @@ namespace Plims.Controllers
 
                 if (inactivestatus == true)
                 {
-                    mymodel.tbProduct = mymodel.tbProduct.Where(x => x.Status == 0).OrderByDescending(x => x.Status).ToList();
+                    mymodel.tbProduct = mymodel.tbProduct.ToList();
                     ViewBag.InactiveStatus = true;
                 }
                 else
@@ -1735,7 +1735,7 @@ namespace Plims.Controllers
                 }
                 if (inactivestatus == true)
                 {
-                    mymodel.tbSection = mymodel.tbSection.Where(x => x.Status == 0).ToList();
+                    mymodel.tbSection = mymodel.tbSection.ToList();
                     ViewBag.InactiveStatus = true;
                 }
                 else
@@ -2387,7 +2387,7 @@ namespace Plims.Controllers
                 }
                 if (inactivestatus == true)
                 {
-                    mymodel.tbShift = mymodel.tbShift.Where(x => x.Status == 0).ToList();
+                    mymodel.tbShift = mymodel.tbShift.ToList();
                     ViewBag.InactiveStatus = true;
                 }
                 else
@@ -2728,7 +2728,7 @@ namespace Plims.Controllers
                 }
                 if (inactivestatus == true)
                 {
-                    incentives.view_Incentive = incentives.view_Incentive.Where(x => x.Status == 0).ToList();
+                    incentives.view_Incentive = incentives.view_Incentive.ToList();
                     ViewBag.InactiveStatus = true;
                 }
                 else
@@ -3701,7 +3701,7 @@ namespace Plims.Controllers
                 }
                 if (inactivestatus == true)
                 {
-                    Mymodel.view_Service = Mymodel.view_Service.Where(x => x.ServicesStatus == 0).ToList();
+                    Mymodel.view_Service = Mymodel.view_Service.ToList();
                     ViewBag.InactiveStatus = true;
                 }
                 else
@@ -4373,7 +4373,7 @@ namespace Plims.Controllers
                 }
                 if (inactivestatus == true)
                 {
-                    reason.view_Reason = reason.view_Reason.Where(x => x.Status == 0).ToList();
+                    reason.view_Reason = reason.view_Reason.ToList();
                     ViewBag.InactiveStatus = true;
                 }
                 else
@@ -4734,7 +4734,7 @@ namespace Plims.Controllers
                 }
                 if (inactivestatus == true)
                 {
-                    mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.Status == 0).ToList();
+                    mymodel.view_ProductSTD = mymodel.view_ProductSTD.ToList();
                     ViewBag.InactiveStatus = true;
                 }
                 else
@@ -5444,7 +5444,7 @@ namespace Plims.Controllers
                 }
                 if (inactivestatus == true)
                 {
-                    mymodel.view_PLPS = mymodel.view_PLPS.Where(x => x.Status == 0).ToList();
+                    mymodel.view_PLPS = mymodel.view_PLPS.ToList();
                     ViewBag.InactiveStatus = true;
                 }
                 else
@@ -7200,7 +7200,7 @@ namespace Plims.Controllers
                 }
                 if (inactivestatus == true)
                 {
-                    mymodel.view_EmployeeGroupList = mymodel.view_EmployeeGroupList.Where(x => x.Status == 0).ToList();
+                    mymodel.view_EmployeeGroupList = mymodel.view_EmployeeGroupList.ToList();
                     ViewBag.InactiveStatus = true;
                 }
                 else
