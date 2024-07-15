@@ -667,7 +667,7 @@
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
                                 <option value="@dataFrist.LineID">
-                                    @Html.DisplayFor(modelItem => dataFrist.LineName)
+                                      @Html.DisplayFor(modelItem => dataFrist.LineID) : @Html.DisplayFor(modelItem => dataFrist.LineName)
                                 </option>
 
                             }
@@ -696,7 +696,7 @@
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
                                 <option value="@dataFrist.SectionID">
-                                  @Html.DisplayFor(modelItem => dataFrist.SectionName)
+                                    @Html.DisplayFor(modelItem => dataFrist.SectionID) : @Html.DisplayFor(modelItem => dataFrist.SectionName)
                                 </option>
 
                             }

@@ -1092,15 +1092,18 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
+            var mymodel = new ViewModelAll
+            {
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                tbProductionTransaction = db.TbProductionTransaction.Where(p => p.PlantID.Equals(PlantID)).ToList(),
+                tbProduct = db.TbProduct.Where(p => p.PlantID.Equals(PlantID)).ToList(),
+                tbSection = db.TbSection.Where(p => p.PlantID.Equals(PlantID)).ToList()
+            };
+
 
             if (FileUpload == null || FileUpload.Length <= 0)
             {
-                var mymodel = new ViewModelAll
-                {
-                    view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                    tbProductionTransaction = db.TbProductionTransaction.Where(p => p.PlantID.Equals(PlantID)).ToList()
-                };
-
+               
                 ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
 
                 ViewBag.Error = "Please select a valid Excel file.";
@@ -1136,8 +1139,8 @@ namespace Plims.Controllers
                             }
 
                             var LineIDDb = db.TbLine.Where(x => x.LineID.Equals(LineVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.LineID).SingleOrDefault();
-                            var ProductIDDb = db.TbProduct.Where(x => x.ProductID.Equals(ProductVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.ProductID).SingleOrDefault();
-                            var SectionIDDb = db.TbSection.Where(x => x.SectionID.Equals(SectionVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.SectionID).SingleOrDefault();
+                            var ProductIDDb = mymodel.tbProduct.Where(x => x.ProductID.Equals(ProductVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.ProductID).SingleOrDefault();
+                            var SectionIDDb = mymodel.tbSection.Where(x => x.SectionID.Equals(SectionVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.SectionID).SingleOrDefault();
                             var EmployeeIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.EmployeeID).SingleOrDefault();
                             var PLPSIDDb = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb) && x.Status.Equals(1)).Select(x => x.FormularID).SingleOrDefault();
                             var EmployeeRefIDDb = "";

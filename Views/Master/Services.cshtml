@@ -449,7 +449,7 @@
  *@
                         <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineNameCreate" required onchange="filterSectionsByLineCreate()">
                             <option value="" default selected></option>
-                            @foreach (var dataGroup in Model.tbLine.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
                                 <option value="@dataFrist.LineID">
@@ -476,7 +476,7 @@
 
                          <select class="selectfillter form-control" style="width:100%" name="SectionName" required id="SectionNameCreate">
                             <option value="" default selected></option>
-                            @foreach (var dataGroup in Model.tbSection.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
+                            @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
                                 <option value="@dataFrist.SectionID">
@@ -485,6 +485,8 @@
 
                             }
                         </select>
+
+
 
 
                     </div>

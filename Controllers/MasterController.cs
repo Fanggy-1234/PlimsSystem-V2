@@ -3883,7 +3883,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
             int cntdb = db.TbService.Count()+1;
-            //Check Duplicate
+            
 
             var Mymodel = new ViewModelAll
             {
@@ -3900,7 +3900,10 @@ namespace Plims.Controllers
 
             }
 
-            var servicedb = Mymodel.tbService.Where(p => p.ServicesName.Equals(obj.ServicesName)  && p.LineID.Equals(obj.LineName) && p.ServicesStatus.Equals(1));
+            var servicedb = Mymodel.tbService.Where(p => p.ServicesName.Trim().Equals(obj.ServicesName.Trim())  && p.LineID.Equals(obj.LineName) && p.ServicesStatus.Equals(1));
+            //Check Duplicate
+           
+
             if (servicedb.Count() == 0)
             {
                 // Insert new Service
