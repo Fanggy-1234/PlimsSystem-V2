@@ -25,7 +25,7 @@
     }
 
     #table_id {
-        border: 0.1px solid #A9A9A9; 
+        border: 0.1px solid #A9A9A9;
         border-collapse: collapse;
         width: 100%;
     }
@@ -52,14 +52,14 @@
 
         #table_id th,
         #table_id td {
-            border: 0.1px solid #A9A9A9; 
+            border: 0.1px solid #A9A9A9;
             border-collapse: collapse;
         }
-     .dataTables_scrollHeadInner,
+
+    .dataTables_scrollHeadInner,
     .table {
         width: 100% !important;
-    }  
-
+    }
 </style>
 
 
@@ -110,26 +110,26 @@
     <div class="row">
         <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> EmployeeID:</label></div>
         <div class="col-3">
-    @*         <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeID">
-                <option value="" default selected></option>
-                @foreach (var item in Model.tbEmployeeMaster)
-                {
+            @*         <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeID">
+            <option value="" default selected></option>
+            @foreach (var item in Model.tbEmployeeMaster)
+            {
 
-                    <option>@Html.DisplayFor(modelItem => item.EmployeeID) </option>
+            <option>@Html.DisplayFor(modelItem => item.EmployeeID) </option>
+            }
+            </select>
+            *@
+            <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="Employee">
+                <option value="" default selected></option>
+                @foreach (var dataGroup in Model.view_EmployeeGroup.GroupBy(x => x.EmployeeID))
+                {
+                    var dataFrist = dataGroup.First(); // Take the first item in the group
+                    <option value="@dataFrist.EmployeeID" selected="@(dataFrist.EmployeeID == ViewBag.SelectedEmployeeID ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => dataFrist.EmployeeID) : @Html.DisplayFor(modelItem => dataFrist.EmployeeName)
+                    </option>
+
                 }
             </select>
- *@
-              <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="Employee">
-                                    <option value="" default selected></option>
-                                    @foreach (var dataGroup in Model.view_EmployeeGroup.GroupBy(x => x.EmployeeID))
-                                    {
-                                        var dataFrist = dataGroup.First(); // Take the first item in the group
-                                        <option value="@dataFrist.EmployeeID" selected="@(dataFrist.EmployeeID == ViewBag.SelectedEmployeeID ? "selected" : null)">
-                                            @Html.DisplayFor(modelItem => dataFrist.EmployeeID) : @Html.DisplayFor(modelItem => dataFrist.EmployeeName)
-                                        </option>
-
-                                    }
-                                </select>
 
         </div>
         <div class="col-2"></div>
@@ -199,14 +199,14 @@
 
         </div>
     </div>
-@* </form> *@
+    @* </form> *@
 
 
-<br />
+    <br />
 
-<div class="row" style="height:10px"></div>
+    <div class="row" style="height:10px"></div>
 
-@* <form asp-controller="Master" method="post" id="dataTableForm"> *@
+    @* <form asp-controller="Master" method="post" id="dataTableForm"> *@
     @* <div id="table_info" class="page-table"></div> *@
     @*Display data*@
     <table id="table_id" class="table table-hover" style="width:100%">
@@ -239,13 +239,13 @@
                 <tr>
                     @Html.HiddenFor(modelItem => item.GroupID)
 
-                    <td id="GroupID" >
+                    <td id="GroupID">
                         @Html.DisplayFor(modelItem => item.GroupID)
                     </td>
                     <td id="EmployeeID">
                         @Html.DisplayFor(modelItem => item.EmployeeIDs)
                     </td>
-                    <td id="EmployeeName" >
+                    <td id="EmployeeName">
                         @Html.DisplayFor(modelItem => item.EmployeeNames)
                     </td>
                     @if (item.Status == 1)
@@ -327,7 +327,7 @@
 
                 <button type="button" class="clear-button" id="btnSelectFile">Import</button>
                 <input type="file" id="FileUpload" name="FileUpload" class="hidden-file-input" style="display: none" />
-                
+
             }
             else
             {
@@ -370,24 +370,24 @@
                             <div class="mb-3">
                                 <label for="recipient-name" class="col-form-label">Group ID:</label>
                                 @{
-                                    // int value = @Model.view_EmployeeGroupList.Count() + 1;
-                                    // string formattedValue = value.ToString("00000");
-                                    <input type="text" class="form-control" style="background-color:gainsboro" name="GroupID" id="GroupIDCreate" readonly >
+            // int value = @Model.view_EmployeeGroupList.Count() + 1;
+            // string formattedValue = value.ToString("00000");
+                                    <input type="text" class="form-control" style="background-color:gainsboro" name="GroupID" id="GroupIDCreate" readonly>
                                 }
 
                             </div>
                             <div class="mb-3">
                                 <label for="recipient-name" class="col-form-label">Employee ID:</label>
-                          @*       <select class="selectfillter form-control" style="width:100%" name="EmployeeIDCreate" id="EmployeeIDCreate">
-                                    <option value="" default selected>Please Select ..</option>
-                                    @foreach (var item in Model.tbEmployeeMaster.Where(x => x.Status.Equals(1)))
-                                    {
+                                @*       <select class="selectfillter form-control" style="width:100%" name="EmployeeIDCreate" id="EmployeeIDCreate">
+                                <option value="" default selected>Please Select ..</option>
+                                @foreach (var item in Model.tbEmployeeMaster.Where(x => x.Status.Equals(1)))
+                                {
 
-                                        <option>@Html.DisplayFor(modelItem => item.EmployeeID) </option>
-                                    }
+                                <option>@Html.DisplayFor(modelItem => item.EmployeeID) </option>
+                                }
                                 </select> *@
 
-                                <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeIDCreate" >
+                                <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeIDCreate">
                                     <option value="" default selected></option>
                                     @foreach (var dataGroup in Model.tbEmployeeMaster.GroupBy(x => x.EmployeeID))
                                     {
@@ -404,7 +404,7 @@
                         </div>
                         <div class="col">
                             <div class="row" style="height:100%">
-                                <div class="col-6">         
+                                <div class="col-6">
                                     <img id="QRCodeImage" src="" class="img-thumbnail" style="display: none; width:100% ; height:100%" />
                                 </div>
                             </div>
@@ -422,14 +422,14 @@
                     <div class="row" style="height:20px"></div>
                     @*  // Display table *@
                     <div class="row">
-                        <table id="tablesubcreate_id"  style="width:100%">
+                        <table id="tablesubcreate_id" style="width:100%">
                             <thead style="background-color:gainsboro;">
                                 <tr>
 
                                     <th style="text-align:center">
                                         Employee ID
                                     </th>
-                                    <th  style="text-align:center">
+                                    <th style="text-align:center">
                                         Employee Name
                                     </th>
                                     <th style="text-align:center">
@@ -448,7 +448,7 @@
 
 
                 <div class="modal-footer">
-               
+
                     <button type="button" class="btn btn-secondary" name="submit" id="CreateGroupQRCode" onclick="generateQRCode()" value="Generate">Generate Barcode</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" id="btncreatesubmit" value="Enter">Submit</button>
@@ -464,8 +464,8 @@
 <div class="modal fade bd-example-modal-lg" id="EditModal" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-           @*  asp-action="EmployeeGroupQRCodeUpdate" *@
-            <form method="get" controller="Master" >
+            @*  asp-action="EmployeeGroupQRCodeUpdate" *@
+            <form method="get" controller="Master">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Employee Group Update</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -479,13 +479,13 @@
                             </div>
                             <div class="mb-3">
                                 <label for="recipient-name" class="col-form-label">Employee ID:</label>
-                             @*    <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="ModalEmployeeID">
-                                    <option value="" default selected></option>
-                                    @foreach (var item in Model.tbEmployeeMaster.Where(x => x.Status.Equals(1)))
-                                    {
+                                @*    <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="ModalEmployeeID">
+                                <option value="" default selected></option>
+                                @foreach (var item in Model.tbEmployeeMaster.Where(x => x.Status.Equals(1)))
+                                {
 
-                                        <option>@Html.DisplayFor(modelItem => item.EmployeeID) </option>
-                                    }
+                                <option>@Html.DisplayFor(modelItem => item.EmployeeID) </option>
+                                }
                                 </select> *@
 
 
@@ -505,7 +505,7 @@
                         <div class="col">
                             <div class="row" style="height:100%">
                                 <div class="col-3">
-                                     <img alt="QRImg" id="modalImage" style="width: 100%; height: auto;" />
+                                    <img alt="QRImg" id="modalImage" style="width: 100%; height: auto;" />
                                     @* <img src="D:\PLIMS PROJECT\Plims_11\QRCode.png" id="ModalImgQRCode" alt="QR Code"> *@
                                 </div>
                             </div>
@@ -614,13 +614,13 @@
                     });
 
 
-                      var employeeID = $('#ModalGroupID').val();
+                    var employeeID = $('#ModalGroupID').val();
 
-                         // Construct the URL for the QR code image
+                    // Construct the URL for the QR code image
                     var qrCodeUrl = '@Url.Content("~/qrcodes/")' + employeeID + '_QRCode.png';
-                             console.log('QR path : ' + qrCodeUrl)
-                        // Set the src attribute of the img tag to the constructed URL
-                        $('#modalImage').attr('src', qrCodeUrl);
+                    console.log('QR path : ' + qrCodeUrl)
+                    // Set the src attribute of the img tag to the constructed URL
+                    $('#modalImage').attr('src', qrCodeUrl);
 
 
 
@@ -635,14 +635,14 @@
 
         });
     }
-  /////////////////////////////////////////////////////////////////////////
-  $(document).on('click', '.btnEmpDel', function() {
-    // Find the parent row and remove it
-    $(this).closest('tr').remove();
-});
+    /////////////////////////////////////////////////////////////////////////
+    $(document).on('click', '.btnEmpDel', function () {
+        // Find the parent row and remove it
+        $(this).closest('tr').remove();
+    });
 
 
-///////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////
 
     //Function Inactive ////////////////////////////////////////////////
     function InactiveFn(id) {
@@ -747,7 +747,7 @@
     // });
 
 
-    
+
     // $(document).ready(function () {
     //     $('#btnExport').click(function () {
     //         var $table = $('#table_id');
@@ -809,106 +809,106 @@
 
 
     $(document).ready(function () {
-    $('#btncreatesubmit').click(function () {
-        // Initialize an array to store table data
-        var tableData = [];
+        $('#btncreatesubmit').click(function () {
+            // Initialize an array to store table data
+            var tableData = [];
 
-        // Iterate through each row in the table
-        $('#tablesubcreate_id tbody tr').each(function (index, row) {
-            // Initialize an object to store row data
-            var rowData = {};
+            // Iterate through each row in the table
+            $('#tablesubcreate_id tbody tr').each(function (index, row) {
+                // Initialize an object to store row data
+                var rowData = {};
 
-            // Iterate through each cell in the row
-            $(row).find('td').each(function (index, col) {
-                // Extract column name and cell value
-                var columnName = $('#tablesubcreate_id thead th').eq(index).text();
-                var cellValue = $(col).text();
+                // Iterate through each cell in the row
+                $(row).find('td').each(function (index, col) {
+                    // Extract column name and cell value
+                    var columnName = $('#tablesubcreate_id thead th').eq(index).text();
+                    var cellValue = $(col).text();
 
-                // Add cell value to rowData object
-                rowData[columnName] = cellValue;
+                    // Add cell value to rowData object
+                    rowData[columnName] = cellValue;
+                });
+
+                // Add rowData object to tableData array
+                tableData.push(rowData);
             });
 
-            // Add rowData object to tableData array
-            tableData.push(rowData);
-        });
+            // Convert tableData array to JSON string
+            var jsonData = JSON.stringify(tableData);
 
-        // Convert tableData array to JSON string
-        var jsonData = JSON.stringify(tableData);
-
-        // Send JSON data to server via AJAX
-        $.ajax({
-            url: '/Master/EmployeeGroupCreate',
-            type: 'POST',
-            contentType: 'application/json',
-            data: jsonData,
-            success: function (response) {
-                // Handle success response     
+            // Send JSON data to server via AJAX
+            $.ajax({
+                url: '/Master/EmployeeGroupCreate',
+                type: 'POST',
+                contentType: 'application/json',
+                data: jsonData,
+                success: function (response) {
+                    // Handle success response
                     location.reload();
-            },
-            error: function (xhr, status, error) {
-                // Handle error response
-                console.error('Error creating data:', error);
-                alert("Error creating Employee Group");
-            }
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response
+                    console.error('Error creating data:', error);
+                    alert("Error creating Employee Group");
+                }
+            });
         });
     });
-});
 
 
 
 
-//     // Attach click event to the "Add" button  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//     $('#AddEmpCreate').on('click', function () {
-//         addRowCreate();
-//     });
+    //     // Attach click event to the "Add" button  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //     $('#AddEmpCreate').on('click', function () {
+    //         addRowCreate();
+    //     });
 
-//     // Function to add a new row to DataTable Modal Create
-//     function addRowCreate() {
+    //     // Function to add a new row to DataTable Modal Create
+    //     function addRowCreate() {
 
-//         var employeeID = $("#EmployeeIDCreate").val(); // Get the selected value from the dropdown
+    //         var employeeID = $("#EmployeeIDCreate").val(); // Get the selected value from the dropdown
 
-//         // Check for duplicates
-//         var duplicate = false;
-//         $('#tablesubcreate_id tbody tr').each(function () {
-//             var existingEmployeeID = $(this).find('td:first').text().trim(); // Assuming employeeID is the first column
-//             if (employeeID === existingEmployeeID) {
-//                 duplicate = true;
-//                 return false; // Exit the loop early since we found a duplicate
-//             }
-//         });
+    //         // Check for duplicates
+    //         var duplicate = false;
+    //         $('#tablesubcreate_id tbody tr').each(function () {
+    //             var existingEmployeeID = $(this).find('td:first').text().trim(); // Assuming employeeID is the first column
+    //             if (employeeID === existingEmployeeID) {
+    //                 duplicate = true;
+    //                 return false; // Exit the loop early since we found a duplicate
+    //             }
+    //         });
 
-//         if (duplicate) {
-//             // Handle duplicate entry
-//             alert('Duplicate entry found.');
-//             return; // Exit the function to prevent adding duplicate rows
-//         }
+    //         if (duplicate) {
+    //             // Handle duplicate entry
+    //             alert('Duplicate entry found.');
+    //             return; // Exit the function to prevent adding duplicate rows
+    //         }
 
 
-//         // Make an AJAX request to fetch the employeeName
-//         $.ajax({
-//             url: '/Master/GetEmployeeName', // Replace with your actual route
-//             type: 'GET',
-//             data: { employeeID: employeeID },
-//             success: function (employeeName) {
-//                 console.log(employeeName);
-//                 var tableBody = $('#tablesubcreate_id tbody');
-//                 var row = $('<tr>');
-//                 row.append('<td class="page-table-data">' + employeeID + '</td>');
-//                 row.append('<td class="page-table-data">' + employeeName + '</td>');
-//               //  row.append('<td  class="page-table-data"><a href="#" class="delete-link delete-row" data-employee-id="' + employeeID + '">Delete</a></td>');
-//                 row.append('<td class="page-table-data"><a href="#" class="delete-link delete-row" data-employee-id="' + employeeID + '">Delete</a></td>');
-//                 tableBody.append(row);
-//                 // class="page-table-data"
-//                // GroupIDCreate
-//                 // Redraw DataTable after adding a new row
-//                 $('#tablesubcreate_id').DataTable().draw();
-//             },
-//             error: function (error) {
-//                 console.log(error);
-//             }
-//         });
-//     }
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //         // Make an AJAX request to fetch the employeeName
+    //         $.ajax({
+    //             url: '/Master/GetEmployeeName', // Replace with your actual route
+    //             type: 'GET',
+    //             data: { employeeID: employeeID },
+    //             success: function (employeeName) {
+    //                 console.log(employeeName);
+    //                 var tableBody = $('#tablesubcreate_id tbody');
+    //                 var row = $('<tr>');
+    //                 row.append('<td class="page-table-data">' + employeeID + '</td>');
+    //                 row.append('<td class="page-table-data">' + employeeName + '</td>');
+    //               //  row.append('<td  class="page-table-data"><a href="#" class="delete-link delete-row" data-employee-id="' + employeeID + '">Delete</a></td>');
+    //                 row.append('<td class="page-table-data"><a href="#" class="delete-link delete-row" data-employee-id="' + employeeID + '">Delete</a></td>');
+    //                 tableBody.append(row);
+    //                 // class="page-table-data"
+    //                // GroupIDCreate
+    //                 // Redraw DataTable after adding a new row
+    //                 $('#tablesubcreate_id').DataTable().draw();
+    //             },
+    //             error: function (error) {
+    //                 console.log(error);
+    //             }
+    //         });
+    //     }
+    // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     $(document).ready(function () {
         // Function to handle click event for delete links
@@ -943,7 +943,7 @@
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    
+
 
     // Attach click event to the "Add" button
     $('#AddEmpEdit').on('click', function () {
@@ -975,14 +975,14 @@
             type: 'GET',
             data: { employeeID: employeeID },
             success: function (employeeName) {
-              
+
                 // Get DataTable instance
                 var dataTableedit = $('#tablesubedit_id tbody');
-               // dataTableedit.empty();
-                        var row = $('<tr>');
-                        row.append('<td class="page-table-data">' + employeeID + '</td>');
-                        row.append('<td class="page-table-data">' + employeeName + '</td>');
-                        row.append('<td class="page-table-data"><a href="#" class="delete-link btnEmpDel" onclick="DeleteFn(' + employeeID + ')" data-employee-id="' + employeeID + '">Delete</a></td>');
+                // dataTableedit.empty();
+                var row = $('<tr>');
+                row.append('<td class="page-table-data">' + employeeID + '</td>');
+                row.append('<td class="page-table-data">' + employeeName + '</td>');
+                row.append('<td class="page-table-data"><a href="#" class="delete-link btnEmpDel" onclick="DeleteFn(' + employeeID + ')" data-employee-id="' + employeeID + '">Delete</a></td>');
                 dataTableedit.append(row);
 
                 // Add the new row to the DataTable
@@ -1033,12 +1033,12 @@
                 contentType: 'application/json',
                 data: jsonData,
                 success: function (response) {
-                    // alert("Successful"); 
-                     location.reload();
-                  //  console.log('test test test');
-                $('#EditModal .modal-content').html(response); // Replace EditModal with the correct ID of your modal
-                // Optionally, you can close the modal after updating its content
-                $('#EditModal').modal('hide');
+                    // alert("Successful");
+                    location.reload();
+                    //  console.log('test test test');
+                    $('#EditModal .modal-content').html(response); // Replace EditModal with the correct ID of your modal
+                    // Optionally, you can close the modal after updating its content
+                    $('#EditModal').modal('hide');
 
                 },
                 error: function (xhr, status, error) {
@@ -1057,14 +1057,14 @@
     //     searching: false,
     //     ordering: false,
     //     paging: false,
-       
+
     // });
 
     new DataTable('#tablesubedit_id', {
         searching: false,
         ordering: false,
         paging: false,
-        
+
     });
 
 
@@ -1107,7 +1107,7 @@
                     // Set the src attribute of the img element dynamically
                     $('#imageDisplay').attr('src', '/Image/GetImage?imageName=' + GroupID);
 
-         
+
                 } else {
                     alert("Please enter Image Name");
                 }
@@ -1121,18 +1121,18 @@
 
 
     /////// FANG /////////////////////////
-     function generateQRCode() {
+    function generateQRCode() {
         var employeeID = $('#GroupIDCreate').val(); // Get the employee ID from the input field
-     //   console.log(employeeID)
+        //   console.log(employeeID)
         $.ajax({
             url: '@Url.Action("CreateQRCodeGroup", "Master")', // Specify the controller action URL
             type: 'POST',
             data: { employeeID: employeeID }, // Send the employee ID to the controller
             success: function (response) {
-               console.log(response);
+                console.log(response);
                 // Update the QR code image source
                 $('#QRCodeImage').attr('src', response.qrUri);
-               // $('#EmployeeIDCreate').val(response.employeeID);
+                // $('#EmployeeIDCreate').val(response.employeeID);
                 // Optionally, update other elements in the modal as needed
                 $('#QRCodeImage').show(); // Show the QR code image
                 $('#QrCodeUri').val(response.qrUri); // Set the QR code URI to a hidden input field
@@ -1154,6 +1154,9 @@
     function addRowCreate() {
 
         var employeeID = $("#EmployeeIDCreate").val(); // Get the selected value from the dropdown
+        if (!employeeID) {
+            return alert('Please input Employee ID')
+        }
 
         // Check for duplicates
         var duplicate = false;
@@ -1195,4 +1198,4 @@
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                </script>
+</script>
