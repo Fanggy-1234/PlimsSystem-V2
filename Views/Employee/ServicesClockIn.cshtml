@@ -270,52 +270,99 @@
 
 
 
-    //////////////////////////////////////
-    function AddserviceFn() {
-        var selectedService = $("#ServicesID option:selected");
-        var selectedSection = $("#SectionID option:selected");
-        var tableBody = $("#tablecreate_id tbody");
-        $("#SectionSelect").val(selectedSection.val());
-        // Check if a service is selected
-        if (selectedService.val() !== "") {
-            if (selectedSection.val() === "ALL") {
-                // Loop through all sections and add a row for each section with the selected service
-                $("#SectionID option").each(function () {
-                    var section = $(this);
-                    if (section.val() !== "ALL" && section.val() !== "") {
-                        var newRow = $("<tr>");
-                        newRow.append("<td>" + section.text() + "</td>");
-                        newRow.append("<td>" + selectedService.text() + "</td>");
-                        newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
-                        tableBody.append(newRow);
-                    }
-                });
-            } else if (selectedSection.val() !== "") {
-                // Add a new row to the table with the selected section-service pair
-                var newRow = $("<tr>");
-                newRow.append("<td>" + selectedSection.text() + "</td>");
-                newRow.append("<td>" + selectedService.text() + "</td>");
-                newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
-                tableBody.append(newRow);
+    // // //////////////////////////////////////
+    // function AddserviceFn() {
+    //     var selectedService = $("#ServicesID option:selected");
+    //     var selectedSection = $("#SectionID option:selected");
+    //     var tableBody = $("#tablecreate_id tbody");
+    //     $("#SectionSelect").val(selectedSection.val());
+      
+
+    //     // Check if a service is selected
+    //     if (selectedService.val() !== "") {
+    //         if (selectedSection.val() === "ALL") {
+    //             // Loop through all sections and add a row for each section with the selected service
+    //             $("#SectionID option").each(function () {
+    //                 var section = $(this);
+    //                 if (section.val() !== "ALL" && section.val() !== "") {
+    //                     var newRow = $("<tr>");
+    //                     newRow.append("<td>" + section.text() + "</td>");
+    //                     newRow.append("<td>" + selectedService.text() + "</td>");
+    //                     newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
+    //                     tableBody.append(newRow);
+    //                 }
+    //             });
+    //         } if (selectedSection.val() !== "" && selectedSection.val() !== "ALL") {
+    //             // Add a new row to the table with the selected section-service pair
+    //             var newRow = $("<tr>");
+    //             newRow.append("<td>" + selectedSection.text() + "</td>");
+    //             newRow.append("<td>" + selectedService.text() + "</td>");
+    //             newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
+    //             tableBody.append(newRow);
             
-            }
+    //         }
 
-            // Clear the selected options in the dropdowns
-            // document.getElementById("ServicesID").selectedIndex = 0;
-            // document.getElementById("SectionID").selectedIndex = 0;
-            // $('#ServicesID').val(response.transactionNo);
-            // $('#SectionID').val(response.employeeID);
+    //         // Clear the selected options in the dropdowns
+    //        //  document.getElementById("ServicesID").selectedIndex = 0;
+    //      //    document.getElementById("SectionID").selectedIndex = 0;
+    //      //    $('#ServicesID').val(response.transactionNo);
+    //         // $('#SectionID').val(response.employeeID);
 
 
-            // Update the hidden input with the table data
-            UpdateTableData();
-        } else {
-            alert("Please select a service before adding.");
+    //         // Update the hidden input with the table data
+    //         UpdateTableData();
+    //     } else {
+    //         alert("Please select a service before adding.");
+    //     }
+    // }
+
+
+
+    function AddserviceFn() {
+    var selectedService = $("#ServicesID option:selected");
+    var selectedSection = $("#SectionID option:selected");
+    var tableBody = $("#tablecreate_id tbody");
+    $("#SectionSelect").val(selectedSection.val());
+
+    // Check if a service is selected
+    if (selectedService.val() !== "") {
+        if (selectedSection.val() === "All") {
+            // Loop through all sections and add a row for each section with the selected service
+            $("#SectionID option").each(function () {
+                var section = $(this);
+                console.log('1');
+                if (section.val() !== "All" && section.val() !== "") {
+                    var newRow = $("<tr>");
+                    newRow.append("<td>" + section.text() + "</td>");
+                    newRow.append("<td>" + selectedService.text() + "</td>");
+                    newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
+                    tableBody.append(newRow);
+                        console.log('1.1');
+                }
+            });
+        } else if (selectedSection.val() !== "") {
+                console.log('2');
+            // Add a new row to the table with the selected section-service pair
+            var newRow = $("<tr>");
+            newRow.append("<td>" + selectedSection.text() + "</td>");
+            newRow.append("<td>" + selectedService.text() + "</td>");
+            newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
+            tableBody.append(newRow);
+            console.log('2.1');
         }
+
+        // Clear the selected options in the dropdowns
+        $("#ServicesID").prop('selectedIndex', 0);
+        $("#SectionID").prop('selectedIndex', 0);
+
+        // Update the hidden input with the table data
+        UpdateTableData();
+    } else {
+        alert("Please select a service before adding.");
     }
 
 
-
+}
     // ///Edit to modal
     // function EditFn(ID) {
     //     $.ajax({
@@ -398,6 +445,7 @@
         var service = $(this).find("td:eq(1)").text();
         tableData.push({ Section: section, Service: service });
     });
+        console.log('test');
 
     // Update the hidden input value
     $("#TableData").val(JSON.stringify(tableData));
@@ -407,6 +455,8 @@
         // Remove the row when the "Remove" button is clicked
         $(button).closest("tr").remove();
     }
+
+
 
 
 

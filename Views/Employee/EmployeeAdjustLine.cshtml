@@ -285,7 +285,7 @@
                             @foreach (var item in Model.tbEmployeeMaster)
                             {
 
-                                <option value="@item.EmployeeID" selected="@(item.EmployeeName == ViewBag.SelectedEmpID ? "selected" : null)">
+                            <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">
                                     @Html.DisplayFor(modelItem => item.EmployeeID) : @Html.DisplayFor(modelItem => item.EmployeeName)
                                 </option>
                             }
@@ -307,7 +307,7 @@
                 </div>
                 <div class="col" style="padding-bottom:0.1em">
                     <!-- Transaction Date -->
-                    <input type="date" class="form-control" name="TransactionDate" id="TransactionDateFillter" style="width:100%" value="@DateTime.Now.Date">
+                    <input type="date" class="form-control" name="TransactionDateFillter" id="TransactionDateFillter" style="width:100%" value="@ViewBag.SelectedTransactionDate">
                 </div>
 
 
@@ -365,6 +365,20 @@
 
             </div>
 
+
+            <div class="row" style="padding-left:2em ; padding-right:2em ; padding-bottom:0.1em">
+                <div class="col-3 label" style="padding-bottom:0.1em">
+                    <label for="recipient-name" class="col-form-label">Production Date:</label>
+                </div>
+                <div class="col" style="padding-bottom:0.1em">
+                    <!-- Transaction Date -->
+                    <input type="date" class="form-control" name="TransactionDate" id="TransactionDate" style="width:100%">
+                </div>
+
+
+            </div>
+
+
             <div class="row" style="padding-left:2em ; padding-right:2em ; padding-bottom:0.1em">
                 <div class="col-3 label" style="padding-bottom:0.1em">
                     <label class="col-form-label">Start Time :</label>
@@ -418,8 +432,8 @@
                 <div class="col-3">
                     @if (ViewBag.VBRoleEmployeeAdjustLine == "Full")
                     {
-                        
-                        <button type="submit" class="clear-button"  onclick="return confirm('Are you sure?')">Adjust</button>
+
+                        <button type="submit" class="clear-button" name="action" value="Save" asp-action="EmployeeAdjustLineSave" onclick="return confirm('Are you sure?')">Adjust</button>
                     }
                     else
                     {
@@ -505,7 +519,7 @@
                         @Html.DisplayFor(modelItem => item.LineName)
                     </td>
                     <td >
-                        @Html.DisplayFor(modelItem => item.FromSection)
+                        @Html.DisplayFor(modelItem => item.FromSectionName)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.SectionName)
@@ -515,8 +529,15 @@
                     </td>
 
                     <td style="color:darkblue">
+                        @if (item.TransactionDate == DateTime.MinValue)
+                        {
+                            <!-- Display a placeholder or leave empty -->
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.TransactionDate)
+                        }
 
-                        @Html.DisplayFor(modelItem => item.TransactionDate)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.StartTime)
@@ -537,7 +558,7 @@
                         }
                         else
                         {
-                            @if (ViewBag.VBRoleEmployeeBreakAdjust == "Full")
+                            @if (ViewBag.VBRoleEmployeeAdjustLine == "Full")
                             {
                                 @*       <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.IncentiveID" onclick="EditFn(@item.IncentiveID)">Edit</a> *@
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.TransactionNo" onclick="EditFn('@item.TransactionNo')">Edit</a>
@@ -545,7 +566,7 @@
                             }
                             else
                             {
-                                <a href="#" id="btnEdit">Edit</a>
+                                <a href="#" id="btnEdit">Edits</a>
 
                             }
                             

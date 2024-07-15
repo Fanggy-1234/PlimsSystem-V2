@@ -22,7 +22,7 @@ namespace Plims.Models
         public string FromLine { get; set; }
         public string LineName { get; set; }
         public string FromSectionID { get; set; }
-        public string FromSection { get; set; }
+        public string FromSectionName { get; set; }
         [Key]
         public string SectionID { get; set; }
         public string SectionName { get; set; }
@@ -35,9 +35,9 @@ namespace Plims.Models
         public string Remark { get; set; }
 
         //  public Nullable<int> QRCodePerUnit { get; set; }
-        public Nullable<int> QRCodePerEmployee { get; set; }
-        public Nullable<int> TransactionNo { get; set; }
+        public int QRCodePerEmployee { get; set; }
+        public int TransactionNo { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public Nullable<System.DateTime> TransactionDate { get; set; }
+        public DateTime TransactionDate { get; set; }
     }
 }
