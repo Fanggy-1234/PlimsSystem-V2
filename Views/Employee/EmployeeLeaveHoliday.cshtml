@@ -24,7 +24,7 @@
 <style type="text/css">
     .form-control {
         width: 100%;
-        height : 70%;
+        height: 70%;
         padding: 8px 10px 5px 10px;
         margin: 8px 0;
         display: inline-block;
@@ -123,7 +123,8 @@
                         {
 
                             <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
-                                @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName) </option>
+                                @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
+                            </option>
                         }
                     </select>
 
@@ -145,8 +146,9 @@
                         @foreach (var item in Model.tbEmployeeMaster)
                         {
 
-                            <option value="@item.EmployeeID" selected="@(item.EmployeeName == ViewBag.SelectedEmpID ? "selected" : null)">
-                                @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName) </option>
+                            <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmployeeID ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
+                            </option>
                         }
                     </select>
                 </div>
@@ -155,15 +157,13 @@
             <div class="row" style="height:5px"></div>
             <div class="row" style=" padding-right:2em">
                 <div class="col-3 label">
-                    <label> Date :</label> 
+                    <label> Date :</label>
                 </div>
                 <div class="col">
                     <input class="form-control" type="Date" style="width:100%" name="TransactionDate" id="TransactionDateFillter" value="@ViewBag.SelectedTransactionDate">
                 </div>
 
             </div>
-
-
 
 
             <div class="row" style="height:5px"></div>
@@ -174,16 +174,16 @@
                 <div class="col">
                     <select class="selectfillter form-control" name="WorkingStatus" id="WorkingstatusFillter" style="width:100%">
                         <option value="" default selected></option>
-                        <option value="Leave"> Leave</option>
-                        <option value="Holiday"> Holiday</option>
+                        <option value="Leave" selected="@(ViewBag.SelectedWorkingStatus == "Leave" ? "seleccted" : null)"> Leave</option>
+                        <option value="Holiday" selected="@(ViewBag.SelectedWorkingStatus == "Holiday" ? "seleccted" : null)"> Holiday</option>
                     </select>
                 </div>
 
             </div>
             <div class="row" style="height:40px ;">
-        </div>
+            </div>
 
-       </div>
+        </div>
 
 
         @*Employee leave/Holiday*@
@@ -193,7 +193,7 @@
             </div>
 
 
-             <div class="row" style="padding-left:2em ; padding-right:2em">
+            <div class="row" style="padding-left:2em ; padding-right:2em">
                 <div class="col-3 label">
                     <label> Working Status : </label>
                 </div>
@@ -209,7 +209,7 @@
             </div>
 
 
-            
+
             <div class="row" style="padding-left:2em ; padding-right:2em">
                 <div class="col-3 label">
                     <label> Date : </label>
@@ -230,19 +230,19 @@
 
             <div class="row" style="height:5px;"></div>
 
-     @*        <div class="row" style=" padding-right:2em">
-                <div class="col-3 label">
-                    <label></label>
-                </div>
-                <div class="col">
-                    <label class="container"> 
-                        <input type="checkbox" id="allDayCheckbox" checked>
-                        <span class="checkmark"></span>All Day
-                    </label>
-                </div>
+            @*        <div class="row" style=" padding-right:2em">
+            <div class="col-3 label">
+            <label></label>
+            </div>
+            <div class="col">
+            <label class="container">
+            <input type="checkbox" id="allDayCheckbox" checked>
+            <span class="checkmark"></span>All Day
+            </label>
+            </div>
 
             </div>
- *@
+            *@
 
             <div class="row" style="padding-left:2em ; padding-right:2em">
                 <div class="col-3 label">
@@ -257,7 +257,7 @@
 
 
 
-               <div class="row" style="padding-left:2em ; padding-right:2em">
+            <div class="row" style="padding-left:2em ; padding-right:2em">
                 <div class="col-3 label">
                     <label> End Time : </label>
                 </div>
@@ -265,27 +265,27 @@
                     <input class="form-control EndTime" type="time" name="EndTime" id="EndTime" disabled style="width:100%">
                 </div>
 
-             </div>
-@* 
+            </div>
+            @*
             <div class="row" style="padding-left:2em ; padding-right:2em">
-                <div class="col-3 label">
-                    <label> Start Time : </label>
-                </div>
-                <div class="col">
-                    <input class="form-control StartTime" type="time" name="StartTime" id="StartTime" disabled style="width:100%">
-                </div>
-                <div class="col-2 label">
-                    <label> End Time : </label>
-                </div>
-                <div class="col">
-                    <input class="form-control EndTime" type="time" name="EndTime" id="EndTime" disabled style="width:100%">
-                </div>
+            <div class="col-3 label">
+            <label> Start Time : </label>
+            </div>
+            <div class="col">
+            <input class="form-control StartTime" type="time" name="StartTime" id="StartTime" disabled style="width:100%">
+            </div>
+            <div class="col-2 label">
+            <label> End Time : </label>
+            </div>
+            <div class="col">
+            <input class="form-control EndTime" type="time" name="EndTime" id="EndTime" disabled style="width:100%">
+            </div>
             </div> *@
 
 
 
-             
-               <div class="row" style="padding-left:2em ; padding-right:2em">
+
+            <div class="row" style="padding-left:2em ; padding-right:2em">
                 <div class="col-3 label">
                     <label> Remark : </label>
                 </div>
@@ -293,7 +293,7 @@
                     <input class="form-control" type="text" list="BrowsersID" name="remarkcreate" id="Remark" style="width:100%">
                 </div>
 
-             </div>
+            </div>
 
 
 
@@ -301,21 +301,21 @@
 
         </div>
 
-        </div>
+    </div>
 
-    
+
     <div class="row">
         <div class="col-6">
             <div class="row" style="height:40px ;">
                 <div class="col-6"></div>
                 <div class="col-3">
-                            <button class="clear-button" type="submit" asp-action="EmployeeLeaveHolidayClear">
+                    <button class="clear-button" type="submit" asp-action="EmployeeLeaveHolidayClear">
                         Clear
                     </button>
                 </div>
 
                 <div class="col-3">
-                            <button class="search-button" type="submit" asp-action="EmployeeLeaveHoliday">
+                    <button class="search-button" type="submit" asp-action="EmployeeLeaveHoliday">
                         Search
                     </button>
                 </div>
@@ -334,7 +334,7 @@
                     {
                         <button type="button" class="clear-button">Save</button>
                     }
-                   
+
                 </div>
             </div>
         </div>
@@ -350,26 +350,26 @@
     @*Diaplay data*@
 
 
-    <table id="tabledata2" class="table table-hover"  style="width:100% ;padding-left:0.5em ">
+    <table id="tabledata2" class="table table-hover" style="width:100% ;padding-left:0.5em ">
         <thead style="background-color:#D1D1D1; height:20px;">
             <tr>
                 <th><input type="checkbox" id="checkall" /></th>
-                <th >
+                <th>
                     Employee ID
                 </th>
-                <th >
+                <th>
                     Employee Name
                 </th>
                 <th>
                     Plant
                 </th>
-                <th >
+                <th>
                     Line
                 </th>
                 <th>
                     Section
                 </th>
-                <th >
+                <th>
                     Service
                 </th>
                 <th>
@@ -378,19 +378,19 @@
                 <th>
                     End Time
                 </th>
-                <th >
+                <th>
                     Date
                 </th>
-                <th >
-                   Clock-In
+                <th>
+                    Clock-In
                 </th>
-                <th >
+                <th>
                     Clock-Out
                 </th>
-                <th >
+                <th>
                     Working Status
                 </th>
-                 <th >
+                <th>
                     Remark
                 </th>
                 <th>
@@ -419,13 +419,13 @@
                         @Html.DisplayFor(modelItem => item.PlantName)
                     </td>
                     <td>
-                              @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
+                        @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
                     </td>
                     <td>
-                       @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
+                        @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
                     </td>
                     <td>
-                @*         @Html.DisplayFor(modelItem => item.ServicesName) *@
+                        @*         @Html.DisplayFor(modelItem => item.ServicesName) *@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.StartTime)
@@ -440,10 +440,10 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.ClockIn)
                     </td>
-                    <td >
+                    <td>
                         @Html.DisplayFor(modelItem => item.ClockOut)
                     </td>
-                    <td >
+                    <td>
                         @Html.DisplayFor(modelItem => item.WorkingStatus)
                     </td>
                     <td>
@@ -513,7 +513,7 @@
                         </select>
                     </div>
 
-                            <div class="mb-3">
+                    <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Remark:</label>
                         <input type="text" class="form-control" name="Remark" id="ModalRemark">
                     </div>
