@@ -6277,12 +6277,12 @@ namespace Plims.Controllers
                 SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                 // Calculate where to draw the text
-                float x = 150; // Left margin
+                float x = 160; // Left margin
                 float y = qrBitmap.Height - 40; // Position at the bottom
 
                 g.DrawString(labelText, font, brush, new System.Drawing.PointF(x, y)); // Draw the label
             }
-
+         
             byte[] bitmapArray;
             using (MemoryStream stream = new MemoryStream())
             {
@@ -7293,7 +7293,7 @@ namespace Plims.Controllers
                     tbEmployeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                     tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                     view_EmployeeGroup = db.View_EmployeeGroup.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                    view_EmployeeGroupList = db.View_EmployeeGroupList.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                    view_EmployeeGroupList = db.View_EmployeeGroupList.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
 
 
                 };
@@ -7345,7 +7345,7 @@ namespace Plims.Controllers
             // var Emp = db.View_EmployeeGroup.Where(x=>x.GroupID.EndsWith(id)).ToList();
 
 
-            var Empgrupdb = db.TbEmployeeGroupQR.Where(p => p.GroupID.Equals(id.PadLeft(5, '0')) && p.Status.Equals(1)).ToList();
+            var Empgrupdb = db.TbEmployeeGroupQR.Where(p => p.PlantID.Equals(PlantID) && p.GroupID.Equals(id.PadLeft(5, '0')) && p.Status.Equals(1)).ToList();
             foreach (var items in Empgrupdb)
             {
                 db.Temp_Group.Add(new Temp_Group()
@@ -7494,8 +7494,7 @@ namespace Plims.Controllers
             //ViewBag.QrCodeUri = QrUri;
             ViewBag.GroupID = qRCode.GroupID;
             ViewBag.QRCodeGenerated = true;
-
-
+         
             var mymodel = new ViewModelAll()
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
@@ -7601,7 +7600,7 @@ namespace Plims.Controllers
                 tbEmployeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EmployeeGroup = db.View_EmployeeGroup.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                view_EmployeeGroupList = db.View_EmployeeGroupList.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                view_EmployeeGroupList = db.View_EmployeeGroupList.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x=>x.Status).ToList(),
 
             };
 
@@ -8332,13 +8331,13 @@ namespace Plims.Controllers
             using (Graphics g = Graphics.FromImage(qrBitmap))
             {
                 g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                Font font = new Font("Arial", 26, FontStyle.Bold);
+                Font font = new Font("Arial", 30, FontStyle.Bold);
                 SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                 // Calculate where to draw the text
-                float x = 10; // Left margin
-                float y = qrBitmap.Height - 30; // Position at the bottom
-
+                float x = 150; // Left margin
+                float y = qrBitmap.Height - 40; // Position at the bottom
+         
                 g.DrawString(labelText, font, brush, new System.Drawing.PointF(x, y)); // Draw the label
             }
 
@@ -8370,12 +8369,21 @@ namespace Plims.Controllers
             //  string directoryPaths = Server.MapPath("~/qrcodes");
 
             // Assign the URI to the ViewBag
+            //ViewData["QrCodeUri"] = QrUri;
+            //ViewBag.EmployeeID = qrCodeText; //qRCode.EmployeeID;
+            //ViewBag.QRCodeGenerated = true;
+            //fgfgfdg
+
+            //return Content(QrUri = QrUri, employeeID = qrCodeText);
+
+
+            // Assign the URI to the ViewBag
             ViewData["QrCodeUri"] = QrUri;
             ViewBag.EmployeeID = qrCodeText; //qRCode.EmployeeID;
             ViewBag.QRCodeGenerated = true;
 
 
-            return Content(QrUri = QrUri, employeeID = qrCodeText);
+            return Content(QrUri);
 
         }
 

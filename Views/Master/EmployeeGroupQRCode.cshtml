@@ -4,6 +4,7 @@
     ViewBag.Title = "EmployeeGroup";
     //TbUser user = Utilities.GetCurrentUser();
     string groupId = ViewBag.groupid;
+    string PlantID = Context.Session.GetString("PlantID");
 }
 
 
@@ -254,7 +255,7 @@
                         <td>
                             @if (ViewBag.VBRoleEmpGroup == "Full")
                             {
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.GroupID." onclick="EditFn(@item.GroupID)">Edit</a>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.GroupID." onclick="EditFn('@item.GroupID')">Edit</a>
 
                             }
                             else
@@ -403,18 +404,13 @@
                             </div>
                         </div>
                         <div class="col">
-                            <div class="row" style="height:100%">
+                            <div class="row" style="height:50%">
                                 <div class="container">
-                        @*     <img src="@ViewData["QrCodeUri"]" class="img-thumbnail" /> *@
-                            <img id="QRCodeImage" src="" class="img-thumbnail" style="display: none;" />
-                              
-                            </div>
+                                    <img id="QRCodeImage" src="" class="img-thumbnail" style="display: none;" />
 
-                              @*   <div class="col-6">
-                                    <img id="QRCodeImage" src="" class="img-thumbnail" style="display: none; width:100% ; height:100%" />
-                                </div> *@
+                                </div>
                             </div>
-
+                            <input type="hidden" id="QrCodeUri" />
                         </div>
                     </div>
 
@@ -509,14 +505,15 @@
                             </div>
                         </div>
                         <div class="col">
-                            <div class="row" style="height:100%">
-                                <div class="col-3">
-                                    <img alt="QRCodeImage" id="QRCodeImage" style="width: 100%; height: auto;" />
-                                    @* <img src="D:\PLIMS PROJECT\Plims_11\QRCode.png" id="ModalImgQRCode" alt="QR Code"> *@
+                            <div class="row" style="height:50%">
+                                <div class="container">
+                                    <img alt="QRImg" id="modalImage" style="width: 100%; height: auto;" />
+
                                 </div>
                             </div>
-
+                          
                         </div>
+
                     </div>
 
                     <div class="row">
@@ -595,7 +592,7 @@
             success: function (response) {
                 if (response == null || response == undefined) {
 
-                    alert("This data can't read1!")
+                    alert("This data can't read!")
                 }
                 else if (response.length == 0) {
 
@@ -623,15 +620,14 @@
                     var employeeID = $('#ModalGroupID').val();
 
                     // Construct the URL for the QR code image
-                    var qrCodeUrl = '@Url.Content("~/qrcodes/")' + employeeID + '_QRCode.png';
+                    var qrCodeUrl = '@Url.Content("~/qrcodes/")' + @PlantID + "/" + employeeID + '_QRCode.png';
+
                     console.log('QR path : ' + qrCodeUrl)
                     // Set the src attribute of the img tag to the constructed URL
                     $('#modalImage').attr('src', qrCodeUrl);
-
-
-
-
+                    //$('#QrCodeUriEdit').val(qrCodeUrl);
                     $('#EditModal').modal('show');
+                    
 
                 }
             },
@@ -727,7 +723,7 @@ console.log('1');
                 data: formData,
                 success: function (data, status, xhr) {
                     // Handle success
-                    console.log(data);
+                  
                     location.reload();
                     // Trigger the download process or perform other actions
                 },
@@ -1129,22 +1125,18 @@ console.log('1');
     /////// FANG /////////////////////////
     function generateQRCode() {
         var employeeID = $('#GroupIDCreate').val(); // Get the employee ID from the input field
-        //   console.log(employeeID)
+           console.log(employeeID)
         $.ajax({
             url: '@Url.Action("CreateQRCodeGroup", "Master")', // Specify the controller action URL
             type: 'POST',
             data: { employeeID: employeeID }, // Send the employee ID to the controller
             success: function (response) {
-                console.log(response);
-                // Update the QR code image source
+              
                 $('#QRCodeImage').attr('src', response);
-                // $('#EmployeeIDCreate').val(response.employeeID);
-                // Optionally, update other elements in the modal as needed
                 $('#QRCodeImage').show(); // Show the QR code image
                 $('#QrCodeUri').val(response); // Set the QR code URI to a hidden input field
                 $('#generateButton').prop('disabled', true); // Disable the "Generate QR Code" button
-                // You can add more actions here based on your requirements
-
+                
 
 
             }

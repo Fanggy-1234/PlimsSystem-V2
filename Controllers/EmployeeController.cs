@@ -1577,7 +1577,13 @@ namespace Plims.Controllers
             // Create Function
             int datacnt = EmployeeIDchk.Count();
             // decimal rateservicecheck = 0.0;
+            //Check Date and Time
+            if(obj.TransactionDate == DateTime.MinValue || obj.ClockIn == null )
+            {
+                TempData["AlertMessage"] = "Please input time and date to clock-in!";
+                return View("ServicesClockIn", Employee);
 
+            }
             List<TableDataRow> tableRows = JsonConvert.DeserializeObject<List<TableDataRow>>(TableData);
             var distinctServices = new HashSet<decimal>();
             int j = 0;
