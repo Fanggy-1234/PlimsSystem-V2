@@ -202,13 +202,13 @@
                                                     </tr>
                                                     totalEmp += item.Cnt;
                                                     totalPercent += item.Percent;
-                                                     totalPerPce += @item.PcsPerHr; 
+                                                    totalPerPce += @item.PcsPerHr;
+                                                  //  totalPercent = totalEmp / totalPercent;
                                                 }
                                                 <tr>
                                                     <td style="font-weight:bold;text-align: center;">Total</td>
                                                     <td style="font-weight:bold;text-align: right;">@totalStd.ToString("#,##0.00")</td>
-                                                    <td style="font-weight:bold;text-align: center;">@totalEmp.ToString("#,##0")</td>
-                                                   
+                                                    <td style="font-weight:bold;text-align: center;">@totalEmp.ToString("#,##0")</td> 
                                                     <td style="font-weight:bold;text-align: center;">@totalPercent.ToString("#,##0")</td>
                                                 </tr>
                                             </tbody>

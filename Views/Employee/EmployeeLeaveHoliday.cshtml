@@ -68,6 +68,13 @@
 
 </style>
 
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
+
 
 <div class="row" style="height:10px"> </div>
 <h2 class="page-name">Employee Leave/Holiday Function</h2>

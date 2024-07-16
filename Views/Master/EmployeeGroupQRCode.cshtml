@@ -710,10 +710,10 @@
         $('#btnSelectFile').on('click', function () {
             $('#FileUpload').click();
         });
-
+        
         $('#FileUpload').on('change', function () {
             var selectedFile = this.files[0];
-
+console.log('1');
             // Create FormData object
             var formData = new FormData();
             formData.append('FileUpload', selectedFile);  // Use the correct name

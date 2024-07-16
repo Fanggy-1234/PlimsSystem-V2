@@ -661,7 +661,7 @@
                         </select>
  *@
 
-                        <select class="selectfillter form-control" style="width:100%" name="LineName" id="ModalLineName" required>
+                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName" required>
                             <option value="" default selected></option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {

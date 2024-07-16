@@ -8083,7 +8083,7 @@ namespace Plims.Controllers
                         if (worksheet.Cells[row, 2].Value != null && worksheet.Cells[row, 2].Value != "")
                         {
 
-                            if (Convert.ToInt32(worksheet.Cells[row, 3].Text) != 1 || Convert.ToInt32(worksheet.Cells[row, 3].Text) != 0)
+                            if (Convert.ToInt32(worksheet.Cells[row, 3].Text) != 1 && Convert.ToInt32(worksheet.Cells[row, 3].Text) != 0)
                             {
                                 int rowerror = row - 1;
                                 TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake please check Master ";

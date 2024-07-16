@@ -7,6 +7,7 @@ using System.Data;
 using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
 using NuGet.Packaging;
+using Microsoft.CodeAnalysis.Elfie.Extensions;
 
 
 namespace Plims.Controllers
@@ -2048,7 +2049,13 @@ namespace Plims.Controllers
                         var workingvar = "";
                         if(durationInMinutesclock < durationInMinutes)
                         {
-                            workingvar = obj.WorkingStatus;
+                            if(obj.WorkingStatus == null)
+                            {
+                                workingvar = "Rotate";
+                            }
+                            else
+                            { workingvar = obj.WorkingStatus; }
+                          
                         }
                         else
                         {
@@ -2261,6 +2268,22 @@ namespace Plims.Controllers
                 else
                 {
 
+                //Check insert data
+
+               if (WorkingstatusCreate == null  )
+                {
+                    TempData["AlertMessage"] = "Please fill date !";
+                    return RedirectToAction("EmployeeLeaveHoliday");
+                }
+               if(remarkcreate == null && WorkingstatusCreate == "Leave")
+                {
+                    TempData["AlertMessage"] = "Please fill remark for leave !";
+                    return RedirectToAction("EmployeeLeaveHoliday");
+                }
+               else if(remarkcreate == null && WorkingstatusCreate == "Holiday" )
+                {
+                    remarkcreate = "";
+                }
                         // Create Function
                         int datacnt = EmployeeIDchk.Count();
                 for (int i = 0; i < datacnt; ++i)
