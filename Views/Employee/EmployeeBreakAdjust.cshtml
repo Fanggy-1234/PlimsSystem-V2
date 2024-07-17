@@ -113,7 +113,7 @@
                 <div class="col-2">  <label for="recipient-name" class="col-form-label">Production Date:</label></div>
                 <div class="col-3">
                         <!-- Transaction Date -->
-                    <input type="date" class="form-control" name="TransactionDate" style="width:100%" id="TransactionDate" value="@DateTime.Now.Date">
+                    <input type="date" class="form-control" name="TransactionDate" style="width:100%" id="TransactionDate" value="@ViewBag.SelectedTransactionDate">
                    </div>
 
 
@@ -146,7 +146,7 @@
                         @foreach (var sectionGroup in Model.view_PLPS.GroupBy(x => x.SectionID))
                         {
                             var sectiond = sectionGroup.First(); // Take the first item in the group
-                            <option value="@sectiond.SectionName" selected="@(sectiond.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                            <option value="@sectiond.SectionID" selected="@(sectiond.SectionID == ViewBag.SelectedSectionName ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => sectiond.SectionID) : @Html.DisplayFor(modelItem => sectiond.SectionName)
                             </option>
 
@@ -163,7 +163,7 @@
                         @foreach (var item in Model.tbEmployeeMaster)
                         {
 
-                            <option value="@item.EmployeeID" selected="@(item.EmployeeName == ViewBag.SelectedEmpID ? "selected" : null)">
+                            <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
                             </option>
                         }
