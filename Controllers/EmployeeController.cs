@@ -629,7 +629,7 @@ namespace Plims.Controllers
 
             var Empdb = new TbEmployeeTransaction();
 
-            var EmpTran = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionDate == obj.TransactionDate).ToList();
+            var EmpTran = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(obj.TransactionNo) && x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionDate == obj.TransactionDate).ToList();
             if (EmpTran.Count() != 0)
             {
                 //Update Transaction
@@ -1829,7 +1829,7 @@ namespace Plims.Controllers
             //var startDate = obj.TransactionDate.Date;
             //var endDate = startDate.AddDays(1);
             //var EmployeeID = obj.EmployeeID.Trim();
-            var EmpTran = db.TbServicesTransaction.Where(x => x.Plant.Equals(PlantID) && x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionDate.Equals(obj.TransactionDate.Date)).ToList();
+            var EmpTran = db.TbServicesTransaction.Where(x => x.TransactionNo.Equals(obj.TransactionNo) && x.Plant.Equals(PlantID) && x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionDate.Equals(obj.TransactionDate.Date)).ToList();
             if (EmpTran.Count() != 0)
             {
                 //Update TbServicesTransaction

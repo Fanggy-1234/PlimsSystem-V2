@@ -246,6 +246,7 @@
                     $('#ModalEmployeeID').val(response.employeeID);
                     $('#ModalClockIn').val(response.clockIn);
                     $('#ModalTransactionDate').val(formattedDate);
+                    $('#ModalTransactionNo').val(response.transactionNo);
                     $('#EditModal').modal('show');
 
 
@@ -648,6 +649,7 @@
         <form method="post" asp-controller="Employee" asp-action="EmployeeClockInUpdate">
             <div class="modal-content">
                 <div class="modal-header" style="background-color:blue">
+                    
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Clock-In Edit</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -656,6 +658,7 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Employee ID:</label>
                         <input type="text" class="form-control" style="background-color:gainsboro" name="EmployeeID" id="ModalEmployeeID" readonly>
+                        <input type="text" class="form-control" style="background-color:gainsboro" name="TransactionNo" id="ModalTransactionNo" hidden>
                     </div>
 
 
