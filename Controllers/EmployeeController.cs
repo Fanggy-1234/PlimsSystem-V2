@@ -1578,7 +1578,7 @@ namespace Plims.Controllers
             int datacnt = EmployeeIDchk.Count();
             // decimal rateservicecheck = 0.0;
             //Check Date and Time
-            if(obj.TransactionDate == DateTime.MinValue || obj.ClockIn == null )
+            if (obj.TransactionDate == DateTime.MinValue || obj.ClockIn == null)
             {
                 TempData["AlertMessage"] = "Please input time and date to clock-in!";
                 return View("ServicesClockIn", Employee);
@@ -2055,13 +2055,13 @@ namespace Plims.Controllers
                         var workingvar = "";
                         if (durationInMinutesclock < durationInMinutes)
                         {
-                            if(obj.WorkingStatus == null)
+                            if (obj.WorkingStatus == null)
                             {
                                 workingvar = "Rotate";
                             }
                             else
                             { workingvar = obj.WorkingStatus; }
-                          
+
                         }
                         else
                         {
@@ -2274,8 +2274,8 @@ namespace Plims.Controllers
             else
             {
 
-                        // Create Function
-                        int datacnt = EmployeeIDchk.Count();
+                // Create Function
+                int datacnt = EmployeeIDchk.Count();
                 for (int i = 0; i < datacnt; ++i)
                 {
 
@@ -2860,7 +2860,7 @@ namespace Plims.Controllers
             if (EmployeeIDchk.Length == 0)
             {
 
-                if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || obj.TransactionDate != DateTime.MinValue)
+                if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || obj.TransactionDate != DateTime.MinValue || !string.IsNullOrEmpty(obj.SectionName))
                 {
 
                     if (!string.IsNullOrEmpty(obj.EmployeeID))
@@ -2868,27 +2868,31 @@ namespace Plims.Controllers
                         ViewBag.SelectedEmpID = obj.EmployeeID;
                         Employee.view_EmployeeAdjustBreak = Employee.view_EmployeeAdjustBreak.Where(p => p.EmployeeID == obj.EmployeeID).ToList();
                     }
+                    if (!string.IsNullOrEmpty(obj.SectionName))
+                    {
+                        ViewBag.SelectedSectionName = obj.SectionName;
+                        Employee.view_EmployeeAdjustBreak = Employee.view_EmployeeAdjustBreak.Where(p => p.SectionID == obj.SectionName).ToList();
+                    }
                     if (!string.IsNullOrEmpty(obj.LineName))
                     {
                         ViewBag.SelectedLineName = obj.LineName;
                         Employee.view_EmployeeAdjustBreak = Employee.view_EmployeeAdjustBreak.Where(p => p.LineName == obj.LineName).ToList();
                     }
-                    if (obj.TransactionDate != DateTime.Today)
+                    if (obj.TransactionDate != DateTime.MinValue)
                     {
+                        if (obj.TransactionDate != DateTime.Today)
+                        {
 
+                            ViewBag.SelectedTransactionDate = obj.TransactionDate.ToString("yyyy-MM-dd");
+                            Employee.view_EmployeeAdjustBreak = Employee.view_EmployeeAdjustBreak.Where(p => p.TransactionDate == obj.TransactionDate).ToList();
 
-                        Employee.view_EmployeeAdjustBreak = Employee.view_EmployeeAdjustBreak.Where(p => p.TransactionDate == obj.TransactionDate).ToList();
+                        }
+                        else if (obj.TransactionDate == DateTime.Today)
+                        {
+                            ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                            Employee.view_EmployeeAdjustBreak = Employee.view_EmployeeAdjustBreak.Where(p => p.TransactionDate.Equals(DateTime.Today)).ToList();
 
-                    }
-                    else if (obj.TransactionDate == DateTime.Today)
-                    {
-                        ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                        Employee.view_EmployeeAdjustBreak = Employee.view_EmployeeAdjustBreak.Where(p => p.TransactionDate.Equals(DateTime.Today)).ToList();
-
-                    }
-                    else
-                    {
-
+                        }
                     }
 
                     return View(Employee);
