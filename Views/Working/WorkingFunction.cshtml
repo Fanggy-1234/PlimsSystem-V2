@@ -569,6 +569,9 @@
         function processInput() {
             var employeeId = $('#EmployeeID').val().trim();
             var productId = $('#ProductID').val();
+            $('#SectionName').val("");
+            $('#SectionName').css('background-color', 'gainsboro');
+            document.getElementById("demo").innerHTML = "";
             // var packageRef = $('#PackageRef').val();
             // console.log(employeeId);
             if (employeeId !== '') { // Only process if there's valid input
@@ -639,7 +642,6 @@
             }
         });
     }
-                });
 
 
 
