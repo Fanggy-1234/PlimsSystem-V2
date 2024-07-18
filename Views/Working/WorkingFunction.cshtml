@@ -581,13 +581,20 @@
                         productId: productId
                     },
                     success: function (section) {
-                        if (section === "EmployeeRefSectionEnabled") {
+                        if (section.message === "EmployeeRefSectionEnabled") {
                             $('#EmployeeRefsection').prop('disabled', false).val('').focus();
                         } else {
                             $('#EmployeeRefsection').prop('disabled', true);
-                            $('#SectionName').val(section);
+                            $('#SectionName').val(section.message);
                             $('#EmployeeID').val('').focus(); // Clear and refocus
-                            document.getElementById("demo").innerHTML = "Message Alert : " + section;
+                            document.getElementById("demo").innerHTML = "Message Alert : " + section.message;
+                            if (section.status) {
+                                $('#SectionName').css('background-color', '#abff6c');
+                                $('#demo').css('color', '#198754');
+                            } else {
+                                $('#SectionName').css('background-color', '#ff4646');
+                                $('#demo').css('color', '#ff4646');
+                            }
                         }
                     },
                     error: function (err) {
@@ -632,7 +639,7 @@
             }
         });
     }
-            });
+                });
 
 
 
