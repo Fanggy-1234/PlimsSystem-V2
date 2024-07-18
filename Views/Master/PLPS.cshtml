@@ -107,17 +107,17 @@
                 else {
                     console.log('AJAX request successful:', response);
                     $('#ModalPLPSID').val(response.plpsid);
-                    
+
                     // $('#ModalPlantName').append('<option value="' + response.plantName + '">' + response.plantName + '</option>');
                     // $('#ModalPlantName').val(response.plantName).trigger('change');
-                    
-                  //  $('#ModalLineName').append('<option value="' + response.lineID + '">' + response.lineID + " : " + response.lineName + '</option>');
+
+                    //  $('#ModalLineName').append('<option value="' + response.lineID + '">' + response.lineID + " : " + response.lineName + '</option>');
                     $('#ModalLineName').val(response.lineID).trigger('change');
 
 
-                      $('#ModalProductName').val(response.productID).trigger('change');
+                    $('#ModalProductName').val(response.productID).trigger('change');
 
-                      $('#ModalSectionName').val(response.sectionID).trigger('change');
+                    $('#ModalSectionName').val(response.sectionID).trigger('change');
 
                     $('#ModalFormularID').val(response.formularID).trigger('change');
 
@@ -161,7 +161,7 @@
     }
 
 
-    
+
     //Function Inactive
     function ActiveFn(id) {
         $.ajax({
@@ -199,63 +199,63 @@
 
 <form method="GET" asp-controller="Master">
 
-    <div style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;" >
+    <div style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;">
         <div class="row">
             <div class="col-2"><label class="FillterLabel">Line Name:</label></div>
             <div class="col-3">
-              @*   <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
-                    <option value="" default selected></option>
-                    @foreach (var item in Model.tbLine)
-                    {
+                @*   <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
+                <option value="" default selected></option>
+                @foreach (var item in Model.tbLine)
+                {
 
-                        <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
-                            @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName) </option>
-                    }
+                <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName) </option>
+                }
                 </select> *@
 
-                 <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
-                <option value="" default selected></option>
+                <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
+                    <option value="" default selected></option>
                     @foreach (var dataGroup in Model.view_PLPS.GroupBy(x => x.LineID))
-                {
-                    var dataFrist = dataGroup.First(); // Take the first item in the group
+                    {
+                        var dataFrist = dataGroup.First(); // Take the first item in the group
                         <option value="@dataFrist.LineName" selected="@(dataFrist.LineName == ViewBag.SelectedLineName ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => dataFrist.LineID) : @Html.DisplayFor(modelItem => dataFrist.LineName)
-                    </option>
+                            @Html.DisplayFor(modelItem => dataFrist.LineID) : @Html.DisplayFor(modelItem => dataFrist.LineName)
+                        </option>
 
-                }
-            </select>
+                    }
+                </select>
 
- 
+
 
 
             </div>
             <div class="col-1"></div>
             <div class="col-2"><label class="FillterLabel">Product Name :</label></div>
             <div class="col-3">
-              @*   <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductName">
-                    <option value="" default selected></option>
-                    @foreach (var item in Model.tbProduct)
-                    {
+                @*   <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductName">
+                <option value="" default selected></option>
+                @foreach (var item in Model.tbProduct)
+                {
 
-                        <option value="@item.ProductName" selected="@(item.ProductName == ViewBag.SelectedProductName ? "selected" : null)">
-                            @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName) </option>
-                    }
+                <option value="@item.ProductName" selected="@(item.ProductName == ViewBag.SelectedProductName ? "selected" : null)">
+                @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName) </option>
+                }
                 </select> *@
 
 
-                   <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductName">
-                <option value="" default selected></option>
+                <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductName">
+                    <option value="" default selected></option>
                     @foreach (var dataGroup in Model.view_PLPS.GroupBy(x => x.ProductID))
-                {
-                    var dataFrist = dataGroup.First(); // Take the first item in the group
+                    {
+                        var dataFrist = dataGroup.First(); // Take the first item in the group
                         <option value="@dataFrist.ProductName" selected="@(dataFrist.ProductName == ViewBag.SelectedProductName ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => dataFrist.ProductID) : @Html.DisplayFor(modelItem => dataFrist.ProductName)
-                    </option>
+                            @Html.DisplayFor(modelItem => dataFrist.ProductID) : @Html.DisplayFor(modelItem => dataFrist.ProductName)
+                        </option>
 
-                }
+                    }
 
 
-            </select>
+                </select>
 
             </div>
 
@@ -265,28 +265,28 @@
             <div class="col-2"><label class="FillterLabel"> Section Name:</label></div>
             <div class="col-3">
 
-              @*   <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
-                    <option value="" default selected></option>
-                    @foreach (var item in Model.tbSection)
-                    {
+                @*   <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
+                <option value="" default selected></option>
+                @foreach (var item in Model.tbSection)
+                {
 
-                        <option value="@item.SectionName" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
-                            @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName) </option>
-                    }
+                <option value="@item.SectionName" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName) </option>
+                }
                 </select> *@
 
 
-                   <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
-                <option value="" default selected></option>
-                @foreach (var dataGroup in Model.view_PLPS.GroupBy(x => x.SectionID))
-                {
-                    var dataFrist = dataGroup.First(); // Take the first item in the group
+                <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
+                    <option value="" default selected></option>
+                    @foreach (var dataGroup in Model.view_PLPS.GroupBy(x => x.SectionID))
+                    {
+                        var dataFrist = dataGroup.First(); // Take the first item in the group
                         <option value="@dataFrist.SectionName" selected="@(dataFrist.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => dataFrist.SectionID) : @Html.DisplayFor(modelItem => dataFrist.SectionName)
-                    </option>
+                            @Html.DisplayFor(modelItem => dataFrist.SectionID) : @Html.DisplayFor(modelItem => dataFrist.SectionName)
+                        </option>
 
-                }
-            </select>
+                    }
+                </select>
 
 
 
@@ -327,73 +327,73 @@
 
         <div class="row" style="height:35px">
 
-        <div class="col" style="width:15% ">
-            <button id="Clear" type="submit" asp-action="PLPSClear" class="clear-button">
-                Clear
-            </button>
-        </div>
-        <div class="col-3" style="width:55% ">
-        </div>
-        <div class="col" style="width:15% ">
-            <button id="Search" type="submit" asp-action="PLPS" class="search-button">
-                Search
-            </button>
-        </div>
-        <div class="col" style="width:15% ">
-             @if (ViewBag.VBRolePLPS == "Full")
-            {
-                <button type="button" action="CreatePlant" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal">Create</button>
+            <div class="col" style="width:15% ">
+                <button id="Clear" type="submit" asp-action="PLPSClear" class="clear-button">
+                    Clear
+                </button>
+            </div>
+            <div class="col-3" style="width:55% ">
+            </div>
+            <div class="col" style="width:15% ">
+                <button id="Search" type="submit" asp-action="PLPS" class="search-button">
+                    Search
+                </button>
+            </div>
+            <div class="col" style="width:15% ">
+                @if (ViewBag.VBRolePLPS == "Full")
+                {
+                    <button type="button" action="CreatePlant" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal">Create</button>
 
-            }
-            else
-            {
-                <button type="button"  class="create-button">Create</button>
+                }
+                else
+                {
+                    <button type="button" class="create-button">Create</button>
 
-            }
-            
+                }
+
+            </div>
         </div>
     </div>
-    </div>
 
 
-<br />
+    <br />
 
 
 
-<div id="demo_info" class="box"></div>
+    <div id="demo_info" class="box"></div>
 
-@*Diaplay data*@
+    @*Diaplay data*@
     <table id="table_id" class="table table-hover" style="width:100%">
-    <thead style="background-color:gainsboro ">
-        <tr>
+        <thead style="background-color:gainsboro ">
+            <tr>
                 <th>
                     PLPS ID
                 </th>
-            <th>
-                Line Name
-            </th>
-            <th>
-                Product Name
-            </th>
-            <th>
-                Section Name
-            </th>
-          @*   <th class="page-table-head">
+                <th>
+                    Line Name
+                </th>
+                <th>
+                    Product Name
+                </th>
+                <th>
+                    Section Name
+                </th>
+                @*   <th class="page-table-head">
                 Size
-            </th> *@
-            <th>
-                QTY Per Unit
-            </th>
-            <th>
-                U/M
-            </th>
+                </th> *@
+                <th>
+                    QTY Per Unit
+                </th>
+                <th>
+                    U/M
+                </th>
 
-            <th>
-                FormulaID
-            </th>
-            <th>
-                Status
-            </th>
+                <th>
+                    FormulaID
+                </th>
+                <th>
+                    Status
+                </th>
                 <th>
                     Edit
                 </th>
@@ -401,38 +401,38 @@
                     Active/Inactive
                 </th>
 
-        </tr>
-    </thead>
-    <tbody>
+            </tr>
+        </thead>
+        <tbody>
             @foreach (var item in Model.view_PLPS)
-        {
-            <tr>
-                @Html.HiddenFor(modelItem => item.PLPSID)
-                <td id="PLPSID">
-                 @Html.DisplayFor(modelItem => item.PLPSID)
-                </td>
-                <td id="LineName">
-                     @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName)
-                </td>
-                <td id="ProductName">
-                    @Html.DisplayFor(modelItem => item.ProductID) :  @Html.DisplayFor(modelItem => item.ProductName)
-                </td>
-                <td id="SectionName">
-                    @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
-                </td>
-               @*  <td id="Size" class="page-table-data">
-                    @Html.DisplayFor(modelItem => item.Size)
+            {
+                <tr>
+                    @Html.HiddenFor(modelItem => item.PLPSID)
+                    <td id="PLPSID">
+                        @Html.DisplayFor(modelItem => item.PLPSID)
+                    </td>
+                    <td id="LineName">
+                        @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName)
+                    </td>
+                    <td id="ProductName">
+                        @Html.DisplayFor(modelItem => item.ProductID) :  @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+                    <td id="SectionName">
+                        @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
+                    </td>
+                    @*  <td id="Size" class="page-table-data">
+                @Html.DisplayFor(modelItem => item.Size)
                 </td> *@
-                <td id="QTYPerQRCode">
-                    @Html.DisplayFor(modelItem => item.QTYPerQRCode)
-                </td>
-                <td id="Unit">
-                    @Html.DisplayFor(modelItem => item.Unit)
-                </td>
+                    <td id="QTYPerQRCode">
+                        @Html.DisplayFor(modelItem => item.QTYPerQRCode)
+                    </td>
+                    <td id="Unit">
+                        @Html.DisplayFor(modelItem => item.Unit)
+                    </td>
 
-                <td id="Formular">
-                    @Html.DisplayFor(modelItem => item.FormularID)
-                </td>
+                    <td id="Formular">
+                        @Html.DisplayFor(modelItem => item.FormularID)
+                    </td>
 
                     @if (item.Status == 1)
                     {
@@ -482,11 +482,11 @@
                         </td>
                     }
 
-            </tr>
-        }
-    </tbody>
+                </tr>
+            }
+        </tbody>
 
-</table>
+    </table>
     <div class="row" style="height:20px"></div>
 
     @* /////////////////////////// Export / Import /////////////////////// *@
@@ -499,11 +499,11 @@
         <div class="col" style="width:15% ">
             @if (ViewBag.VBRolePLPS == "Full")
             {
-                <button class="search-button" id="btnExport" type="Submit"  asp-action="PLPSExport" value="export" name="submit">Export</button>
+                <button class="search-button" id="btnExport" type="Submit" asp-action="PLPSExport" value="export" name="submit">Export</button>
             }
             else
             {
-             
+
                 <button type="button" id="btnExportView" class="search-button">Export</button>
             }
         </div>
@@ -573,7 +573,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">SectionName Name:</label>
                         <select class="selectfillter form-control" style="width:100%" list="SectionName" name="SectionID" id="ModalSectionName">
-                            @foreach (var item in Model.tbSection.Where(x=>x.Status.Equals(1)))
+                            @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
                             {
 
                                 <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionID)  : @Html.DisplayFor(modelItem => item.SectionName) </option>
@@ -584,8 +584,8 @@
 
                     </div>
 
-                    
-                     <div class="mb-3">
+
+                    <div class="mb-3">
                         <label class="col-form-label">Formula:</label>
                         <select class="selectfillter form-control" style="width:100%" list="FormularID" name="FormularID" id="ModalFormularID">
                             <option value="" default selected>Please Select ..</option>
@@ -597,10 +597,10 @@
                         </select>
 
                     </div>
-@* 
-                       <div class="mb-3">
-                        <label for="recipient-name" class="col-form-label">Size:</label>
-                        <input class="form-control"  list="Size" name="Size" id="ModalSize" />
+                    @*
+                    <div class="mb-3">
+                    <label for="recipient-name" class="col-form-label">Size:</label>
+                    <input class="form-control"  list="Size" name="Size" id="ModalSize" />
                     </div> *@
 
                     <div class="mb-3">
@@ -689,7 +689,7 @@
 
                     </div>
 
-                     <div class="mb-3">
+                    <div class="mb-3">
                         <label class="col-form-label">Formula:</label>
                         <select class="selectfillter form-control" style="width:100%" list="FormularID" name="FormularID" id="FormularIDCreate" required>
                             <option value="" default selected>Please Select ..</option>
@@ -704,8 +704,8 @@
 
 
                     @*  <div class="mb-3">
-                        <label for="recipient-name" class="col-form-label">Size:</label>
-                        <input class="form-control"  list="Size" name="Size" id="SizeCreate" />
+                    <label for="recipient-name" class="col-form-label">Size:</label>
+                    <input class="form-control"  list="Size" name="Size" id="SizeCreate" />
                     </div> *@
 
                     <div class="mb-3">
@@ -715,7 +715,7 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Unit:</label>
                         <select class="selectfillter form-control" style="width:100%" list="Unit" name="Unit" id="UnitCreate" required>
-                                <option value="PCS">PCS </option>
+                            <option value="PCS">PCS </option>
                             <option value="Kgs">Kgs </option>
                             <option value="g">g </option>
                         </select>
@@ -755,7 +755,7 @@
 
 
 
-    
+
     $(document).ready(function () {
         $('#btnSelectFile').on('click', function () {
             $('#FileUpload').click();
@@ -789,6 +789,12 @@
                 }
             });
         });
+
+        $('#CreateModal').on('shown.bs.modal', function () {
+            $('#LineNameCreate, #ProductNameCreate, #SectionNameCreate, #FormularIDCreate, #UnitCreate').select2({
+                dropdownParent: $('#CreateModal')
+            });
+        });
     });
 
 
@@ -802,30 +808,30 @@
     // });
 
 
-    
-//         $(document).ready(function() {
-//         $('#btnExport').click(function () {
-//             var $table = $('#table_id');
 
-//         // Clone the table to preserve the original
-//         var $clonedTable = $table.clone();
+    //         $(document).ready(function() {
+    //         $('#btnExport').click(function () {
+    //             var $table = $('#table_id');
 
-//         // Remove unwanted columns (in this case, remove second column)
-//         $clonedTable.find('tr').each(function() {
-//                 $(this).find('th:eq(8), td:eq(8)').remove();
-//                 $(this).find('th:eq(7), td:eq(7)').remove();
-//                // $(this).find('td:eq(8)').remove();
+    //         // Clone the table to preserve the original
+    //         var $clonedTable = $table.clone();
 
-//         });
+    //         // Remove unwanted columns (in this case, remove second column)
+    //         $clonedTable.find('tr').each(function() {
+    //                 $(this).find('th:eq(8), td:eq(8)').remove();
+    //                 $(this).find('th:eq(7), td:eq(7)').remove();
+    //                // $(this).find('td:eq(8)').remove();
 
-//         // Export the modified table using table2excel
-//         $clonedTable.table2excel({
-//             exclude: ".noExl", // Exclude elements with class "noExl"
-//             name: "Worksheet Name",
-//                 filename: "PLPS-Master"
-//         });
-//     });
-// });
+    //         });
+
+    //         // Export the modified table using table2excel
+    //         $clonedTable.table2excel({
+    //             exclude: ".noExl", // Exclude elements with class "noExl"
+    //             name: "Worksheet Name",
+    //                 filename: "PLPS-Master"
+    //         });
+    //     });
+    // });
 
 
 </script>
