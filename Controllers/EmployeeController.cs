@@ -2206,7 +2206,7 @@ namespace Plims.Controllers
 
             }
 
-            return RedirectToAction("ServicesClockIn");
+            return RedirectToAction("ServicesClockOut");
 
         }
 
