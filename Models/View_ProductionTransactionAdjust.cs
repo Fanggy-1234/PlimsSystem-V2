@@ -38,7 +38,7 @@ namespace Plims.Models
         public int DefectQty { get; set; }  //int
         public int MinusQty { get; set; }  //int
 
-        public decimal FG { get; set; }  //int
+        public int FG { get; set; }  //int
         public decimal TotalPiece { get; set; }
 
         public decimal Yield { get; set; }

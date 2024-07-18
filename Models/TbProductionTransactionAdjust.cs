@@ -13,7 +13,7 @@ namespace Plims.Models
         public string SectionID { get; set; }
         public string Prefix { get; set; }
         public string Type { get; set; }
-        public int QTY { get; set; }
+        public Decimal QTY { get; set; }
         public DateTime CreateDate { get; set; }
         public string CreateBy { get; set; }
 

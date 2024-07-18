@@ -1537,7 +1537,7 @@ namespace Plims.Controllers
                     decimal sumTotalHr = 0;
                     int sumTotalYield = 0;
                     decimal sumTotalWage = 0;
-                    int sumTotalFGAdjust = 0;
+                    Decimal sumTotalFGAdjust = 0;
 
                     foreach (var item in collection)
                     {
@@ -4841,7 +4841,7 @@ namespace Plims.Controllers
 
 
 
-        public IActionResult ProductionTransactionAdjustFG(string FGPlanDate, String FGLine, String FGSection, String FGShift, int FGQTY, string[] TransactionID)
+        public IActionResult ProductionTransactionAdjustFG(string FGPlanDate, String FGLine, String FGSection, String FGShift, decimal FGQTY, string[] TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -4886,7 +4886,7 @@ namespace Plims.Controllers
                 inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("FG")).Select(x=>x.Qty).ToList().Sum();
             
                 // Calculate FG/Count for QTYPerQR
-                int QRPerAdjust = (FGQTY - inputqty) / ProductionTrand;
+                decimal QRPerAdjust = (FGQTY - inputqty) / ProductionTrand;
                 string[] note;
                 if (ProductionTrand != 0)
                 {
@@ -4964,7 +4964,7 @@ namespace Plims.Controllers
                 inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList().Sum();
 
                 // Calculate FG/Count for QTYPerQR
-                int QRPerAdjustinsert = (FGQTY - inputqty) / ProductionTrandinsert;
+                decimal QRPerAdjustinsert = (FGQTY - inputqty) / ProductionTrandinsert;
                 if (ProductionTrandinsert != 0)
                 {
                     var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
