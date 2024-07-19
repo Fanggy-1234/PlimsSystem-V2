@@ -981,7 +981,12 @@ namespace Plims.Controllers
                 if (obj.ClockOut == null || obj.ClockOut == "")
                 {
                     TempData["AlertMessage"] = "Please fill Time/Date Clockin";
-                    return RedirectToAction("EmployeeClockIn", "Employee");
+                    return RedirectToAction("EmployeeClockOut", "Employee");
+                }
+                if (obj.WorkingStatus == null )
+                {
+                    TempData["AlertMessage"] = "Please fill Working Status";
+                    return RedirectToAction("EmployeeClockOut", "Employee");
                 }
 
                 // Create Function

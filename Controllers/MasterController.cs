@@ -6273,7 +6273,7 @@ namespace Plims.Controllers
             using (Graphics g = Graphics.FromImage(qrBitmap))
             {
                 g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                Font font = new Font("Arial", 30, FontStyle.Bold);
+                Font font = new Font("Arial", 36, FontStyle.Bold);
                 SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                 // Calculate where to draw the text
@@ -6423,7 +6423,7 @@ namespace Plims.Controllers
                 using (Graphics g = Graphics.FromImage(qrBitmap))
                 {
                     g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                    Font font = new Font("Arial", 30, FontStyle.Bold);
+                    Font font = new Font("Arial", 36, FontStyle.Bold);
                     SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                     // Calculate where to draw the text
@@ -6524,7 +6524,7 @@ namespace Plims.Controllers
                 using (Graphics g = Graphics.FromImage(qrBitmap))
                 {
                     g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                    Font font = new Font("Arial", 30, FontStyle.Bold);
+                    Font font = new Font("Arial", 36, FontStyle.Bold);
                     SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                     // Calculate where to draw the text
@@ -8432,12 +8432,12 @@ namespace Plims.Controllers
             using (Graphics g = Graphics.FromImage(qrBitmap))
             {
                 g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                Font font = new Font("Arial", 30, FontStyle.Bold);
+                Font font = new Font("Arial", 36, FontStyle.Bold);
                 SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                 // Calculate where to draw the text
                 float x = 150; // Left margin
-                float y = qrBitmap.Height - 40; // Position at the bottom
+                float y = qrBitmap.Height - 30; // Position at the bottom
          
                 g.DrawString(labelText, font, brush, new System.Drawing.PointF(x, y)); // Draw the label
             }

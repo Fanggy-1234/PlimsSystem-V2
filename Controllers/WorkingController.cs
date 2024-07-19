@@ -1062,6 +1062,8 @@ namespace Plims.Controllers
                 Sheet.Cells[string.Format("N{0}", row)].Value = "";
                 Sheet.Cells[string.Format("O{0}", row)].Value = "";
 
+
+
                 //    row++;
                 //}
                 Sheet.Cells["A:AZ"].AutoFitColumns();
@@ -1865,8 +1867,6 @@ namespace Plims.Controllers
                                                       ((x.ClockOut != null || x.ClockOut != "") && x.Remark == "Adjust" && x.TransactionDate.Date == currentDate))).FirstOrDefault();
 
 
-
-
                             if (objEmp != null)
                             {
                                 var objPLPS = db.View_PLPS
@@ -2032,6 +2032,7 @@ namespace Plims.Controllers
                                             x.ProductID.Equals(productId) &&
                                             x.SectionID.Equals(objEmp.SectionID.ToString()))
                                 .FirstOrDefault();
+
 
                                 if (objPLPS != null)
                                 {
@@ -4802,7 +4803,7 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -4871,7 +4872,7 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -4902,7 +4903,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5066,7 +5067,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5127,7 +5128,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5191,7 +5192,7 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5261,7 +5262,7 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5292,7 +5293,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
