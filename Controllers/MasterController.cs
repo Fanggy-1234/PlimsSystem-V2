@@ -6490,6 +6490,107 @@ namespace Plims.Controllers
 
         }
 
+
+
+
+
+        [HttpGet]
+        public ActionResult EmployeeGroupRegenerate()
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var Employeevar = db.TbEmployeeGroupQR
+                .Where(x => x.Status.Equals(1) && x.PlantID.Equals(PlantID)).Select(x=>x.GroupID)
+                .Distinct().ToList();
+
+            foreach (var item in Employeevar)
+            {
+                string qrCodeText = item.Trim();
+                string labelText = $"{item.Trim()}";
+
+                // Generate the QR code
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrCodeText, QRCodeGenerator.ECCLevel.Q);
+                QRCode qrCode = new QRCode(qrCodeData);
+                Bitmap qrBitmap = qrCode.GetGraphic(20);
+
+                // Add label to the QR code
+                using (Graphics g = Graphics.FromImage(qrBitmap))
+                {
+                    g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
+                    Font font = new Font("Arial", 30, FontStyle.Bold);
+                    SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
+
+                    // Calculate where to draw the text
+                    float x = 160; // Left margin
+                    float y = qrBitmap.Height - 50; // Position at the bottom
+
+                    g.DrawString(labelText, font, brush, new System.Drawing.PointF(x, y)); // Draw the label
+                }
+
+                byte[] bitmapArray;
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    qrBitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                    bitmapArray = stream.ToArray();
+                    ViewBag.QRCodeImage = "data:image/png;base64," + Convert.ToBase64String(stream.ToArray());
+                }
+
+                // string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes");
+                string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes", PlantID.ToString());
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                string filePath = Path.Combine(directoryPath, $"{qrCodeText}_QRCode.png");
+                System.IO.File.WriteAllBytes(filePath, bitmapArray);
+                string QrUri = Url.Content("~/qrcodes/" + PlantID.ToString() + "/" + $"{qrCodeText}_QRCode.png"); //qRCode.EmployeeID
+            }
+
+            var mymodel = new ViewModelAll
+            {
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                tbEmployeeGroupQR = db.TbEmployeeGroupQR.ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
+                view_EmployeeGroup = db.View_EmployeeGroup.ToList(),
+                view_EmployeeGroupList = db.View_EmployeeGroupList.ToList(),
+
+
+            };
+
+
+            // Check Admin
+            if (PlantID != 0)
+            {
+
+                mymodel.view_PermissionMaster = mymodel.view_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList();
+                mymodel.tbEmployeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID)).ToList();
+                mymodel.tbEmployeeMaster = mymodel.tbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList();
+                mymodel.view_EmployeeGroup = mymodel.view_EmployeeGroup.Where(x => x.PlantID.Equals(PlantID)).ToList();
+                mymodel.view_EmployeeGroupList = mymodel.view_EmployeeGroupList.Where(x => x.PlantID.Equals(PlantID)).ToList();
+
+            }
+
+
+
+            ViewBag.VBRoleEmpGroup = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(15)).Select(x => x.RoleAction).FirstOrDefault();
+
+            return View("EmployeeGroupQRCode", mymodel);
+
+
+        }
+
+
+
+
+
         // Function Create transaction : View EmployeeManagement
         [HttpPost]
         public ActionResult EmployeeCreate(View_EmployeeMaster obj, string submit)

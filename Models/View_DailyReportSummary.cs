@@ -54,7 +54,7 @@ namespace Plims.Models
         public decimal PcsPerHr { get; set; }
        // public decimal PiecePerHr { get; set; }// change from int
         public decimal EffManPerSTD { get; set; }
-        public decimal FGQty { get; set; } //int
+        public Decimal FGQty { get; set; } //int
 
         [Column(TypeName = "decimal(18,3)")]
         public decimal wage { get; set; }

@@ -1856,9 +1856,16 @@ namespace Plims.Controllers
                         }
                         else
                         {
+                            //var objEmp = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
+                            //                            (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
+                            //                            ((x.ClockOut != null || x.ClockOut != "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate))).FirstOrDefault();
+
                             var objEmp = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
-                                                        (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
-                                                        ((x.ClockOut != null || x.ClockOut != "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate))).FirstOrDefault();
+                                                      (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
+                                                      ((x.ClockOut != null || x.ClockOut != "") && x.Remark == "Adjust" && x.TransactionDate.Date == currentDate))).FirstOrDefault();
+
+
+
 
                             if (objEmp != null)
                             {
@@ -4751,7 +4758,7 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelAll
+            var mymodel = new ViewModelProductionAdjust
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -4820,7 +4827,7 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelAll
+            var mymodel = new ViewModelProductionAdjust
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -4841,7 +4848,7 @@ namespace Plims.Controllers
 
 
 
-        public IActionResult ProductionTransactionAdjustFG(string FGPlanDate, String FGLine, String FGSection, String FGShift, decimal FGQTY, string[] TransactionID)
+        public IActionResult ProductionTransactionAdjustFG(string FGPlanDate, String FGLine, String FGSection, String FGShift, int FGQTY, string[] TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -4851,7 +4858,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelAll
+            var mymodel = new ViewModelProductionAdjust
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5015,7 +5022,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelAll
+            var mymodel = new ViewModelProductionAdjust
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5075,7 +5082,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelAll
+            var mymodel = new ViewModelProductionAdjust
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5139,7 +5146,7 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelAll
+            var mymodel = new ViewModelProductionAdjust
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5209,7 +5216,7 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelAll
+            var mymodel = new ViewModelProductionAdjust
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5240,7 +5247,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelAll
+            var mymodel = new ViewModelProductionAdjust
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),

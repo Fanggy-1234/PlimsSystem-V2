@@ -997,45 +997,6 @@ namespace Plims.Controllers
                     //  var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(EmpClockView) && (x.TransactionDate == TransactionDateVar || (x.TransactionDate == TransactionDateVar.AddDays(-1) && x.ClockOut == "")) && (x.Remark == null || x.Remark == "") && x.WorkingStatus == "Working").ToList();
 
 
-                    /////////////////////******************************/////////////////////////////////
-                    var EmpTransaction = db.TbServicesTransaction.Where(x => x.TransactionNo.Equals(Convert.ToInt32(empid))).SingleOrDefault();
-                    // check clockout beofre endtime?
-                    var EmpMaster = db.View_EmployeeMaster.Where(x => x.EmployeeID.Equals(EmpTransaction.EmployeeID) && x.PlantID.Equals(PlantID)).SingleOrDefault();
-
-                    var startTime = Convert.ToDateTime(EmpMaster.StartTime);
-                    var endTime = Convert.ToDateTime(EmpMaster.EndTime);
-                    var clockinvar = Convert.ToDateTime(EmpTransaction.ClockIn);
-                    var clockoutvar = Convert.ToDateTime(obj.ClockOut);
-
-
-                    // Calculate time span
-                    TimeSpan timeSpan = endTime - startTime;
-                    TimeSpan timeclockspan = clockoutvar - clockinvar;
-                    // Now you have the time span, you can use it as needed
-
-
-                    // var durationInHours = timeSpan.TotalHours;
-                    var durationInMinutes = timeSpan.TotalMinutes;
-                    // var durationInHours = timeSpan.TotalHours;
-                    var durationInMinutesclock = timeclockspan.TotalMinutes;
-                    var workingvar = "";
-                    if (durationInMinutesclock < durationInMinutes)
-                    {
-                        if (obj.WorkingStatus == null)
-                        {
-                            workingvar = "Rotate";
-                        }
-                        else
-                        { workingvar = obj.WorkingStatus; }
-
-                    }
-                    else
-                    {
-                        workingvar = "Working";
-                    }
-
-                    /////////////////////******************************/////////////////////////////////
-
 
                     //   DateTime dateFilter = DateTime.Parse(TransactionDateFillter);&& x.TransactionDate.Equals(dateFilter)//
                     var EmpClockNo = db.View_EmployeeClocktime.Where(x => x.ID.Equals(Convert.ToInt32(empid)) && x.ClockIn != "" && x.ClockOut == "").Select(x => x.TransactionNo).SingleOrDefault();

@@ -26,13 +26,13 @@
     }
 
     #table_id {
-        border: 0.1px solid #A9A9A9;
+        border: 0.1px solid #A9A9A9; /* Set border style */
         border-collapse: collapse;
         width: 100%;
     }
 
         #table_id th {
-            background-color: #C5C5C5;
+            background-color: #C5C5C5; /* Set your desired header background color */
             font-weight: bold;
             text-align: center;
             font-family: Arial, sans-serif;
@@ -53,9 +53,17 @@
 
         #table_id th,
         #table_id td {
-            border: 0.1px solid #A9A9A9;
+            border: 0.1px solid #A9A9A9; /* Set border style */
             border-collapse: collapse;
         }
+         .table-hover td {
+        word-wrap: break-word;
+        white-space: normal;
+    }
+
+    #EmployeeID, #EmployeeName {
+        max-width: 200px; /* Adjust this value as needed */
+    }
 
     .dataTables_scrollHeadInner,
     .table {
@@ -63,6 +71,24 @@
     }
 </style>
 
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            ordering: false,
+            searching: false,
+            // scrollX: true,
+            // scrollY: true,
+            // order: [[1, 'asc']],
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 20, // Default page length
+            paging: true, // Enable paging
+        });
+
+    });
+</script>
 
 
 <script>
@@ -73,10 +99,10 @@
         //     ordering: false,
         //     searching: false,
         //     scrollX: true,
-        //     scrollY: false,
+        //     // scrollY: false,
         //     // order: [[1, 'asc']],
-        //     lengthMenu: [10, 25, 50, 75, 100],
-        //     pageLength: 20, // Default page length
+        //    // lengthMenu: [10, 25, 50, 75, 100],
+        //    // pageLength: 20, // Default page length
         //     paging: true, // Enable paging
         // });
 
@@ -215,13 +241,13 @@
     @* <form asp-controller="Master" method="post" id="dataTableForm"> *@
     @* <div id="table_info" class="page-table"></div> *@
     @*Display data*@
-    <table id="table_id" class="table table-hover" style="width:100%">
+    <table id="table_id" class="table table-hover" >
         <thead style="background-color:gainsboro;">
             <tr>
                 <th>
                     Group ID
                 </th>
-                <th>
+                <th style="width:200px">
                     Employee ID
                 </th>
                 <th>
@@ -315,8 +341,20 @@
     <br>
     <div class="row" style="height:40px">
 
-        <div class="col-3" style="width:70% ">
+        <div class="col-2" style="width:50% "></div>
+
+          <div class="col" style="width:70% ">
+            @if (ViewBag.VBRoleEmpGroup == "Full")
+            {
+                <button class="search-button" id="btnRegenerate" type="Submit" asp-action="EmployeeGroupRegenerate" value="Regenerate" name="submit">Regenerate</button>
+            }
+            else
+            {
+                <button class="search-button">Regenerates</button>
+            }
         </div>
+
+
         <div class="col" style="width:15% ">
             @if (ViewBag.VBRoleEmpGroup == "Full")
             {
