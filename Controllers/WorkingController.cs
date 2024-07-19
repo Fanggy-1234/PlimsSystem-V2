@@ -12,7 +12,7 @@ namespace Plims.Controllers
     public class WorkingController : Controller
     {
         //Connect database
-        private readonly AppDbContext db;   
+        private readonly AppDbContext db;
         public WorkingController(AppDbContext _db)
         {
             db = _db;
@@ -59,11 +59,11 @@ namespace Plims.Controllers
                 TempData["AlertMessage"] = "Working page had problem! please contact IT";
                 return RedirectToAction("Login");
             }
-           
+
         }
 
 
-        public ActionResult WorkingFunctionCreate(string employeeId,string productId)
+        public ActionResult WorkingFunctionCreate(string employeeId, string productId)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -84,7 +84,7 @@ namespace Plims.Controllers
             };
 
             // check QRcode in system
-            if (db.TbEmployeeMaster.Where(x=>x.EmployeeID.Equals(employeeId))== null || db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(employeeId)) == null)
+            if (db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)) == null || db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(employeeId)) == null)
             {
                 TempData["AlertMessage"] = "QR Code is not available in the system!";
                 return Json(mymodel);
@@ -105,7 +105,7 @@ namespace Plims.Controllers
                         .OrderByDescending(x => x.TransactionNo)
                         .FirstOrDefault();
 
-                    if(objEmp != null)
+                    if (objEmp != null)
                     {
                         var objPLPS = db.View_PLPS
                         .Where(x => x.PlantID.Equals(PlantID) &&
@@ -167,12 +167,12 @@ namespace Plims.Controllers
                 }
                 catch
                 {
-                            TempData["AlertMessage"] = "Please check master data!";
-                            return Json(mymodel);
+                    TempData["AlertMessage"] = "Please check master data!";
+                    return Json(mymodel);
                 }
             }
 
-           
+
 
             return Json(mymodel);
         }
@@ -185,7 +185,7 @@ namespace Plims.Controllers
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             var currentDateTime = DateTime.Now;
             var currentDate = currentDateTime.Date;
-     
+
 
             if (EmpID == null)
             {
@@ -296,7 +296,7 @@ namespace Plims.Controllers
 
             try
             {
-                
+
 
                 var objEmp = db.TbEmployeeTransaction
                    .Where(x => x.EmployeeID.Equals(employeeID) &&
@@ -341,7 +341,7 @@ namespace Plims.Controllers
                 db.SaveChanges();
 
 
-                return View("WorkingFunction",mymodel);
+                return View("WorkingFunction", mymodel);
             }
             catch (Exception ex)
             {
@@ -353,7 +353,7 @@ namespace Plims.Controllers
 
 
 
-        
+
         [HttpPost]
         public ActionResult ProductQtySpeialMinus(TbProductionTransaction obj, string employeeID, string productID)
         {
@@ -394,7 +394,7 @@ namespace Plims.Controllers
                    .FirstOrDefault();
 
 
-                if(objEmp == null)
+                if (objEmp == null)
                 {
                     TempData["AlertMessage"] = "Please check Clockin";
                     return View("WorkingFunction", mymodel);
@@ -666,7 +666,7 @@ namespace Plims.Controllers
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                tbSetup = db.TbSetup.Where(x=>x.PlantID.Equals(PlantID)).ToList()
+                tbSetup = db.TbSetup.Where(x => x.PlantID.Equals(PlantID)).ToList()
             };
 
 
@@ -707,7 +707,7 @@ namespace Plims.Controllers
 
             }
 
-            return View("SetUpRefreshTime",mymodel);
+            return View("SetUpRefreshTime", mymodel);
             //// Return section and unit as JSON
             //return Json(new { refrestime = refrestime });
 
@@ -715,7 +715,7 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-        public ActionResult RollBackDataProduction(View_RollBackData obj, string[] Productchk ,string ProductTo)
+        public ActionResult RollBackDataProduction(View_RollBackData obj, string[] Productchk, string ProductTo)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -725,7 +725,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-           
+
 
 
             var mymodel = new ViewModelAll
@@ -740,8 +740,8 @@ namespace Plims.Controllers
                 view_PLPS = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                View_RollBackData = db.View_RollBackData.Where(x => x.PlantID.Equals(PlantID) ).ToList()
-        };
+                View_RollBackData = db.View_RollBackData.Where(x => x.PlantID.Equals(PlantID)).ToList()
+            };
 
             ViewBag.VBRoleRollBackDataProduction = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(29)).Select(x => x.RoleAction).FirstOrDefault();
             if (Productchk.Length == 0)
@@ -778,10 +778,10 @@ namespace Plims.Controllers
                     return View(mymodel);
                 }
 
-          
+
                 ViewBag.SelectedProductionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                mymodel.View_RollBackData =  mymodel.View_RollBackData.Where(x => x.ProductionDate == DateTime.Today).ToList();
-              //  mymodel.View_RollBackData = db.View_RollBackData.Where(x => x.PlantID.Equals(PlantID) && x.ProductionDate == DateTime.Today).ToList();
+                mymodel.View_RollBackData = mymodel.View_RollBackData.Where(x => x.ProductionDate == DateTime.Today).ToList();
+                //  mymodel.View_RollBackData = db.View_RollBackData.Where(x => x.PlantID.Equals(PlantID) && x.ProductionDate == DateTime.Today).ToList();
 
                 return View(mymodel);
             }
@@ -799,7 +799,7 @@ namespace Plims.Controllers
                     //Check PLPS
 
                     var PLPSdata = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(selectview.LineID) && x.ProductID.Equals(ProductTo)).ToList();
-                        if(PLPSdata.Count == 0)
+                    if (PLPSdata.Count == 0)
                     {
                         TempData["AlertMessage"] = "Please check PLPS ";
                     }
@@ -856,7 +856,7 @@ namespace Plims.Controllers
 
             mymodel.View_RollBackData = db.View_RollBackData.Where(x => x.PlantID.Equals(PlantID) && x.ProductionDate == DateTime.Today).ToList();
 
-            return View("RollBackDataProduction",mymodel);
+            return View("RollBackDataProduction", mymodel);
             //// Return section and unit as JSON
             //return Json(new { refrestime = refrestime });
 
@@ -898,9 +898,9 @@ namespace Plims.Controllers
         }
 
 
-        
 
-       [HttpPost]
+
+        [HttpPost]
         public ActionResult ImportManualExport(View_ProductionPlan obj)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -972,34 +972,34 @@ namespace Plims.Controllers
 
                 //foreach (var item in collection)
                 //{
-                    Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                    // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
-                    Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                    Sheet.Cells[string.Format("C{0}", row)].Value = "000001";
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = "000001";
 
-                    Sheet.Cells[string.Format("D{0}", row)].Value = PlantID+"000001";
-                    Sheet.Cells[string.Format("E{0}", row)].Value = "000001";
-                    Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "000001";
+                Sheet.Cells[string.Format("E{0}", row)].Value = "000001";
+                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
 
-                    Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
-                    Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
-                    Sheet.Cells[string.Format("I{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
+                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("I{0}", row)].Value = "1";
 
-                    Sheet.Cells[string.Format("J{0}", row)].Value = "1";
-                    Sheet.Cells[string.Format("K{0}", row)].Value = "";
-                    Sheet.Cells[string.Format("L{0}", row)].Value = "Count";
+                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "Count";
 
-                    Sheet.Cells[string.Format("M{0}", row)].Value = "";
-                    Sheet.Cells[string.Format("N{0}", row)].Value = "";
-                    Sheet.Cells[string.Format("O{0}", row)].Value = "";
-
-
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+                Sheet.Cells[string.Format("O{0}", row)].Value = "";
 
 
 
 
-                 //   row++;
-              //  }
+
+
+                //   row++;
+                //  }
                 Sheet.Cells["A:AZ"].AutoFitColumns();
                 Response.Clear();
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -1041,29 +1041,29 @@ namespace Plims.Controllers
                 //foreach (var item in collection)
                 //{
 
-                    Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                    // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
-                    Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                    Sheet.Cells[string.Format("C{0}", row)].Value = "000001";
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = "000001";
 
-                    Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "000001";
-                    Sheet.Cells[string.Format("E{0}", row)].Value = "000001";
-                    Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "000001";
+                Sheet.Cells[string.Format("E{0}", row)].Value = "000001";
+                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
 
-                    Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
-                    Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
-                    Sheet.Cells[string.Format("I{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
+                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("I{0}", row)].Value = "1";
 
-                    Sheet.Cells[string.Format("J{0}", row)].Value = "1";
-                    Sheet.Cells[string.Format("K{0}", row)].Value = "";
-                    Sheet.Cells[string.Format("L{0}", row)].Value = "Count";
+                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "Count";
 
-                    Sheet.Cells[string.Format("M{0}", row)].Value = "";
-                    Sheet.Cells[string.Format("N{0}", row)].Value = "";
-                    Sheet.Cells[string.Format("O{0}", row)].Value = "";
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+                Sheet.Cells[string.Format("O{0}", row)].Value = "";
 
                 //    row++;
-               //}
+                //}
                 Sheet.Cells["A:AZ"].AutoFitColumns();
                 Response.Clear();
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -1079,7 +1079,7 @@ namespace Plims.Controllers
         }
 
 
-        
+
         [HttpPost]
         public IActionResult ImportManualUpload(IFormFile FileUpload)
         {
@@ -1103,7 +1103,7 @@ namespace Plims.Controllers
 
             if (FileUpload == null || FileUpload.Length <= 0)
             {
-               
+
                 ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
 
                 ViewBag.Error = "Please select a valid Excel file.";
@@ -1131,7 +1131,7 @@ namespace Plims.Controllers
 
                             //Check Employee Clockin
                             var ClockinDb = db.View_ClockTime.Where(x => x.TransactionDate == TransactionDateVar && x.EmployeeID.Equals(EmployeeVar) && x.ClockIn != null).ToList();
-                            if(ClockinDb.Count == 0)
+                            if (ClockinDb.Count == 0)
                             {
                                 int rowerror = row - 1;
                                 TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Please Clockin ";
@@ -1147,16 +1147,16 @@ namespace Plims.Controllers
 
                             if (EmployeeRefVar != "")
                             {
-                                 EmployeeRefIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeRefVar)).Select(x => x.EmployeeID).SingleOrDefault();
+                                EmployeeRefIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeRefVar)).Select(x => x.EmployeeID).SingleOrDefault();
 
                             }
                             else
                             {
-                                 EmployeeRefIDDb = "";
+                                EmployeeRefIDDb = "";
 
                             }
 
-                      
+
                             if (LineIDDb == null || ProductIDDb == null || SectionIDDb == null || EmployeeIDDb == null || EmployeeRefIDDb == null)
                             {
                                 int rowerror = row - 1;
@@ -1170,14 +1170,14 @@ namespace Plims.Controllers
                             {
 
 
-                                    //int CntDb = db.TbProductSTD.ToList().Count;
-                                    //int CntDbnext = CntDb + 1;
-                             
-                                    // Insert new record
-                                    var newData = new TbProductionTransaction
-                                    {
+                                //int CntDb = db.TbProductSTD.ToList().Count;
+                                //int CntDbnext = CntDb + 1;
 
-                                     TransactionDate = Convert.ToDateTime(worksheet.Cells[row, 1].Text),
+                                // Insert new record
+                                var newData = new TbProductionTransaction
+                                {
+
+                                    TransactionDate = Convert.ToDateTime(worksheet.Cells[row, 1].Text),
                                     PlantID = PlantID,
                                     LineID = LineIDDb,
                                     SectionID = SectionIDDb,
@@ -1193,19 +1193,19 @@ namespace Plims.Controllers
                                     PackageRef = 1,
                                     GroupRef = worksheet.Cells[row, 14].Text,
                                     EmployeeRef = worksheet.Cells[row, 11].Text,
-                                        CreateDate = DateTime.Now,
-                                        CreateBy = EmpID,
-                                        UpdateDate = DateTime.Now,
+                                    CreateDate = DateTime.Now,
+                                    CreateBy = EmpID,
+                                    UpdateDate = DateTime.Now,
                                     UpdateBy = EmpID,
 
 
-                                    };
+                                };
 
 
-                                    db.TbProductionTransaction.Add(newData);
+                                db.TbProductionTransaction.Add(newData);
 
 
-                               
+
                             }
                         }
 
@@ -1224,7 +1224,7 @@ namespace Plims.Controllers
 
         //DateTime startDate, DateTime endDate,
         [HttpGet]
-        public async Task<IActionResult> DailyReport(string EmployeeID , DateTime StartDate , DateTime EndDate , string LineID ,string SectionID,string Prefix)
+        public async Task<IActionResult> DailyReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, string SectionID, string Prefix)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -1244,7 +1244,7 @@ namespace Plims.Controllers
                 view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).ToList()
             };
 
-          
+
 
             ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster
                                             .Where(x => x.UserEmpID == EmpID && x.PageID == 23)
@@ -1252,7 +1252,7 @@ namespace Plims.Controllers
                                             .FirstOrDefault();
 
 
-           
+
             if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionID) || !string.IsNullOrEmpty(Prefix) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
             {
 
@@ -1280,13 +1280,13 @@ namespace Plims.Controllers
                     ViewBag.SelectedPrefix = Prefix;
                 }
 
-                if ( StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
+                if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
                 {
-                     mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
-                        .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
-                        .ToList();
+                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
+                       .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
+                       .ToList();
 
-                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd"); 
+                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
                     ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd"); ;
 
                 }
@@ -1296,7 +1296,7 @@ namespace Plims.Controllers
                          .Where(x => x.TransactionDate >= StartDate)
                          .ToList();
 
-                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd"); 
+                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
                 }
                 else if (EndDate != DateTime.MinValue)
                 {
@@ -1304,7 +1304,7 @@ namespace Plims.Controllers
                      .Where(x => x.TransactionDate <= EndDate)
                      .ToList();
 
-                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd"); 
+                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
                 }
 
                 return View(mymodel);
@@ -1360,15 +1360,15 @@ namespace Plims.Controllers
                 //};
 
                 ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
-                ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd"); 
-                mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x=> x.TransactionDate == DateTime.Today);
-            
+                ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
+                mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.TransactionDate == DateTime.Today);
+
                 return View(mymodel);
 
             }
 
 
-           
+
 
         }
 
@@ -1376,13 +1376,13 @@ namespace Plims.Controllers
 
 
 
-    //DateTime startDateString;
-    //DateTime endDateString;
+        //DateTime startDateString;
+        //DateTime endDateString;
 
 
 
 
-    public ActionResult DailyReportClear()
+        public ActionResult DailyReportClear()
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -1543,15 +1543,15 @@ namespace Plims.Controllers
                     {
 
                         Sheet.Cells[string.Format("A{0}", row)].Value = item.PlantID;
-                        Sheet.Cells[string.Format("B{0}", row)].Value = item.LineID  + " : " +  item.LineName;
-                        Sheet.Cells[string.Format("C{0}", row)].Value = ""+item.TransactionDate;
+                        Sheet.Cells[string.Format("B{0}", row)].Value = item.LineID + " : " + item.LineName;
+                        Sheet.Cells[string.Format("C{0}", row)].Value = "" + item.TransactionDate;
 
                         Sheet.Cells[string.Format("D{0}", row)].Value = item.ShiftName;
-                        Sheet.Cells[string.Format("E{0}", row)].Value = item.ProductID +" : "+ item.ProductName;
+                        Sheet.Cells[string.Format("E{0}", row)].Value = item.ProductID + " : " + item.ProductName;
                         Sheet.Cells[string.Format("F{0}", row)].Value = item.QRCode;
 
                         Sheet.Cells[string.Format("G{0}", row)].Value = item.EmployeeName;
-                        Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionID + " : " +  item.SectionName;
+                        Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionID + " : " + item.SectionName;
                         Sheet.Cells[string.Format("I{0}", row)].Value = item.CountQty;
                         sumTotalCount = sumTotalCount + item.CountQty;
 
@@ -1575,7 +1575,7 @@ namespace Plims.Controllers
                         sumTotalHr = sumTotalHr + item.DiffHours;
 
                         Sheet.Cells[string.Format("P{0}", row)].Value = item.YieldDefect;
-                        Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr.ToString("#,###.00"); 
+                        Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr.ToString("#,###.00");
 
                         Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD.ToString("#,###.00");
                         Sheet.Cells[string.Format("S{0}", row)].Value = item.Grade;
@@ -1586,16 +1586,16 @@ namespace Plims.Controllers
                     }
 
                     Sheet.Cells[string.Format("H{0}", row)].Value = "Total";
-                    Sheet.Cells[string.Format("I{0}", row)].Value = sumTotalCount.ToString("#,###.00"); 
-                    Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice.ToString("#,###.00"); 
-                    Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect.ToString("#,###.00"); 
-                    Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll.ToString("#,###.00"); 
-                    Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG.ToString("#,###.00"); 
-                    Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust.ToString("#,###.00"); 
+                    Sheet.Cells[string.Format("I{0}", row)].Value = sumTotalCount.ToString("#,###.00");
+                    Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice.ToString("#,###.00");
+                    Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect.ToString("#,###.00");
+                    Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll.ToString("#,###.00");
+                    Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG.ToString("#,###.00");
+                    Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust.ToString("#,###.00");
 
                     Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr.ToString("#,###.00"); ;//DiffHours
-                    Sheet.Cells[string.Format("P{0}", row)].Value = (sumTotalPeice- sumTotalDefect) / sumTotalPeice *100; //YieldDefect
-                    Sheet.Cells[string.Format("Q{0}", row)].Value = (sumTotalPeice/ sumTotalHr).ToString("#,###.00"); // PiecePerHr
+                    Sheet.Cells[string.Format("P{0}", row)].Value = (sumTotalPeice - sumTotalDefect) / sumTotalPeice * 100; //YieldDefect
+                    Sheet.Cells[string.Format("Q{0}", row)].Value = (sumTotalPeice / sumTotalHr).ToString("#,###.00"); // PiecePerHr
                     Sheet.Cells[string.Format("T{0}", row)].Value = sumTotalWage;//WAGE
 
                     for (char col = 'H'; col <= 'T'; col++)
@@ -1672,15 +1672,15 @@ namespace Plims.Controllers
                             Sheet.Cells[string.Format("B{0}", row)].Value = item.LineID + " : " + item.LineName;
                             Sheet.Cells[string.Format("C{0}", row)].Value = item.TransactionDate;
 
-                            Sheet.Cells[string.Format("D{0}", row)].Value = item.ProductID + " : " +  item.ProductName;
+                            Sheet.Cells[string.Format("D{0}", row)].Value = item.ProductID + " : " + item.ProductName;
                             Sheet.Cells[string.Format("F{0}", row)].Value = item.QRCode;
 
                             Sheet.Cells[string.Format("G{0}", row)].Value = item.EmployeeName;
-                            Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionID + " : " +  item.SectionName;
+                            Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionID + " : " + item.SectionName;
                             Sheet.Cells[string.Format("I{0}", row)].Value = item.CountQty;
                             sumTotalCount = sumTotalCount + item.CountQty;
 
-                            Sheet.Cells[string.Format("J{0}", row)].Value =item.FGQty.ToString("#,###.00");
+                            Sheet.Cells[string.Format("J{0}", row)].Value = item.FGQty.ToString("#,###.00");
                             sumTotalPeice = sumTotalPeice + item.FGQty;
 
                             Sheet.Cells[string.Format("K{0}", row)].Value = item.DefectQty.ToString("#,###.00");
@@ -1810,11 +1810,11 @@ namespace Plims.Controllers
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-              //  tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-               // tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-               // tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                //  tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                // tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                // tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                 tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-            //    view_Employee = db.View_Employee.ToList(),
+                //    view_Employee = db.View_Employee.ToList(),
                 tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbPLPS = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.ProductID.Equals(productId)).ToList()
                 //  tbProductionTransaction = db.TbProductionTransaction.ToList()
@@ -1838,13 +1838,13 @@ namespace Plims.Controllers
                 try
                 {
                     //check employee or Group
-                    if(db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)).Count() != 0) // case Employee
+                    if (db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)).Count() != 0) // case Employee
                     {
 
                         //Check EmployeeClockin                    
                         var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
                                                         (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
-                                                        ((x.ClockOut != null || x.ClockOut != "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate )
+                                                        ((x.ClockOut != null || x.ClockOut != "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate)
 
                                                         )).ToList();
 
@@ -1879,13 +1879,23 @@ namespace Plims.Controllers
                                 // check formular for insert or return to enter Employee
                                 if (objPLPS == null)
                                 {
-                                    var section = "Please check PLPS";
-                                    return Json(section);
+                                    var sectionvalalert = new
+                                    {
+                                        message = "Please check PLPS",
+                                        status = false
+                                    };
+                                    //var section = "Please check PLPS";
+                                    return Json(sectionvalalert);
                                 }
                                 if (objPLPS.FormularID == 10)
                                 {
-                                    var section = "EmployeeRefSectionEnabled";
-                                    return Json(section);
+                                    var sectionvalalert = new
+                                    {
+                                        message = "EmployeeRefSectionEnabled",
+                                        status = false
+                                    };
+                                    //var section = "EmployeeRefSectionEnabled";
+                                    return Json(sectionvalalert);
                                 }
                                 else
                                 {
@@ -1920,7 +1930,7 @@ namespace Plims.Controllers
                                                 QRCode = employeeId,
                                                 Qty = 1,
                                                 QtyPerQR = objPLPS.QTYPerQRCode,//Get from PLPS
-                                               // QtyPerQR = Convert.ToInt16(objPLPS.QTYPerQRCode),//Get from PLPS
+                                                                                // QtyPerQR = Convert.ToInt16(objPLPS.QTYPerQRCode),//Get from PLPS
                                                 DataType = "Count",
                                                 Reason = "",
                                                 Note = "",
@@ -1933,20 +1943,33 @@ namespace Plims.Controllers
                                                 UpdateBy = EmpID
                                             });
                                             db.SaveChanges();
-                                            sectionval = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString();
-                                            return Json(sectionval);
+                                            var sectionvalalert = new
+                                            {
+                                                message = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString(),
+                                                status = true
+                                            };
+                                            //sectionval = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString();
+                                            return Json(sectionvalalert);
 
                                         }
                                         else
                                         {
                                             // TempData["AlertMessage"] = "please check time!";
-                                            var sectionvalalert = "check time : " + roundedDifftime + " Sec.";
+                                            var sectionvalalert = new
+                                            {
+                                                message = "check time : " + roundedDifftime + " Sec.",
+                                                status = false
+                                            };
                                             return Json(sectionvalalert);
                                         }
                                     }
                                     else
                                     {
-                                        var sectionvalalert = "Check Master PLPS";
+                                        var sectionvalalert = new
+                                        {
+                                            message = "Check Master PLPS",
+                                            status = false
+                                        };
                                         return Json(sectionvalalert);
                                     }
                                 }
@@ -1955,7 +1978,12 @@ namespace Plims.Controllers
                             }
                             else
                             {
-                                var sectionvalalert = "Check Clock in time";
+                                var sectionvalalert = new
+                                {
+                                    message = "Check Clock in time",
+                                    status = false
+                                };
+                                //var sectionvalalert = "Check Clock in time";
                                 return Json(sectionvalalert);
                             }
                         }
@@ -1977,9 +2005,14 @@ namespace Plims.Controllers
                                         x.PlantID.Equals(PlantID))
                             .ToList();
 
-                            if(objEmpcount.Count == 0) 
-                             {
-                                var sectionvalalert = "Check Clock in time";
+                            if (objEmpcount.Count == 0)
+                            {
+                                var sectionvalalert = new
+                                {
+                                    message = "Check Clock in time",
+                                    status = false
+                                };
+                                //var sectionvalalert = "Check Clock in time";
                                 return Json(sectionvalalert);
                             }
 
@@ -2034,7 +2067,7 @@ namespace Plims.Controllers
                                             DataType = "Count",
                                             Reason = "",
                                             Note = "",
-                                            PackageRef =  0,
+                                            PackageRef = 0,
                                             EmployeeRef = string.IsNullOrEmpty(EmployeeRef) ? "" : EmployeeRef,
                                             GroupRef = employeeId,
                                             CreateDate = DateTime.Now,
@@ -2043,26 +2076,37 @@ namespace Plims.Controllers
                                             UpdateBy = EmpID
                                         });
                                         db.SaveChanges();
-                                        sectionval = objEmp.SectionID.ToString();
+                                        var sectionvalalert = new
+                                        {
+                                            message = objEmp.SectionID.ToString(),
+                                            status = true
+                                        };
+                                        //sectionval = objEmp.SectionID.ToString();
+                                        return Json(sectionvalalert);
 
 
                                     }
                                     else
                                     {
-                                      //  TempData["AlertMessage"] = "please check time!";
-                                        var sectionvalalert = "check time :" + roundedDifftime + " sec.";
+                                        //  TempData["AlertMessage"] = "please check time!";
+                                        var sectionvalalert = new
+                                        {
+                                            message = "check time :" + roundedDifftime + " sec.",
+                                            status = false
+                                        };
+                                        //var sectionvalalert = "check time :" + roundedDifftime + " sec.";
                                         return Json(sectionvalalert);
                                     }
                                 }
                             }
-                         
+
                         }
-                       
+
                         return Json(sectionval);
 
                         //End case group
                     }
-                       
+
 
 
 
@@ -2594,11 +2638,11 @@ namespace Plims.Controllers
                                    x.SectionID.Equals(objEmp.Section.ToString()))
                        .FirstOrDefault();
 
-            if(objPLPS == null)
+            if (objPLPS == null)
             {
                 return Json(new { section = "Please check PLPS", unit = "" });
             }
-      
+
             string section = objEmp.Section;
             string unit = objPLPS.Unit;
 
@@ -2625,7 +2669,7 @@ namespace Plims.Controllers
             // For demonstration purposes, let's assume you have a method to get section and unit
             var objEmp = db.TbEmployeeTransaction
                         .Where(x => x.EmployeeID.Equals(employeeID) &&
-                                    (x.TransactionDate.Date == currentDate || (x.TransactionDate == currentDate.AddDays(-1) && x.ClockOut == "") ) &&
+                                    (x.TransactionDate.Date == currentDate || (x.TransactionDate == currentDate.AddDays(-1) && x.ClockOut == "")) &&
                                     x.Plant.Equals(PlantID))
                         .OrderByDescending(x => x.TransactionNo)
                         .FirstOrDefault();
@@ -2638,7 +2682,7 @@ namespace Plims.Controllers
                        .FirstOrDefault();
 
 
-       
+
 
             string section = objEmp.Section;
             string unit = objPLPS.Unit;
@@ -2662,7 +2706,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-          
+
 
             var mymodel = new ViewModelAll
             {
@@ -2680,7 +2724,7 @@ namespace Plims.Controllers
             //{
             //    return Json(new { success = true });
             //}
-         
+
 
 
 
@@ -2715,7 +2759,7 @@ namespace Plims.Controllers
                            .FirstOrDefault();
 
 
-           
+
 
                 db.TbProductionTransaction.Add(new TbProductionTransaction()
                 {
@@ -2734,8 +2778,8 @@ namespace Plims.Controllers
                     Reason = "",
                     Note = "",
                     GroupRef = "",
-                    EmployeeRef ="",
-                    PackageRef=0,
+                    EmployeeRef = "",
+                    PackageRef = 0,
                     CreateDate = DateTime.Now,
                     CreateBy = EmpID,
                     UpdateDate = DateTime.Now,
@@ -2756,7 +2800,7 @@ namespace Plims.Controllers
 
 
 
-        public ActionResult ProductQTYPieceWithReffn( string EmployeeID, string ProductID, string SectionID, int QTY)
+        public ActionResult ProductQTYPieceWithReffn(string EmployeeID, string ProductID, string SectionID, int QTY)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -3074,10 +3118,10 @@ namespace Plims.Controllers
             }
 
 
-                // Generate date range
-                List < DateTime > dateRange = Enumerable.Range(0, 1 + EndDate.Subtract(StartDate).Days)
-                                      .Select(offset => StartDate.AddDays(offset))
-                                      .ToList();
+            // Generate date range
+            List<DateTime> dateRange = Enumerable.Range(0, 1 + EndDate.Subtract(StartDate).Days)
+                                  .Select(offset => StartDate.AddDays(offset))
+                                  .ToList();
 
             // Pass date range along with other data to the view
             ViewBag.DateRange = dateRange;
@@ -3090,7 +3134,7 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList()
-                
+
             };
 
             ViewBag.VBRoleFinancial = mymodel.view_PermissionMaster
@@ -3123,20 +3167,20 @@ namespace Plims.Controllers
                        .ToList();
 
 
-                    ViewBag.SelectedStartDate  = StartDate.ToString("yyyy-MM-dd");
-                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd"); 
+                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
 
                 }
-       
 
-                var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date,x.LineID, x.QRCode,x.SectionID  })
+
+                var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.LineID, x.QRCode, x.SectionID })
                    .Select(g => new GroupedFinancialData // Use the correct model type here
                    {
                        TransactionDate = g.Key.Date,
                        QRCode = g.Key.QRCode,
                        EmployeeName = g.Max(x => x.EmployeeName),
                        TotalIncentive = g.Sum(x => x.Incentive),
-                       SectionName = g.Max(x=>x.SectionName)
+                       SectionName = g.Max(x => x.SectionName)
                    })
                    .ToList<GroupedFinancialData>(); // Specify the type explicitly
 
@@ -3156,9 +3200,9 @@ namespace Plims.Controllers
 
                 };
 
-                
-              //  return View(groupedData);
-               return View(mymodel);
+
+                //  return View(groupedData);
+                return View(mymodel);
 
             }
             else
@@ -3171,13 +3215,13 @@ namespace Plims.Controllers
                    TotalIncentive = g.Sum(x => x.Incentive)
                })
                .ToList();
-              
+
                 mymodel.view_FinancialReport = db.View_FinancialReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
                 ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
                 ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
                 return View(mymodel);
             }
-           
+
         }
 
 
@@ -3216,8 +3260,8 @@ namespace Plims.Controllers
                                       .Select(offset => StartDate.AddDays(offset))
                                       .ToList();
 
-               
-             
+
+
 
 
                 ViewBag.VBRoleFinancial = mymodel.view_PermissionMaster
@@ -3228,7 +3272,7 @@ namespace Plims.Controllers
 
 
 
-                if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID)  || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
+                if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
                 {
 
                     if (!string.IsNullOrEmpty(EmployeeID))
@@ -3296,7 +3340,7 @@ namespace Plims.Controllers
                         worksheet.Cells[2, 1].Value = "Employee ID";
                         worksheet.Cells[2, 2].Value = "Employee Name";
 
-                        worksheet.Cells[2,1].Style.Font.Bold = true;
+                        worksheet.Cells[2, 1].Style.Font.Bold = true;
                         worksheet.Cells[2, 2].Style.Font.Bold = true;
 
 
@@ -3312,7 +3356,7 @@ namespace Plims.Controllers
                         // Merge the date header columns
                         worksheet.Cells[1, dateStartColumn, 1, dateStartColumn + dateRange.Count - 1].Merge = true;
                         worksheet.Cells[1, dateStartColumn].Value = "สิทธิเงินพิเศษ";
-                        worksheet.Cells[1, dateStartColumn ].Style.Font.Bold = true;
+                        worksheet.Cells[1, dateStartColumn].Style.Font.Bold = true;
 
 
                         worksheet.Cells[2, dateStartColumn + dateRange.Count].Value = "จำนวนเงิน";
@@ -3320,7 +3364,7 @@ namespace Plims.Controllers
                         worksheet.Cells[1, dateStartColumn + dateRange.Count].Merge = true;
                         worksheet.Cells[1, dateStartColumn + dateRange.Count + 1].Merge = true;
                         worksheet.Cells[2, dateStartColumn + dateRange.Count].Style.Font.Bold = true;
-                        worksheet.Cells[2, dateStartColumn + dateRange.Count +1].Style.Font.Bold = true;
+                        worksheet.Cells[2, dateStartColumn + dateRange.Count + 1].Style.Font.Bold = true;
 
                         // Set data
                         if (groupedData != null && groupedData.Any())
@@ -3335,16 +3379,16 @@ namespace Plims.Controllers
 
                                 decimal totalIncentive = 0;
                                 //decimal totalIncentivedate = 0;
-                                
+
                                 for (int i = 0; i < dateRange.Count; i++)
                                 {
                                     var date = dateRange[i];
                                     var matchingTransaction = group.FirstOrDefault(x => x.TransactionDate.Date == date.Date);
                                     decimal incentive = matchingTransaction != null ? matchingTransaction.TotalIncentive : 0;
                                     worksheet.Cells[row, dateStartColumn + i].Value = matchingTransaction != null ? matchingTransaction.TotalIncentive.ToString("0.00") : "";
-                                    
+
                                     totalIncentive += matchingTransaction != null ? matchingTransaction.TotalIncentive : 0;
-                                   // totalIncentivedate += incentive;
+                                    // totalIncentivedate += incentive;
                                     sumByDate[i] += incentive;
                                     sumtotalall += incentive;
                                 }
@@ -3365,7 +3409,7 @@ namespace Plims.Controllers
                             }
 
                             worksheet.Cells[row, dateStartColumn + dateRange.Count].Value = sumtotalall;
-                           // worksheet.Cells[row, dateStartColumn + dateRange.Count].Formula = $"SUM({worksheet.Cells[3, dateStartColumn + dateRange.Count].Address}:{worksheet.Cells[row - 1, dateStartColumn + dateRange.Count].Address})";
+                            // worksheet.Cells[row, dateStartColumn + dateRange.Count].Formula = $"SUM({worksheet.Cells[3, dateStartColumn + dateRange.Count].Address}:{worksheet.Cells[row - 1, dateStartColumn + dateRange.Count].Address})";
                             worksheet.Cells[row, dateStartColumn + dateRange.Count].Style.Font.Bold = true;
 
 
@@ -3389,7 +3433,7 @@ namespace Plims.Controllers
 
 
                     // mymodel.tbLine = db.TbLine.Where(p => p.LineName.Equals(obj.LineName) || p.LineID.Equals(obj.LineID)).OrderByDescending(x => x.Status);
-                   // return View("DailyReport", mymodel);
+                    // return View("DailyReport", mymodel);
                 }
                 else
                 {
@@ -3537,7 +3581,7 @@ namespace Plims.Controllers
 
 
         public ActionResult FinancialReportClear(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
-        { 
+        {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
@@ -3567,7 +3611,7 @@ namespace Plims.Controllers
 
             mymodel.view_FinancialReport = db.View_FinancialReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
             return View("FinancialReport", mymodel);
-            
+
 
         }
 
@@ -3575,7 +3619,7 @@ namespace Plims.Controllers
 
         //DateTime startDate, DateTime endDate,
         [HttpGet]
-        public async Task<IActionResult> EFFReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID,String SectionName)
+        public async Task<IActionResult> EFFReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, String SectionName)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -3602,8 +3646,8 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-              //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
-                view_EFFReport = db.View_EFFReport.Where(x=>x.PlantID == PlantID).ToList()
+                //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
+                view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).ToList()
             };
 
             ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster
@@ -3612,7 +3656,7 @@ namespace Plims.Controllers
                                             .FirstOrDefault();
 
 
-            if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionName)  || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
+            if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionName) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
             {
 
 
@@ -3673,7 +3717,7 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-               // view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
+                // view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
                 view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).ToList()
             };
 
@@ -3687,8 +3731,8 @@ namespace Plims.Controllers
             ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
 
             mymodel.view_EFFReport = db.View_EFFReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
-                return View("EFFReport",mymodel);
-            
+            return View("EFFReport", mymodel);
+
 
         }
 
@@ -3713,12 +3757,12 @@ namespace Plims.Controllers
                     tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                     tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                     view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                  //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
+                    //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
                     view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).ToList()
 
                 };
 
-               
+
 
                 ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster
                                             .Where(x => x.UserEmpID == EmpID && x.PageID == 25)
@@ -3759,13 +3803,13 @@ namespace Plims.Controllers
                     {
                         var worksheet = package.Workbook.Worksheets.Add("EFF Report");
 
-                    worksheet.Cells[1, 1].Value = "Line";
-                    worksheet.Cells[1, 2].Value = "Section";
-                    worksheet.Cells[1, 3].Value = "ProductID";
+                        worksheet.Cells[1, 1].Value = "Line";
+                        worksheet.Cells[1, 2].Value = "Section";
+                        worksheet.Cells[1, 3].Value = "ProductID";
 
-                    worksheet.Cells[1, 4].Value = "ProductName";
-                    worksheet.Cells[1, 5].Value = "Unit";
-                    worksheet.Cells[1, 6].Value = "EFF-STD";
+                        worksheet.Cells[1, 4].Value = "ProductName";
+                        worksheet.Cells[1, 5].Value = "Unit";
+                        worksheet.Cells[1, 6].Value = "EFF-STD";
 
                         worksheet.Cells[1, 7].Value = "ชม. งาน STD";
                         worksheet.Cells[1, 8].Value = "ชม. งาน  ACT";
@@ -3777,7 +3821,7 @@ namespace Plims.Controllers
 
                         worksheet.Cells[1, 13].Value = "ชม.จริง+บริการแยกได้"; //EFF2
                         worksheet.Cells[1, 14].Value = "ชม.จริง+บริการแยกได้+บริการแยกไม่ได้"; //EFF3
-                        worksheet.Cells[1, 15].Value = "EFF ชม.1"; 
+                        worksheet.Cells[1, 15].Value = "EFF ชม.1";
 
                         worksheet.Cells[1, 16].Value = "EFF ชม.2";
                         worksheet.Cells[1, 17].Value = "EFF ชม.3";
@@ -3789,19 +3833,19 @@ namespace Plims.Controllers
 
                         worksheet.Cells[1, 22].Value = "ค่ากลาง ชม.1";
                         worksheet.Cells[1, 23].Value = "ค่าที่ได้";
-                       
+
 
                         for (int i = 1; i < 24; i++)
                         {
                             worksheet.Cells[1, i].Style.Font.Bold = true;
                         }
 
-                            int row = 2;
+                        int row = 2;
                         decimal sumWorkinghourSTD = 0;
                         decimal sumWorkinghourACT = 0;
                         decimal sumFinishGood = 0;
                         decimal sumEFF1 = 0;
-                        decimal  sumServicehour = 0;
+                        decimal sumServicehour = 0;
                         decimal sumSupporthour = 0;
                         decimal sumEFF2 = 0;
                         decimal sumEFF3 = 0;
@@ -3815,11 +3859,11 @@ namespace Plims.Controllers
                         decimal sumMEDh1 = 0;
                         decimal sumValEffh1 = 0;
                         foreach (var item in collection)
-                    {
+                        {
 
-                            worksheet.Cells[row,1].Value = item.LineID + " : " + item.LineName;
-                            worksheet.Cells[row, 2].Value = item.SectionID +" : "+ item.SectionName;
-                            worksheet.Cells[row, 3].Value = item.ProductID ;
+                            worksheet.Cells[row, 1].Value = item.LineID + " : " + item.LineName;
+                            worksheet.Cells[row, 2].Value = item.SectionID + " : " + item.SectionName;
+                            worksheet.Cells[row, 3].Value = item.ProductID;
 
                             worksheet.Cells[row, 4].Value = item.ProductName;
                             worksheet.Cells[row, 5].Value = item.Unit;
@@ -3876,7 +3920,7 @@ namespace Plims.Controllers
                             worksheet.Cells[row, 23].Value = item.ValueEFF1;
                             sumValEffh1 += item.ValueEFF1;
                             row++;
-                    }
+                        }
 
                         worksheet.Cells[row, 6].Value = "Total";
                         worksheet.Cells[row, 7].Value = sumWorkinghourSTD;
@@ -4086,9 +4130,9 @@ namespace Plims.Controllers
 
 
                 }
-                  
 
-                }
+
+            }
 
             catch
             {
@@ -4125,9 +4169,9 @@ namespace Plims.Controllers
                 view_PLPS = db.View_PLPS.Where(p => p.PlantID.Equals(PlantID)).ToList()
 
             };
-            
+
             ViewBag.VBRoleProductionPlan = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
-            if ( !string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.ProductName) || obj.PlanDate != DateTime.MinValue)
+            if (!string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.ProductName) || obj.PlanDate != DateTime.MinValue)
             {//obj.PlanDate.HasValue != false ||
 
                 if (obj.PlanDate != DateTime.MinValue)
@@ -4155,7 +4199,7 @@ namespace Plims.Controllers
 
 
                 // var ViewEmpPlantName = incentives.view_Incentive.Where(x => x.IncentiveName.Equals(obj.SectionName) || x.PlantName.Equals(obj.PlantName) || x.LineName.Equals(obj.LineName) || x.ProductName.Equals(obj.ProductName)).ToList();
-              
+
                 return View(mymodel);
 
             }
@@ -4164,7 +4208,7 @@ namespace Plims.Controllers
                 ViewBag.SelectedPlantDate = DateTime.Today;
                 mymodel.view_ProductionPlan = mymodel.view_ProductionPlan.Where(x => x.PlanDate == DateTime.Today).ToList();
 
-              
+
                 return View(mymodel);
             }
 
@@ -4194,12 +4238,12 @@ namespace Plims.Controllers
                 view_PLPS = db.View_PLPS.Where(p => p.PlantID.Equals(PlantID)).ToList()
 
             };
- 
+
             ViewBag.SelectedPlantDate = DateTime.Today;
             mymodel.view_ProductionPlan = mymodel.view_ProductionPlan.Where(x => x.PlanDate == DateTime.Today).ToList();
 
-            return View("ProductionPlan",mymodel);
-            
+            return View("ProductionPlan", mymodel);
+
 
 
         }
@@ -4371,7 +4415,7 @@ namespace Plims.Controllers
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 view_ProductionPlan = db.View_ProductionPlan.Where(x => x.PlantID == PlantID).ToList(),
-                    view_PLPS = db.View_PLPS.Where(p => p.PlantID.Equals(PlantID)).ToList()
+                view_PLPS = db.View_PLPS.Where(p => p.PlantID.Equals(PlantID)).ToList()
 
             };
 
@@ -4416,7 +4460,7 @@ namespace Plims.Controllers
                 foreach (var item in collection)
                 {
                     Sheet.Cells[string.Format("A{0}", row)].Value = item.TransactionID;
-                   // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
+                    // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
                     Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate.ToString("yyyy-MM-dd");
                     Sheet.Cells[string.Format("C{0}", row)].Value = item.Prefix;
                     Sheet.Cells[string.Format("D{0}", row)].Value = item.LineID;
@@ -4461,7 +4505,7 @@ namespace Plims.Controllers
                 {
 
                     Sheet.Cells[string.Format("A{0}", row)].Value = item.TransactionID;
-                   // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
+                    // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
                     Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate.ToString("yyyy-MM-dd");
                     Sheet.Cells[string.Format("C{0}", row)].Value = item.Prefix;
                     Sheet.Cells[string.Format("D{0}", row)].Value = item.LineID;
@@ -4522,27 +4566,27 @@ namespace Plims.Controllers
                         if (worksheet.Cells[row, 2].Value != null && worksheet.Cells[row, 2].Value != "")
                         {
 
-                            int id = 0 ;
+                            int id = 0;
                             if (worksheet.Cells[row, 1].Value != null)
                             {
                                 id = Convert.ToInt32(worksheet.Cells[row, 1].Value.ToString().Trim());
                             }
-                           // int shiftvar = Convert.ToInt32(worksheet.Cells[row, 3].Text.Trim());
+                            // int shiftvar = Convert.ToInt32(worksheet.Cells[row, 3].Text.Trim());
 
 
                             var DataDb = db.TbProductionPlan.Where(x => x.TransactionID == id).SingleOrDefault();
-                          //  var ShiftIDDb = db.TbShift.Where(x => x.ShiftID.Equals(shiftvar) && x.PlantID.Equals(PlantID)).Select(x => x.ShiftID).SingleOrDefault();
+                            //  var ShiftIDDb = db.TbShift.Where(x => x.ShiftID.Equals(shiftvar) && x.PlantID.Equals(PlantID)).Select(x => x.ShiftID).SingleOrDefault();
                             var LineIDDb = db.TbLine.Where(x => x.LineID.Equals(worksheet.Cells[row, 4].Text.Trim()) && x.PlantID.Equals(PlantID)).Select(x => x.LineID).SingleOrDefault();
                             var ProductIDDb = db.TbProduct.Where(x => x.ProductID.Equals(worksheet.Cells[row, 5].Text.Trim()) && x.PlantID.Equals(PlantID)).Select(x => x.ProductID).SingleOrDefault();
                             var SectionIDDb = db.TbSection.Where(x => x.SectionID.Equals(worksheet.Cells[row, 6].Text.Trim()) && x.PlantID.Equals(PlantID)).Select(x => x.SectionID).SingleOrDefault();
 
-                            if ( LineIDDb == null || ProductIDDb == null || SectionIDDb == null)
+                            if (LineIDDb == null || ProductIDDb == null || SectionIDDb == null)
                             {
                                 int rowerror = row - 1;
                                 TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake ";
                                 return Json(new { success = false, message = "Data Row : " + rowerror + " =>  Mistake please check. " });
                                 // ViewBag.Success = "Data Row : " + row + "=>  Mistake ";
-                              //  return RedirectToAction("ProductionPlan");
+                                //  return RedirectToAction("ProductionPlan");
 
                             }
 
@@ -4562,9 +4606,9 @@ namespace Plims.Controllers
                                 {
                                     int rowerror = row - 1;
                                     TempData["AlertMessage"] = "Data Row : " + rowerror + " =>   Mistake please PLPS check. ";
-                                  //  return Json(new { success = false, message = "Data Row : " + rowerror + " =>  " });
+                                    //  return Json(new { success = false, message = "Data Row : " + rowerror + " =>  " });
                                     // ViewBag.Success = "Data Row : " + row + "=>  Mistake ";
-                                  //  return RedirectToAction("ProductionPlan");
+                                    //  return RedirectToAction("ProductionPlan");
                                 }
                                 else
                                 {
@@ -4586,7 +4630,7 @@ namespace Plims.Controllers
                                         DataDb.Weight = int.Parse(worksheet.Cells[row, 9].Text);
                                         DataDb.QRcodeperday = int.Parse(worksheet.Cells[row, 9].Text);
                                         DataDb.TotalPiecePerDay = int.Parse(worksheet.Cells[row, 10].Text);
-                                         DataDb.QTY = int.Parse(worksheet.Cells[row, 10].Text) / int.Parse(worksheet.Cells[row, 9].Text);
+                                        DataDb.QTY = int.Parse(worksheet.Cells[row, 10].Text) / int.Parse(worksheet.Cells[row, 9].Text);
                                         DataDb.UpdateDate = DateTime.Now;
                                         DataDb.UpdateBy = EmpID;
 
@@ -4594,21 +4638,21 @@ namespace Plims.Controllers
                                     else
                                     {
 
-                                      //  CntDbnext = CntDbnext + 1;
-                              
+                                        //  CntDbnext = CntDbnext + 1;
+
                                         // Insert new record
                                         var newData = new TbProductionPlan
                                         {
 
                                             PlanDate = DateTime.Parse(worksheet.Cells[row, 2].Text),
                                             PlantID = PlantID,
-                                            Prefix = worksheet.Cells[row,3].Text,
+                                            Prefix = worksheet.Cells[row, 3].Text,
                                             LineID = LineIDDb,
                                             ProductID = ProductIDDb,
                                             SectionID = SectionIDDb,
                                             SizeMin = int.Parse(worksheet.Cells[row, 7].Text),
                                             SizeMax = int.Parse(worksheet.Cells[row, 8].Text),
-                                            Weight ='0' ,//int.Parse(worksheet.Cells[row, 9].Text),
+                                            Weight = '0',//int.Parse(worksheet.Cells[row, 9].Text),
                                             QRcodeperday = int.Parse(worksheet.Cells[row, 9].Text),
                                             TotalPiecePerDay = int.Parse(worksheet.Cells[row, 10].Text),
                                             QTY = int.Parse(worksheet.Cells[row, 10].Text) / int.Parse(worksheet.Cells[row, 9].Text),
@@ -4634,16 +4678,16 @@ namespace Plims.Controllers
             }
 
             ViewBag.Success = "Data imported and updated successfully!";
-           // return RedirectToAction("ProductionPlan");
+            // return RedirectToAction("ProductionPlan");
             return Json(new { success = true, message = "Data imported and updated successfully!" });
 
         }
 
 
 
-        
 
-       [HttpGet]
+
+        [HttpGet]
         public IActionResult FilterProductByEmployee(string selectedEmpID)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -4664,7 +4708,7 @@ namespace Plims.Controllers
                             && x.ClockOut == "")
                 .ToList();
 
-            if(empsectioncheck.Count() == 0 )
+            if (empsectioncheck.Count() == 0)
             {
 
                 //TempData["AlertMessage"] = "Data haven't clockin or Data already clock out. : " + selectedEmpID ;
@@ -4717,7 +4761,7 @@ namespace Plims.Controllers
                            && x.ClockOut == "")
                .ToList();
 
-            if(empsectioncount.Count() == 0)
+            if (empsectioncount.Count() == 0)
             {
 
                 return Json(new { success = false, message = "Data haven't clockin or Data already clock out. " });
@@ -4765,7 +4809,7 @@ namespace Plims.Controllers
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                 tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                 view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
+                view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
 
             };
 
@@ -4777,7 +4821,7 @@ namespace Plims.Controllers
                 {
                     mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(obj.TransactionDate)).ToList();
                     ViewBag.SelectedTransactionDate = obj.TransactionDate.ToString("yyyy-MM-dd");
-                 
+
                 }
 
                 if (!string.IsNullOrEmpty(obj.SectionName))
@@ -4807,7 +4851,7 @@ namespace Plims.Controllers
             }
             else
             {
-              mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                 ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
                 return View(mymodel);
             }
@@ -4840,8 +4884,8 @@ namespace Plims.Controllers
 
             ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
             mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
-     
-            return View("ProductionTransactionAdjust",mymodel);
+
+            return View("ProductionTransactionAdjust", mymodel);
 
         }
 
@@ -4890,8 +4934,8 @@ namespace Plims.Controllers
 
                 //Check Input QTY 
                 int inputqty = 0;
-                inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("FG")).Select(x=>x.Qty).ToList().Sum();
-            
+                inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList().Sum();
+
                 // Calculate FG/Count for QTYPerQR
                 decimal QRPerAdjust = (FGQTY - inputqty) / ProductionTrand;
                 string[] note;
@@ -5044,22 +5088,23 @@ namespace Plims.Controllers
                 TranDefectAdjust.QTY = DefectQTY;
                 db.SaveChanges();
             }
-            else { 
-
-            // Table : TbProductionTransactionAdjust  Create
-            db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+            else
             {
-                TransactionDate = Convert.ToDateTime(DefectPlanDate),
-                PlantID = PlantID,
-                LineID = DefectLine,
-                SectionID = DefectSection,
-                Prefix = DefectShift,
-                Type = "Defect",
-                QTY = DefectQTY,
-                CreateDate = DateTime.Now,
-                CreateBy = EmpID
-            });
-              db.SaveChanges();
+
+                // Table : TbProductionTransactionAdjust  Create
+                db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                {
+                    TransactionDate = Convert.ToDateTime(DefectPlanDate),
+                    PlantID = PlantID,
+                    LineID = DefectLine,
+                    SectionID = DefectSection,
+                    Prefix = DefectShift,
+                    Type = "Defect",
+                    QTY = DefectQTY,
+                    CreateDate = DateTime.Now,
+                    CreateBy = EmpID
+                });
+                db.SaveChanges();
 
             }
             ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
@@ -5134,7 +5179,7 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-        public IActionResult ProductionTransactionAdjustByEmployee(View_ProductionTransactionAdjust obj,string FGPlanDate, String FGLine, String FGSection, String FGShift, int FGQTY, string[] TransactionID, string checkthis, string checkall)
+        public IActionResult ProductionTransactionAdjustByEmployee(View_ProductionTransactionAdjust obj, string FGPlanDate, String FGLine, String FGSection, String FGShift, int FGQTY, string[] TransactionID, string checkthis, string checkall)
         {
 
 
@@ -5236,7 +5281,7 @@ namespace Plims.Controllers
 
 
 
-        
+
         public IActionResult ProductionTransactionAdjustFGByEmployee(DateTime FGPlanDate, string FGLine, string FGSection, string FGShift, int FGQTY, List<int> TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -5264,91 +5309,91 @@ namespace Plims.Controllers
 
             //Check ALL , Employee , Employee > 1
             int checkPrdAdjust = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(FGPlanDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).ToList().Count();
-            if (checkPrdAdjust == TransactionID.Count()) 
+            if (checkPrdAdjust == TransactionID.Count())
             {
                 // All FG Adjust
 
-                        //Check Duplicate
-                        int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).ToList().Count();
-                        if (checkDuplicate > 0)
-                        {
+                //Check Duplicate
+                int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).ToList().Count();
+                if (checkDuplicate > 0)
+                {
                     //Update  TbProductionTransactionAdjust      
-                   
+
                     var TranFGAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).SingleOrDefault();
-                            TranFGAdjust.QTY = FGQTY;
-                            db.SaveChanges();
+                    TranFGAdjust.QTY = FGQTY;
+                    db.SaveChanges();
 
 
-                            int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).ToList().Count();
-                            if (ProductionTrand == 0)
-                            {
+                    int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).ToList().Count();
+                    if (ProductionTrand == 0)
+                    {
 
-                                ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
-                                mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
-                                ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                               return View("ProductionTransactionAdjustByEmployee", mymodel);
-                      
-                            }
+                        ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                        mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                        ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+
+                    }
                     // Calculate FG/Count for QTYPerQR
-                            int inputqty = 0;
-                            inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList().Sum();
+                    int inputqty = 0;
+                    inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList().Sum();
 
 
-                             decimal QRPerAdjust = Math.Round(((decimal)FGQTY - inputqty) / ProductionTrand, 8);
-                
-                            string[] note;
-                            if (ProductionTrand != 0)
-                            {
-                                //Check Clockout
-                                 var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
-                                var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "").ToList();
+                    decimal QRPerAdjust = Math.Round(((decimal)FGQTY - inputqty) / ProductionTrand, 8);
 
-                                if (checkClockout.Count() >= 1)
-                                {
+                    string[] note;
+                    if (ProductionTrand != 0)
+                    {
+                        //Check Clockout
+                        var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                        var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "").ToList();
 
-                                    TempData["AlertMessage"] = "Please Clockout First!";
-                                    return View("ProductionTransactionAdjustByEmployee", mymodel);
-                                }
+                        if (checkClockout.Count() >= 1)
+                        {
+
+                            TempData["AlertMessage"] = "Please Clockout First!";
+                            return View("ProductionTransactionAdjustByEmployee", mymodel);
+                        }
 
                         foreach (string item in EmpIDtrancheck)
+                        {
+                            // Update Table : TbProductionTransaction column QTYPerQR
+                            var ProdUpdate = db.TbProductionTransaction
+                                 .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                                             x.PlantID.Equals(PlantID) &&
+                                             x.LineID.Equals(FGLine) &&
+                                             x.SectionID.Equals(FGSection) &&
+                                             x.Prefix.Equals(FGShift) &&
+                                             x.QRCode.Equals(item) &&
+                                             x.DataType.Equals("Count"))
+                                 .ToList();
+
+                            foreach (var transaction in ProdUpdate)
+                            {
+
+                                transaction.QtyPerQR = QRPerAdjust;
+
+                                note = transaction.Note.Split(":");
+                                if (note.Length > 0)
                                 {
-                                    // Update Table : TbProductionTransaction column QTYPerQR
-                                    var ProdUpdate = db.TbProductionTransaction
-                                         .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
-                                                     x.PlantID.Equals(PlantID) &&
-                                                     x.LineID.Equals(FGLine) &&
-                                                     x.SectionID.Equals(FGSection) &&
-                                                     x.Prefix.Equals(FGShift) &&
-                                                     x.QRCode.Equals(item) &&
-                                                     x.DataType.Equals("Count"))
-                                         .ToList();
-
-                                    foreach (var transaction in ProdUpdate)
-                                    {
-
-                                        transaction.QtyPerQR = QRPerAdjust;
-
-                                        note = transaction.Note.Split(":");
-                                        if (note.Length > 0)
-                                        {
-                                            transaction.Note = "Replace : " + note[1] + "," + transaction.QtyPerQR;
-                                        }
-                                        else
-                                        {
-                                            transaction.Note = "Replace : " + transaction.QtyPerQR;
-                                        }
-                                        transaction.UpdateBy = EmpID; // User.Identity.Name;
-                                        transaction.UpdateDate = DateTime.Now;
-                                    }
+                                    transaction.Note = "Replace : " + note[1] + "," + transaction.QtyPerQR;
                                 }
-                                db.SaveChanges();
-
-
-
+                                else
+                                {
+                                    transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                }
+                                transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                transaction.UpdateDate = DateTime.Now;
                             }
                         }
-                        else
-                        { // Insert New Adjust Transaction
+                        db.SaveChanges();
+
+
+
+                    }
+                }
+                else
+                { // Insert New Adjust Transaction
 
                     //Check Clockout
                     var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
@@ -5364,31 +5409,31 @@ namespace Plims.Controllers
 
                     // Table : TbProductionTransactionAdjust  Create
                     db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
-                                {
-                                    TransactionDate = Convert.ToDateTime(FGPlanDate),
-                                    PlantID = PlantID,
-                                    LineID = FGLine,
-                                    SectionID = FGSection,
-                                    Prefix = FGShift,
-                                    Type = "FG",
-                                    QTY = FGQTY,
-                                    CreateDate = DateTime.Now,
-                                    CreateBy = EmpID
-                                });
-                            //  db.SaveChanges();
+                    {
+                        TransactionDate = Convert.ToDateTime(FGPlanDate),
+                        PlantID = PlantID,
+                        LineID = FGLine,
+                        SectionID = FGSection,
+                        Prefix = FGShift,
+                        Type = "FG",
+                        QTY = FGQTY,
+                        CreateDate = DateTime.Now,
+                        CreateBy = EmpID
+                    });
+                    //  db.SaveChanges();
 
 
-                            //// Count Employee base on plant, line ,section, productiondate ,prefix
-                            int ProductionTrandinsert = mymodel.view_ProductionTransactionAj.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate  && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).ToList().Count();
+                    //// Count Employee base on plant, line ,section, productiondate ,prefix
+                    int ProductionTrandinsert = mymodel.view_ProductionTransactionAj.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).ToList().Count();
 
-                            if (ProductionTrandinsert == 0)
-                            {
+                    if (ProductionTrandinsert == 0)
+                    {
 
-                                ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
-                                mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
-                                ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                           return View("ProductionTransactionAdjustByEmployee", mymodel);
-                      
+                        ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                        mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                        ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+
                     }
                     int inputqty = 0;
                     inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList().Sum();
@@ -5396,49 +5441,49 @@ namespace Plims.Controllers
 
                     // Calculate FG/Count for QTYPerQR
                     decimal QRPerAdjustinsert = Math.Round(((decimal)FGQTY - inputqty) / ProductionTrandinsert, 8);
-              
+
                     if (ProductionTrandinsert != 0)
+                    {
+                        var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+
+                        foreach (string item in EmpIDtran)
+                        {
+                            // Update Table : TbProductionTransaction column QTYPerQR
+                            var ProdUpdate = db.TbProductionTransaction
+                                 .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                                             x.PlantID.Equals(PlantID) &&
+                                             x.LineID.Equals(FGLine) &&
+                                             x.SectionID.Equals(FGSection) &&
+                                             x.Prefix.Equals(FGShift) &&
+                                             x.QRCode.Equals(item) &&
+                                             x.DataType.Equals("Count"))
+                                 .ToList();
+
+                            foreach (var transaction in ProdUpdate)
                             {
-                                var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
-
-                                foreach (string item in EmpIDtran)
-                                {
-                                    // Update Table : TbProductionTransaction column QTYPerQR
-                                    var ProdUpdate = db.TbProductionTransaction
-                                         .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
-                                                     x.PlantID.Equals(PlantID) &&
-                                                     x.LineID.Equals(FGLine) &&
-                                                     x.SectionID.Equals(FGSection) &&
-                                                     x.Prefix.Equals(FGShift) &&
-                                                     x.QRCode.Equals(item) &&
-                                                     x.DataType.Equals("Count"))
-                                         .ToList();
-
-                                    foreach (var transaction in ProdUpdate)
-                                    {
-                                        transaction.Note = "Replace : " + transaction.QtyPerQR;
-                                        transaction.QtyPerQR = QRPerAdjustinsert;
-                                        transaction.UpdateBy = EmpID; // User.Identity.Name;
-                                        transaction.UpdateDate = DateTime.Now;
-                                    }
-                                }
-                                db.SaveChanges();
-
+                                transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                transaction.QtyPerQR = QRPerAdjustinsert;
+                                transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                transaction.UpdateDate = DateTime.Now;
                             }
-
-
                         }
+                        db.SaveChanges();
 
-                        ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
-                        mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
-                        ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                        return View("ProductionTransactionAdjustByEmployee", mymodel);
-              
+                    }
+
+
+                }
+
+                ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                return View("ProductionTransactionAdjustByEmployee", mymodel);
+
 
 
                 // END All FG Adjust
             }
-            else 
+            else
             {
                 // Employee Adjust
 
@@ -5453,7 +5498,7 @@ namespace Plims.Controllers
                     db.SaveChanges();
 
                     //CountQRCode
-                    decimal sumQRCodeEmp = 0;                 
+                    decimal sumQRCodeEmp = 0;
                     string EmployeeIDvar = "";
 
                     //Check Clockout
@@ -5469,21 +5514,21 @@ namespace Plims.Controllers
 
                     foreach (int item in TransactionID)
                     {
-                        var QREmp = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.TransactionID.Equals(item)).Select(x=>x.QRCode).SingleOrDefault();
+                        var QREmp = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.TransactionID.Equals(item)).Select(x => x.QRCode).SingleOrDefault();
                         EmployeeIDvar = QREmp;
 
                         int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp) && x.DataType.Equals("Count")).Count();
                         sumQRCodeEmp += ProductionTrand;
-                  
+
                     }
-                   if (sumQRCodeEmp == 0)
+                    if (sumQRCodeEmp == 0)
                     {
 
                         ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                         mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                         ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
-                   
+
                     }
 
                     int inputqty = 0;
@@ -5491,8 +5536,8 @@ namespace Plims.Controllers
 
                     // Calculate FG/Count for QTYPerQR
                     decimal QRPerAdjust = 0;
-                     //  QRPerAdjust =  FGQTY / sumQRCodeEmp;
-                            QRPerAdjust = Math.Round(((decimal)FGQTY - inputqty) / sumQRCodeEmp, 8);
+                    //  QRPerAdjust =  FGQTY / sumQRCodeEmp;
+                    QRPerAdjust = Math.Round(((decimal)FGQTY - inputqty) / sumQRCodeEmp, 8);
                     string[] note;
                     if (sumQRCodeEmp != 0)
                     {
@@ -5508,13 +5553,13 @@ namespace Plims.Controllers
                                              x.SectionID.Equals(FGSection) &&
                                              x.Prefix.Equals(FGShift) &&
                                              x.QRCode.Equals(item) &&
-                                             x.DataType.Equals("Count") )
+                                             x.DataType.Equals("Count"))
                                  .ToList();
 
                             foreach (var transaction in ProdUpdate)
                             {
 
-                               
+
 
                                 note = transaction.Note.Split(":");
                                 if (note.Length > 0)
@@ -5534,7 +5579,7 @@ namespace Plims.Controllers
 
 
 
-                    }                 
+                    }
                 }
 
                 else
@@ -5573,11 +5618,11 @@ namespace Plims.Controllers
                     string employeeIDvar = "";
                     foreach (int item in TransactionID)
                     {
-               
+
                         var QREmp = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionID.Equals(item)).Select(x => x.QRCode).SingleOrDefault();
                         employeeIDvar = QREmp;
 
-                       var ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp) && x.DataType.Equals("Count")).ToList();
+                        var ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp) && x.DataType.Equals("Count")).ToList();
 
                         int cntProductionTrand = ProductionTrand.Count();
                         sumQRCodeEmp += cntProductionTrand;
@@ -5590,7 +5635,7 @@ namespace Plims.Controllers
                         mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                         ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
-                
+
                     }
                     int inputqty = 0;
                     //var inputqtytest = mymodel.view_ProductionTransactionAj.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList();
@@ -5599,7 +5644,7 @@ namespace Plims.Controllers
 
                     // Calculate FG/Count for QTYPerQR
                     decimal QRPerAdjustinsert = Math.Round(((decimal)FGQTY - inputqty) / sumQRCodeEmp, 8);
-                   
+
                     if (sumQRCodeEmp != 0)
                     {
 
@@ -5632,7 +5677,7 @@ namespace Plims.Controllers
                                 }
                             }
 
-                        
+
                         }
                         db.SaveChanges();
 
@@ -5643,7 +5688,7 @@ namespace Plims.Controllers
                 ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                 mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
 
-          
+
                 return View("ProductionTransactionAdjustByEmployee", mymodel);
 
                 // END Employee Adjust
