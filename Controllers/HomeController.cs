@@ -185,7 +185,7 @@ namespace Plims.Controllers
                 view_User = db.View_User.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 tbPlants = db.TbPlant.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 //tbLine = db.TbLine.ToList(),
-                //tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
+                //tb3Master = db.TbEmployeeMaster.ToList(),
                 //view_Employee = db.View_Employee.ToList()
 
             };
