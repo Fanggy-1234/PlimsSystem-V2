@@ -2617,7 +2617,7 @@ namespace Plims.Controllers
             };
             ViewBag.VBRoleEmployeeAdjustLine = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(31)).Select(x => x.RoleAction).FirstOrDefault();
 
-            if ((StartTime == "" || StartTime == null) || (ToLine == "" || ToLine == null) || (ToSection == "" || ToSection == null) || TransactionDate == DateTime.MinValue)
+            if (((StartTime == "" || StartTime == null) && (EndTime == "" || EndTime == null)) || (ToLine == "" || ToLine == null) || (ToSection == "" || ToSection == null) || TransactionDate == DateTime.MinValue)
             {
                 TempData["AlertMessage"] = "Please Fill data before save !";
                 return RedirectToAction("EmployeeAdjustLine");
@@ -2673,9 +2673,19 @@ namespace Plims.Controllers
                         Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i]  && x.Plant.Equals(PlantID) && x.ClockOut == "" && x.Remark == "Adjust").SingleOrDefault();
 
                         Empdb.ClockOut = EndTime; 
-                    }  
+                    }
+                    if (StartTime != null && EndTime != null)
+                    {
+                        Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == thisday && x.Plant.Equals(PlantID)).SingleOrDefault();
+                        Empdb.ClockIn = StartTime;
+                        Empdb.ClockOut = EndTime;
+                        Empdb.Line = ToLine;
+                        Empdb.Section = ToSection;
 
-                    Empdb.UpdateBy = EmpID;//User.Identity.Name;
+                    }
+
+
+                        Empdb.UpdateBy = EmpID;//User.Identity.Name;
                     Empdb.UpdateDate = DateTime.Now;
                     db.SaveChanges();
 

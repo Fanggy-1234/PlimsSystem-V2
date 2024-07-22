@@ -338,6 +338,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <input class="form-control" type="datetime" name="FGPlanDate" id="FGPlanDate" style="background-color:beige" readonly>
+                        <input type="text" name="FGEmployeeID" id="FGEmployeeID" hidden>
                     </div>
 
                     <div class="mb-3">
@@ -471,10 +472,12 @@
                 var lineName = selectedRow.cells[3].innerText;
                 var sectionName = selectedRow.cells[4].innerText;
                 var prefix = selectedRow.cells[6].innerText;
+                var EmployeeID = selectedRow.cells[5].innerText;
 
-                console.log('1');
-                console.log(transactionDate);
+              //  console.log('1');
+                console.log(EmployeeID);
                 document.getElementById('FGPlanDate').value = Date(transactionDate).toString("dd/MM/yyyy");
+                document.getElementById('FGEmployeeID').value = EmployeeID;
                 document.getElementById('FGLine').value = lineName;
                 document.getElementById('FGSection').value = sectionName;
                 document.getElementById('FGShift').value = prefix;
@@ -499,10 +502,12 @@
             var lineName = selectedRow.cells[3].innerText;
             var sectionName = selectedRow.cells[4].innerText;
             var prefix = selectedRow.cells[6].innerText;
+            var EmployeeID = selectedRow.cells[5].innerText;
 
-            console.log('2');
-            console.log(transactionDate);
+           // console.log('2');
+           // console.log(transactionDate);
             document.getElementById('FGPlanDate').value = formatDate(transactionDate);
+            document.getElementById('FGEmployeeID').value = EmployeeID;
             document.getElementById('FGLine').value = lineName;
             document.getElementById('FGSection').value = sectionName;
             document.getElementById('FGShift').value = prefix;

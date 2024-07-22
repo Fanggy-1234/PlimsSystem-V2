@@ -2057,6 +2057,10 @@ namespace Plims.Controllers
                                        .Select(x => x.CreateDate.TimeOfDay)
                                        .FirstOrDefault();
 
+                                        //Check last count
+                                        var LastTransactionCount = db.TbProductionTransaction
+                                      .Where(x => x.QRCode.Equals(employeeId) && x.CreateDate.Date == currentDate).Count();
+                                        LastTransactionCount += 1;
 
                                         // Convert TimeSpan to total seconds
                                         double lastTransactionSeconds = LastTransactionTime.TotalSeconds;
@@ -2095,7 +2099,7 @@ namespace Plims.Controllers
                                             db.SaveChanges();
                                             var sectionvalalert = new
                                             {
-                                                message = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString(),
+                                                message = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString() + "  =>  " + LastTransactionCount ,
                                                 status = true
                                             };
                                             //sectionval = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString();
@@ -5454,7 +5458,7 @@ namespace Plims.Controllers
 
 
 
-        public IActionResult ProductionTransactionAdjustFGByEmployee(DateTime FGPlanDate, string FGLine, string FGSection, string FGShift, int FGQTY, List<int> TransactionID)
+        public IActionResult ProductionTransactionAdjustFGByEmployee(DateTime FGPlanDate,string FGEmployeeID, string FGLine, string FGSection, string FGShift, int FGQTY, List<int> TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -5588,6 +5592,7 @@ namespace Plims.Controllers
                         SectionID = FGSection,
                         Prefix = FGShift,
                         Type = "FG",
+                        Remark = "",
                         QTY = FGQTY,
                         CreateDate = DateTime.Now,
                         CreateBy = EmpID
@@ -5660,7 +5665,7 @@ namespace Plims.Controllers
                 // Employee Adjust
 
                 //Check for Update
-                int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("Employee")).ToList().Count();
+                int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("Employee") && x.Remark.Equals(FGEmployeeID)).ToList().Count();
                 if (checkDuplicate > 0)
                 {
 
@@ -5764,7 +5769,7 @@ namespace Plims.Controllers
                     if (checkClockout.Count() >= 1)
                     {
 
-                        TempData["AlertMessage"] = "Please Clockout First!";
+                        TempData["AlertMessage"] = "Please Clockout First ,Some Employee in this section not Clock out!";
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
                     }
 
@@ -5777,6 +5782,7 @@ namespace Plims.Controllers
                         SectionID = FGSection,
                         Prefix = FGShift,
                         Type = "Employee",
+                        Remark = FGEmployeeID,
                         QTY = FGQTY,
                         CreateDate = DateTime.Now,
                         CreateBy = EmpID
