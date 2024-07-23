@@ -1,6 +1,6 @@
 ﻿@model Plims.ViewModel.ViewModelAll
 @{
-    ViewBag.Title = "Working Function [key]";
+    ViewBag.Title = "Working Function ";
 }
 
 <style type="text/css">
@@ -151,7 +151,7 @@
 
 
 <div class="row" style="height:10px"></div>
-<h2 class="page-name">Working Function [Keys]</h2>
+<h2 class="page-name">Working Function </h2>
 <div class="row" style="height:30px"> </div>
 
 <div class="row" style="height:300px">
@@ -623,7 +623,6 @@
         insertIntoTbProductionTransaction(employeeId, productId, EmployeeRef);
     });
 
-
     function insertIntoTbProductionTransaction(employeeId, productId, EmployeeRef) {
         $.ajax({
             url: '/Working/InsertIntoTbProductionTransaction',
@@ -642,13 +641,6 @@
             }
         });
     }
-
-
-
-
-
-
-
 
 
     // $(document).ready(function () {

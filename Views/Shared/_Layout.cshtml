@@ -352,19 +352,19 @@
         } *@
 
         
-        @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(22) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+       @*  @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(22) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
         {
             ViewBag.VBRoleWorkingFunctionWithPackage = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(22)).Select(x => x.RoleAction).FirstOrDefault();
             <a href="@Url.Action("WorkingFunctionWithPackage", "Working")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
                 <img src="~/Picture/flaticon-pd-incentive-scan-white.png" class="nav-images" alt="PD incentive scan photo"> Product Working
         </a>
-        }
+        } *@
 
         @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(22) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
         {
             ViewBag.VBRoleWorkingFunction = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(22)).Select(x => x.RoleAction).FirstOrDefault();
             <a href="@Url.Action("WorkingFunction", "Working")" class="w3-bar-item w3-button w3-hover-blue" style="color:white">
-                <img src="~/Picture/flaticon-pd-incentive-scan-white.png" class="nav-images" alt="PD incentive scan photo"> Product Working for key
+                <img src="~/Picture/flaticon-pd-incentive-scan-white.png" class="nav-images" alt="PD incentive scan photo"> Product Working 
             </a>
         }
           @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(33) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
@@ -466,7 +466,7 @@
             
         </div>
          <div class="buttons">
-            <img style="width:50%;height:30%;  background-color: #0F40F5"> <p style="color:whitesmoke">Version1.1.8 | LastUpdate: 15/07/24 </p>
+            <img style="width:50%;height:30%;  background-color: #0F40F5"> <p style="color:whitesmoke">Version1.1.10 | LastUpdate: 21/07/24 </p>
         </div>
 
     </div>

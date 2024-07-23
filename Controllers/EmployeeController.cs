@@ -981,7 +981,12 @@ namespace Plims.Controllers
                 if (obj.ClockOut == null || obj.ClockOut == "")
                 {
                     TempData["AlertMessage"] = "Please fill Time/Date Clockin";
-                    return RedirectToAction("EmployeeClockIn", "Employee");
+                    return RedirectToAction("EmployeeClockOut", "Employee");
+                }
+                if (obj.WorkingStatus == null )
+                {
+                    TempData["AlertMessage"] = "Please fill Working Status";
+                    return RedirectToAction("EmployeeClockOut", "Employee");
                 }
 
                 // Create Function
@@ -2612,9 +2617,9 @@ namespace Plims.Controllers
             };
             ViewBag.VBRoleEmployeeAdjustLine = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(31)).Select(x => x.RoleAction).FirstOrDefault();
 
-            if (StartTime == "" || StartTime == null || EndTime == "" || EndTime == null)
+            if (((StartTime == "" || StartTime == null) && (EndTime == "" || EndTime == null)) || (ToLine == "" || ToLine == null) || (ToSection == "" || ToSection == null) || TransactionDate == DateTime.MinValue)
             {
-                TempData["AlertMessage"] = "Please Fill StartTime or EndTime !";
+                TempData["AlertMessage"] = "Please Fill data before save !";
                 return RedirectToAction("EmployeeAdjustLine");
             }
             // Create Function
@@ -2624,12 +2629,26 @@ namespace Plims.Controllers
             {
                 var Empdb = new TbEmployeeTransaction();
                 string empid = EmployeeIDchk[i];
-
+               // var EmpTran = new object();
+                List<TbEmployeeTransaction> EmpTran;
                 //check current line not clockin
-                var Empcheckclockout = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.Plant.Equals(PlantID) && x.ClockOut == "").ToList();
-                var EmpTran = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.Plant.Equals(PlantID) && x.Line.Equals(ToLine) && x.Section.Equals(ToSection) && x.Remark == "Adjust").ToList();
+                var Empcheckclockout = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.Plant.Equals(PlantID) && x.Remark != "Adjust" && x.ClockOut == "").ToList();
+                //   var EmpTran = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.Plant.Equals(PlantID) && x.Line.Equals(ToLine) && x.Section.Equals(ToSection) && x.Remark == "Adjust").ToList();
+                if (StartTime == null)
+                {
+                      EmpTran = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid)  && x.Plant.Equals(PlantID)&& x.ClockOut == "" && x.Remark == "Adjust").ToList();
+
+                }
+                else
+                {
+                      EmpTran = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.Plant.Equals(PlantID) && x.Line.Equals(ToLine) && x.Section.Equals(ToSection) && x.Remark == "Adjust").ToList();
+
+                }
 
 
+              //  var EmpClockNo = db.View_EmployeeClocktime.Where(x => x.ID.Equals(Convert.ToInt32(empid)) && x.ClockIn != "" && x.ClockOut == "").Select(x => x.TransactionNo).SingleOrDefault();
+
+              
 
                 if (Empcheckclockout.Count != 0)
                 {
@@ -2641,12 +2660,32 @@ namespace Plims.Controllers
                 {
 
                     //Update Transaction
-                    Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == thisday && x.Plant.Equals(PlantID)).SingleOrDefault();
-                    Empdb.ClockIn = StartTime;
-                    Empdb.ClockOut = EndTime;
-                    Empdb.Line = ToLine;
-                    Empdb.Section = ToSection;
-                    Empdb.UpdateBy = EmpID;//User.Identity.Name;
+                    if (StartTime != null )
+                    {
+                        Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == thisday && x.Plant.Equals(PlantID)).SingleOrDefault();
+
+                        Empdb.ClockIn = StartTime;
+                        Empdb.Line = ToLine;
+                        Empdb.Section = ToSection;
+                    }
+                    if ( EndTime != null)
+                    {
+                        Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i]  && x.Plant.Equals(PlantID) && x.ClockOut == "" && x.Remark == "Adjust").SingleOrDefault();
+
+                        Empdb.ClockOut = EndTime; 
+                    }
+                    if (StartTime != null && EndTime != null)
+                    {
+                        Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == thisday && x.Plant.Equals(PlantID)).SingleOrDefault();
+                        Empdb.ClockIn = StartTime;
+                        Empdb.ClockOut = EndTime;
+                        Empdb.Line = ToLine;
+                        Empdb.Section = ToSection;
+
+                    }
+
+
+                        Empdb.UpdateBy = EmpID;//User.Identity.Name;
                     Empdb.UpdateDate = DateTime.Now;
                     db.SaveChanges();
 
@@ -2657,6 +2696,12 @@ namespace Plims.Controllers
                     var empdetails = db.TbEmployeeMaster.Where(x => x.EmployeeID == empid.Trim() && x.PlantID.Equals(PlantID)).SingleOrDefault();
                     // Create Transaction
                     var empshift = db.View_EmployeeMaster.Where(x => x.EmployeeID == empid.Trim() && x.PlantID.Equals(PlantID)).SingleOrDefault();
+                    if (StartTime == "" || StartTime == null)
+                    {
+                        TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid;
+                        return RedirectToAction("EmployeeAdjustLine");
+                    }
+
 
                     //Case with clock out
                     db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
@@ -2675,7 +2720,7 @@ namespace Plims.Controllers
                         StartTime = empshift.StartTime,
                         EndTime = empshift.EndTime,
                         ClockIn = StartTime,
-                        ClockOut = EndTime,
+                        ClockOut = "",
                         CreateDate = DateTime.Now,
                         CreateBy = EmpID,//User.Identity.Name,
                         UpdateDate = DateTime.Now,

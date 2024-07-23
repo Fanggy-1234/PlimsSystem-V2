@@ -969,23 +969,20 @@ namespace Plims.Controllers
 
                 int row = 2;
 
-
-                //foreach (var item in collection)
-                //{
                 Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
                 // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
                 Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = "000001";
+                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
 
-                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "000001";
-                Sheet.Cells[string.Format("E{0}", row)].Value = "000001";
+                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
+                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
                 Sheet.Cells[string.Format("F{0}", row)].Value = "1";
 
                 Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
                 Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
                 Sheet.Cells[string.Format("I{0}", row)].Value = "1";
 
-                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("J{0}", row)].Value = "50";
                 Sheet.Cells[string.Format("K{0}", row)].Value = "";
                 Sheet.Cells[string.Format("L{0}", row)].Value = "Count";
 
@@ -993,7 +990,77 @@ namespace Plims.Controllers
                 Sheet.Cells[string.Format("N{0}", row)].Value = "";
                 Sheet.Cells[string.Format("O{0}", row)].Value = "";
 
+                row++;
 
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
+
+                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
+                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
+                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+
+                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
+                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("I{0}", row)].Value = "1000";
+
+                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "FG";
+
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+                Sheet.Cells[string.Format("O{0}", row)].Value = "";
+
+
+                row++;
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
+
+                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
+                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
+                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+
+                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
+                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("I{0}", row)].Value = "50";
+
+                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "Defect";
+
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+                Sheet.Cells[string.Format("O{0}", row)].Value = "";
+
+
+
+                row++;
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
+
+                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
+                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
+                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+
+                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
+                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("I{0}", row)].Value = "50";
+
+                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "Defect";
+
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "00001";
+                Sheet.Cells[string.Format("O{0}", row)].Value = "";
 
 
 
@@ -1044,23 +1111,96 @@ namespace Plims.Controllers
                 Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
                 // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
                 Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = "000001";
+                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
 
-                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "000001";
-                Sheet.Cells[string.Format("E{0}", row)].Value = "000001";
+                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
+                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
                 Sheet.Cells[string.Format("F{0}", row)].Value = "1";
 
                 Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
                 Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
                 Sheet.Cells[string.Format("I{0}", row)].Value = "1";
 
-                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("J{0}", row)].Value = "50";
                 Sheet.Cells[string.Format("K{0}", row)].Value = "";
                 Sheet.Cells[string.Format("L{0}", row)].Value = "Count";
 
                 Sheet.Cells[string.Format("M{0}", row)].Value = "";
                 Sheet.Cells[string.Format("N{0}", row)].Value = "";
                 Sheet.Cells[string.Format("O{0}", row)].Value = "";
+
+                row++;
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
+
+                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
+                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
+                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+
+                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
+                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("I{0}", row)].Value = "1000";
+
+                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "FG";
+
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+                Sheet.Cells[string.Format("O{0}", row)].Value = "";
+
+
+                row++;
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
+
+                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
+                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
+                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+
+                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
+                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("I{0}", row)].Value = "50";
+
+                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "Defect";
+
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+                Sheet.Cells[string.Format("O{0}", row)].Value = "";
+
+
+                row++;
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
+
+                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
+                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
+                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+
+                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
+                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("I{0}", row)].Value = "50";
+
+                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "Defect";
+
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "00001";
+                Sheet.Cells[string.Format("O{0}", row)].Value = "";
+
+
 
                 //    row++;
                 //}
@@ -1841,12 +1981,18 @@ namespace Plims.Controllers
                     if (db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)).Count() != 0) // case Employee
                     {
 
-                        //Check EmployeeClockin                    
+                        //Check EmployeeClockin  change adjust clockout                   
                         var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
                                                         (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
-                                                        ((x.ClockOut != null || x.ClockOut != "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate)
+                                                        ((x.ClockOut != null || x.ClockOut == "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)
 
                                                         )).ToList();
+
+                        //var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
+                        //                              (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
+                        //                              ((x.ClockOut != null || x.ClockOut != "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate)
+
+                        //                              )).ToList();
 
 
                         if (objEmpcount.Count > 1)
@@ -1860,11 +2006,15 @@ namespace Plims.Controllers
                             //                            (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
                             //                            ((x.ClockOut != null || x.ClockOut != "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate))).FirstOrDefault();
 
+                            //var objEmp = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
+                            //                          (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
+                            //                          ((x.ClockOut != null || x.ClockOut != "") && x.Remark == "Adjust" && x.TransactionDate.Date == currentDate))).FirstOrDefault();
+                           
+                                        
                             var objEmp = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
-                                                      (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
-                                                      ((x.ClockOut != null || x.ClockOut != "") && x.Remark == "Adjust" && x.TransactionDate.Date == currentDate))).FirstOrDefault();
-
-
+                                                            (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
+                                                            ((x.ClockOut != null || x.ClockOut == "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)
+                                                            )).FirstOrDefault();
 
 
                             if (objEmp != null)
@@ -1907,6 +2057,10 @@ namespace Plims.Controllers
                                        .Select(x => x.CreateDate.TimeOfDay)
                                        .FirstOrDefault();
 
+                                        //Check last count
+                                        var LastTransactionCount = db.TbProductionTransaction
+                                      .Where(x => x.QRCode.Equals(employeeId) && x.CreateDate.Date == currentDate).Count();
+                                        LastTransactionCount += 1;
 
                                         // Convert TimeSpan to total seconds
                                         double lastTransactionSeconds = LastTransactionTime.TotalSeconds;
@@ -1945,7 +2099,7 @@ namespace Plims.Controllers
                                             db.SaveChanges();
                                             var sectionvalalert = new
                                             {
-                                                message = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString(),
+                                                message = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString() + "  =>  " + LastTransactionCount ,
                                                 status = true
                                             };
                                             //sectionval = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString();
@@ -1998,16 +2152,25 @@ namespace Plims.Controllers
                         {
 
                             //Select EmployeeTransaction
+
+
+
                             var objEmpcount = db.View_ClockTime
                             .Where(x => x.EmployeeID.Equals(item.EmployeeID) &&
                                          (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) &&
                                          x.ClockOut == "" &&
                                         x.PlantID.Equals(PlantID))
                             .ToList();
+                            double roundedDifftime = 0.0;
+                            var sectionvalalert = new
+                            {
+                                message = "",
+                                status = false
+                            };
 
                             if (objEmpcount.Count == 0)
                             {
-                                var sectionvalalert = new
+                                 sectionvalalert = new
                                 {
                                     message = "Check Clock in time",
                                     status = false
@@ -2016,27 +2179,35 @@ namespace Plims.Controllers
                                 return Json(sectionvalalert);
                             }
 
-                            var objEmp = db.View_ClockTime
-                            .Where(x => x.EmployeeID.Equals(item.EmployeeID) &&
-                                         (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) &&
-                                         x.ClockOut == "" &&
-                                        x.PlantID.Equals(PlantID))
-                            .FirstOrDefault();
+                            //var objEmp = db.View_ClockTime
+                            //.Where(x => x.EmployeeID.Equals(item.EmployeeID) &&
+                            //             (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) &&
+                            //             x.ClockOut == "" &&
+                            //            x.PlantID.Equals(PlantID))
+                            //.ToList();
+
+                            var objEmp = db.view_EmployeeGroupWorking
+                           .Where(x => x.GroupID.Equals(item.GroupID) && x.PlantID.Equals(PlantID))
+                           .ToList();
+
+                            foreach (var items in objEmp)
+                            {
 
 
                             if (objEmp != null)
                             {
                                 var objPLPS = db.View_PLPS
                                 .Where(x => x.PlantID.Equals(PlantID) &&
-                                            x.LineID.Equals(objEmp.LineID.ToString()) &&
+                                            x.LineID.Equals(items.Line.ToString()) &&
                                             x.ProductID.Equals(productId) &&
-                                            x.SectionID.Equals(objEmp.SectionID.ToString()))
+                                            x.SectionID.Equals(items.Section.ToString()))
                                 .FirstOrDefault();
+
 
                                 if (objPLPS != null)
                                 {
                                     var LastTransactionTime = db.TbProductionTransaction
-                                   .Where(x => x.QRCode.Equals(objEmp.EmployeeID) && x.CreateDate.Date == currentDate)
+                                   .Where(x => x.QRCode.Equals(items.EmployeeID) && x.CreateDate.Date == currentDate)
                                    .OrderByDescending(x => x.CreateDate)
                                    .Select(x => x.CreateDate.TimeOfDay)
                                    .FirstOrDefault();
@@ -2045,61 +2216,66 @@ namespace Plims.Controllers
                                     double lastTransactionSeconds = LastTransactionTime.TotalSeconds;
                                     double delayTimeSeconds = Convert.ToDouble(objPLPS.Delaytime);
                                     double difftime = ((lastTransactionSeconds + delayTimeSeconds) - currentTime.TotalSeconds);
-                                    double roundedDifftime = Math.Round(difftime, 2);
+                                     roundedDifftime = Math.Round(difftime, 2);
 
 
-                                    if (lastTransactionSeconds + delayTimeSeconds < currentTime.TotalSeconds)
-                                    {
-                                        // Perform actions if LastTransactionTime is greater than or equal to objPLPS.Delaytime                  
-                                        db.TbProductionTransaction.Add(new TbProductionTransaction()
+                                        if (lastTransactionSeconds + delayTimeSeconds < currentTime.TotalSeconds)
                                         {
-                                            // TransactionNo = db.TbProductionTransaction.Count() + 1,
-                                            TransactionDate = objEmp.TransactionDate,//DateTime.Now,
-                                            PlantID = Convert.ToInt32(objEmp.PlantID),
-                                            LineID = objEmp.LineID,
-                                            SectionID = objEmp.SectionID,
-                                            ProductID = productId,
-                                            FormularID = objPLPS.FormularID,
-                                            Prefix = objEmp.Prefix,
-                                            QRCode = objEmp.EmployeeID,
-                                            Qty = 1,
-                                            QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
-                                            DataType = "Count",
-                                            Reason = "",
-                                            Note = "",
-                                            PackageRef = 0,
-                                            EmployeeRef = string.IsNullOrEmpty(EmployeeRef) ? "" : EmployeeRef,
-                                            GroupRef = employeeId,
-                                            CreateDate = DateTime.Now,
-                                            CreateBy = EmpID,
-                                            UpdateDate = DateTime.Now,
-                                            UpdateBy = EmpID
-                                        });
-                                        db.SaveChanges();
-                                        var sectionvalalert = new
+                                            // Perform actions if LastTransactionTime is greater than or equal to objPLPS.Delaytime                  
+                                            db.TbProductionTransaction.Add(new TbProductionTransaction()
+                                            {
+                                                // TransactionNo = db.TbProductionTransaction.Count() + 1,
+                                                TransactionDate = items.TransactionDate,//DateTime.Now,
+                                                PlantID = Convert.ToInt32(items.PlantID),
+                                                LineID = items.Line,
+                                                SectionID = items.Section,
+                                                ProductID = productId,
+                                                FormularID = objPLPS.FormularID,
+                                                Prefix = items.Prefix,
+                                                QRCode = items.EmployeeID,
+                                                Qty = 1,
+                                                QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
+                                                DataType = "Count",
+                                                Reason = "",
+                                                Note = "",
+                                                PackageRef = 0,
+                                                EmployeeRef = string.IsNullOrEmpty(EmployeeRef) ? "" : EmployeeRef,
+                                                GroupRef = employeeId,
+                                                CreateDate = DateTime.Now,
+                                                CreateBy = EmpID,
+                                                UpdateDate = DateTime.Now,
+                                                UpdateBy = EmpID
+                                            });
+
+                                            db.SaveChanges();
+                                           
+
+                                        }
+                                         sectionvalalert = new
                                         {
-                                            message = objEmp.SectionID.ToString(),
+                                            message = items.Section.ToString(),
                                             status = true
                                         };
                                         //sectionval = objEmp.SectionID.ToString();
-                                        return Json(sectionvalalert);
+                                       
 
 
                                     }
                                     else
                                     {
                                         //  TempData["AlertMessage"] = "please check time!";
-                                        var sectionvalalert = new
+                                         sectionvalalert = new
                                         {
                                             message = "check time :" + roundedDifftime + " sec.",
                                             status = false
                                         };
                                         //var sectionvalalert = "check time :" + roundedDifftime + " sec.";
-                                        return Json(sectionvalalert);
+                                      //  return Json(sectionvalalert);
                                     }
                                 }
                             }
 
+                            return Json(sectionvalalert);
                         }
 
                         return Json(sectionval);
@@ -4802,7 +4978,7 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -4871,7 +5047,7 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -4902,7 +5078,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5066,7 +5242,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5127,7 +5303,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5191,13 +5367,13 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                 tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
                 view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
 
             };
@@ -5261,7 +5437,7 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5282,7 +5458,7 @@ namespace Plims.Controllers
 
 
 
-        public IActionResult ProductionTransactionAdjustFGByEmployee(DateTime FGPlanDate, string FGLine, string FGSection, string FGShift, int FGQTY, List<int> TransactionID)
+        public IActionResult ProductionTransactionAdjustFGByEmployee(DateTime FGPlanDate,string FGEmployeeID, string FGLine, string FGSection, string FGShift, int FGQTY, List<int> TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -5292,7 +5468,7 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelProductionAdjust
+            var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
@@ -5416,6 +5592,7 @@ namespace Plims.Controllers
                         SectionID = FGSection,
                         Prefix = FGShift,
                         Type = "FG",
+                        Remark = "",
                         QTY = FGQTY,
                         CreateDate = DateTime.Now,
                         CreateBy = EmpID
@@ -5488,7 +5665,7 @@ namespace Plims.Controllers
                 // Employee Adjust
 
                 //Check for Update
-                int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("Employee")).ToList().Count();
+                int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.Type.Equals("Employee") && x.Remark.Equals(FGEmployeeID)).ToList().Count();
                 if (checkDuplicate > 0)
                 {
 
@@ -5592,7 +5769,7 @@ namespace Plims.Controllers
                     if (checkClockout.Count() >= 1)
                     {
 
-                        TempData["AlertMessage"] = "Please Clockout First!";
+                        TempData["AlertMessage"] = "Please Clockout First ,Some Employee in this section not Clock out!";
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
                     }
 
@@ -5605,6 +5782,7 @@ namespace Plims.Controllers
                         SectionID = FGSection,
                         Prefix = FGShift,
                         Type = "Employee",
+                        Remark = FGEmployeeID,
                         QTY = FGQTY,
                         CreateDate = DateTime.Now,
                         CreateBy = EmpID

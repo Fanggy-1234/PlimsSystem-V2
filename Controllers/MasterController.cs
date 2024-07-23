@@ -4685,6 +4685,7 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.ToList(),
                 tbProduct = db.TbProduct.ToList(),
                 tbSection = db.TbSection.ToList(),
+                view_PLPS = db.View_PLPS.ToList(),
                 view_ProductSTD = db.View_ProductSTD.OrderByDescending(x => x.Status).ToList()
 
             };
@@ -4698,6 +4699,7 @@ namespace Plims.Controllers
                 mymodel.tbLine = mymodel.tbLine.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbProduct = mymodel.tbProduct.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbSection = mymodel.tbSection.Where(x => x.PlantID.Equals(PlantID)).ToList();
+                mymodel.view_PLPS = mymodel.view_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.PlantID.Equals(PlantID)).ToList();
             }
 
@@ -4774,6 +4776,7 @@ namespace Plims.Controllers
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 tbProductSTD = db.TbProductSTD.ToList(),
+                view_PLPS = db.View_PLPS.ToList(),
                 view_ProductSTD = db.View_ProductSTD.OrderByDescending(x => x.Status).ToList()
 
             };
@@ -4784,6 +4787,7 @@ namespace Plims.Controllers
 
                 mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbProductSTD = mymodel.tbProductSTD.Where(x => x.PlantID.Equals(PlantID)).ToList();
+                mymodel.view_PLPS = mymodel.view_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList();
             }
 
 
@@ -4849,6 +4853,7 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.ToList(),
                 tbProduct = db.TbProduct.ToList(),
                 tbSection = db.TbSection.ToList(),
+                view_PLPS = db.View_PLPS.ToList(),
                 view_ProductSTD = db.View_ProductSTD.OrderByDescending(x => x.Status).ToList()
 
             };
@@ -4864,6 +4869,7 @@ namespace Plims.Controllers
                 mymodel.tbSection = mymodel.tbSection.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbProductSTD = mymodel.tbProductSTD.Where(x => x.PlantID.Equals(PlantID)).ToList();
+                mymodel.view_PLPS = mymodel.view_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList();
             }
             ViewBag.InactiveStatus = true;
             return RedirectToAction("ProductSTD");
@@ -6273,7 +6279,7 @@ namespace Plims.Controllers
             using (Graphics g = Graphics.FromImage(qrBitmap))
             {
                 g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                Font font = new Font("Arial", 30, FontStyle.Bold);
+                Font font = new Font("Arial", 36, FontStyle.Bold);
                 SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                 // Calculate where to draw the text
@@ -6423,7 +6429,7 @@ namespace Plims.Controllers
                 using (Graphics g = Graphics.FromImage(qrBitmap))
                 {
                     g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                    Font font = new Font("Arial", 30, FontStyle.Bold);
+                    Font font = new Font("Arial", 36, FontStyle.Bold);
                     SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                     // Calculate where to draw the text
@@ -6524,7 +6530,7 @@ namespace Plims.Controllers
                 using (Graphics g = Graphics.FromImage(qrBitmap))
                 {
                     g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                    Font font = new Font("Arial", 30, FontStyle.Bold);
+                    Font font = new Font("Arial", 36, FontStyle.Bold);
                     SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                     // Calculate where to draw the text
@@ -8432,12 +8438,12 @@ namespace Plims.Controllers
             using (Graphics g = Graphics.FromImage(qrBitmap))
             {
                 g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                Font font = new Font("Arial", 30, FontStyle.Bold);
+                Font font = new Font("Arial", 36, FontStyle.Bold);
                 SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                 // Calculate where to draw the text
                 float x = 150; // Left margin
-                float y = qrBitmap.Height - 40; // Position at the bottom
+                float y = qrBitmap.Height - 30; // Position at the bottom
          
                 g.DrawString(labelText, font, brush, new System.Drawing.PointF(x, y)); // Draw the label
             }
