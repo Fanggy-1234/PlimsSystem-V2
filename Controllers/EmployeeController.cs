@@ -2850,7 +2850,7 @@ namespace Plims.Controllers
             }
             var Employee = new ViewModelAll
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
