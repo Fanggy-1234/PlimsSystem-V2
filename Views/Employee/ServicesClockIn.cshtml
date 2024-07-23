@@ -141,6 +141,23 @@
         });
     });
 
+    function checkTime() {
+        if (!$('#ClockIn').val() || !$('#TransactionDate').val()) {
+            alert('Please fill Time/Date Clockin')
+            return false
+        }
+        if (!$('#LineID').val()) {
+            alert('Please select Line');
+            return false;
+        }
+        if ($("#tablecreate_id tbody tr").length <= 0) {
+            alert('Please add Section/Service')
+            return false
+        }
+        confirm('Are you sure?')
+        return true
+    }
+
 </script>
 
 
@@ -149,7 +166,7 @@
 
 
 
-    
+
     // $(document).ready(function () {
     //     $("#table_id #checkall").click(function () {
     //         if ($("#table_id #checkall").is(':checked')) {
@@ -174,7 +191,7 @@
 
     // new DataTable('#table_id')
     //     .on('page.dt', () => eventFired('Page'));
-    
+
     // $(document).ready(function () {
     //     var table = $('#table_id').DataTable({
     //         columnDefs: [{
@@ -196,7 +213,7 @@
     //         ]
     //     });
 
-       
+
     // });
 
 
@@ -211,12 +228,12 @@
         var sectionID = $('#btnEdit[data-id="' + ID + '"]').data('section-id');
         var serviceID = $('#btnEdit[data-id="' + ID + '"]').data('service-id');
 
-    // Use the retrieved data as needed, for example:
-        
-    // console.log("Section ID: " + sectionID);
-    // console.log("Service ID: " + serviceID);
+        // Use the retrieved data as needed, for example:
 
-       // var TranDate = $("#TransactionDateFillter").val();
+        // console.log("Section ID: " + sectionID);
+        // console.log("Service ID: " + serviceID);
+
+        // var TranDate = $("#TransactionDateFillter").val();
         $.ajax({
             url: '/Employee/SericesClockInEdit/' + ID,
             type: 'GET',
@@ -238,11 +255,11 @@
                     // var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed
 
 
-                var transactionDate = new Date(response.transactionDate);
-                var year = transactionDate.getFullYear();
-                var month = ('0' + (transactionDate.getMonth() + 1)).slice(-2);
-                var day = ('0' + transactionDate.getDate()).slice(-2);
-                var formattedDate = `${year}-${month}-${day}`;
+                    var transactionDate = new Date(response.transactionDate);
+                    var year = transactionDate.getFullYear();
+                    var month = ('0' + (transactionDate.getMonth() + 1)).slice(-2);
+                    var day = ('0' + transactionDate.getDate()).slice(-2);
+                    var formattedDate = `${year}-${month}-${day}`;
 
 
 
@@ -276,7 +293,7 @@
     //     var selectedSection = $("#SectionID option:selected");
     //     var tableBody = $("#tablecreate_id tbody");
     //     $("#SectionSelect").val(selectedSection.val());
-      
+
 
     //     // Check if a service is selected
     //     if (selectedService.val() !== "") {
@@ -299,7 +316,7 @@
     //             newRow.append("<td>" + selectedService.text() + "</td>");
     //             newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
     //             tableBody.append(newRow);
-            
+
     //         }
 
     //         // Clear the selected options in the dropdowns
@@ -319,50 +336,50 @@
 
 
     function AddserviceFn() {
-    var selectedService = $("#ServicesID option:selected");
-    var selectedSection = $("#SectionID option:selected");
-    var tableBody = $("#tablecreate_id tbody");
-    $("#SectionSelect").val(selectedSection.val());
+        var selectedService = $("#ServicesID option:selected");
+        var selectedSection = $("#SectionID option:selected");
+        var tableBody = $("#tablecreate_id tbody");
+        $("#SectionSelect").val(selectedSection.val());
 
-    // Check if a service is selected
-    if (selectedService.val() !== "") {
-        if (selectedSection.val() === "All") {
-            // Loop through all sections and add a row for each section with the selected service
-            $("#SectionID option").each(function () {
-                var section = $(this);
-                console.log('1');
-                if (section.val() !== "All" && section.val() !== "") {
-                    var newRow = $("<tr>");
-                    newRow.append("<td>" + section.text() + "</td>");
-                    newRow.append("<td>" + selectedService.text() + "</td>");
-                    newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
-                    tableBody.append(newRow);
+        // Check if a service is selected
+        if (selectedService.val() !== "") {
+            if (selectedSection.val() === "All") {
+                // Loop through all sections and add a row for each section with the selected service
+                $("#SectionID option").each(function () {
+                    var section = $(this);
+                    console.log('1');
+                    if (section.val() !== "All" && section.val() !== "") {
+                        var newRow = $("<tr>");
+                        newRow.append("<td>" + section.text() + "</td>");
+                        newRow.append("<td>" + selectedService.text() + "</td>");
+                        newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
+                        tableBody.append(newRow);
                         console.log('1.1');
-                }
-            });
-        } else if (selectedSection.val() !== "") {
+                    }
+                });
+            } else if (selectedSection.val() !== "") {
                 console.log('2');
-            // Add a new row to the table with the selected section-service pair
-            var newRow = $("<tr>");
-            newRow.append("<td>" + selectedSection.text() + "</td>");
-            newRow.append("<td>" + selectedService.text() + "</td>");
-            newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
-            tableBody.append(newRow);
-            console.log('2.1');
+                // Add a new row to the table with the selected section-service pair
+                var newRow = $("<tr>");
+                newRow.append("<td>" + selectedSection.text() + "</td>");
+                newRow.append("<td>" + selectedService.text() + "</td>");
+                newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
+                tableBody.append(newRow);
+                console.log('2.1');
+            }
+
+            // Clear the selected options in the dropdowns
+            $("#ServicesID").prop('selectedIndex', 0);
+            $("#SectionID").prop('selectedIndex', 0);
+
+            // Update the hidden input with the table data
+            UpdateTableData();
+        } else {
+            alert("Please select a service before adding.");
         }
 
-        // Clear the selected options in the dropdowns
-        $("#ServicesID").prop('selectedIndex', 0);
-        $("#SectionID").prop('selectedIndex', 0);
 
-        // Update the hidden input with the table data
-        UpdateTableData();
-    } else {
-        alert("Please select a service before adding.");
     }
-
-
-}
     // ///Edit to modal
     // function EditFn(ID) {
     //     $.ajax({
@@ -404,7 +421,7 @@
     // }
     ///////////////////////////////////////////////////////////
 
-     ///Add Service and Section
+    ///Add Service and Section
     //  function AddserviceFn() {
 
     //     var selectedService = $("#ServicesID option:selected");
@@ -438,18 +455,18 @@
     // }
 
     function UpdateTableData() {
-    // Get the table data and update the hidden input
-    var tableData = [];
-    $("#tablecreate_id tbody tr").each(function () {
-        var section = $(this).find("td:eq(0)").text();
-        var service = $(this).find("td:eq(1)").text();
-        tableData.push({ Section: section, Service: service });
-    });
+        // Get the table data and update the hidden input
+        var tableData = [];
+        $("#tablecreate_id tbody tr").each(function () {
+            var section = $(this).find("td:eq(0)").text();
+            var service = $(this).find("td:eq(1)").text();
+            tableData.push({ Section: section, Service: service });
+        });
         console.log('test');
 
-    // Update the hidden input value
-    $("#TableData").val(JSON.stringify(tableData));
-}
+        // Update the hidden input value
+        $("#TableData").val(JSON.stringify(tableData));
+    }
 
     function RemoveRow(button) {
         // Remove the row when the "Remove" button is clicked
@@ -462,7 +479,7 @@
 
 
 
-    
+
     function filterSectionByLine() {
 
         var SelectLineID = $("#LineID").val().toString();
@@ -481,8 +498,8 @@
                         alert(data.message);
 
                     } else {
-                       
-                          $("#SectionID").empty();
+
+                        $("#SectionID").empty();
                         $("#SectionID").append("<option value='All'>All</option>");
 
                         data.forEach(function (section) {
@@ -555,7 +572,8 @@
                         {
 
                             <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
-                                @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName) </option>
+                                @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
+                            </option>
                         }
                     </select>
                 </div>
@@ -580,8 +598,8 @@
 
             </div>
 
-                        <div class="row" style="height:10px"></div>
-             <div class="row" style="padding-right:2em">
+            <div class="row" style="height:10px"></div>
+            <div class="row" style="padding-right:2em">
                 <div class="col-3 label">
                     <label>  Section Name:</label>
                 </div>
@@ -599,7 +617,7 @@
                             }
                         </select>
 
-                       
+
                     </div>
 
                 </div>
@@ -607,7 +625,7 @@
 
             </div>
 
-              <div class="row" style="padding-right:2em">
+            <div class="row" style="padding-right:2em">
                 <div class="col-3 label">
                     <label for="recipient-name" class="col-form-label">  TransactionDate:</label>
                 </div>
@@ -623,7 +641,7 @@
             </div>
 
 
-          @*   <div class="row" style="height:10px"></div>
+            @*   <div class="row" style="height:10px"></div>
             *@
 
 
@@ -654,21 +672,21 @@
             </div>
             <div class="row" style="height:10px"></div>
 
-@* 
+            @*
             <div class="row" style="padding-right:2em">
-                <div class="col-3 label">
-                    <label for="recipient-name" class="col-form-label">Clock In Date:</label>
-                </div>
-                <div class="col">
-                    <!-- Transaction Date -->
-                   
-                   <input type="date" class="form-control" name="TransactionDate" id="TransactionDate" style="width:100%" value="@DateTime.Now.ToString("yyyy-MM-dd")" disabled>
+            <div class="col-3 label">
+            <label for="recipient-name" class="col-form-label">Clock In Date:</label>
+            </div>
+            <div class="col">
+            <!-- Transaction Date -->
 
-                </div>
-                <div class="col-1"></div>
+            <input type="date" class="form-control" name="TransactionDate" id="TransactionDate" style="width:100%" value="@DateTime.Now.ToString("yyyy-MM-dd")" disabled>
+
+            </div>
+            <div class="col-1"></div>
             </div> *@
 
-             <div class="row" style="padding-right:2em">
+            <div class="row" style="padding-right:2em">
                 <div class="col-3 label">
                     <label> Line :</label>
                 </div>
@@ -683,7 +701,6 @@
                     </select>
                 </div>
                 <div class="col-1">
-                  
                 </div>
             </div>
 
@@ -696,10 +713,10 @@
                     <select class="selectfillter form-control" list="SectionID" name="SectionID" id="SectionID" style="width:100%">
                         <option value="" default selected></option>
                         <option value="ALL"> ALL</option>
-                       @*  @foreach (var item in Model.tbSection.Where(x=>x.Status.Equals(1)))
+                        @*  @foreach (var item in Model.tbSection.Where(x=>x.Status.Equals(1)))
                         {
 
-                            <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName) </option>
+                        <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName) </option>
                         } *@
                     </select>
                     <input name="SectionSelect" id="SectionSelect" hidden />
@@ -727,9 +744,6 @@
                     </select>
                 </div>
                 <div class="col-1">
-                  
-
-
                 </div>
             </div>
 
@@ -740,24 +754,23 @@
                     <input type="hidden" name="TableData" id="TableData" value="">
                 </div>
                 <div class="col">
-                <table id="tablecreate_id" class="page-table">
-                    <thead>
-                        <tr>
+                    <table id="tablecreate_id" class="page-table">
+                        <thead>
+                            <tr>
                                 <th style="text-align:center; height:25px; border:solid 1px grey ; background-color:darkgrey">
-                                Section
-                            </th>
+                                    Section
+                                </th>
                                 <th style="text-align:center ; height:25px; border:solid 1px grey; background-color:darkgrey">
-                                Service
-                            </th>
+                                    Service
+                                </th>
                                 <th style="text-align:center; height:25px; border:solid 1px grey; background-color:darkgrey">
-                                Action
-                            </th> 
-                        </tr>
-                    </thead>
-                    <tbody style="border:solid 1px grey">
-                       
-                    </tbody>
-                </table>
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody style="border:solid 1px grey">
+                        </tbody>
+                    </table>
                 </div>
                 <div class="col-1"></div>
             </div>
@@ -766,41 +779,41 @@
 
     </div>
 
-    
-        <div class="row">
-            <div class="col-6">
-                        <div class="row" style="height:40px ;">
-                            <div class="col-6"></div>
-                            <div class="col-3">
-                    <button class="clear-button" type="submit" asp-action="ServicesClockInClear">
-                                    Clear
-                                </button>
-                            </div>
 
-                            <div class="col-3">
+    <div class="row">
+        <div class="col-6">
+            <div class="row" style="height:40px ;">
+                <div class="col-6"></div>
+                <div class="col-3">
+                    <button class="clear-button" type="submit" asp-action="ServicesClockInClear">
+                        Clear
+                    </button>
+                </div>
+
+                <div class="col-3">
                     <button class="search-button" type="submit" asp-action="ServicesClockIn">
-                                    Search
-                                </button>
-                            </div>
-                        </div>
-             </div> 
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <div class="col-6">
-                <div class="row" style="height:40px ;">
-                    <div class="col-9"></div>
-                    <div class="col-3">
+            <div class="row" style="height:40px ;">
+                <div class="col-9"></div>
+                <div class="col-3">
                     @if (ViewBag.VBRoleServicesClockIn == "Full")
                     {
-                        <button type="submit" class="clear-button" asp-action="ServicesClockInSave" onclick="return confirm('Are you sure?')">save</button>
+                        <button type="submit" class="clear-button" asp-action="ServicesClockInSave" onclick="return checkTime()">save</button>
 
                     }
-                        else
+                    else
                     {
-                        <button type="button" class="clear-button" >saves</button>
+                        <button type="button" class="clear-button">saves</button>
 
                     }
-                    </div>
                 </div>
+            </div>
         </div>
 
     </div>
@@ -855,7 +868,7 @@
             @foreach (var item in Model.view_ServicesClocktime)
             {
                 <tr>
-                   @*  @Html.HiddenFor(modelItem => item.ID) *@
+                    @*  @Html.HiddenFor(modelItem => item.ID) *@
                     <td>
                         <input type="checkbox" id="@item.EmployeeID" value="@item.EmployeeID" class="checkthis" Name="EmployeeIDchk" />
                     </td>
@@ -869,7 +882,7 @@
                         @Html.DisplayFor(modelItem => item.EmployeeName)
                     </td>
                     <td>
-                       @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
+                        @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
@@ -878,7 +891,7 @@
                         @Html.DisplayFor(modelItem => item.ServicesID) :  @Html.DisplayFor(modelItem => item.ServicesName)
                     </td>
                     <td style="color:darkblue">
-                           @if (item.TransactionDate == DateTime.MinValue)
+                        @if (item.TransactionDate == DateTime.MinValue)
                         {
                             <!-- Display a placeholder or leave empty -->
                         }
@@ -887,9 +900,9 @@
                             @Html.DisplayFor(modelItem => item.TransactionDate)
                         }
 
-                
+
                     </td>
-                    <td >
+                    <td>
                         @Html.DisplayFor(modelItem => item.StartTime)
                     </td>
                     <td>
@@ -914,12 +927,12 @@
                             @if (ViewBag.VBRoleServicesClockIn == "Full")
                             {
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" data-section-id="@item.SectionID" data-service-id="@item.ServicesID" onclick="EditFn('@item.ID','@item.TransactionNo')">Edit</a>
-                              @*   <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" data-transactiondate="@item.TransactionDate" onclick="EditFn('@item.ID', '@item.TransactionDate' ,'@item.TransactionNo')">Edit</a>
- *@
+                                @*   <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" data-transactiondate="@item.TransactionDate" onclick="EditFn('@item.ID', '@item.TransactionDate' ,'@item.TransactionNo')">Edit</a>
+                    *@
                             }
                             else
                             {
-                                <a href="#" id="btnEdit" >Edit</a>
+                                <a href="#" id="btnEdit">Edit</a>
 
                             }
                         }
@@ -953,7 +966,7 @@
                         <input type="text" class="form-control" name="transactionNo" id="ModaltransactionNo" hidden>
                     </div>
 
-              
+
                     <!-- Clock-In -->
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Clock In Time:</label>
@@ -966,7 +979,7 @@
                         <label for="recipient-name" class="col-form-label">Clock In Date:</label>
                         <input type="date" class="form-control" name="TransactionDate" id="ModalTransactionDate" style="background-color:gainsboro" readonly>
                     </div>
-          
+
                 </div>
 
                 <div class="modal-footer">
