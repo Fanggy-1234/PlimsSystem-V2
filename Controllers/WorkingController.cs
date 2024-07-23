@@ -704,7 +704,7 @@ namespace Plims.Controllers
                 SetupDb.UpdateBy = EmpID;
                 SetupDb.UpdateDate = DateTime.Now;
                 db.SaveChanges();
-
+                TempData["AlertMessage"] = "Successfully Updated";
             }
 
             return View("SetUpRefreshTime", mymodel);

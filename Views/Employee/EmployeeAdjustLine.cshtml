@@ -158,7 +158,20 @@
 
 
 
-    
+    function checkTime() {
+        if (!$('#StartTime').val()) {
+            alert('Please input Start time')
+            return false
+        } else {
+            if (!$('#EndTime').val()) {
+                alert('Please input End time')
+                return false
+            }
+        }
+        confirm('Are you sure?')
+        return true
+    }
+
     function filterSectionsByLine() {
         // Clear previous options
         $("#SectionID").empty();
@@ -433,7 +446,7 @@
                     @if (ViewBag.VBRoleEmployeeAdjustLine == "Full")
                     {
 
-                        <button type="submit" class="clear-button" name="action" value="Save" asp-action="EmployeeAdjustLineSave" onclick="return confirm('Are you sure?')">Adjust</button>
+                        <button type="submit" class="clear-button" name="action" value="Save" asp-action="EmployeeAdjustLineSave" onclick="return checkTime()">Adjust</button>
                     }
                     else
                     {
