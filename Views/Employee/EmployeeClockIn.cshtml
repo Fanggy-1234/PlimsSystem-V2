@@ -153,8 +153,10 @@
             alert('Please fill Time/Date Clockin')
             return false
         }
-        confirm('Are you sure?')
-        return true
+        if (confirm('Are you sure?')) {
+            return true
+        }
+        return false
     }
 
 </script>

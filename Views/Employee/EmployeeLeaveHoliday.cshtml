@@ -251,7 +251,6 @@
                 <div class="col">
                     <input class="form-control StartTime" type="time" name="StartTime" id="StartTime" disabled style="width:100%">
                 </div>
-
             </div>
 
 
@@ -328,7 +327,7 @@
                 <div class="col-3">
                     @if (ViewBag.VBRoleEmployeeLeaveHoliday == "Full")
                     {
-                        <button type="submit" class="clear-button" onclick="return confirm('Are you sure?')">Save</button>
+                        <button type="submit" class="clear-button" onclick="return checkData()">Save</button>
                     }
                     else
                     {
@@ -597,7 +596,26 @@
         });
     });
 
-
+    function checkData() {
+        if (!$("#WorkingstatusCreate").val()) {
+            alert('Please fill in Working Status')
+            return false
+        }
+        if (!$("#TransactionDate").val()) {
+            alert('Please input Date')
+            return false
+        }
+        if (!$("#allDayCheckbox").is(':checked')) {
+            if (!$('#StartTime').val() || !$("#EndTime").val()) {
+                alert('Please input Start/End Time')
+                return false
+            }
+        }
+        if (confirm('Are you sure?')) {
+            return true
+        }
+        return false
+    }
 
 </script>
 <script>
