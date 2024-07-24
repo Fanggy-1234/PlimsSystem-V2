@@ -1982,9 +1982,9 @@ namespace Plims.Controllers
                     {
 
                         //Check EmployeeClockin  change adjust clockout                   
-                        var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
+                        var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) && x.WorkingStatus != "Leave" &&
                                                         (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
-                                                        ((x.ClockOut != null || x.ClockOut == "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)
+                                                        ((x.ClockOut == null || x.ClockOut == "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)
 
                                                         )).ToList();
 
@@ -1997,8 +1997,15 @@ namespace Plims.Controllers
 
                         if (objEmpcount.Count > 1)
                         {
-                            TempData["AlertMessage"] = "Please check clock out!";
-                            return Json(mymodel);
+                            var sectionvalalert = new
+                            {
+                                message = "Please check clock out!",
+                                status = false
+                            };
+                            //var section = "Please check PLPS";
+                            return Json(sectionvalalert);
+                            // TempData["AlertMessage"] = "Please check clock out!";
+                          //  return Json(mymodel);
                         }
                         else
                         {
@@ -2011,7 +2018,7 @@ namespace Plims.Controllers
                             //                          ((x.ClockOut != null || x.ClockOut != "") && x.Remark == "Adjust" && x.TransactionDate.Date == currentDate))).FirstOrDefault();
                            
                                         
-                            var objEmp = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
+                            var objEmp = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) && x.WorkingStatus != "Leave"  && 
                                                             (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
                                                             ((x.ClockOut != null || x.ClockOut == "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)
                                                             )).FirstOrDefault();

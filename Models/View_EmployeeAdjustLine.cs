@@ -37,6 +37,7 @@ namespace Plims.Models
         //  public Nullable<int> QRCodePerUnit { get; set; }
         public int QRCodePerEmployee { get; set; }
         public int TransactionNo { get; set; }
+        [Key]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime TransactionDate { get; set; }
     }
