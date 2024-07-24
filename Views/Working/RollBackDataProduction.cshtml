@@ -363,16 +363,16 @@
                         @Html.DisplayFor(modelItem => item.ProductionDate.Date)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.QRCode)
+                        @Html.DisplayFor(modelItem => item.QRCode) : @Html.DisplayFor(modelItem => item.EmployeeName) @Html.DisplayFor(modelItem => item.EmployeeLastName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.LineID)
+                        @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.SectionID)
+                        @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ProductID)
+                        @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ShiftName)
