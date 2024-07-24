@@ -7,6 +7,7 @@ namespace Plims.Models
 
         [Key]
         public int ID { get; set; }
+        [Key]
         public string EmployeeID { get; set; }
         public string EmployeeName { get; set; }
         public Nullable<int> Status { get; set; }

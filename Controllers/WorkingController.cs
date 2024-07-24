@@ -3223,6 +3223,7 @@ namespace Plims.Controllers
             try
             {
 
+                
                 var empsectioncount = db.View_ClockTime
                .Where(x => x.EmployeeID.Equals(EmployeeID) &&
                             (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
@@ -3247,8 +3248,14 @@ namespace Plims.Controllers
                                        x.SectionID.Equals(objEmp.SectionID.ToString()))
                            .FirstOrDefault();
 
+                
 
+                var transactionscan = db.TbProductionTransaction.Where(x => x.QRCode.Equals(EmployeeID) && x.TransactionDate.Equals(objEmp.TransactionDate.Date)).ToList();
+                if (transactionscan.Count() > 1)
+                {
 
+                    return Json(new { success = false, message = "Please Check data before input defect : " + EmployeeID });
+                }
 
 
                 db.TbProductionTransaction.Add(new TbProductionTransaction()

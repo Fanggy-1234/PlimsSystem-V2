@@ -156,7 +156,7 @@ namespace Plims.Data
             //            modelBuilder.Entity<TbEmployeeMaster>()
             //.HasKey(v => new { v.ID, v.PlantID ,v.EmployeeID  });
             modelBuilder.Entity<View_EmployeeAdjustLine>()
-                  .HasKey(v => new { v.ID, v.SectionID, v.LineID , v.PlantID });
+                  .HasKey(v => new { v.ID, v.SectionID, v.LineID , v.PlantID ,v.TransactionNo});
 
             modelBuilder.Entity<View_EmployeeAdjustBreak>()
                .HasKey(v => new { v.ID, v.TransactionNo });
