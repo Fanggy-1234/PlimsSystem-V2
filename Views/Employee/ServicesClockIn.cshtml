@@ -154,8 +154,10 @@
             alert('Please add Section/Service')
             return false
         }
-        confirm('Are you sure?')
-        return true
+        if (confirm('Are you sure?')) {
+            return true
+        }
+        return false
     }
 
 </script>

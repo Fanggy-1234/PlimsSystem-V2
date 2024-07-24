@@ -147,6 +147,21 @@
         });
     });
 
+    function checkData(){
+        if (!$("#ClockOut").val()) {
+            alert('Please input clock-out time')
+            return false
+        }
+        if (!$("#WorkingStatus").val()) {
+            alert('Please fill Working Status')
+            return false
+        }
+        if (confirm('Are you sure?')) {
+            return true
+        } 
+        return false
+    }
+
 </script>
 <script>
 
@@ -441,7 +456,7 @@
                 <div class="col-3">
                     @if (ViewBag.VBRoleEmpClockOut == "Full")
                     {
-                        <button type="submit" class="clear-button" name="action" value="Save" asp-action="EmployeeClockOutsave" onclick="return confirm('Are you sure?')">Create</button>
+                        <button type="submit" class="clear-button" name="action" value="Save" asp-action="EmployeeClockOutsave" onclick="return checkData()">Create</button>
                     }
                     else
                     {

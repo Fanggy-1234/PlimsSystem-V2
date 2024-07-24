@@ -543,7 +543,7 @@
 
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Line Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName" required>
+                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName" required onchange="filterProductsByLineEdit()">
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -556,7 +556,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Product Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductName" required>
+                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductName" required onchange="filterSectionsByProductEdit()">
                          @*    @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
 

@@ -260,14 +260,18 @@
 
     //check clockout before create
     function CheckClockout() {
-        var time = $("#ClockOut").val();
-        if (time) {
-            confirm('Are you sure?');
-            return true;
-        } else {
-            alert("Please input time to clock-out.");
-            return false;
+        if (!$("#ClockOut").val()) {
+            alert('Please input clock-out time')
+            return false
         }
+        if (!$("#Workingstatus").val()) {
+            alert('Please fill Working Status')
+            return false
+        }
+        if (confirm('Are you sure?')) {
+            return true
+        }
+        return false
     }
 
 
