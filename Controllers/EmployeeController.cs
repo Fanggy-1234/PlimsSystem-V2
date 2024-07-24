@@ -2621,7 +2621,7 @@ namespace Plims.Controllers
             };
             ViewBag.VBRoleEmployeeAdjustLine = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(31)).Select(x => x.RoleAction).FirstOrDefault();
 
-            if (((StartTime == "" || StartTime == null) && (EndTime == "" || EndTime == null)) || (ToLine == "" || ToLine == null) || (ToSection == "" || ToSection == null) || TransactionDate == DateTime.MinValue)
+            if (((StartTime == "" || StartTime == null) && (EndTime == "" || EndTime == null)) || (ToLine == "" || ToLine == null) || (ToSection == "" || ToSection == null) || TransactionDate == DateTime.MinValue || TransactionDate == null)
             {
                 TempData["AlertMessage"] = "Please Fill data before save !";
                 return RedirectToAction("EmployeeAdjustLine");

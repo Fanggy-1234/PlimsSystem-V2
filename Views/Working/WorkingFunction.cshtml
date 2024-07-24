@@ -148,7 +148,12 @@
 
 </style>
 
-
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
 
 <div class="row" style="height:10px"></div>
 <h2 class="page-name">Working Function </h2>
@@ -191,7 +196,7 @@
             <div class="row" style="height:80px">
                 <div class="col-2" style=" align-content: center;"><label class="FillterLabel">Product ID:</label></div>
                 <div class="col-8">
-                    <select class="selectfillter" style="width:100%; height:100%" list="ProductID" name="productId" id="ProductID">
+                     <select class="selectfillter" style="width:100%; height:100%" list="ProductID" name="productId" id="ProductID">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                         {
@@ -201,6 +206,9 @@
                             </option>
                         }
                     </select>
+
+
+
                 </div>
                 <div class="col-2"></div>
             </div>

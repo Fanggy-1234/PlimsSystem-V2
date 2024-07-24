@@ -150,10 +150,10 @@
                     <!-- Line Name -->
                     <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
                         <option value="" default selected></option>
-                        @foreach (var lineGroup in Model.View_RollBackData.GroupBy(x => x.LineID))
+                        @foreach (var lineGroup in Model.view_PLPS.GroupBy(x => x.LineID))
                         {
                             var line = lineGroup.First(); // Take the first item in the group
-                            <option value="@line.LineName" selected="@(line.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                            <option value="@line.LineID" selected="@(line.LineID == ViewBag.SelectedLineName ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => line.LineID) : @Html.DisplayFor(modelItem => line.LineName)
                             </option>
 
@@ -177,10 +177,10 @@
 
                     <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
                 <option value="" default selected></option>
-                        @foreach (var sectionGroup in Model.View_RollBackData.GroupBy(x => x.SectionID))
+                        @foreach (var sectionGroup in Model.view_PLPS.GroupBy(x => x.SectionID))
                 {
                     var sectiond = sectionGroup.First(); // Take the first item in the group
-                    <option value="@sectiond.SectionName" selected="@(sectiond.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+                            <option value="@sectiond.SectionID" selected="@(sectiond.SectionID == ViewBag.SelectedSectionName ? "selected" : null)">
                         @Html.DisplayFor(modelItem => sectiond.SectionID) : @Html.DisplayFor(modelItem => sectiond.SectionName)
                     </option>
                
@@ -203,10 +203,10 @@
  
               <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeID">
                 <option value="" default selected></option>
-                        @foreach (var EmpGroup in Model.View_RollBackData.GroupBy(x => x.EmployeeID))
+                        @foreach (var EmpGroup in Model.tbEmployeeMaster.GroupBy(x => x.EmployeeID))
                 {
                             var Empd = EmpGroup.First(); // Take the first item in the group
-                            <option value="@Empd.EmployeeName" selected="@(Empd.EmployeeName == ViewBag.SelectedEmployeeName ? "selected" : null)">
+                            <option value="@Empd.EmployeeID" selected="@(Empd.EmployeeID == ViewBag.SelectedEmployeeName ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => Empd.EmployeeID) : @Html.DisplayFor(modelItem => Empd.EmployeeName)
                     </option>
                

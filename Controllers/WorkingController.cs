@@ -1381,7 +1381,7 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).ToList()
+                view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).Distinct().ToList()
             };
 
 
@@ -1539,7 +1539,7 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).ToList()
+                view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).Distinct().ToList()
             };
 
             ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster
@@ -1579,7 +1579,7 @@ namespace Plims.Controllers
                     tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                     tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                     view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).ToList()
+                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).Distinct().ToList()
 
                 };
 
@@ -3251,10 +3251,11 @@ namespace Plims.Controllers
                 
 
                 var transactionscan = db.TbProductionTransaction.Where(x => x.QRCode.Equals(EmployeeID) && x.TransactionDate.Equals(objEmp.TransactionDate.Date)).ToList();
-                if (transactionscan.Count() > 1)
+                if (transactionscan.Count() ==  0)
                 {
-
-                    return Json(new { success = false, message = "Please Check data before input defect : " + EmployeeID });
+                   // TempData["AlertMessage"] = "Please Check data before input defect";
+                    return Json(new { success = false, message = "Please Check data before input defect" });
+                    //return View("WorkingFunction", mymodel);
                 }
 
 
