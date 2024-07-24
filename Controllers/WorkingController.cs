@@ -2066,7 +2066,7 @@ namespace Plims.Controllers
 
                                         //Check last count
                                         var LastTransactionCount = db.TbProductionTransaction
-                                      .Where(x => x.QRCode.Equals(employeeId) && x.CreateDate.Date == currentDate).Count();
+                                      .Where(x => x.QRCode.Equals(employeeId) && x.SectionID.Equals(objEmp.SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Count();
                                         LastTransactionCount += 1;
 
                                         // Convert TimeSpan to total seconds
@@ -3022,7 +3022,7 @@ namespace Plims.Controllers
 
                 var empsectioncount = db.View_ClockTime
                  .Where(x => x.EmployeeID.Equals(EmployeeID) &&
-                              (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+                              (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "") && x.WorkingStatus.Equals("Working")) &&
                             x.PlantID.Equals(PlantID)).ToList();
 
                 if (empsectioncount.Count() > 1)
@@ -3036,7 +3036,7 @@ namespace Plims.Controllers
 
                 var objEmp = db.View_ClockTime
                    .Where(x => x.EmployeeID.Equals(EmployeeID) &&
-                                (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+                                (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "") && x.WorkingStatus.Equals("Working")) &&
                               x.PlantID.Equals(PlantID))
                    .FirstOrDefault();
 
@@ -3092,7 +3092,7 @@ namespace Plims.Controllers
         }
 
 
-
+        [HttpPost]
         public ActionResult ProductQtyDefectWithRef(TbProductionTransaction obj, string employeeID, string productID)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -3226,7 +3226,7 @@ namespace Plims.Controllers
                 var empsectioncount = db.View_ClockTime
                .Where(x => x.EmployeeID.Equals(EmployeeID) &&
                             (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
-                          x.PlantID.Equals(PlantID)).ToList();
+                          x.PlantID.Equals(PlantID) && x.WorkingStatus.Equals("Working")).ToList();
 
                 if (empsectioncount.Count() > 1)
                 {
@@ -3236,7 +3236,7 @@ namespace Plims.Controllers
 
                 var objEmp = db.View_ClockTime
                    .Where(x => x.EmployeeID.Equals(EmployeeID) &&
-                              (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+                              (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "") && x.WorkingStatus.Equals("Working")) &&
                                x.PlantID.Equals(PlantID))
                    .FirstOrDefault();
 
@@ -4888,7 +4888,7 @@ namespace Plims.Controllers
                             && x.PlantID.Equals(PlantID)
                             && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
                             && x.ClockIn != ""
-                            && x.ClockOut == "")
+                            && x.ClockOut == "" && x.WorkingStatus.Equals("Working"))
                 .ToList();
 
             if (empsectioncheck.Count() == 0)
@@ -4906,7 +4906,7 @@ namespace Plims.Controllers
                            && x.PlantID.Equals(PlantID)
                            && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
                            && x.ClockIn != ""
-                           && x.ClockOut == "")
+                           && x.ClockOut == "" && x.WorkingStatus.Equals("Working"))
                .SingleOrDefault();
 
             var groupedProducts = db.View_PLPS
@@ -4941,7 +4941,7 @@ namespace Plims.Controllers
                            && x.PlantID.Equals(PlantID)
                            && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
                            && x.ClockIn != ""
-                           && x.ClockOut == "")
+                           && x.ClockOut == "" && x.WorkingStatus.Equals("Working"))
                .ToList();
 
             if (empsectioncount.Count() == 0)
@@ -4955,7 +4955,7 @@ namespace Plims.Controllers
                             && x.PlantID.Equals(PlantID)
                             && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
                             && x.ClockIn != ""
-                            && x.ClockOut == "")
+                            && x.ClockOut == "" && x.WorkingStatus.Equals("Working"))
                 .SingleOrDefault();
 
             var groupedProducts = db.View_PLPS
