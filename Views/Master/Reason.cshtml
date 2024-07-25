@@ -62,6 +62,17 @@
 <script>
 
     $(document).ready(function () {
+        $('#CreateModal').on('shown.bs.modal', function () {
+            $('#LineNameCreate, #ProductNameCreate, #SectionNameCreate').select2({
+                dropdownParent: $('#CreateModal')
+            });
+        });
+
+        $('#EditModal').on('shown.bs.modal', function () {
+            $('#ModalLineName, #ModalProductName, #ModalSectionName').select2({
+                dropdownParent: $('#EditModal')
+            });
+        });
         var table = $('#table_id').DataTable({
             dom: 'Bfrtip',
             ordering: false,
@@ -392,7 +403,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Line Name:</label>
                         <select class="selectfillter form-control" style="width:100%" name="LineID" id="LineNameCreate" onchange="filterProductsByLine()" required>
-                            <option value="" default selected>Please Select ..</option>
+                            <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
 
@@ -410,7 +421,7 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Product Name:</label>
                         <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ProductNameCreate" onchange="filterSectionsByProduct()" required>
-                            <option value="" default selected>Please Select ..</option>
+                            <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.ProductID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -425,7 +436,7 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Section Name:</label>
                         <select class="selectfillter form-control" style="width:100%" name="SectionID" id="SectionNameCreate" required>
-                            <option value="" default selected>Please Select ..</option>
+                            <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -479,6 +490,7 @@
                     <div class="mb-3">
                         <label  class="col-form-label">Line Name:</label>
                         <select class="form-control selectfillter" style="width:100%" name="LineID" id="ModalLineName" onchange="filterProductsByLineEdit()" required>
+                            <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
                             {
 
@@ -489,6 +501,7 @@
                     <div class="mb-3">
                         <label  class="col-form-label">Product Name:</label>
                         <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductName" onchange="filterSectionsByProductEdit()" required>
+                            <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
 
@@ -499,6 +512,7 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Section Name:</label>
                         <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName" required>
+                            <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
                             {
 

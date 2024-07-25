@@ -62,6 +62,16 @@
 <script>
 
     $(document).ready(function () {
+        $('#CreateModal').on('shown.bs.modal', function () {
+            $('#LineNameCreate, #SectionNameCreate').select2({
+                dropdownParent: $('#CreateModal')
+            });
+        });
+        $('#EditModal').on('shown.bs.modal', function () {
+            $('#ModalLineName, #ModalSectionName').select2({
+                dropdownParent: $('#EditModal')
+            });
+        });
         var table = $('#table_id').DataTable({
             dom: 'Bfrtip',
             ordering: false,
@@ -92,19 +102,19 @@
 @* Textbox for search *@
 <form method="get" asp-controller="Master">
 
-        <div class="row">
-            <div class="col-2"><label class="FillterLabel">Line Name :</label></div>
-            <div class="col-3">
+    <div class="row">
+        <div class="col-2"><label class="FillterLabel">Line Name :</label></div>
+        <div class="col-3">
 
             @* <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
-                <option value="" default selected></option>
-                    @foreach (var item in Model.tbLine)
-                    {
+            <option value="" default selected></option>
+            @foreach (var item in Model.tbLine)
+            {
 
-                    <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName) </option>
-                    }
-                </select> *@
+            <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+            @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName) </option>
+            }
+            </select> *@
 
             <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
                 <option value="" default selected></option>
@@ -120,18 +130,18 @@
 
 
 
-            </div>
+        </div>
 
         <div class="col-1"></div>
         <div class="col-2"><label class="FillterLabel"> Services Name :</label></div>
         <div class="col-3">
-         @*    <select class="selectfillter form-control" style="width:100%" name="ServicesName" id="ServicesName">
-                <option value="" default selected></option>
-                @foreach (var item in Model.tbService)
-                {
-                    <option value="@item.ServicesName" selected="@(item.ServicesName == ViewBag.SelectedServicesName ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => item.ServicesName) </option>
-                }
+            @*    <select class="selectfillter form-control" style="width:100%" name="ServicesName" id="ServicesName">
+            <option value="" default selected></option>
+            @foreach (var item in Model.tbService)
+            {
+            <option value="@item.ServicesName" selected="@(item.ServicesName == ViewBag.SelectedServicesName ? "selected" : null)">
+            @Html.DisplayFor(modelItem => item.ServicesName) </option>
+            }
             </select> *@
 
             <select class="selectfillter form-control" style="width:100%" name="ServicesName" id="ServicesName">
@@ -152,21 +162,21 @@
 
         </div>
 
-        </div>
-        <div class="row" style="height:10px"></div>
-        <div class="row">
-            <div class="col-2"><label class="FillterLabel"> Section Name:</label></div>
-            <div class="col-3">
-@*                 <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
-                    <option value="" default selected></option>
-                    @foreach (var item in Model.tbSection)
-                    {
-                    <option value="@item.SectionName" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
-                            @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
-                        </option>
+    </div>
+    <div class="row" style="height:10px"></div>
+    <div class="row">
+        <div class="col-2"><label class="FillterLabel"> Section Name:</label></div>
+        <div class="col-3">
+            @*                 <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
+            <option value="" default selected></option>
+            @foreach (var item in Model.tbSection)
+            {
+            <option value="@item.SectionName" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
+            @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
+            </option>
 
-                    }
-                </select> *@
+            }
+            </select> *@
             <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
                 <option value="" default selected></option>
                 @foreach (var sectionGroup in Model.view_Service.GroupBy(x => x.SectionID))
@@ -180,13 +190,13 @@
             </select>
 
 
-            </div>
-            <div class="col-1"></div>
-            <div class="col-2"></div>
-            <div class="col-3">
-            </div>
-
         </div>
+        <div class="col-1"></div>
+        <div class="col-2"></div>
+        <div class="col-3">
+        </div>
+
+    </div>
 
     <div class="row" style="height:20px"></div>
 
@@ -238,39 +248,39 @@
 
             }
 
-            
+
         </div>
     </div>
-@* </form> *@
-</br>
+    @* </form> *@
+    </br>
 
-<div class="row" style="height:10px"></div>
-@* <form asp-controller="Master"  method="post" id="dataTableForm"> *@
-@*Diaplay data*@
+    <div class="row" style="height:10px"></div>
+    @* <form asp-controller="Master"  method="post" id="dataTableForm"> *@
+    @*Diaplay data*@
     <table id="table_id" class="table table-hover" style="width:100%">
-    <thead style="background-color:gainsboro;">
-        <tr>
-            @* <th><input type="checkbox" id="checkall" /></th>*@
-            <th>
-                Services ID
-            </th>
-            <th>
-                Services Name
-            </th>
+        <thead style="background-color:gainsboro;">
+            <tr>
+                @* <th><input type="checkbox" id="checkall" /></th>*@
+                <th>
+                    Services ID
+                </th>
+                <th>
+                    Services Name
+                </th>
 
-            <th>
-                Line Name
-            </th>
+                <th>
+                    Line Name
+                </th>
                 <th>
                     Section Name
                 </th>
-            <th>
-                Rate
-            </th>
+                <th>
+                    Rate
+                </th>
 
-            <th>
-                Status
-            </th>
+                <th>
+                    Status
+                </th>
                 <th>
                     Edit
                 </th>
@@ -279,36 +289,36 @@
                 </th>
 
 
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.view_Service)
-        {
-            <tr>
-                @Html.HiddenFor(modelItem => item.ServicesID)
-                @* <td><input type="checkbox" class="checkthis" /></td>*@
-                <td id="ServicesID">
-                      @Html.DisplayFor(modelItem => item.ServicesID)
-                </td>
-                <td id="ServicesName" >
-                    @Html.DisplayFor(modelItem => item.ServicesName)
-                </td>
-
-                <td id="LineName">
-                    @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName)
-                </td>
-                    <td id="LineName">
-                       @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.view_Service)
+            {
+                <tr>
+                    @Html.HiddenFor(modelItem => item.ServicesID)
+                    @* <td><input type="checkbox" class="checkthis" /></td>*@
+                    <td id="ServicesID">
+                        @Html.DisplayFor(modelItem => item.ServicesID)
                     </td>
-                <td id="Rate">
-                    @Html.DisplayFor(modelItem => item.ServicesRate)
-                </td>
+                    <td id="ServicesName">
+                        @Html.DisplayFor(modelItem => item.ServicesName)
+                    </td>
 
-                @if (item.ServicesStatus == 1)
-                {
-                    <td id="Status"> <span id="open">Active</span> </td>
-                    <td>
-                        @if (ViewBag.VBRoleServices == "Full")
+                    <td id="LineName">
+                        @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName)
+                    </td>
+                    <td id="LineName">
+                        @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
+                    </td>
+                    <td id="Rate">
+                        @Html.DisplayFor(modelItem => item.ServicesRate)
+                    </td>
+
+                    @if (item.ServicesStatus == 1)
+                    {
+                        <td id="Status"> <span id="open">Active</span> </td>
+                        <td>
+                            @if (ViewBag.VBRoleServices == "Full")
                             {
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="'@item.ServicesID'" onclick="EditFn('@item.ServicesID')">Edit</a>
 
@@ -318,49 +328,49 @@
                                 <a href="#" id="btnEdit">Edit</a>
 
                             }
-                             </td>
+                        </td>
 
-                    <td>
+                        <td>
                             @if (ViewBag.VBRoleServices == "Full")
                             {
                                 <a href="#" id="Inactive" onclick="InactiveFn('@item.ServicesID')">Inactive</a>
                             }
                             else
                             {
-                                <a href="#" id="Inactive" >Inactive</a>
+                                <a href="#" id="Inactive">Inactive</a>
                             }
-                           
-                    </td>
 
-                }
-                @if (item.ServicesStatus == 0)
-                {
-                    <td id="Status"><span id="closed" style="color:red">Inactive</span></td>
-                    <td>
-                        <span id="closed">Edit</span>
-                    </td>
-                    <td>
+                        </td>
+
+                    }
+                    @if (item.ServicesStatus == 0)
+                    {
+                        <td id="Status"><span id="closed" style="color:red">Inactive</span></td>
+                        <td>
+                            <span id="closed">Edit</span>
+                        </td>
+                        <td>
                             @if (ViewBag.VBRoleServices == "Full")
                             {
                                 <a href="#" id="Active" onclick="ActiveFn('@item.ServicesID')">Active</a>
                             }
                             else
                             {
-                                <a href="#" id="Active" >Active</a>
+                                <a href="#" id="Active">Active</a>
                             }
-                           
-                    </td>
-                }
 
-            </tr>
-        }
-    </tbody>
-</table>
+                        </td>
+                    }
 
-<div style="height:20px">
-</div>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-@* /////////////////////////// Export / Import /////////////////////// *@
+    <div style="height:20px">
+    </div>
+
+    @* /////////////////////////// Export / Import /////////////////////// *@
 
 
     <br>
@@ -371,12 +381,12 @@
         <div class="col" style="width:15% ">
             @if (ViewBag.VBRoleServices == "Full")
             {
-                <button class="search-button" id="btnExport"  type="Submit"  asp-action="ServicesExport" value="export" name="submit">Export</button>
+                <button class="search-button" id="btnExport" type="Submit" asp-action="ServicesExport" value="export" name="submit">Export</button>
             }
             else
             {
                 <button type="button" id="btnExportView" class="search-button">Export</button>
-           
+
             }
         </div>
         <div class="col" style="width:15% ">
@@ -419,11 +429,11 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Services ID:</label>
                         @{
-                            // int value = Model.tbService.Count() + 1;
-                            
-                            //    string formattedValue = value.ToString("00000");
-                            // value = "@formattedValue"
-                            <input type="text" class="form-control" id="ServicesIDCreate" name="ServicesID" readonly style="background-color:gainsboro" >
+            // int value = Model.tbService.Count() + 1;
+
+            //    string formattedValue = value.ToString("00000");
+            // value = "@formattedValue"
+                            <input type="text" class="form-control" id="ServicesIDCreate" name="ServicesID" readonly style="background-color:gainsboro">
                         }
                     </div>
 
@@ -438,17 +448,17 @@
                     @* Line Name*@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Line Name:</label>
-                       @*  <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineNameCreate">
-                            <option value="" default selected>Please Select ..</option>
-                            @foreach (var item in Model.view_Service)
-                            {
+                        @*  <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineNameCreate">
+                        <option value="" default selected>Please Select ..</option>
+                        @foreach (var item in Model.view_Service)
+                        {
 
-                                <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineName) </option>
-                            }
+                        <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineName) </option>
+                        }
                         </select>
- *@
+                        *@
                         <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineNameCreate" required onchange="filterSectionsByLineCreate()">
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -463,19 +473,19 @@
                     </div>
 
 
-                       @* section Name*@
+                    @* section Name*@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Section Name:</label>
-                       @*  <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionNameCreate">
-                            @foreach (var item in Model.view_Service)
-                            {
+                        @*  <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionNameCreate">
+                        @foreach (var item in Model.view_Service)
+                        {
 
-                                <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionName) </option>
-                            }
+                        <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionName) </option>
+                        }
                         </select> *@
 
-                         <select class="selectfillter form-control" style="width:100%" name="SectionName" required id="SectionNameCreate">
-                            <option value="" default selected></option>
+                        <select class="selectfillter form-control" style="width:100%" name="SectionName" required id="SectionNameCreate">
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -543,16 +553,16 @@
                     @* Line Name*@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Line Name:</label>
-                       @*  <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName">
-                            @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
-                            {
+                        @*  <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName">
+                        @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
+                        {
 
-                                <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineName) </option>
-                            }
+                        <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineName) </option>
+                        }
                         </select> *@
 
                         <select class="selectfillter form-control" style="width:100%" name="LineName" id="ModalLineName" required>
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.tbLine.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -569,16 +579,16 @@
                     @* section Name*@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Section Name:</label>
-             @*            <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName">
-                            @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
-                            {
+                        @*            <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName">
+                        @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
+                        {
 
-                                <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionName) </option>
-                            }
+                        <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionName) </option>
+                        }
                         </select> *@
 
                         <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName" required>
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.tbSection.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -627,7 +637,7 @@
     // });
 
 
-        // Ensure that the checkbox state is included in the form submission
+    // Ensure that the checkbox state is included in the form submission
     document.getElementById("inactivestatus").addEventListener("change", function () {
         if (this.checked) {
             // Set the value of the hidden input field to "true" when checked
@@ -670,7 +680,7 @@
 
 
                     //  $('#ModalPlantName').append('<option value="' + response.plantID + '">' + response.plantName + '</option>');
-                 //   $('#ModalPlantName').val(response.plantID).trigger('change');
+                    //   $('#ModalPlantName').val(response.plantID).trigger('change');
 
                     //  $('#ModalLineName').append('<option value="' + response.lineID + '">' + response.lineName + '</option>');
                     $('#ModalLineName').val(response.lineID).trigger('change');
@@ -684,7 +694,7 @@
                     // $('#ModalLineName').val(response.lineName);
                     $('#ModalServicesRate').val(response.servicesRate);
                     //  alert(formattedDate)
-                   // $('.calendar').fullCalendar('renderEvent', response.teacher, true);
+                    // $('.calendar').fullCalendar('renderEvent', response.teacher, true);
                     // $('#ModalMonthYear').val(formattedDate);
                     $('#ModalStatus').prop('checked', response.servicesStatus == 1)
                     $('#EditModal').modal('show');
@@ -816,7 +826,7 @@
 
 
 
-    
+
     function filterSectionsByLineCreate() {
         // Clear previous options
         $("#SectionNameCreate").empty();
@@ -824,7 +834,7 @@
         $("#SectionNameCreate").append("<option value='' default selected>Please Select ..</option>");
 
         // Get the selected Product ID
-      //  var selectedSectionID = $("#SectionNameCreate").val().toString();
+        //  var selectedSectionID = $("#SectionNameCreate").val().toString();
         var selectedLineID = $("#LineNameCreate").val().toString();
 
         // Check if a product is selected
@@ -853,7 +863,7 @@
         // Clear previous options
         //$("#SectionNameEdit").empty();
         // Add a default option
-      //  $("#SectionNameEidt").append("<option value='' default selected>Please Select ..</option>");
+        //  $("#SectionNameEidt").append("<option value='' default selected>Please Select ..</option>");
 
         // Get the selected Product ID
         //  var selectedSectionID = $("#SectionNameCreate").val().toString();

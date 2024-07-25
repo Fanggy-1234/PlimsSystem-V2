@@ -69,6 +69,17 @@
 <script>
 
     $(document).ready(function () {
+        $('#CreateModal').on('shown.bs.modal', function () {
+            $('#LineNameCreate, #ProductNameCreate, #SectionNameCreate').select2({
+                dropdownParent: $('#CreateModal')
+            });
+        });
+
+        $('#EditModal').on('shown.bs.modal', function () {
+            $('#ModalLineName, #ModalProductName, #ModalSectionName').select2({
+                dropdownParent: $('#EditModal')
+            });
+        });
         var table = $('#table_id').DataTable({
             dom: 'Bfrtip',
             ordering: false,
@@ -435,7 +446,7 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Line Name:</label>
                         <select class="selectfillter form-control" style="width:100%" list="LineName" name="LineName" id="LineNameCreate" onchange="filterProductsByLine()" required>
-                            <option value="" default selected>Please Select ..</option>
+                            <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
                             {
 
@@ -447,7 +458,7 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Product Name:</label>
                         <select class="selectfillter form-control" style="width:100%" list="ProductName" name="ProductName" id="ProductNameCreate" onchange="filterSectionsByProduct()" required>
-                            <option value="" default selected>Please Select ..</option>
+                            <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
 
@@ -461,7 +472,7 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Section Name:</label>
                         <select class="selectfillter form-control" style="width:100%" list="SectionName" name="SectionName" id="SectionNameCreate" required>
-                            <option value="" default selected>Please Select ..</option>
+                            <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
                             {
 
@@ -908,7 +919,7 @@
         $("#ModalProductName").empty();
         // Add a default option
 
-        $("#ModalProductName").append("<option value='' default selected>Please Select ..</option>");
+        $("#ModalProductName").append("<option value='' default selected disabled>Please Select ..</option>");
 
 
         // Get the selected Line ID
@@ -939,7 +950,7 @@
         // Clear previous options
         $("#ModalSectionName").empty();
         // Add a default option
-        $("#ModalSectionName").append("<option value='' default selected>Please Select ..</option>");
+        $("#ModalSectionName").append("<option value='' default selected disabled>Please Select ..</option>");
 
         // Get the selected Product ID
 

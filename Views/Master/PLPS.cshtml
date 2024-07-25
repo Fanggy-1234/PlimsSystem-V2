@@ -97,7 +97,7 @@
             dataType: 'json',
             success: function (response) {
                 if (response == null || response == undefined) {
-                 //   console.log('AJAX request unsuccessful:', response);
+                    //   console.log('AJAX request unsuccessful:', response);
                     alert("This data can't read1!")
                 }
                 else if (response.length == 0) {
@@ -105,7 +105,7 @@
                     alert("This data can't id!" + PLPSID)
                 }
                 else {
-                  //  console.log('AJAX request successful:', response);
+                    //  console.log('AJAX request successful:', response);
                     $('#ModalPLPSID').val(response.plpsid);
 
                     // $('#ModalPlantName').append('<option value="' + response.plantName + '">' + response.plantName + '</option>');
@@ -550,6 +550,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Line Name:</label>
                         <select class="selectfillter form-control" style="width:100%" list="LineName" name="LineID" id="ModalLineName">
+                            <option value="" default disabled selected>Select Value ...</option>
                             @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
                             {
 
@@ -561,6 +562,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">ProductName Name:</label>
                         <select class="selectfillter form-control" style="width:100%" list="ProductName" name="ProductID" id="ModalProductName">
+                            <option value="" default disabled selected>Select Value ...</option>
                             @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
 
@@ -573,6 +575,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">SectionName Name:</label>
                         <select class="selectfillter form-control" style="width:100%" list="SectionName" name="SectionID" id="ModalSectionName">
+                            <option value="" default disabled selected>Select Value ...</option>
                             @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
                             {
 
@@ -588,7 +591,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Formula:</label>
                         <select class="selectfillter form-control" style="width:100%" list="FormularID" name="FormularID" id="ModalFormularID">
-                            <option value="" default selected>Please Select ..</option>
+                            <option value="" default disabled selected>Select Value ...</option>
                             @foreach (var item in Model.tbFormular)
                             {
 
@@ -666,7 +669,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Product Name:</label>
                         <select class="selectfillter form-control" style="width:100%" list="ProductName" name="ProductName" id="ProductNameCreate" required>
-                            <option value="" default selected>Please Select ..</option>
+                            <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
 
@@ -679,7 +682,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Section Name:</label>
                         <select class="selectfillter form-control" style="width:100%" list="SectionName" name="SectionName" id="SectionNameCreate" required>
-                            <option value="" default selected>Please Select ..</option>
+                            <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
                             {
 
@@ -692,7 +695,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Formula:</label>
                         <select class="selectfillter form-control" style="width:100%" list="FormularID" name="FormularID" id="FormularIDCreate" required>
-                            <option value="" default selected>Please Select ..</option>
+                            <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbFormular)
                             {
 
@@ -793,6 +796,11 @@
         $('#CreateModal').on('shown.bs.modal', function () {
             $('#LineNameCreate, #ProductNameCreate, #SectionNameCreate, #FormularIDCreate, #UnitCreate').select2({
                 dropdownParent: $('#CreateModal')
+            });
+        });
+        $('#EditModal').on('shown.bs.modal', function () {
+            $('#ModalLineName, #ModalProductName, #ModalSectionName, #ModalFormularID, #ModalUnit').select2({
+                dropdownParent: $('#EditModal')
             });
         });
     });

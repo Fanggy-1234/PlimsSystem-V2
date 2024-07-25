@@ -62,6 +62,17 @@
 <script>
 
     $(document).ready(function () {
+        $('#CreateModal').on('shown.bs.modal', function () {
+            $('#RoleNamecreate').select2({
+                dropdownParent: $('#CreateModal')
+            });
+        });
+        $('#EditModal').on('shown.bs.modal', function () {
+            $('#ModalRoleName').select2({
+                dropdownParent: $('#EditModal')
+            });
+        });
+        
         var table = $('#table_id').DataTable({
             dom: 'Bfrtip',
             ordering: false,
@@ -461,7 +472,7 @@
                     <div class="mb-3">
                         <label for="RoleName" class="col-form-label">Role:</label>
                         <select class="selectfillter form-control" style="width:100%" name="RoleID" id="RoleNamecreate">
-                        <option value="" default selected></option>
+                        <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var item in Model.tbRole.Where(x=>x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
                          {
                             var dataitem = item.First(); // Take the first item in the group
@@ -540,11 +551,11 @@
 
 
                         <select class="selectfillter form-control" style="width:100%" name="UserPermission" id="ModalRoleName">
-                        <option value="" default selected></option>
+                        <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var item in Model.tbRole.Where(x=>x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
                          {
                             var dataitem = item.First(); // Take the first item in the group
-                                <option value="@dataitem.RoleID" selected="@(dataitem.RoleName == ViewBag.SelectedRoleName ? "selected" : null)">
+                                <option value="@dataitem.RoleID" selected=@(dataitem.RoleID == ViewBag.SelectedRoleName ? "selected" : null)>
                               @Html.DisplayFor(modelItem => dataitem.RoleName)
                             </option>
 

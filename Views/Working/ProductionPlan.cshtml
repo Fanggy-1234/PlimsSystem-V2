@@ -388,7 +388,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Shift prefix:</label>
                         <select class="selectfillter form-control" style="width:100%" name="Prefix" id="CreatePrefix" required>
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.tbShift.Where(x => x.Status.Equals(1)).GroupBy(x => x.Prefix))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -403,7 +403,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Line Name:</label>
                         <select class="selectfillter form-control" style="width:100%" name="LineID" id="CreateLineID" required>
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -415,7 +415,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Product Name:</label>
                         <select class="selectfillter form-control" style="width:100%" name="ProductID" id="CreateProductID" required>
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.ProductID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -429,7 +429,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Section Name:</label>
                         <select class="selectfillter form-control" style="width:100%" name="SectionID" id="CreateSectionName" required>
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -509,7 +509,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Shift Prefix:</label>
                         <select class="selectfillter form-control" style="width:100%" name="Prefix" id="ModalPrefix">
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.tbShift.Where(x => x.Status.Equals(1)).GroupBy(x => x.Prefix))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -524,7 +524,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Line Name:</label>
                         <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineID" >
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -536,7 +536,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Product Name:</label>
                         <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductID" >
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.ProductID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -550,7 +550,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Section Name:</label>
                         <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName" >
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -602,6 +602,17 @@
 <script>
 
     $(document).ready(function () {
+        $('#CreateModal').on('shown.bs.modal', function () {
+            $('#CreatePrefix, #CreateLineID, #CreateProductID, #CreateSectionName').select2({
+                dropdownParent: $('#CreateModal')
+            });
+        });
+
+        $('#EditModal').on('shown.bs.modal', function () {
+            $('#ModalPrefix, #ModalLineID, #ModalProductID, #ModalSectionName').select2({
+                dropdownParent: $('#EditModal')
+            });
+        });
         $('#btnSelectFile').on('click', function () {
             $('#FileUpload').click();
         });

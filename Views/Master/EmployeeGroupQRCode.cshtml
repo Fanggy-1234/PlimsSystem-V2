@@ -111,6 +111,11 @@
                 dropdownParent: $('#CreateModal')
             });
         });
+        $('#EditModal').on('shown.bs.modal', function () {
+            $('#ModalEmployeeID').select2({
+                dropdownParent: $('#EditModal')
+            });
+        });
     });
 
 
@@ -535,7 +540,7 @@
 
 
                                 <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="ModalEmployeeID">
-                                    <option value="" default selected></option>
+                                    <option value="" default selected disabled>Select Value ...</option>
                                     @foreach (var dataGroup in Model.tbEmployeeMaster.GroupBy(x => x.EmployeeID))
                                     {
                                         var dataFrist = dataGroup.First(); // Take the first item in the group
