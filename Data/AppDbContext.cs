@@ -152,6 +152,8 @@ namespace Plims.Data
             modelBuilder.Entity<TbProductionTransaction>()
           .HasKey(v => new { v.TransactionNo });
 
+            modelBuilder.Entity<TbEmployeeMaster>()
+           .HasKey(v => new { v.ID, v.EmployeeID, v.LineID, v.PlantID, v.SectionID });
 
             //            modelBuilder.Entity<TbEmployeeMaster>()
             //.HasKey(v => new { v.ID, v.PlantID ,v.EmployeeID  });

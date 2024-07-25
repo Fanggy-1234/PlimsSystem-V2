@@ -808,6 +808,8 @@ namespace Plims.Controllers
                         // Apply changes to the list
                         product.ProductID = ProductTo; // Apply a 10% discount
                         product.QtyPerQR = product.QtyPerQR;
+                        int PLPSdataselect = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.SectionID.Equals(selectview.SectionID) && x.LineID.Equals(selectview.LineID) && x.ProductID.Equals(ProductTo)).Select(x=>x.FormularID).SingleOrDefault();
+                        product.FormularID = PLPSdataselect;
                         product.UpdateDate = DateTime.Now;
                         product.UpdateBy = EmpID;
                     }
@@ -1982,17 +1984,13 @@ namespace Plims.Controllers
                     {
 
                         //Check EmployeeClockin  change adjust clockout                   
-                        var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) && x.WorkingStatus != "Leave" &&
-                                                        (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
-                                                        ((x.ClockOut == null || x.ClockOut == "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)
+                        var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) && x.Type != "Service" && x.WorkingStatus != "Leave" && x.ClockIn != "" && x.ClockOut == ""  && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)).ToList();
 
-                                                        )).ToList();
+                        var objEmpcount2 = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
+                                                      (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
+                                                      ((x.ClockOut != null || x.ClockOut != "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate)
 
-                        //var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
-                        //                              (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
-                        //                              ((x.ClockOut != null || x.ClockOut != "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate)
-
-                        //                              )).ToList();
+                                                      )).ToList();
 
 
                         if (objEmpcount.Count > 1)
@@ -2016,12 +2014,13 @@ namespace Plims.Controllers
                             //var objEmp = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) &&
                             //                          (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
                             //                          ((x.ClockOut != null || x.ClockOut != "") && x.Remark == "Adjust" && x.TransactionDate.Date == currentDate))).FirstOrDefault();
-                           
-                                        
-                            var objEmp = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) && x.WorkingStatus != "Leave"  && 
-                                                            (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
-                                                            ((x.ClockOut != null || x.ClockOut == "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)
-                                                            )).FirstOrDefault();
+
+                            var objEmp = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) && x.Type != "Service"  && x.WorkingStatus != "Leave" && x.ClockIn != "" && x.ClockOut == "" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)).FirstOrDefault();
+
+                            //var objEmp = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) && x.WorkingStatus != "Leave"  && 
+                            //                                (((x.ClockOut == null || x.ClockOut == "") && x.Type != "Adjust" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)) ||
+                            //                                ((x.ClockOut != null || x.ClockOut == "") && x.Type == "Adjust" && x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)
+                            //                                )).FirstOrDefault();
 
 
                             if (objEmp != null)
@@ -2163,7 +2162,7 @@ namespace Plims.Controllers
 
 
                             var objEmpcount = db.View_ClockTime
-                            .Where(x => x.EmployeeID.Equals(item.EmployeeID) &&
+                            .Where(x => x.EmployeeID.Equals(item.EmployeeID) &&  x.Type != "Service" &&
                                          (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) &&
                                          x.ClockOut == "" &&
                                         x.PlantID.Equals(PlantID))
@@ -2349,11 +2348,14 @@ namespace Plims.Controllers
                     {
                         //Check EmployeeClockin
 
-                        var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) &&
-                                                                               (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) &&
-                                                                               x.PlantID.Equals(PlantID) &&
-                                                                                (((x.ClockOut == null || x.ClockOut == "") && x.Remark == "") ||
-                                                                                ((x.ClockOut != null || x.ClockOut != "") && x.Remark == "Adjust"))).ToList();
+                        //var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) &&
+                        //                                                       (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) &&
+                        //                                                       x.PlantID.Equals(PlantID) && x.Type != "Service" &&
+                        //                                                        (((x.ClockOut == null || x.ClockOut == "") && x.Remark == "") ||
+                        //                                                        ((x.ClockOut != null || x.ClockOut != "") && x.Remark == "Adjust"))).ToList();
+
+                        var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) && x.Type != "Service" && x.WorkingStatus != "Leave" && x.ClockIn != "" && x.ClockOut == "" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)).ToList();
+
 
                         if (objEmpcount.Count > 1)
                         {
@@ -3022,7 +3024,7 @@ namespace Plims.Controllers
 
                 var empsectioncount = db.View_ClockTime
                  .Where(x => x.EmployeeID.Equals(EmployeeID) &&
-                              (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "") && x.WorkingStatus.Equals("Working")) &&
+                              (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDate.AddDays(-1))  && x.ClockOut == ""&& x.WorkingStatus.Equals("Working") &&
                             x.PlantID.Equals(PlantID)).ToList();
 
                 if (empsectioncount.Count() > 1)
@@ -3036,7 +3038,7 @@ namespace Plims.Controllers
 
                 var objEmp = db.View_ClockTime
                    .Where(x => x.EmployeeID.Equals(EmployeeID) &&
-                                (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "") && x.WorkingStatus.Equals("Working")) &&
+                                (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1)) && x.ClockOut == "" && x.WorkingStatus.Equals("Working")) &&
                               x.PlantID.Equals(PlantID))
                    .FirstOrDefault();
 
@@ -3126,8 +3128,8 @@ namespace Plims.Controllers
             {
 
                 var empsectioncount = db.View_ClockTime
-               .Where(x => x.EmployeeID.Equals(employeeID) &&
-                            (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+               .Where(x => x.EmployeeID.Equals(employeeID) && x.ClockOut == ""  && 
+                            (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) )) &&
                           x.PlantID.Equals(PlantID)).ToList();
 
                 if (empsectioncount.Count() > 1)
@@ -3137,8 +3139,8 @@ namespace Plims.Controllers
                 }
 
                 var objEmp = db.View_ClockTime
-                   .Where(x => x.EmployeeID.Equals(employeeID) &&
-                              (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
+                   .Where(x => x.EmployeeID.Equals(employeeID) && x.ClockOut == "" &&
+                              (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) )) &&
                                x.PlantID.Equals(PlantID))
                    .FirstOrDefault();
 
