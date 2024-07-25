@@ -125,14 +125,14 @@
             <div class="row" style="height:10px">
             </div>
 
-            
+
             <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:1em">
-                <div class="col-3 label">
+                <div class="col-3 label" style="align-items:center; display:flex">
                     <label for="recipient-name" class="col-form-label">Production Date:</label>
                 </div>
-                <div class="col">
+                <div class="col" style="align-items:center; display:flex">
                     <!-- Transaction Date -->
-                    <input type="date" class="form-control" name="ProductionDate" id="ProductionDate" style="width:100%" value="@ViewBag.SelectedProductionDate" >
+                    <input type="date" class="form-control" name="ProductionDate" id="ProductionDate" style="width:100%" value="@ViewBag.SelectedProductionDate">
                 </div>
 
 
@@ -143,10 +143,10 @@
             </div>
 
             <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:1em">
-                <div class="col-3 label">
+                <div class="col-3 label" style="align-items:center; display:flex">
                     <label for="recipient-name" class="col-form-label">  Line Name:</label>
                 </div>
-                <div class="col">
+                <div class="col" style="align-items:center; display:flex">
                     <!-- Line Name -->
                     <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
                         <option value="" default selected></option>
@@ -168,24 +168,24 @@
             <div class="row" style="height:10px">
             </div>
 
-             <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:1em">
-                <div class="col-3 label">
+            <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:1em">
+                <div class="col-3 label" style="align-items:center; display:flex">
                     <label for="recipient-name" class="col-form-label">  Section Name:</label>
                 </div>
-                <div class="col">
+                <div class="col" style="align-items:center; display:flex">
                     <!-- Section Name -->
 
                     <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
-                <option value="" default selected></option>
+                        <option value="" default selected></option>
                         @foreach (var sectionGroup in Model.view_PLPS.GroupBy(x => x.SectionID))
-                {
-                    var sectiond = sectionGroup.First(); // Take the first item in the group
+                        {
+                            var sectiond = sectionGroup.First(); // Take the first item in the group
                             <option value="@sectiond.SectionID" selected="@(sectiond.SectionID == ViewBag.SelectedSectionName ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => sectiond.SectionID) : @Html.DisplayFor(modelItem => sectiond.SectionName)
-                    </option>
-               
-                }
-            </select>
+                                @Html.DisplayFor(modelItem => sectiond.SectionID) : @Html.DisplayFor(modelItem => sectiond.SectionName)
+                            </option>
+
+                        }
+                    </select>
 
                 </div>
 
@@ -195,23 +195,23 @@
 
 
             <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:1em">
-                <div class="col-3 label">
+                <div class="col-3 label" style="align-items:center; display:flex">
                     <label for="recipient-name" class="col-form-label"> Employee ID:</label>
                 </div>
-                <div class="col">
+                <div class="col" style="align-items:center; display:flex">
                     <!-- Employee ID -->
- 
-              <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeID">
-                <option value="" default selected></option>
+
+                    <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeID">
+                        <option value="" default selected></option>
                         @foreach (var EmpGroup in Model.tbEmployeeMaster.GroupBy(x => x.EmployeeID))
-                {
+                        {
                             var Empd = EmpGroup.First(); // Take the first item in the group
                             <option value="@Empd.EmployeeID" selected="@(Empd.EmployeeID == ViewBag.SelectedEmployeeName ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => Empd.EmployeeID) : @Html.DisplayFor(modelItem => Empd.EmployeeName)
-                    </option>
-               
-                }
-            </select>
+                            </option>
+
+                        }
+                    </select>
                 </div>
 
 
@@ -230,12 +230,12 @@
             <div class="row" style="height:10px">
             </div>
 
-            
+
             <div class="row" style="padding-left:2em ; padding-right:2em ; padding-bottom:1em">
-                <div class="col-3 label">
+                <div class="col-3 label" style="align-items:center; display:flex">
                     <label for="recipient-name" class="col-form-label"> Product From :</label>
                 </div>
-                <div class="col">
+                <div class="col" style="align-items:center; display:flex">
                     <input type="text" class="form-control" name="ProductFrom" id="ProductFrom" style="width:100% ;background-color:gainsboro" readonly>
 
                 </div>
@@ -246,10 +246,10 @@
 
             <div class="row" style="height:10px;"></div>
             <div class="row" style="padding-left:2em ; padding-right:2em ; padding-bottom:1em">
-                <div class="col-3 label">
+                <div class="col-3 label" style="align-items:center; display:flex">
                     <label for="recipient-name" class="col-form-label"> Product To :</label>
                 </div>
-                <div class="col">
+                <div class="col" style="align-items:center; display:flex">
                     <!-- Employee ID -->
                     <select class="selectfillter form-control" name="ProductTo" id="ProductTo" style="width:100%">
                         <option value="" default selected></option>
@@ -267,7 +267,7 @@
             </div>
 
 
-           
+
 
 
 
@@ -355,8 +355,8 @@
             @foreach (var item in Model.View_RollBackData)
             {
                 <tr>
-           
-                   <td>
+
+                    <td>
                         <input type="checkbox" id="@item.RunningNumber" value="@item.RunningNumber" class="checkthis" Name="Productchk" />
                     </td>
                     <td>
@@ -384,7 +384,7 @@
                         @Html.DisplayFor(modelItem => item.EndTime)
                     </td>
 
-                  
+
                 </tr>
             }
         </tbody>

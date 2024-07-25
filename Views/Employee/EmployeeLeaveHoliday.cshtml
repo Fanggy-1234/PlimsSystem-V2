@@ -113,10 +113,10 @@
 
             @*Fillter Process*@
             <div class="row" style="padding-right:2em ">
-                <div class="col-3 label">
+                <div class="col-3 label d-flex align-items-center">
                     <label> Line Name:</label>
                 </div>
-                <div class="col">
+                <div class="col d-flex align-items-center">
                     <select class="selectfillter form-control" list="LineName" name="LineName" id="LineName" style="width:100%">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbLine)
@@ -137,10 +137,10 @@
             <div class="row" style="height:5px"></div>
 
             <div class="row" style=" padding-right:2em">
-                <div class="col-3 label">
+                <div class="col-3 label d-flex align-items-center">
                     <label> Employee ID:</label>
                 </div>
-                <div class="col">
+                <div class="col d-flex align-items-center">
                     <select class="selectfillter form-control" list="EmployeeID" style="width:100%" name="EmployeeID" id="EmployeeID">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbEmployeeMaster)
@@ -156,10 +156,10 @@
             </div>
             <div class="row" style="height:5px"></div>
             <div class="row" style=" padding-right:2em">
-                <div class="col-3 label">
+                <div class="col-3 label d-flex align-items-center">
                     <label> Date :</label>
                 </div>
-                <div class="col">
+                <div class="col d-flex align-items-center">
                     <input class="form-control" type="Date" style="width:100%" name="TransactionDate" id="TransactionDateFillter" value="@ViewBag.SelectedTransactionDate">
                 </div>
 
@@ -168,10 +168,10 @@
 
             <div class="row" style="height:5px"></div>
             <div class="row" style=" padding-right:2em">
-                <div class="col-3 label">
+                <div class="col-3 label d-flex align-items-center">
                     <label> Working Status :</label>
                 </div>
-                <div class="col">
+                <div class="col d-flex align-items-center">
                     <select class="selectfillter form-control" name="WorkingStatus" id="WorkingstatusFillter" style="width:100%">
                         <option value="" default selected></option>
                         <option value="Leave" selected="@(ViewBag.SelectedWorkingStatus == "Leave" ? "seleccted" : null)"> Leave</option>
@@ -194,10 +194,10 @@
 
 
             <div class="row" style="padding-left:2em ; padding-right:2em">
-                <div class="col-3 label">
+                <div class="col-3 label d-flex align-items-center">
                     <label> Working Status : </label>
                 </div>
-                <div class="col">
+                <div class="col d-flex align-items-center">
                     <select class="selectfillter form-control" name="WorkingstatusCreate" id="WorkingstatusCreate" style="width:100%">
                         <option value="" default selected></option>
                         <option value="Leave"> Leave</option>
@@ -211,10 +211,10 @@
 
 
             <div class="row" style="padding-left:2em ; padding-right:2em">
-                <div class="col-3 label">
+                <div class="col-3 label d-flex align-items-center">
                     <label> Date : </label>
                 </div>
-                <div class="col-6">
+                <div class="col-6 d-flex align-items-center">
                     <input class="form-control" type="Date" list="BrowsersName" name="TreansactionDateCreate" id="TransactionDate" style="width:100%">
                 </div>
                 <div class="col d-flex align-items-center justify-content-center">
@@ -245,10 +245,10 @@
             *@
 
             <div class="row" style="padding-left:2em ; padding-right:2em">
-                <div class="col-3 label">
+                <div class="col-3 label d-flex align-items-center">
                     <label> Start Time : </label>
                 </div>
-                <div class="col">
+                <div class="col d-flex align-items-center">
                     <input class="form-control StartTime" type="time" name="StartTime" id="StartTime" disabled style="width:100%">
                 </div>
             </div>
@@ -257,10 +257,10 @@
 
 
             <div class="row" style="padding-left:2em ; padding-right:2em">
-                <div class="col-3 label">
+                <div class="col-3 label d-flex align-items-center">
                     <label> End Time : </label>
                 </div>
-                <div class="col">
+                <div class="col d-flex align-items-center">
                     <input class="form-control EndTime" type="time" name="EndTime" id="EndTime" disabled style="width:100%">
                 </div>
 
@@ -285,10 +285,10 @@
 
 
             <div class="row" style="padding-left:2em ; padding-right:2em">
-                <div class="col-3 label">
+                <div class="col-3 label d-flex align-items-center">
                     <label> Remark : </label>
                 </div>
-                <div class="col">
+                <div class="col d-flex align-items-center">
                     <input class="form-control" type="text" list="BrowsersID" name="remarkcreate" id="Remark" style="width:100%">
                 </div>
 

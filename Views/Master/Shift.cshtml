@@ -28,7 +28,7 @@
         width: 100%;
     }
 
-    #table_id th {
+        #table_id th {
             background-color: #C5C5C5; /* Set your desired header background color */
             font-weight: bold;
             text-align: center;
@@ -38,17 +38,17 @@
             border-collapse: collapse;
         }
 
-    #table_id td {
+        #table_id td {
             text-align: left;
             font-size: 14px;
         }
 
-    #table_id tr {
+        #table_id tr {
             text-align: left;
             padding: initial;
         }
 
-    #table_id th,
+        #table_id th,
         #table_id td {
             border: 0.1px solid #A9A9A9; /* Set border style */
             border-collapse: collapse;
@@ -173,58 +173,60 @@
 <form method="GET" asp-controller="Master" asp-action="Shift">
 
     @* <div style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;"> *@
-        <div class="row">
-            <div class="col-2"><label class="FillterLabel">Shift ID:</label></div>
-            <div class="col-3">
-            <select class="selectfillter form-control" style="width:100%"  name="ShiftID" id="ShiftID">
+    <div class="row">
+        <div class="col-2 d-flex align-items-center"><label class="FillterLabel">Shift ID:</label></div>
+        <div class="col-3 d-flex align-items-center">
+            <select class="selectfillter form-control" style="width:100%" name="ShiftID" id="ShiftID">
                 <option value="" default selected></option>
                 @foreach (var item in Model.tbShift.Where(x => x.PlantID.Equals(@ViewBag.plantID)))
-                    {
+                {
 
-                        <option value="@item.ShiftID" selected="@(item.ShiftID == ViewBag.SelectedShiftID ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => item.ShiftID) </option>
-                    }
-                </select>
-            </div>
-  
-            <div class="col-1"></div>
-            <div class="col-2"><label class="FillterLabel">Shift Name :</label></div>
-            <div class="col-3">
+                    <option value="@item.ShiftID" selected="@(item.ShiftID == ViewBag.SelectedShiftID ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => item.ShiftID)
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-1"></div>
+        <div class="col-2 d-flex align-items-center"><label class="FillterLabel">Shift Name :</label></div>
+        <div class="col-3 d-flex align-items-center">
 
             <select class="selectfillter form-control" style="width:100%" name="ShiftName" id="ShiftName">
                 <option value="" default selected></option>
                 @foreach (var item in Model.tbShift.Where(x => x.PlantID.Equals(@ViewBag.plantID)))
-                    {
+                {
 
                     <option value="@item.ShiftName" selected="@(item.ShiftName == ViewBag.SelectedShiftName ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => item.ShiftName) </option>
-                    }
-                </select>
-            </div>
-            </div>
-        <div class="row" style="height:20px"></div>
-
-
-        @* //Inactive Checkbox *@
-        <div class="row ">
-            <div class="col-2" style=" padding-top:0.5em"></div>
-            <div class="col-3">
-                @{
-                    // Determine if the checkbox should be checked based on ViewBag.InactiveStatus
-                    string checkedAttribute = (ViewBag.InactiveStatus ?? false) ? "checked" : "";
+                        @Html.DisplayFor(modelItem => item.ShiftName)
+                    </option>
                 }
-
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="inactivestatus" name="inactivestatus" @checkedAttribute>
-                    <label class="form-check-label" for="inactivestatus">Inactive Status</label>
-                    <input type="hidden" id="inactivestatus-hidden" name="inactivestatus" value="@((ViewBag.InactiveStatus ?? false).ToString().ToLower())">
-                </div>
-            </div>
-            <div class="col-6"></div>
+            </select>
         </div>
+    </div>
+    <div class="row" style="height:20px"></div>
 
 
-        <div class="row" style="height:20px"></div>
+    @* //Inactive Checkbox *@
+    <div class="row ">
+        <div class="col-2" style=" padding-top:0.5em"></div>
+        <div class="col-3">
+            @{
+                // Determine if the checkbox should be checked based on ViewBag.InactiveStatus
+                string checkedAttribute = (ViewBag.InactiveStatus ?? false) ? "checked" : "";
+            }
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="inactivestatus" name="inactivestatus" @checkedAttribute>
+                <label class="form-check-label" for="inactivestatus">Inactive Status</label>
+                <input type="hidden" id="inactivestatus-hidden" name="inactivestatus" value="@((ViewBag.InactiveStatus ?? false).ToString().ToLower())">
+            </div>
+        </div>
+        <div class="col-6"></div>
+    </div>
+
+
+    <div class="row" style="height:20px"></div>
 
     <div class="row" style="height:35px">
         <div class="col" style="width:15% ">
@@ -245,16 +247,16 @@
             </button>*@
 
             @if (ViewBag.VBRoleShift == "Full")
-             {
+            {
                 <button type="button" class="create-button" data-bs-toggle="modal" data-bs-target="#CreateModal" style=" justify-content: flex-end ">Create</button>
 
-             }
+            }
             else
             {
                 <button type="button" class="create-button" style=" justify-content: flex-end ">Create</button>
 
             }
-           
+
         </div>
     </div>
 
@@ -273,22 +275,22 @@
     }
 </div>
 
-@* 
+@*
 
 <div id="table_info" class="box"></div>
  *@
 @*Diaplay data*@
 <table id="table_id" class="table table-hover" style="width:100%">
-    <thead  style="background-color:lightgrey;width:100%">
+    <thead style="background-color:lightgrey;width:100%">
         <tr>
             @*  <th><input type="checkbox" id="checkall" /></th>*@
-            <th >
+            <th>
                 Shift ID
             </th>
             <th>
                 Prefix
             </th>
-            <th >
+            <th>
                 Shift Name
             </th>
             <th>
@@ -327,10 +329,10 @@
                     @Html.DisplayFor(modelItem => item.ShiftName)
                 </td>
 
-                <td id="StartTime" >
+                <td id="StartTime">
                     @Html.DisplayFor(modelItem => item.StartTime)
                 </td>
-                <td id="Endime" >
+                <td id="Endime">
                     @Html.DisplayFor(modelItem => item.EndTime)
                 </td>
 
@@ -346,21 +348,21 @@
                         }
                         else
                         {
-                            <a href="#"  id="btnEdit">Edit</a>
+                            <a href="#" id="btnEdit">Edit</a>
 
                         }
-                       </td>
+                    </td>
 
-                    <td >
-                         @if (ViewBag.VBRoleShift == "Full")
+                    <td>
+                        @if (ViewBag.VBRoleShift == "Full")
                         {
                             <a href="#" id="Inactive" onclick="InactiveFn(@item.ShiftID)">Inactive</a>
                         }
                         else
                         {
-                            <a href="#" id="Inactive" >Inactive</a>
+                            <a href="#" id="Inactive">Inactive</a>
                         }
-                        
+
                     </td>
 
                 }
@@ -373,13 +375,13 @@
                     <td>
                         @if (ViewBag.VBRoleShift == "Full")
                         {
-                              <a href="#" id="Active" onclick="ActiveFn(@item.ShiftID)">Active</a>
+                            <a href="#" id="Active" onclick="ActiveFn(@item.ShiftID)">Active</a>
                         }
                         else
                         {
                             <a href="#" id="Active">Active</a>
                         }
-                      
+
                     </td>
                 }
 
@@ -405,15 +407,15 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Shift ID:</label>
                         @{
-                           // int value = @Model.tbShift.Count() + 1;
+            // int value = @Model.tbShift.Count() + 1;
 
-                          //  value = "@value"
+            //  value = "@value"
                             <input type="text" class="form-control" id="ShiftidCreate" name="ShiftID" readonly style="background-color:gainsboro">
                         }
                     </div>
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Prefix:</label>
-                          <input type="text" class="form-control" id="PrefixCreate" name="Prefix" required>
+                        <input type="text" class="form-control" id="PrefixCreate" name="Prefix" required>
                     </div>
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Shift Name:</label>

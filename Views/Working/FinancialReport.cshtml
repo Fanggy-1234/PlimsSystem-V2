@@ -50,18 +50,17 @@
 
     #table_id tr {
         text-align: left;
-        padding: 0px; 
+        padding: 0px;
         width: 100%;
     }
 
     #table_id th, #table_id td {
         border: 0.5px solid #F5F5F5;
         border-collapse: collapse;
-      
     }
 
     table.dataTable thead th, table.dataTable tbody td {
-       padding: 0px 10px; 
+        padding: 0px 10px;
         box-sizing: border-box;
     }
 
@@ -105,34 +104,34 @@
 
 
 
-                
+
 <div class="row" style="height:10px"></div>
 <h2 class="page-name">Financial Report</h2>
 <div class="row" style="height:10px"></div>
 <form method="GET" asp-controller="Working">
     @* ///////////////////////////////////Textbox for search ///////////////////////////////////////////////*@
-      <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 5px;">
-                        <div class="col left" style="border: solid 1px #d5d5d5; margin-left:1em;">
+    <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 5px;">
+        <div class="col left" style="border: solid 1px #d5d5d5; margin-left:1em;">
 
 
-                    <div class="row" style="height:10px"></div>
-                    <div class="row">
-                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Start Date:</label></div>
-                        <div class="col-3">
+            <div class="row" style="height:10px"></div>
+            <div class="row">
+                <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  Start Date:</label></div>
+                <div class="col-3" style="align-items:center; display:flex">
                     <input class="form-control StartDate" type="Date" name="StartDate" id="StartDate" value="@ViewBag.SelectedStartDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%">
-                        </div>
-          
-                        <div class="col-1"></div>
-                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  End Date:</label></div>
-                        <div class="col-3">
-                    <input class="form-control EndDate" type="Date" name="EndDate" id="EndDate" value="@ViewBag.SelectedEndDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%" >
-                        </div>
+                </div>
 
-                    </div>
-                    <div class="row" style="height:10px"></div>
-                    <div class="row">
-                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> Line :</label></div>
-                        <div class="col-3">
+                <div class="col-1"></div>
+                <div class="col-2" style="align-items:center; display:flex;"><label class="FillterLabel">  End Date:</label></div>
+                <div class="col-3" style="align-items:center; display:flex">
+                    <input class="form-control EndDate" type="Date" name="EndDate" id="EndDate" value="@ViewBag.SelectedEndDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%">
+                </div>
+
+            </div>
+            <div class="row" style="height:10px"></div>
+            <div class="row">
+                <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel"> Line :</label></div>
+                <div class="col-3" style="align-items:center; display:flex">
                     <select class="selectfillter form-control" style="width:100%" name="LineID" id="LineName">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbLine)
@@ -142,32 +141,32 @@
                             </option>
                         }
                     </select>
-                        </div>
+                </div>
 
-                        <div class="col-1"></div>
-                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> Employee ID  :</label></div>
-                        <div class="col-3">
-                 
+                <div class="col-1"></div>
+                <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel"> Employee ID  :</label></div>
+                <div class="col-3" style="align-items:center; display:flex">
 
-                                   <select class="selectfillter form-control" list="EmployeeID" style="width:100%" name="EmployeeID" id="EmployeeID">
-                                <option value="" default selected></option>
-                                @foreach (var item in Model.tbEmployeeMaster)
-                                {
+
+                    <select class="selectfillter form-control" list="EmployeeID" style="width:100%" name="EmployeeID" id="EmployeeID">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbEmployeeMaster)
+                        {
 
                             <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">
-                                        @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
-                                    </option>
-                                }
-                            </select>
+                                @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
+                            </option>
+                        }
+                    </select>
 
-                        </div>
+                </div>
 
-                    </div>
-                 
-                    <div class="row" style="height:10px"></div>
-  </div>
+            </div>
 
-</div>
+            <div class="row" style="height:10px"></div>
+        </div>
+
+    </div>
     <div class="row" style="height:20px"></div>
     <div class="row" style="height:40px">
 
@@ -184,7 +183,7 @@
                 Search
             </button>
         </div>
-      
+
     </div>
 
 
@@ -206,24 +205,24 @@
                 <th rowspan="2" style="width:150px">จุดงาน</th>
             </tr>
             <tr>
-      
-                    <!-- Render date range headers -->
-                    @foreach (var date in ViewBag.DateRange)
-                    {
+
+                <!-- Render date range headers -->
+                @foreach (var date in ViewBag.DateRange)
+                {
                     <th>@date.ToString("dd/MM/yy")</th>
-                    }
+                }
             </tr>
         </thead>
         <tbody style="width:100%">
             @if (Model.groupedData != null && Model.groupedData.Any())
             {
-                var groupedByEmployeeAndSection = Model.groupedData.GroupBy(x => new { x.QRCode , x.SectionName });
+                var groupedByEmployeeAndSection = Model.groupedData.GroupBy(x => new { x.QRCode, x.SectionName });
 
                 foreach (var group in groupedByEmployeeAndSection)
                 {
                     <tr style="width:100%">
                         <td>@group.Key.QRCode</td>
-                        <td >@group.Max(x => x.EmployeeName)</td>
+                        <td>@group.Max(x => x.EmployeeName)</td>
                         @{
                             decimal totalIncentive = 0;
                         }
@@ -234,22 +233,22 @@
                             <td>@(matchingTransaction != null ? matchingTransaction.TotalIncentive.ToString("0.00") : "")</td>
                             totalIncentive += matchingTransaction != null ? matchingTransaction.TotalIncentive : 0;
                         }
-                    
+
                         <td id="TotalAmount">@string.Format("{0:0.00}", totalIncentive)</td>
-                  @*       <td id="TotalAmount">@totalIncentive</td> *@
+                        @*       <td id="TotalAmount">@totalIncentive</td> *@
                         <td id="SectionName">@group.Key.SectionName</td>
                     </tr>
                 }
             }
             else
-            {@* 
-                <tr style="width:100%">
-                <td colspan="100%">No data available.</td> 
-                </tr> *@
+            {@*
+            <tr style="width:100%">
+            <td colspan="100%">No data available.</td>
+            </tr> *@
 
-                 <tr style="width:100%">
-                <td colspan="@(4 + (ViewBag.DateRange as List<DateTime>).Count)">No data available.</td>
-            </tr>
+                <tr style="width:100%">
+                    <td colspan="@(4 + (ViewBag.DateRange as List<DateTime>).Count)">No data available.</td>
+                </tr>
 
 
             }
@@ -270,7 +269,7 @@
             @if (ViewBag.VBRoleFinancial == "Full")
             {
                 <button class="search-button" id="btnExportreport" type="submit" asp-action="FinanceReportExport" value="export" name="submit">Export</button>
-             
+
             }
             else
             {

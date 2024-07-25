@@ -4,7 +4,7 @@
     ViewBag.Title = "EmployeeManagement";
     string PlantID = Context.Session.GetString("PlantID");
 }
-@* 
+@*
 <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
 <link href="~/css/w3.css" rel="stylesheet" />
 <link href="~/css/jquery.datatables.min.css" rel="stylesheet" />
@@ -99,12 +99,12 @@
 
 
 @* @if (ViewBag.MessageAlert != null)
-    {  
-        <script type="text/javascript">  
-            window.onload = function () {  
-                alert("@ViewBag.MessageAlert");  
-            };  
-        </script>  
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("@ViewBag.MessageAlert");
+            };
+        </script>
     }   *@
 
 
@@ -116,16 +116,16 @@
     <div class="row">
         <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> Employee ID:</label></div>
         <div class="col-3">
-        @*     <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeID">
-                <option value="" default selected></option>
-                @foreach (var item in Model.tbEmployeeMaster)
-                {
+            @*     <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeID">
+            <option value="" default selected></option>
+            @foreach (var item in Model.tbEmployeeMaster)
+            {
 
-                    <option>@Html.DisplayFor(modelItem => item.EmployeeID) </option>
-                }
+            <option>@Html.DisplayFor(modelItem => item.EmployeeID) </option>
+            }
             </select> *@
 
-            
+
             <select class="selectfillter form-control" style="width:100%" name="EmployeeID" id="EmployeeID">
                 <option value="" default selected></option>
                 @foreach (var item in Model.view_EmployeeMaster.GroupBy(x => x.EmployeeID))
@@ -148,11 +148,11 @@
         <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> Section Name  :</label></div>
         <div class="col-3">
             @* <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
-                <option value="" default selected></option>
-                @foreach (var item in Model.tbSection)
-                {
-                    <option>@Html.DisplayFor(modelItem => item.SectionName) </option>
-                }
+            <option value="" default selected></option>
+            @foreach (var item in Model.tbSection)
+            {
+            <option>@Html.DisplayFor(modelItem => item.SectionName) </option>
+            }
             </select> *@
             <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
                 <option value="" default selected></option>
@@ -160,7 +160,7 @@
                 {
                     var dataitem = item.First(); // Take the first item in the group
                     <option value="@dataitem.SectionName" selected="@(dataitem.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
-                      @Html.DisplayFor(modelItem => dataitem.SectionID)  : @Html.DisplayFor(modelItem => dataitem.SectionName)
+                        @Html.DisplayFor(modelItem => dataitem.SectionID)  : @Html.DisplayFor(modelItem => dataitem.SectionName)
                     </option>
 
                 }
@@ -176,22 +176,22 @@
         <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> Line Name:</label></div>
         <div class="col-3">
             @* <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
-                <option value="" default selected></option>
-                @foreach (var item in Model.tbLine)
-                {
+            <option value="" default selected></option>
+            @foreach (var item in Model.tbLine)
+            {
 
-                    <option>@Html.DisplayFor(modelItem => item.LineName) </option>
-                }
+            <option>@Html.DisplayFor(modelItem => item.LineName) </option>
+            }
             </select> *@
 
 
-             <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
+            <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
                 <option value="" default selected></option>
                 @foreach (var item in Model.view_EmployeeMaster.GroupBy(x => x.LineName))
                 {
                     var dataitem = item.First(); // Take the first item in the group
                     <option value="@dataitem.LineName" selected="@(dataitem.LineName == ViewBag.SelectedLineName ? "selected" : null)">
-                         @Html.DisplayFor(modelItem => dataitem.LineID) : @Html.DisplayFor(modelItem => dataitem.LineName)
+                        @Html.DisplayFor(modelItem => dataitem.LineID) : @Html.DisplayFor(modelItem => dataitem.LineName)
                     </option>
 
                 }
@@ -204,16 +204,16 @@
         <div class="col-1"></div>
         <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> Shift name :</label></div>
         <div class="col-3">
-           @*  <select class="selectfillter form-control" style="width:100%" name="ShiftName" id="ShiftName">
-                <option value="" default selected></option>
-                @foreach (var item in Model.tbShift)
-                {
-                    <option>@Html.DisplayFor(modelItem => item.ShiftName) </option>
-                }
+            @*  <select class="selectfillter form-control" style="width:100%" name="ShiftName" id="ShiftName">
+            <option value="" default selected></option>
+            @foreach (var item in Model.tbShift)
+            {
+            <option>@Html.DisplayFor(modelItem => item.ShiftName) </option>
+            }
             </select>
- *@
-            
-             <select class="selectfillter form-control" style="width:100%" name="ShiftName" id="ShiftName">
+            *@
+
+            <select class="selectfillter form-control" style="width:100%" name="ShiftName" id="ShiftName">
                 <option value="" default selected></option>
                 @foreach (var item in Model.view_EmployeeMaster.GroupBy(x => x.ShiftName))
                 {
@@ -255,7 +255,7 @@
 
 
     <div class="row" style="height:20px"></div>
- 
+
 
 
     <div class="row" style="height:10px"></div>
@@ -269,8 +269,8 @@
         <div class="col-3" style="width:40% ">
         </div>
         <div class="col-3" style="width:15% ">
-     @*        <button id="Group" type="submit" href="@Url.Action("EmployeeGroupQRCode", "Master")" name="button"  class="search-button">
-                Employee Group
+            @*        <button id="Group" type="submit" href="@Url.Action("EmployeeGroupQRCode", "Master")" name="button"  class="search-button">
+            Employee Group
             </button> *@
             <button type="submit" onclick="redirectToEmployeeGroup();" class="search-button">Employee Group</button>
 
@@ -299,107 +299,107 @@
 
 
 
-       </div>
-     
-<br />
+    </div>
+
+    <br />
 
 
-@*Diaplay data*@
+    @*Diaplay data*@
 
     <table id="table_id" class="table table-hover" style="width:100%">
         <thead style="background-color:gainsboro;width:100%">
-        <tr>
-            @*<th><input type="checkbox" id="checkall" /></th>*@
-            <th>
-                Employee ID
-            </th>
-            <th >
-                Employee Name
-            </th>
-            <th >
-                Plant Name
-            </th>
-            <th >
-                Line Name
-            </th>
-            <th >
-                Section Name
-            </th>
-            <th >
-                Shift
-            </th>
-            <th>
-                Status
-            </th>
+            <tr>
+                @*<th><input type="checkbox" id="checkall" /></th>*@
+                <th>
+                    Employee ID
+                </th>
+                <th>
+                    Employee Name
+                </th>
+                <th>
+                    Plant Name
+                </th>
+                <th>
+                    Line Name
+                </th>
+                <th>
+                    Section Name
+                </th>
+                <th>
+                    Shift
+                </th>
+                <th>
+                    Status
+                </th>
                 <th>
                     Edit
                 </th>
                 <th>
                     Active/Inactive
                 </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.view_EmployeeMaster)
-        {
-            <tr>
-                @Html.HiddenFor(modelItem => item.ID)
-                @*<td><input type="checkbox" class="checkthis" /></td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.EmployeeID)
-                </td>
-                <td>
-                        @Html.DisplayFor(modelItem => item.EmployeeName)  @Html.DisplayFor(modelItem => item.EmployeeLastName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PlantName)
-                </td>
-                <td>
-                   @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
-                </td>
-                <td>
-                      @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
-                </td>
-                <td>
-                   @Html.DisplayFor(modelItem => item.ShiftID) :  @Html.DisplayFor(modelItem => item.ShiftName)
-                </td>
-
-                @if (item.Status == 1)
-                {
-                    <td id="Status"> <span id="open">Active</span> </td>
-                    <td>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" onclick="EditFn(@item.ID)">Edit</a>
-                    </td>
-
-                    <td >
-                        <a href="#" id="Inactive" onclick="InactiveFn(@item.ID)">Inactive</a>
-                    </td>
-
-                }
-                @if (item.Status == 0)
-                {
-                    <td id="Status"><span id="closed" style="color:red">Inactive</span></td>
-                    <td>
-                        <span id="closed">Edit</span>
-                    </td>
-                    <td>
-                        <a href="#" id="Active" onclick="ActiveFn(@item.ID)">Active</a>
-                    </td>
-                }
-
-
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.view_EmployeeMaster)
+            {
+                <tr>
+                    @Html.HiddenFor(modelItem => item.ID)
+                    @*<td><input type="checkbox" class="checkthis" /></td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EmployeeID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EmployeeName)  @Html.DisplayFor(modelItem => item.EmployeeLastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlantName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ShiftID) :  @Html.DisplayFor(modelItem => item.ShiftName)
+                    </td>
+
+                    @if (item.Status == 1)
+                    {
+                        <td id="Status"> <span id="open">Active</span> </td>
+                        <td>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" onclick="EditFn(@item.ID)">Edit</a>
+                        </td>
+
+                        <td>
+                            <a href="#" id="Inactive" onclick="InactiveFn(@item.ID)">Inactive</a>
+                        </td>
+
+                    }
+                    @if (item.Status == 0)
+                    {
+                        <td id="Status"><span id="closed" style="color:red">Inactive</span></td>
+                        <td>
+                            <span id="closed">Edit</span>
+                        </td>
+                        <td>
+                            <a href="#" id="Active" onclick="ActiveFn(@item.ID)">Active</a>
+                        </td>
+                    }
 
 
-@* /////////////////////////// Export / Import /////////////////////// *@
+                </tr>
+            }
+        </tbody>
+    </table>
 
 
-        <br>
-          <div class="row" style="height:40px">
-         <div class="col-2" style="width:50% "></div>
+    @* /////////////////////////// Export / Import /////////////////////// *@
+
+
+    <br>
+    <div class="row" style="height:40px">
+        <div class="col-2" style="width:50% "></div>
         <div class="col" style="width:70% ">
             @if (ViewBag.VBRoleEmployee == "Full")
             {
@@ -411,9 +411,9 @@
             }
         </div>
         <div class="col" style="width:15% ">
-        @if (ViewBag.VBRoleEmployee == "Full")
+            @if (ViewBag.VBRoleEmployee == "Full")
             {
-                <button class="search-button" id="btnExport" type="Submit"  asp-action="EmployeeExport" value="export" name="submit">Export</button>
+                <button class="search-button" id="btnExport" type="Submit" asp-action="EmployeeExport" value="export" name="submit">Export</button>
             }
             else
             {
@@ -421,7 +421,7 @@
             }
         </div>
         <div class="col" style="width:15% ">
-        @if (ViewBag.VBRoleEmployee == "Full")
+            @if (ViewBag.VBRoleEmployee == "Full")
             {
 
                 <button type="button" class="clear-button" id="btnSelectFile">Import</button>
@@ -434,7 +434,7 @@
                 <button type="button" class="clear-button">Import</button>
 
             }
-           
+
         </div>
     </div>
 
@@ -461,7 +461,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="post" controller="Master" asp-action="EmployeeCreate">
-       @*          <form method="get" controller="Master" action="EmployeeCreate"> *@
+                @*          <form method="get" controller="Master" action="EmployeeCreate"> *@
                 @* *@
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Employee Create</h1>
@@ -493,9 +493,9 @@
 
                         <div class="col-3">
                             <div class="container">
-                        @*     <img src="@ViewData["QrCodeUri"]" class="img-thumbnail" /> *@
-                            <img id="QRCodeImage" src="" class="img-thumbnail" style="display: none;" />
-                              
+                                @*     <img src="@ViewData["QrCodeUri"]" class="img-thumbnail" /> *@
+                                <img id="QRCodeImage" src="" class="img-thumbnail" style="display: none;" />
+
                             </div>
                         </div>
                         <input type="hidden" id="QrCodeUri" />
@@ -504,18 +504,18 @@
                     @* Line Name*@
                     <div class="mb-3">
                         <label class="col-form-label">Line Name:</label>
-                      @*   <select class="selectfillter form-control" name="LineName" id="LineNameCreate" style="width:100%" onchange="filterSectionByLine()">
-                            <option value="" default selected>Please Select ..</option>
-                            @foreach (var item in Model.tbLine.Where(x=>x.Status.Equals(1)))
-                            {
+                        @*   <select class="selectfillter form-control" name="LineName" id="LineNameCreate" style="width:100%" onchange="filterSectionByLine()">
+                        <option value="" default selected>Please Select ..</option>
+                        @foreach (var item in Model.tbLine.Where(x=>x.Status.Equals(1)))
+                        {
 
-                                <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineName) </option>
-                            }
+                        <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineName) </option>
+                        }
                         </select> *@
 
-                        
+
                         <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineNameCreate" onchange="filterSectionByLine()" required>
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.GroupBy(x => x.LineID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -534,29 +534,29 @@
                     @* Section Name*@
                     <div class="mb-3">
                         <label class="col-form-label">Section Name:</label>
-                  @*       <select class="selectfillter form-control" name="SectionName" id="SectionNameCreate" style="width:100%" >
-                            <option value="" default selected>Please Select ..</option>
-                            @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
-                            {
+                        @*       <select class="selectfillter form-control" name="SectionName" id="SectionNameCreate" style="width:100%" >
+                        <option value="" default selected>Please Select ..</option>
+                        @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
+                        {
 
-                                <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionName) </option>
-                            }
+                        <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionName) </option>
+                        }
                         </select>
- *@
+                        *@
 
                         <select class="selectfillter form-control" style="width:100%" name="SectionID" id="SectionNameCreate" required>
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
                                 <option value="@dataFrist.SectionID">
-                                 @Html.DisplayFor(modelItem => dataFrist.SectionID) : @Html.DisplayFor(modelItem => dataFrist.SectionName)
+                                    @Html.DisplayFor(modelItem => dataFrist.SectionID) : @Html.DisplayFor(modelItem => dataFrist.SectionName)
                                 </option>
 
                             }
                         </select>
 
-                  
+
 
                     </div>
 
@@ -570,32 +570,32 @@
 
                                 <option value="@item.ShiftID">
                                     @Html.DisplayFor(modelItem => item.ShiftName) : @Html.DisplayFor(modelItem => item.StartTime) - @Html.DisplayFor(modelItem => item.EndTime)
-                                    </option>
+                                </option>
                             }
                         </select>
                     </div>
 
 
-               @*      <div class="mb-3">
-                        <label class="col-form-label">QRCodePerEmployee :</label>
-                        <input class="form-control" name="QRCodePerEmployee" id="QRCodePerEmployeeCreate" style="width:100%">
+                    @*      <div class="mb-3">
+                    <label class="col-form-label">QRCodePerEmployee :</label>
+                    <input class="form-control" name="QRCodePerEmployee" id="QRCodePerEmployeeCreate" style="width:100%">
                     </div>
- *@
-         @*            <div class="mb-3">
-                        <input class="form-check-input" rel="active" type="checkbox" id="StatusCreate" name="Status" value="1" checked>
-                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+                    *@
+                    @*            <div class="mb-3">
+                    <input class="form-check-input" rel="active" type="checkbox" id="StatusCreate" name="Status" value="1" checked>
+                    <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
 
                     </div> *@
 
-                                        <div class="form-check form-switch">
+                    <div class="form-check form-switch">
                         <input class="form-check-input" rel="active" type="checkbox" id="StatusCreate" name="Status" value="1" checked>
                         <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
                     </div>
 
                     <div class="modal-footer">
                         <input type="button" value="Generate QR Code" onclick="generateQRCode()" class="btn btn-primary text-center" />
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Cancel</button>
-                        <button type="submit" class="btn btn-primary" name="submit" value="Enter" >Submit</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" name="submit" value="Enter">Submit</button>
                     </div>
                 </div>
             </form>
@@ -608,7 +608,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="Post" controller="Master" action="EmployeeUpdate">
-                  @*  *@
+                @*  *@
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Employee Edit</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -633,7 +633,7 @@
                                     <input class="form-control" name="EmployeeName" id="ModalEmployeeName" required>
                                 </div>
                             </div>
-                              <div class="row">
+                            <div class="row">
                                 <div class="col-md-12">
                                     <label class="col-form-label">Employee Last:</label>
                                     <input class="form-control" name="EmployeeLastName" id="ModalEmployeeLastName" required>
@@ -641,7 +641,7 @@
                             </div>
                         </div>
 
-                       <div class="col-3" style="max-width: 150px; max-height: 120px;">
+                        <div class="col-3" style="max-width: 150px; max-height: 120px;">
                             <img alt="QRImg" id="modalImage" style="width: 100%; height: auto;" />
                         </div>
 
@@ -651,23 +651,23 @@
                     @* Line Name*@
                     <div class="mb-3">
                         <label class="col-form-label">Line Name:</label>
-                    @*     <select class="selectfillter form-control" name="LineID" id="ModalLineName" style="width:100%">
-                            <option value="" default selected></option>
-                            @foreach (var item in Model.tbLine)
-                            {
+                        @*     <select class="selectfillter form-control" name="LineID" id="ModalLineName" style="width:100%">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbLine)
+                        {
 
-                                <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName) </option>
-                            }
+                        <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName) </option>
+                        }
                         </select>
- *@
+                        *@
 
                         <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName" required>
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
                                 <option value="@dataFrist.LineID">
-                                      @Html.DisplayFor(modelItem => dataFrist.LineID) : @Html.DisplayFor(modelItem => dataFrist.LineName)
+                                    @Html.DisplayFor(modelItem => dataFrist.LineID) : @Html.DisplayFor(modelItem => dataFrist.LineName)
                                 </option>
 
                             }
@@ -680,18 +680,18 @@
                     @* Section Name*@
                     <div class="mb-3">
                         <label class="col-form-label">Section Name:</label>
-                      @*   <select class="selectfillter form-control" name="SectionID" id="ModalSectionName" style="width:100%">
-                            <option value="" default selected></option>
-                            @foreach (var item in Model.tbSection)
-                            {
+                        @*   <select class="selectfillter form-control" name="SectionID" id="ModalSectionName" style="width:100%">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbSection)
+                        {
 
-                                <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionID)  : @Html.DisplayFor(modelItem => item.SectionName) </option>
-                            }
+                        <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionID)  : @Html.DisplayFor(modelItem => item.SectionName) </option>
+                        }
                         </select> *@
 
 
                         <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName" required>
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -706,17 +706,17 @@
                     @* Shift Name*@
                     <div class="mb-3">
                         <label class="col-form-label">Shift Name:</label>
-                       @*  <select class="selectfillter form-control" name="ShiftID" id="ModalShiftName" style="width:100%">
-                            <option value="" default selected></option>
-                            @foreach (var item in Model.tbShift)
-                            {
+                        @*  <select class="selectfillter form-control" name="ShiftID" id="ModalShiftName" style="width:100%">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbShift)
+                        {
 
-                                <option value="@item.ShiftID">@Html.DisplayFor(modelItem => item.ShiftName) </option>
-                            }
+                        <option value="@item.ShiftID">@Html.DisplayFor(modelItem => item.ShiftName) </option>
+                        }
                         </select> *@
 
                         <select class="selectfillter form-control" style="width:100%" name="ShiftID" id="ModalShiftName" required>
-                            <option value="" default selected></option>
+                            <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.tbShift.Where(x => x.Status.Equals(1)).GroupBy(x => x.ShiftID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -730,18 +730,18 @@
 
                     </div>
 
-@* 
+                    @*
                     <div class="mb-3">
 
-                        <label class="col-form-label">QRCodePerEmployee :</label>
-                        <input class="form-control" name="Contact" id="ModalQRCodePerEmployee">
+                    <label class="col-form-label">QRCodePerEmployee :</label>
+                    <input class="form-control" name="Contact" id="ModalQRCodePerEmployee">
 
                     </div>
- *@
-@* 
+                    *@
+                    @*
                     <div class="mb-3">
-                        <input class="form-check-input" rel="active" type="checkbox" id="ModalStatus" name="Status" value="1">
-                        <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
+                    <input class="form-check-input" rel="active" type="checkbox" id="ModalStatus" name="Status" value="1">
+                    <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
 
                     </div> *@
                     <div class="form-check form-switch">
@@ -763,7 +763,12 @@
 
 <script>
 
-        $(document).ready(function () {
+    $(document).ready(function () {
+        $('#CreateModal').on('shown.bs.modal', function () {
+            $('#LineNameCreate, #SectionNameCreate, #ShiftNameCreate').select2({
+                dropdownParent: $('#CreateModal')
+            });
+        });
         var table = $('#table_id').DataTable({
             dom: 'Bfrtip',
             ordering: false,
@@ -799,7 +804,7 @@
             success: function (response) {
                 // Update the QR code image source
                 $('#QRCodeImage').attr('src', response);
-                
+
                 // Optionally, update other elements in the modal as needed
                 $('#QRCodeImage').show(); // Show the QR code image
                 $('#QrCodeUri').val(response); // Set the QR code URI to a hidden input field
@@ -822,7 +827,7 @@
 
 <script type="text/javascript" charset="utf8">
 
-    
+
     // $(function () {
     //     $("#btnExport").click(function () {
     //         $("#table_id").table2excel({
@@ -833,6 +838,9 @@
 
     $(document).ready(function () {
         $('#EditModal').on('shown.bs.modal', function () {
+            $('#ModalLineName, #ModalSectionName, #ModalShiftName').select2({
+                dropdownParent: $('#EditModal')
+            });
             // Get the value of the Employee ID input field
             var employeeID = $('#ModalEmployeeID').val();
 
@@ -871,13 +879,13 @@
 
 
 
-     function redirectToEmployeeGroup() {
+    function redirectToEmployeeGroup() {
         event.preventDefault(); // Prevent default form submission
         location.href = '@Url.Action("EmployeeGroupQRCode", "Master")'; // Redirect to the specified URL
     }
 
 
-       $(document).ready(function () {
+    $(document).ready(function () {
         $('#btnSelectFile').on('click', function () {
             $('#FileUpload').click();
         });
@@ -913,10 +921,10 @@
     document.getElementById("generateBtn").addEventListener("click", function () {
         // Retrieve the employee ID and other data
         var employeeId = document.getElementById("EmployeeIDCreate").value;
-     
+
         // Create a JSON object with the data
         var data = {
-            EmployeeId: employeeId    
+            EmployeeId: employeeId
         };
 
         // Make an AJAX request to generate and save the QR code
@@ -939,124 +947,124 @@
 
 
 
-        //Function Inactive
-        function InactiveFn(id) {
-            $.ajax({
-                url: '/Master/EmployeeInactive/' + id,
-                type: 'GET',
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'json',
-                success: function (response) {
+    //Function Inactive
+    function InactiveFn(id) {
+        $.ajax({
+            url: '/Master/EmployeeInactive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
                 location.reload();
-                    alert("Inactive Finish");
-                },
-                error: function (response) {
-                    alert("Inactive something went wrong.");
-                }
+                alert("Inactive Finish");
+            },
+            error: function (response) {
+                alert("Inactive something went wrong.");
+            }
 
-            });
-        }
+        });
+    }
 
 
-        //Function Active
-        function ActiveFn(id) {
-            $.ajax({
-                url: '/Master/EmployeeActive/' + id,
-                type: 'GET',
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'json',
-                success: function (response) {
+    //Function Active
+    function ActiveFn(id) {
+        $.ajax({
+            url: '/Master/EmployeeActive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
                 location.reload();
-                    alert("Active Finish");
-                },
-                error: function (response) {
-                    alert("Active something went wrong.");
+                alert("Active Finish");
+            },
+            error: function (response) {
+                alert("Active something went wrong.");
+            }
+
+        });
+    }
+
+
+    //Edit to modal
+    function EditFn(ID) {
+        $.ajax({
+            url: '/Master/EmployeeEdit/' + ID,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+
+                if (response == null || response == undefined) {
+
+                    alert("This data can't read1!")
                 }
+                else if (response.length == 0) {
 
-            });
-        }
-
-
-        //Edit to modal
-        function EditFn(ID) {
-            $.ajax({
-                url: '/Master/EmployeeEdit/' + ID,
-                type: 'GET',
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'json',
-                success: function (response) {
-
-                    if (response == null || response == undefined) {
-
-                        alert("This data can't read1!")
-                    }
-                    else if (response.length == 0) {
-
-                        alert("This data can't id!" + id)
-                    }
-                    else {
-                      //  console.log('AJAX request successful:', response);
-                        $('#ModalEmployeeID').val(response.employeeID);
-                        $('#ModalEmployeeName').val(response.employeeName)
-                              $('#ModalEmployeeLastName').val(response.employeeLastName)
-                     //   $('#ModalPlantName').append('<option value="' + response.plantID + '">' + response.plantName + '</option>');
+                    alert("This data can't id!" + id)
+                }
+                else {
+                    //  console.log('AJAX request successful:', response);
+                    $('#ModalEmployeeID').val(response.employeeID);
+                    $('#ModalEmployeeName').val(response.employeeName)
+                    $('#ModalEmployeeLastName').val(response.employeeLastName)
+                    //   $('#ModalPlantName').append('<option value="' + response.plantID + '">' + response.plantName + '</option>');
                     $('#ModalPlantName').val(response.plantID).trigger('change');
 
-                   // $('#ModalLineName').append('<option value="' + response.lineID + '">' + response.lineName + '</option>');
+                    // $('#ModalLineName').append('<option value="' + response.lineID + '">' + response.lineName + '</option>');
                     $('#ModalLineName').val(response.lineID).trigger('change');
 
 
-                      //  $('#ModalSectionName').append('<option value="' + response.sectionID + '">' + response.sectionName + '</option>');
+                    //  $('#ModalSectionName').append('<option value="' + response.sectionID + '">' + response.sectionName + '</option>');
                     $('#ModalSectionName').val(response.sectionID).trigger('change');
 
-                  //  $('#ModalShiftName').append('<option value="' + response.shiftID + '">' + response.shiftName + '</option>');
+                    //  $('#ModalShiftName').append('<option value="' + response.shiftID + '">' + response.shiftName + '</option>');
                     $('#ModalShiftName').val(response.shiftID).trigger('change');
-                                 $('#ModalStatus').prop('checked', response.status == 1)
-                       // $('#ModalShiftName').val(response.shiftName);
-                        $('#ModalQRCodePerEmployee').val(response.qrCodePerEmployee);
-                        // $('#modalImage').attr('src', "D:\\PLIMS PROJECT\\Plims_9\\QRCode\\TU01.png");
+                    $('#ModalStatus').prop('checked', response.status == 1)
+                    // $('#ModalShiftName').val(response.shiftName);
+                    $('#ModalQRCodePerEmployee').val(response.qrCodePerEmployee);
+                    // $('#modalImage').attr('src', "D:\\PLIMS PROJECT\\Plims_9\\QRCode\\TU01.png");
 
-                           var employeeID = $('#ModalEmployeeID').val();
+                    var employeeID = $('#ModalEmployeeID').val();
 
-                         // Construct the URL for the QR code image
-                            var qrCodeUrl = '@Url.Content("~/qrcodes/")' + @PlantID + "/"+ employeeID + '_QRCode.png';
-                             console.log('QR path : ' + qrCodeUrl)
-                        // Set the src attribute of the img tag to the constructed URL
-                        $('#modalImage').attr('src', qrCodeUrl);
+                    // Construct the URL for the QR code image
+                    var qrCodeUrl = '@Url.Content("~/qrcodes/")' + @PlantID + "/" + employeeID + '_QRCode.png';
+                    console.log('QR path : ' + qrCodeUrl)
+                    // Set the src attribute of the img tag to the constructed URL
+                    $('#modalImage').attr('src', qrCodeUrl);
 
 
-                        // $('#modalImage').attr('src', "'D:\PLIMS PROJECT\Plims_9\QRCode\'" + response.employeeID + "'.png'");
-                        $('#EditModal').modal('show');
+                    // $('#modalImage').attr('src', "'D:\PLIMS PROJECT\Plims_9\QRCode\'" + response.employeeID + "'.png'");
+                    $('#EditModal').modal('show');
 
-                    }
-                },
-                error: function (response) {
-                    alert(response.responseText);
                 }
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
 
-            });
-        }
-
-        // Function to fetch and set the image source
-        function loadEmployeeImage(employeeID) {
-            // Assuming you have a route in your controller to get the image, adjust the URL accordingly
-            var imageUrl = "/Image/GetImage?imageName=" + employeeID + ".png";
-
-            // Set the image source
-            document.getElementById("ImgQRCode").src = imageUrl;
-        }
-
-        // Assuming you have a button or element to trigger the modal
-        document.getElementById("GenerateQRBtn").addEventListener("click", function () {
-            // Get the employee ID from your model or wherever it's stored
-            var employeeID = document.getElementById("EmployeeIDCreate").value; // Replace with the actual employee ID
-
-            // Load the image when the modal is triggered
-            loadEmployeeImage(employeeID);
         });
+    }
+
+    // Function to fetch and set the image source
+    function loadEmployeeImage(employeeID) {
+        // Assuming you have a route in your controller to get the image, adjust the URL accordingly
+        var imageUrl = "/Image/GetImage?imageName=" + employeeID + ".png";
+
+        // Set the image source
+        document.getElementById("ImgQRCode").src = imageUrl;
+    }
+
+    // Assuming you have a button or element to trigger the modal
+    document.getElementById("GenerateQRBtn").addEventListener("click", function () {
+        // Get the employee ID from your model or wherever it's stored
+        var employeeID = document.getElementById("EmployeeIDCreate").value; // Replace with the actual employee ID
+
+        // Load the image when the modal is triggered
+        loadEmployeeImage(employeeID);
+    });
 
 
-    
+
     /// Fillter Create
     function filterSectionByLine() {
         // Clear previous options
@@ -1074,7 +1082,7 @@
                 url: "/Master/FilterSectionByLine", // Update the URL to your controller action
                 data: { lineId: selectedLineID },
                 success: function (filteredProducts) {
-                   
+
                     // Add filtered products to the dropdown
                     filteredProducts.forEach(function (product) {
                         $("#SectionNameCreate").append("<option value='" + product.sectionID + "'>" + product.sectionID + " : " + product.sectionName + "</option>");
