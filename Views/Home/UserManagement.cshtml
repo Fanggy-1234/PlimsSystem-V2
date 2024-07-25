@@ -72,7 +72,7 @@
                 dropdownParent: $('#EditModal')
             });
         });
-        
+
         var table = $('#table_id').DataTable({
             dom: 'Bfrtip',
             ordering: false,
@@ -90,7 +90,7 @@
 <script type="text/javascript" charset="utf8">
 
 
-  
+
 
     //Edit to modal
     function EditFn(id) {
@@ -200,9 +200,9 @@
                 {
                     var dataitem = item.First(); // Take the first item in the group
                     <option value="@dataitem.UserEmpID" selected="@(dataitem.UserEmpID == ViewBag.SelectedUserEmpID ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => dataitem.UserEmpID) 
+                        @Html.DisplayFor(modelItem => dataitem.UserEmpID)
                     </option>
-               
+
                 }
             </select>
 
@@ -210,8 +210,8 @@
 
         </div>
         <div class="col-1"></div>
-        <div class="col-2"><label class="FillterLabel"> Role:</label></div>
-        <div class="col-3">
+        <div class="col-2 d-flex align-items-center"><label class="FillterLabel"> Role:</label></div>
+        <div class="col-3 d-flex align-items-center">
 
             <select class="selectfillter form-control" style="width:100%" name="RoleName" id="RoleName">
                 <option value="" default selected></option>
@@ -230,8 +230,8 @@
     </div>
     <div class="row" style="height:10px"></div>
     <div class="row">
-        <div class="col-2">   <label class="FillterLabel"> First Name:</label></div>
-        <div class="col-3">
+        <div class="col-2 d-flex align-items-center">   <label class="FillterLabel"> First Name:</label></div>
+        <div class="col-3 d-flex align-items-center">
 
             <select class="selectfillter form-control" style="width:100%" name="UserName" id="UserName">
                 <option value="" default selected></option>
@@ -250,8 +250,8 @@
 
         </div>
         <div class="col-1"></div>
-        <div class="col-2">   <label class="FillterLabel"> Last Name :</label></div>
-        <div class="col-3">
+        <div class="col-2 d-flex align-items-center">   <label class="FillterLabel"> Last Name :</label></div>
+        <div class="col-3 d-flex align-items-center">
             <select class="selectfillter form-control" style="width:100%" name="UserLastName">
                 <option value="" default selected></option>
                 @foreach (var item in Model.view_User.GroupBy(x => x.UserLastName))
@@ -335,17 +335,17 @@
             <th>
                 User ID
             </th>
-            <th >
+            <th>
                 User Name
             </th>
-            <th >
+            <th>
                 Permission
             </th>
 
             <th>
                 Email
             </th>
-            <th >
+            <th>
                 Status
             </th>
             <th>
@@ -363,7 +363,7 @@
             <tr>
                 @Html.HiddenFor(modelItem => item.ID)
                 @*<td><input type="checkbox" class="checkthis" /></td>*@
-                <td >
+                <td>
                     @Html.DisplayFor(modelItem => item.UserEmpID)
                 </td>
                 <td>
@@ -377,8 +377,8 @@
                 </td>
                 @if (item.Status == 1)
                 {
-                    <td id="Status" > <span id="open">Active</span> </td>
-                    <td >
+                    <td id="Status"> <span id="open">Active</span> </td>
+                    <td>
                         @if (ViewBag.VBRoleUserManagement == "Full")
                         {
                             <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" onclick="EditFn(@item.ID)">Edit</a>
@@ -407,8 +407,8 @@
                 }
                 @if (item.Status == 0)
                 {
-                    <td id="Status" ><span id="closed" style="color:red">Inactive</span></td>
-                    <td >
+                    <td id="Status"><span id="closed" style="color:red">Inactive</span></td>
+                    <td>
                         <span id="closed">Edit</span>
                     </td>
                     <td>
@@ -457,9 +457,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                     <div class="mb-3">
+                    <div class="mb-3">
                         <label for="UserEmpID" class="col-form-label">User ID:</label>
-                        <input type="text" class="form-control" name="UserEmpID" id="UserEmpIDCreate" style="background-color:gainsboro"  readonly>
+                        <input type="text" class="form-control" name="UserEmpID" id="UserEmpIDCreate" style="background-color:gainsboro" readonly>
                     </div>
                     <div class="mb-3">
                         <label for="UserName" class="col-form-label">First Name:</label>
@@ -472,16 +472,16 @@
                     <div class="mb-3">
                         <label for="RoleName" class="col-form-label">Role:</label>
                         <select class="selectfillter form-control" style="width:100%" name="RoleID" id="RoleNamecreate">
-                        <option value="" default selected disabled>Select Value ...</option>
-                            @foreach (var item in Model.tbRole.Where(x=>x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
-                         {
-                            var dataitem = item.First(); // Take the first item in the group
+                            <option value="" default selected disabled>Select Value ...</option>
+                            @foreach (var item in Model.tbRole.Where(x => x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
+                            {
+                                var dataitem = item.First(); // Take the first item in the group
                                 <option value="@dataitem.RoleID" selected="@(dataitem.RoleName == ViewBag.SelectedRoleName ? "selected" : null)">
-                              @Html.DisplayFor(modelItem => dataitem.RoleName)
-                            </option>
+                                    @Html.DisplayFor(modelItem => dataitem.RoleName)
+                                </option>
 
                             }
-                             </select>
+                        </select>
 
 
                     </div>
@@ -495,7 +495,7 @@
                         <input type="password" class="form-control" name="UserPassword" id="UserPasswordCreate">
                     </div>
                     <div class="form-check form-switch">
-                   @*      <input class="form-check-input" type="checkbox" Name="Status" id="StatusCreate" checked>
+                        @*      <input class="form-check-input" type="checkbox" Name="Status" id="StatusCreate" checked>
                         <label class="form-check-label" for="flexSwitchCheckChecked">Status</label> *@
                         <input class="form-check-input" rel="active" type="checkbox" id="StatusCreate" name="Status" value="1" checked>
                         <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
@@ -539,30 +539,30 @@
                         <label for="UserLastName" class="col-form-label">Last Name:</label>
                         <input type="text" class="form-control" name="UserLastName" id="ModalLastName">
                     </div>
-                   <div class="mb-3">
+                    <div class="mb-3">
                         <label class="col-form-label">Role:</label>
-                   @*      <select class="selectfillter form-control" style="width:100%" name="UserPermission" id="RoleName">
-                            @foreach (var item in Model.tbRole.Where(x => x.RoleStatus.Equals(1)))
-                            {
+                        @*      <select class="selectfillter form-control" style="width:100%" name="UserPermission" id="RoleName">
+                        @foreach (var item in Model.tbRole.Where(x => x.RoleStatus.Equals(1)))
+                        {
 
-                                <option value="@item.RoleID">@Html.DisplayFor(modelItem => item.RoleName) </option>
-                            }
+                        <option value="@item.RoleID">@Html.DisplayFor(modelItem => item.RoleName) </option>
+                        }
                         </select> *@
 
 
                         <select class="selectfillter form-control" style="width:100%" name="UserPermission" id="ModalRoleName">
-                        <option value="" default selected disabled>Select Value ...</option>
-                            @foreach (var item in Model.tbRole.Where(x=>x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
-                         {
-                            var dataitem = item.First(); // Take the first item in the group
+                            <option value="" default selected disabled>Select Value ...</option>
+                            @foreach (var item in Model.tbRole.Where(x => x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
+                            {
+                                var dataitem = item.First(); // Take the first item in the group
                                 <option value="@dataitem.RoleID" selected=@(dataitem.RoleID == ViewBag.SelectedRoleName ? "selected" : null)>
-                              @Html.DisplayFor(modelItem => dataitem.RoleName)
-                            </option>
+                                    @Html.DisplayFor(modelItem => dataitem.RoleName)
+                                </option>
 
                             }
 
 
-            </select>
+                        </select>
 
 
                     </div>
@@ -571,10 +571,10 @@
                         <label for="UserEmail" class="col-form-label">Email:</label>
                         <input type="text" class="form-control" name="UserEmail" id="ModalUserEmail">
                     </div>
-                   <div class="mb-3">
+                    <div class="mb-3">
                         <label for="UserPassword" class="col-form-label">Password:</label>
                         <input type="password" class="form-control" name="UserPassword" id="ModalUserPassword">
-                    </div> 
+                    </div>
 
                     <div class="form-check form-switch">
                         <input class="form-check-input" rel="active" type="checkbox" id="ModalStatus" name="Status" value="1">

@@ -92,7 +92,7 @@
     <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;">
         <div class="row">
             <div class="col-1"></div>
-            <div class="col-2"><label class="FillterLabel"> Production Date:</label></div>
+            <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel"> Production Date:</label></div>
             <div class="col-3">
                 <input type="date" class="form-control" name="PlanDate" id="PlanDate" style="width:100%" value="@ViewBag.SelectedPlantDate.ToString("yyyy-MM-dd")">
 
@@ -101,8 +101,8 @@
 
 
             <div class="col-1"></div>
-            <div class="col-2"><label class="FillterLabel">  Line Name:</label></div>
-            <div class="col-3">
+            <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  Line Name:</label></div>
+            <div class="col-3" style="align-items:center; display:flex">
 
                 <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
                     <option value="" default selected></option>
@@ -123,8 +123,8 @@
 
         <div class="row">
             <div class="col-1"></div>
-            <div class="col-2"><label class="FillterLabel"> Product Name:</label></div>
-            <div class="col-3">
+            <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel"> Product Name:</label></div>
+            <div class="col-3" style="align-items:center; display:flex">
                 <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductName">
                     <option value="" default selected></option>
                     @foreach (var productGroup in Model.view_ProductionPlan.GroupBy(x => x.ProductID))
@@ -142,8 +142,8 @@
 
 
             <div class="col-1"></div>
-            <div class="col-2"><label class="FillterLabel">  Section Name:</label></div>
-            <div class="col-3">
+            <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  Section Name:</label></div>
+            <div class="col-3" style="align-items:center; display:flex">
 
                 <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
                     <option value="" default selected></option>
@@ -164,7 +164,7 @@
 
 
 
-</div>
+    </div>
     <div class="row" style="height:35px">
 
         <div class="col" style="width:15% ">
@@ -172,7 +172,7 @@
                 Clear
             </button>
         </div>
-         <div class="col" style="width:15% ">
+        <div class="col" style="width:15% ">
             <button class="search-button" type="submit" asp-action="ProductionPlan">
                 Search
             </button>
@@ -193,7 +193,7 @@
             }
 
         </div>
-       
+
     </div>
     @* </form> *@
 
@@ -204,9 +204,9 @@
     <table id="table_id" class="table table-hover" style="width:100%">
         <thead style="background-color:lightgrey;width:100%">
             <tr>
-                
+
                 <th>
-                   Production Date
+                    Production Date
                 </th>
                 <th>
                     ShiftName
@@ -230,8 +230,8 @@
                     Piece-Qty
                 </th>
 
-               @*  <th>
-                    Total piece per day
+                @*  <th>
+                Total piece per day
                 </th> *@
 
                 <th>
@@ -248,12 +248,12 @@
             {
                 <tr>
                     @Html.HiddenFor(modelItem => item.TransactionID)
-                   
+
                     <td>
                         @Html.DisplayFor(modelItem => item.PlanDate.Date)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Prefix) 
+                        @Html.DisplayFor(modelItem => item.Prefix)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName)
@@ -270,42 +270,42 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.SizeMax)
                     </td>
-            
-                       <td>
+
+                    <td>
                         @Html.DisplayFor(modelItem => item.QRcodeperday)
                     </td>
 
-                        <td>
+                    <td>
                         @Html.DisplayFor(modelItem => item.Weight)
-                        </td> 
+                    </td>
 
-                  @*   <td>
-                        @Html.DisplayFor(modelItem => item.TotalPiecePerDay)
-                    </td> 
+                    @*   <td>
+                @Html.DisplayFor(modelItem => item.TotalPiecePerDay)
+                </td>
 
-                     <td>
-                        @if (item.TotalPiecePerDay != 0)
+                <td>
+                @if (item.TotalPiecePerDay != 0)
+                {
+                @((decimal)item.TotalPiecePerDay / (decimal)item.QRcodeperday)
+                }
+                else
+                {
+                @:0
+                }
+                </td>*@
+
+                    <td>
+                        @if (ViewBag.VBRoleProductionPlan == "Full")
                         {
-                            @((decimal)item.TotalPiecePerDay / (decimal)item.QRcodeperday)
+                            @*       <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.IncentiveID" onclick="EditFn(@item.IncentiveID)">Edit</a> *@
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.TransactionID" onclick="EditFn('@item.TransactionID')">Edit</a>
+
                         }
                         else
                         {
-                            @:0
-                        } 
-                    </td>*@
-                   
-                    <td>
-                        @if (ViewBag.VBRoleProductionPlan == "Full")
-                            {
-                                @*       <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.IncentiveID" onclick="EditFn(@item.IncentiveID)">Edit</a> *@
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.TransactionID" onclick="EditFn('@item.TransactionID')">Edit</a>
+                            <a href="#" id="btnEdit">Edit</a>
 
-                            }
-                            else
-                            {
-                                <a href="#" id="btnEdit">Edit</a>
-
-                            }
+                        }
 
                     </td>
 
@@ -411,7 +411,7 @@
                             }
                         </select>
                     </div>
-                      @* Section Name *@
+                    @* Section Name *@
                     <div class="mb-3">
                         <label class="col-form-label">Product Name:</label>
                         <select class="selectfillter form-control" style="width:100%" name="ProductID" id="CreateProductID" required>
@@ -438,9 +438,9 @@
                         </select>
                     </div>
 
-                   @*  <div class="mb-3">
-                        <label class="col-form-label">Weight:</label>
-                        <input type="text" class="form-control" id="CreateWeight" Name="Weight" required>
+                    @*  <div class="mb-3">
+                    <label class="col-form-label">Weight:</label>
+                    <input type="text" class="form-control" id="CreateWeight" Name="Weight" required>
                     </div> *@
 
                     <div class="mb-3">
@@ -450,26 +450,26 @@
                                 <input type="text" class="form-control" id="CreateSizeMIN" Name="SizeMIN" required>
                             </div>
                             <div class="col-6">
-                                <label  class="col-form-label">MAX:</label>
+                                <label class="col-form-label">MAX:</label>
                                 <input type="text" class="form-control" Name="SizeMAX" id="CreateSizeMAX" required>
                             </div>
                         </div>
                     </div>
 
-                     <div class="mb-3">
+                    <div class="mb-3">
                         <label class="col-form-label">Piece-Qty:</label>
                         <input type="text" class="form-control" id="CreatQRcodeperday" Name="QRcodeperday" required>
                     </div>
 
 
-                   @*  <div class="mb-3">
-                        <label class="col-form-label">TotalPiecePerDay:</label>
-                        <input type="text" class="form-control" id="CreateTotalPiecePerDay" Name="TotalPiecePerDay" required>
+                    @*  <div class="mb-3">
+                    <label class="col-form-label">TotalPiecePerDay:</label>
+                    <input type="text" class="form-control" id="CreateTotalPiecePerDay" Name="TotalPiecePerDay" required>
                     </div> *@
                     <div class="mb-3">
                         <label class="col-form-label">Weight-Qty:</label>
                         <input type="text" class="form-control" id="CreateWeightQty" Name="Weight" required>
-                    </div> 
+                    </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -502,7 +502,7 @@
 
                     <div class="mb-3">
                         <label class="col-form-label">Plan Date:</label>
-                        <input class="form-control" type="date" name="PlanDate" id="ModalPlanDate" >
+                        <input class="form-control" type="date" name="PlanDate" id="ModalPlanDate">
                     </div>
 
 
@@ -523,7 +523,7 @@
                     @* Product Name *@
                     <div class="mb-3">
                         <label class="col-form-label">Line Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineID" >
+                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineID">
                             <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
@@ -532,10 +532,10 @@
                             }
                         </select>
                     </div>
-                      @* Section Name *@
+                    @* Section Name *@
                     <div class="mb-3">
                         <label class="col-form-label">Product Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductID" >
+                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductID">
                             <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.ProductID))
                             {
@@ -549,7 +549,7 @@
                     @* Section Name *@
                     <div class="mb-3">
                         <label class="col-form-label">Section Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName" >
+                        <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName">
                             <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
                             {
@@ -560,8 +560,8 @@
                     </div>
 
                     @* <div class="mb-3">
-                        <label class="col-form-label">Weight:</label>
-                        <input type="text" class="form-control" id="ModalWeight" Name="Weight" required>
+                    <label class="col-form-label">Weight:</label>
+                    <input type="text" class="form-control" id="ModalWeight" Name="Weight" required>
                     </div> *@
 
                     <div class="mb-3">
@@ -571,7 +571,7 @@
                                 <input type="text" class="form-control" id="ModalSizeMIN" Name="SizeMIN" required>
                             </div>
                             <div class="col-6">
-                                <label  class="col-form-label">MAX:</label>
+                                <label class="col-form-label">MAX:</label>
                                 <input type="text" class="form-control" Name="SizeMAX" id="ModalSizeMAX" required>
                             </div>
                         </div>
@@ -581,13 +581,13 @@
                         <input type="text" class="form-control" id="ModalQRcodeperday" Name="QRcodeperday" required>
                     </div>
                     @* <div class="mb-3">
-                        <label class="col-form-label">TotalPiecePerDay:</label>
-                        <input type="text" class="form-control" id="ModalTotalPiecePerDay" Name="TotalPiecePerDay" required>
+                    <label class="col-form-label">TotalPiecePerDay:</label>
+                    <input type="text" class="form-control" id="ModalTotalPiecePerDay" Name="TotalPiecePerDay" required>
                     </div> *@
                     <div class="mb-3">
                         <label class="col-form-label">Wieight-Qty:</label>
                         <input type="text" class="form-control" id="ModalWeightQty" Name="Weight" required>
-                    </div> 
+                    </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -633,7 +633,7 @@
                 data: formData,
                 success: function (data, status, xhr) {
                     // Handle success
-                   // console.log(data);
+                    // console.log(data);
                     alert(data.message);
                     location.reload();
                     // Trigger the download process or perform other actions
@@ -647,9 +647,9 @@
     });
 
 
-      //Edit to modal
+    //Edit to modal
     function EditFn(id) {
-       // alert(" id!" + id)
+        // alert(" id!" + id)
         $.ajax({
             url: '/Working/ProductionPlanEdit/' + id,
             type: 'GET',
@@ -671,12 +671,12 @@
                     var year = transactionDate.getFullYear();
                     var month = String(transactionDate.getMonth() + 1).padStart(2, '0');
                     var day = String(transactionDate.getDate()).padStart(2, '0');
-                        var formattedDate = `${year}-${month}-${day}`;
+                    var formattedDate = `${year}-${month}-${day}`;
 
                     $('#ModalPlanID').val(response.plantID);
                     $('#ModalPlanDate').val(formattedDate);
                     $('#ModalPrefix').val(response.prefix).trigger('change');
-                    $('#ModalLineID').val(response.lineID).trigger('change'); 
+                    $('#ModalLineID').val(response.lineID).trigger('change');
                     $('#ModalProductID').val(response.productID).trigger('change');
                     $('#ModalSectionName').val(response.sectionID).trigger('change');
                     $('#ModalSizeMAX').val(response.sizeMin);

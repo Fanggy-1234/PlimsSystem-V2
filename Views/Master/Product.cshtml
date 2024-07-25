@@ -1,7 +1,7 @@
 ﻿@model Plims.ViewModel.ViewModelAll
 
 @{
-  //  ViewBag.Title = "Product";
+    //  ViewBag.Title = "Product";
 }
 
 
@@ -80,39 +80,41 @@
 <h2 class="page-name">Product Management</h2>
 
 @* Textbox for search *@
-<form method="get" asp-controller="Master" >
+<form method="get" asp-controller="Master">
 
-        <div class="row">
-            <div class="col-2"><label class="FillterLabel">Product ID:</label></div>
-            <div class="col-3">
+    <div class="row">
+        <div class="col-2 d-flex align-items-center"><label class="FillterLabel">Product ID:</label></div>
+        <div class="col-3 d-flex align-items-center">
 
-                <select class="selectfillter form-control" style="width:100%" list="ProductID" name="ProductID" id="ProductID">
+            <select class="selectfillter form-control" style="width:100%" list="ProductID" name="ProductID" id="ProductID">
                 <option value="" default selected></option>
-                    @foreach (var item in Model.tbProduct)
-                    {
+                @foreach (var item in Model.tbProduct)
+                {
 
                     <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => item.ProductID) </option>
-                    }
-                </select>
-            </div>
+                        @Html.DisplayFor(modelItem => item.ProductID)
+                    </option>
+                }
+            </select>
+        </div>
         <div class="col-1"></div>
-            <div class="col-2"><label class="FillterLabel"> Product Name :</label></div>
-            <div class="col-3">
+        <div class="col-2 d-flex align-items-center"><label class="FillterLabel"> Product Name :</label></div>
+        <div class="col-3 d-flex align-items-center">
             <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductName">
                 <option value="" default selected></option>
                 @foreach (var item in Model.tbProduct)
-                    {
+                {
 
                     <option value="@item.ProductName" selected="@(item.ProductName == ViewBag.SelectedProductName ? "selected" : null)">
-                             @Html.DisplayFor(modelItem => item.ProductName) </option>
-                    }
-                </select>
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </option>
+                }
+            </select>
 
-
-            </div>
 
         </div>
+
+    </div>
     <div class="row" style="height:20px"></div>
 
 
@@ -165,39 +167,39 @@
                 <button type="button" class="create-button" style=" justify-content: flex-end ">Create</button>
 
             }
-           
+
         </div>
     </div>
-@* </form> *@
+    @* </form> *@
 
 
-<br />
+    <br />
 
 
-<div class="row" style="height:10px">
-    @if (TempData.ContainsKey("AlertMessage"))
-    {
-        <script>
-            alert('@TempData["AlertMessage"]');
-        </script>
-    }
-</div>
+    <div class="row" style="height:10px">
+        @if (TempData.ContainsKey("AlertMessage"))
+        {
+            <script>
+                alert('@TempData["AlertMessage"]');
+            </script>
+        }
+    </div>
 
-@* <form asp-controller="Master" method="post" id="dataTableForm"> *@
-@*Diaplay data*@
+    @* <form asp-controller="Master" method="post" id="dataTableForm"> *@
+    @*Diaplay data*@
     <table id="table_id" class="table table-hover" style="width:100%">
         <thead style="background-color:lightgrey;width:100%">
-        <tr>
+            <tr>
 
-            <th >
-                Product ID
-            </th>
-            <th >
-                Product Name
-            </th>
-            <th>
-                Status
-            </th>
+                <th>
+                    Product ID
+                </th>
+                <th>
+                    Product Name
+                </th>
+                <th>
+                    Status
+                </th>
                 <th>
                     Edit
                 </th>
@@ -205,26 +207,26 @@
                     Active/Inactive
                 </th>
 
-        </tr>
-    </thead>
+            </tr>
+        </thead>
         <tbody style="width:100%">
-        @foreach (var item in Model.tbProduct)
-        {
-            <tr>
-                @Html.HiddenFor(modelItem => item.ID)
+            @foreach (var item in Model.tbProduct)
+            {
+                <tr>
+                    @Html.HiddenFor(modelItem => item.ID)
 
-                <td id="ProductId" >
-                    @Html.DisplayFor(modelItem => item.ProductID)
-                </td>
-                <td id="ProductName" >
-                    @Html.DisplayFor(modelItem => item.ProductName)
-                </td>
+                    <td id="ProductId">
+                        @Html.DisplayFor(modelItem => item.ProductID)
+                    </td>
+                    <td id="ProductName">
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
 
 
-                @if (item.Status == 1)
-                {
+                    @if (item.Status == 1)
+                    {
                         <td id="Status"> <span id="open">Active</span> </td>
-                        <td >
+                        <td>
                             @if (ViewBag.VBRoleProduct == "Full")
                             {
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.ID" onclick="EditFn(@item.ID)">Edit</a>
@@ -232,12 +234,12 @@
                             }
                             else
                             {
-                                <a href="#"  id="btnEdit">Edit</a>
+                                <a href="#" id="btnEdit">Edit</a>
 
                             }
-                            </td>
+                        </td>
 
-                    <td>
+                        <td>
                             @if (ViewBag.VBRoleProduct == "Full")
                             {
                                 <a href="#" id="Inactive" onclick="InactiveFn(@item.ID)">Inactive</a>
@@ -246,51 +248,51 @@
                             {
                                 <a href="#" id="Inactive">Inactive</a>
                             }
-                          
-                    </td>
 
-                }
-                @if (item.Status == 0)
-                {
-                    <td id="Status" ><span id="closed" style="color:red">Inactive</span></td>
-                    <td>
-                        <span id="closed">Edit</span>
-                    </td>
-                    <td >
-                        @if (ViewBag.VBRoleProduct == "Full")
+                        </td>
+
+                    }
+                    @if (item.Status == 0)
+                    {
+                        <td id="Status"><span id="closed" style="color:red">Inactive</span></td>
+                        <td>
+                            <span id="closed">Edit</span>
+                        </td>
+                        <td>
+                            @if (ViewBag.VBRoleProduct == "Full")
                             {
                                 <a href="#" id="Active" onclick="ActiveFn(@item.ID)">Active</a>
                             }
                             else
                             {
-                                <a href="#" id="Active" >Active</a>
+                                <a href="#" id="Active">Active</a>
                             }
-                           
-                    </td>
-                }
 
-            </tr>
-        }
-    </tbody>
-</table>
+                        </td>
+                    }
 
-   <div style="height:20px">
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div style="height:20px">
     </div>
-@* /////////////////////////// Export / Import /////////////////////// *@
+    @* /////////////////////////// Export / Import /////////////////////// *@
 
-        <br>
-          <div class="row" style="height:40px">
+    <br>
+    <div class="row" style="height:40px">
 
         <div class="col-3" style="width:70% ">
         </div>
         <div class="col" style="width:15% ">
             @if (ViewBag.VBRoleProduct == "Full")
             {
-                <button class="search-button" id="btnExport" type="Submit"  asp-action="ProductExport" value="export" name="submit">Export</button>
+                <button class="search-button" id="btnExport" type="Submit" asp-action="ProductExport" value="export" name="submit">Export</button>
             }
             else
             {
-                <button type="button" class="search-button" >Export</button>
+                <button type="button" class="search-button">Export</button>
             }
         </div>
         <div class="col" style="width:15% ">
@@ -307,7 +309,7 @@
                 <button type="button" class="clear-button">Import</button>
 
             }
-           
+
         </div>
     </div>
 
@@ -333,7 +335,7 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Product ID:</label>
 
-                        <input type="text" class="form-control" name="Productid" id="ProductidCreate" >
+                        <input type="text" class="form-control" name="Productid" id="ProductidCreate">
                     </div>
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Product Name:</label>

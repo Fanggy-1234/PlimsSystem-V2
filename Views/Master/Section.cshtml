@@ -130,7 +130,7 @@
                     alert("This data can't id!" + id)
                 }
                 else {
-                    console.log('AJAX request successful:', response); 
+                    console.log('AJAX request successful:', response);
                     $('#ModalSectionID').val(response.sectionID);
                     $('#ModalSectionName').val(response.sectionName);
                     //$('#ModalDelaytime').val(response.delaytime)
@@ -250,30 +250,30 @@
     // });
 
 
-         
-//         $(document).ready(function() {
-//         $('#btnExport').click(function () {
-//             var $table = $('#table_id');
 
-//         // Clone the table to preserve the original
-//         var $clonedTable = $table.clone();
+    //         $(document).ready(function() {
+    //         $('#btnExport').click(function () {
+    //             var $table = $('#table_id');
 
-//         // Remove unwanted columns (in this case, remove second column)
-//         $clonedTable.find('tr').each(function() {
-//                 $(this).find('th:eq(5), td:eq(5)').remove();
-//                 $(this).find('th:eq(4), td:eq(4)').remove();
-//               //  $(this).find('td:eq(3)').remove();
+    //         // Clone the table to preserve the original
+    //         var $clonedTable = $table.clone();
 
-//         });
+    //         // Remove unwanted columns (in this case, remove second column)
+    //         $clonedTable.find('tr').each(function() {
+    //                 $(this).find('th:eq(5), td:eq(5)').remove();
+    //                 $(this).find('th:eq(4), td:eq(4)').remove();
+    //               //  $(this).find('td:eq(3)').remove();
 
-//         // Export the modified table using table2excel
-//         $clonedTable.table2excel({
-//             exclude: ".noExl", // Exclude elements with class "noExl"
-//             name: "Worksheet Name",
-//                 filename: "Section-Master"
-//         });
-//     });
-// });
+    //         });
+
+    //         // Export the modified table using table2excel
+    //         $clonedTable.table2excel({
+    //             exclude: ".noExl", // Exclude elements with class "noExl"
+    //             name: "Worksheet Name",
+    //                 filename: "Section-Master"
+    //         });
+    //     });
+    // });
 
 
 
@@ -318,34 +318,36 @@
 @* Textbox for search *@
 <form method="GET" asp-controller="Master" asp-action="Section">
 
-        <div class="row">
-            <div class="col-2"><label class="FillterLabel">Section ID:</label></div>
-            <div class="col-3">
+    <div class="row">
+        <div class="col-2 d-flex align-items-center"><label class="FillterLabel">Section ID:</label></div>
+        <div class="col-3 d-flex align-items-center">
             <select class="selectfillter form-control" style="width:100%" name="SectionID" id="SectionID">
                 <option value="" default selected></option>
-                    @foreach (var item in Model.tbSection)
-                    {
+                @foreach (var item in Model.tbSection)
+                {
                     <option value="@item.SectionID" selected="@(item.SectionID == ViewBag.SelectedSectionID ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => item.SectionID) </option>
-                    }
-                </select>
-            </div>
+                        @Html.DisplayFor(modelItem => item.SectionID)
+                    </option>
+                }
+            </select>
+        </div>
         <div class="col-1"></div>
-            <div class="col-2"><label class="FillterLabel"> Section Name :</label></div>
-            <div class="col-3">
-            <select class="selectfillter form-control" style="width:100%"  name="SectionName" id="SectionName">
+        <div class="col-2 d-flex align-items-center"><label class="FillterLabel"> Section Name :</label></div>
+        <div class="col-3 d-flex align-items-center">
+            <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionName">
                 <option value="" default selected></option>
-                    @foreach (var item in Model.tbSection)
-                    {
+                @foreach (var item in Model.tbSection)
+                {
 
 
                     <option value="@item.SectionName" selected="@(item.SectionName == ViewBag.SelectedSectionName ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => item.SectionName) </option>
-                    }
-                </select>
-            </div>
-
+                        @Html.DisplayFor(modelItem => item.SectionName)
+                    </option>
+                }
+            </select>
         </div>
+
+    </div>
 
     <div class="row" style="height:20px"></div>
 
@@ -396,45 +398,45 @@
                 <button type="button" class="create-button" style="justify-content: flex-end ">Create</button>
 
             }
-            
+
         </div>
     </div>
-@* </form> *@
+    @* </form> *@
 
 
-<br />
+    <br />
 
-<div class="row" style="height:10px">
-    @if (TempData.ContainsKey("AlertMessage"))
-    {
-        <script>
-            alert('@TempData["AlertMessage"]');
-        </script>
-    }
-</div>
+    <div class="row" style="height:10px">
+        @if (TempData.ContainsKey("AlertMessage"))
+        {
+            <script>
+                alert('@TempData["AlertMessage"]');
+            </script>
+        }
+    </div>
 
-@*}*@
+    @*}*@
 
-@* <form asp-controller="Master" method="post" id="dataTableForm"> *@
-<div id="table_info" class="box"></div>
+    @* <form asp-controller="Master" method="post" id="dataTableForm"> *@
+    <div id="table_info" class="box"></div>
 
-@*Diaplay data*@
+    @*Diaplay data*@
     <table id="table_id" class="table table-hover" style="width:100%">
         <thead style="background-color:lightgrey;width:100%">
-        <tr>
+            <tr>
 
-            <th >
-                Section ID
-            </th>
-            <th>
-                Section Name
-            </th>
-            <th >
-                Delay Status
-            </th>
-            <th >
-                Status
-            </th>
+                <th>
+                    Section ID
+                </th>
+                <th>
+                    Section Name
+                </th>
+                <th>
+                    Delay Status
+                </th>
+                <th>
+                    Status
+                </th>
                 <th>
                     Edit
                 </th>
@@ -442,40 +444,40 @@
                     Active/Inactive
                 </th>
 
-        </tr>
-    </thead>
+            </tr>
+        </thead>
         <tbody style="width:100%">
-        @foreach (var item in Model.tbSection)
-        {
-            <tr>
-                @Html.HiddenFor(modelItem => item.SectionID)
+            @foreach (var item in Model.tbSection)
+            {
+                <tr>
+                    @Html.HiddenFor(modelItem => item.SectionID)
 
-                <td id="SectionId">
-                    @Html.DisplayFor(modelItem => item.SectionID)
-                </td>
-                <td id="SectionName" >
-                    @Html.DisplayFor(modelItem => item.SectionName)
-                </td>
-                <td id="Delaytime" >
-                    @Html.DisplayFor(modelItem => item.Delaytime)
-                </td>
+                    <td id="SectionId">
+                        @Html.DisplayFor(modelItem => item.SectionID)
+                    </td>
+                    <td id="SectionName">
+                        @Html.DisplayFor(modelItem => item.SectionName)
+                    </td>
+                    <td id="Delaytime">
+                        @Html.DisplayFor(modelItem => item.Delaytime)
+                    </td>
 
 
-                @if (item.Status == 1)
-                {
-                    <td id="Status"> <span id="open">Active</span> </td>
-                    <td >
+                    @if (item.Status == 1)
+                    {
+                        <td id="Status"> <span id="open">Active</span> </td>
+                        <td>
                             @if (ViewBag.VBRoleSection == "Full")
                             {
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.SectionID" onclick="EditFn(@item.SectionID)">Edit</a>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.SectionID" onclick="EditFn(@item.SectionID)">Edit</a>
                             }
                             else
                             {
-                            <a href="#" id="btnEdit">Edit</a>
+                                <a href="#" id="btnEdit">Edit</a>
                             }
                         </td>
 
-                    <td>
+                        <td>
                             @if (ViewBag.VBRoleSection == "Full")
                             {
                                 <a href="#" id="Inactive" onclick="InactiveFn(@item.SectionID)">Inactive</a>
@@ -484,17 +486,17 @@
                             {
                                 <a href="#" id="Inactive">Inactive</a>
                             }
-                        
-                    </td>
 
-                }
-                @if (item.Status == 0)
-                {
-                    <td id="Status" ><span id="closed" style="color:red">Inactive</span></td>
-                    <td>
-                        <span id="closed">Edit</span>
-                    </td>
-                    <td>
+                        </td>
+
+                    }
+                    @if (item.Status == 0)
+                    {
+                        <td id="Status"><span id="closed" style="color:red">Inactive</span></td>
+                        <td>
+                            <span id="closed">Edit</span>
+                        </td>
+                        <td>
                             @if (ViewBag.VBRoleSection == "Full")
                             {
                                 <a href="#" id="Active" onclick="ActiveFn(@item.SectionID)">Active</a>
@@ -503,29 +505,29 @@
                             {
                                 <a href="#" id="Active">Active</a>
                             }
-                           
-                    </td>
-                }
 
-            </tr>
-        }
-    </tbody>
-</table>
+                        </td>
+                    }
+
+                </tr>
+            }
+        </tbody>
+    </table>
 
     <div style="height:20px">
     </div>
-@* /////////////////////////// Export / Import /////////////////////// *@
+    @* /////////////////////////// Export / Import /////////////////////// *@
 
 
-        <br>
-          <div class="row" style="height:40px">
+    <br>
+    <div class="row" style="height:40px">
 
         <div class="col-3" style="width:70% ">
         </div>
         <div class="col" style="width:15% ">
             @if (ViewBag.VBRoleSection == "Full")
             {
-                <button class="search-button" id="btnExport" type="Submit"  asp-action="SectionExport" value="export" name="submit">Export</button>
+                <button class="search-button" id="btnExport" type="Submit" asp-action="SectionExport" value="export" name="submit">Export</button>
             }
             else
             {
@@ -546,7 +548,7 @@
                 <button type="button" id="btnSubmitView" class="clear-button">Import</button>
 
             }
-           
+
         </div>
     </div>
 
@@ -574,7 +576,7 @@
                         <label for="recipient-name" class="col-form-label">Section ID:</label>
 
                         <input type="text" class="form-control" name="SectionID" id="SectionID" readonly style="background-color:gainsboro" value="">
-                  
+
                     </div>
 
                     <div class="mb-3">
@@ -584,22 +586,22 @@
 
                     <div class="mb-3">
                         @* <input class="form-check-input" type="checkbox" id="DelayTime" name="DelayTime" checked> *@
-                        <label class="form-check-label" >Delay Time</label>
+                        <label class="form-check-label">Delay Time</label>
                         <select class="selectfillter form-control" name="DelayTime" id="DelayTimeCreate" style="width:100%" required>
                             <option value="0" default selected>0</option>
                             <option value="5">5</option>
-                            <option value="10" >10</option>
-                            <option value="15" >15</option>
-                            <option value="20" >20</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
                             <option value="25">25</option>
                             <option value="30">30</option>
                             <option value="35">35</option>
-                             <option value="40">40</option>
-                              <option value="45">45</option>
-                               <option value="50">50</option>
-                                <option value="55">55</option>
-                                <option value="60">60</option>
-                         </select>
+                            <option value="40">40</option>
+                            <option value="45">45</option>
+                            <option value="50">50</option>
+                            <option value="55">55</option>
+                            <option value="60">60</option>
+                        </select>
 
                     </div>
 
@@ -644,8 +646,8 @@
                         <input type="text" class="form-control" id="ModalSectionName" name="SectionName" required>
                     </div>
                     <div class="mb-3">
-               
-                        <label class="form-check-label" >Delay Time</label>
+
+                        <label class="form-check-label">Delay Time</label>
                         <select class="selectfillter form-control" name="Delaytime" id="ModalDelaytime" style="width:100%" required>
                             <option value="0">0</option>
                             <option value="5">5</option>

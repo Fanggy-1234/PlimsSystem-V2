@@ -13,10 +13,10 @@
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
 
 <!-- Remove the duplicate CSS link -->
- <link href="~/css/datatable2.2.0.css" rel="stylesheet" /> 
+<link href="~/css/datatable2.2.0.css" rel="stylesheet" />
 <script src="~/js/table2excel.js"></script>
 
-@* 
+@*
 @if (TempData.ContainsKey("AlertMessage"))
 {
     <script>
@@ -130,82 +130,84 @@
 <div class="row" style="height:10px"></div>
 <form method="GET" asp-controller="Working">
     @* ///////////////////////////////////Textbox for search ///////////////////////////////////////////////*@
-      <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 5px;">
-                        <div class="col left" style="border: solid 1px #d5d5d5; margin-left:1em;">
+    <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 5px;">
+        <div class="col left" style="border: solid 1px #d5d5d5; margin-left:1em;">
 
 
-                    <div class="row" style="height:10px"></div>
-                    <div class="row">
-                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Start Date:</label></div>
-                        <div class="col-3">
+            <div class="row" style="height:10px"></div>
+            <div class="row">
+                <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  Start Date:</label></div>
+                <div class="col-3" style="align-items:center; display:flex">
                     <input class="form-control StartDate" type="Date" name="StartDate" id="StartDate" value="@ViewBag.SelectedStartDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%">
-                        </div>
+                </div>
 
-                        <div class="col-1"></div>
-                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  End Date:</label></div>
-                        <div class="col-3">
+                <div class="col-1"></div>
+                <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  End Date:</label></div>
+                <div class="col-3">
                     <input class="form-control EndDate" type="Date" name="EndDate" id="EndDate" value="@ViewBag.SelectedEndDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%">
-                        </div>
+                </div>
 
-                    </div>
-                    <div class="row" style="height:10px"></div>
-                    <div class="row">
-                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Employee ID:</label></div>
-                        <div class="col-3">
-                            <select class="selectfillter form-control" list="EmployeeID" style="width:100%" name="EmployeeID" id="EmployeeID">
-                                <option value="" default selected></option>
-                                @foreach (var item in Model.tbEmployeeMaster)
-                                {
+            </div>
+            <div class="row" style="height:10px"></div>
+            <div class="row">
+                <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  Employee ID:</label></div>
+                <div class="col-3" style="align-items:center; display:flex">
+                    <select class="selectfillter form-control" list="EmployeeID" style="width:100%" name="EmployeeID" id="EmployeeID">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbEmployeeMaster)
+                        {
 
                             <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">
-                                        @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
-                                    </option>
-                                }
-                            </select>
+                                @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
+                            </option>
+                        }
+                    </select>
 
-                 @*    @Html.DropDownListFor(model => model.FilterEmp, (IEnumerable<SelectListItem>)ViewBag.varEmp as SelectList, ":: All Employee ::", new { @class = "btn form-select", style = "text-align:center;" })
-                     *@    </div>
+                    @*    @Html.DropDownListFor(model => model.FilterEmp, (IEnumerable<SelectListItem>)ViewBag.varEmp as SelectList, ":: All Employee ::", new { @class = "btn form-select", style = "text-align:center;" })
+                    *@
+                </div>
 
-                        <div class="col-1"></div>
-                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel"> Line  :</label></div>
-                        <div class="col-3">
-                                    <select class="selectfillter form-control" style="width:100%" name="LineID" id="LineName">
-                                <option value="" default selected></option>
-                                @foreach (var item in Model.tbLine)
-                                {
-                                            <option value="@item.LineID" selected="@(ViewBag.SelectedLineID != null && ViewBag.SelectedLineID.Contains(item.LineID) ? "selected" : null)">
-                                                @Html.DisplayFor(modelItem => item.LineID) :    @Html.DisplayFor(modelItem => item.LineName)
-                                    </option>
-                                }
-                            </select>
+                <div class="col-1"></div>
+                <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel"> Line  :</label></div>
+                <div class="col-3" style="align-items:center; display:flex">
+                    <select class="selectfillter form-control" style="width:100%" name="LineID" id="LineName">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbLine)
+                        {
+                            <option value="@item.LineID" selected="@(ViewBag.SelectedLineID != null && ViewBag.SelectedLineID.Contains(item.LineID) ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.LineID) :    @Html.DisplayFor(modelItem => item.LineName)
+                            </option>
+                        }
+                    </select>
 
-                   @*  @Html.DropDownListFor(model => model.FilterLine, (IEnumerable<SelectListItem>)ViewBag.varLine as SelectList, ":: All Line ::", new { @class = "btn form-select", style = "text-align:center;" })
-                    *@     </div>
+                    @*  @Html.DropDownListFor(model => model.FilterLine, (IEnumerable<SelectListItem>)ViewBag.varLine as SelectList, ":: All Line ::", new { @class = "btn form-select", style = "text-align:center;" })
+                    *@
+                </div>
 
-                    </div>
+            </div>
 
-                      <div class="row" style="height:10px"></div>
-                    <div class="row">
-                        <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Section:</label></div>
-                        <div class="col-3">
-                            <select class="selectfillter form-control" style="width:100%" name="SectionID" id="SectionID">
-                                <option value="" default selected></option>
-                                @foreach (var item in Model.tbSection)
-                                {
-                                    <option value="@item.SectionID" selected="@(item.SectionID == ViewBag.SelectedSectionID ? "selected" : null)">
-                                                @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
-                                    </option>
-                                }
-                            </select>
+            <div class="row" style="height:10px"></div>
+            <div class="row">
+                <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  Section:</label></div>
+                <div class="col-3" style="align-items:center; display:flex">
+                    <select class="selectfillter form-control" style="width:100%" name="SectionID" id="SectionID">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbSection)
+                        {
+                            <option value="@item.SectionID" selected="@(item.SectionID == ViewBag.SelectedSectionID ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName)
+                            </option>
+                        }
+                    </select>
 
-                   @*  @Html.DropDownListFor(model => model.FilterPoint, (IEnumerable<SelectListItem>)ViewBag.varPoint as SelectList, ":: All Section ::", new { @class = "btn form-select", style = "text-align:center;" })
- *@
+                    @*  @Html.DropDownListFor(model => model.FilterPoint, (IEnumerable<SelectListItem>)ViewBag.varPoint as SelectList, ":: All Section ::", new { @class = "btn form-select", style = "text-align:center;" })
+                    *@
 
-                        </div>
+                </div>
 
-                        <div class="col-1"></div> 
-                <div class="col-2" style=" padding-top:0.5em"><label class="FillterLabel">  Prefix:</label></div>
-                        <div class="col-3">
+                <div class="col-1"></div>
+                <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  Prefix:</label></div>
+                <div class="col-3" style="align-items:center; display:flex">
                     <select class="selectfillter form-control" style="width:100%" name="Prefix" id="Prefix">
                         <option value="" default selected></option>
                         @foreach (var Prefixgroup in Model.tbShift.GroupBy(x => x.Prefix))
@@ -217,13 +219,13 @@
 
                         }
                     </select>
-                        </div>
+                </div>
 
-                    </div>
-                    <div class="row" style="height:10px"></div>
-  </div>
+            </div>
+            <div class="row" style="height:10px"></div>
+        </div>
 
-</div>
+    </div>
     <div class="row" style="height:20px"></div>
     <div class="row" style="height:40px">
 
@@ -240,18 +242,18 @@
                 Search
             </button>
         </div>
-      
+
     </div>
 
 
-<div class="row" style="height:20px"></div>
+    <div class="row" style="height:20px"></div>
 
     @*//////////////////////////////////////Diaplay data tabel ////////////////////////////////////////*@
     <table id="table_id" class="table table-hover ; width:100%">
         <thead style="background-color:lightgrey; width:100%">
             <tr>
-               @*  <th class="column">
-                    Production Date
+                @*  <th class="column">
+                Production Date
                 </th> *@
                 <th>
                     Plant
@@ -275,25 +277,25 @@
                     Employee Name
                 </th>
                 <th>
-                    Section  
+                    Section
                 </th>
-                <th >
+                <th>
                     Total Count
                 </th>
-                <th >
+                <th>
                     Total Peice Scan Process
                 </th>
                 <th>
                     Total Defect Real Time Employee
                 </th>
                 <th>
-                    Total Defect 
+                    Total Defect
                 </th>
                 <th>
                     Actual FG
                 </th>
 
-                 <th>
+                <th>
                     Total Piece Adjust Process
                 </th>
 
@@ -301,7 +303,7 @@
                     Working Hours
                 </th>
                 <th>
-                    % Yield 
+                    % Yield
                 </th>
                 <th>
                     Piece Per Hr.
@@ -315,8 +317,8 @@
                 <th>
                     wage Real Time Per Employee
                 </th>
-              @*   <th>
-                    Total Summary Piece Real Time
+                @*   <th>
+                Total Summary Piece Real Time
                 </th> *@
             </tr>
         </thead>
@@ -325,9 +327,9 @@
             {
                 <tr>
                     @* @Html.HiddenFor(modelItem => item.TransactionDate) *@
-                   @*  <td id="TransactionNo">
-                        @Html.DisplayFor(modelItem => item.TransactionDate)
-                    </td> *@
+                    @*  <td id="TransactionNo">
+                @Html.DisplayFor(modelItem => item.TransactionDate)
+                </td> *@
                     <td id="PlantID">
                         @Html.DisplayFor(modelItem => item.PlantName)
                     </td>
@@ -380,7 +382,7 @@
                     <td id="YieldDefect">
                         @* Yield Defect *@
                         @string.Format("{0:0.000}", item.YieldDefect)
-                         @* @Html.DisplayFor(modelItem => item.YieldDefect)  *@
+                        @* @Html.DisplayFor(modelItem => item.YieldDefect)  *@
                     </td>
                     <td id="PeicePerHr">
                         @* Peice / Hr *@
@@ -397,11 +399,11 @@
                     <td id="Wage">
                         @* Wage *@
                         @string.Format("{0:0.000}", item.wage)
-                     @*    @Html.DisplayFor(modelItem => item.wage) *@
+                        @*    @Html.DisplayFor(modelItem => item.wage) *@
                     </td>
-                   @*  <td id="FGQty">
-                        @Html.DisplayFor(modelItem => item.FGQty) 
-                    </td> *@
+                    @*  <td id="FGQty">
+                @Html.DisplayFor(modelItem => item.FGQty)
+                </td> *@
                 </tr>
             }
         </tbody>
@@ -413,15 +415,15 @@
 
 
     @* /////////////////////////// Export / Import /////////////////////// *@
-  <div class="row" style="height:40px">
+    <div class="row" style="height:40px">
 
         <div class="col-10">
         </div>
-        <div class="col" >
+        <div class="col">
             @if (ViewBag.VBRoleDailyReport == "Full")
             {
                 <button class="search-button" id="btnExportreport" type="submit" asp-action="DailyReportExport" value="export" name="submit">Export</button>
-                 
+
             }
             else
             {
