@@ -147,7 +147,7 @@
         });
     });
 
-    function checkData(){
+    function checkData() {
         if (!$("#ClockOut").val()) {
             alert('Please input clock-out time')
             return false
@@ -158,7 +158,7 @@
         }
         if (confirm('Are you sure?')) {
             return true
-        } 
+        }
         return false
     }
 
@@ -311,7 +311,7 @@
                 <div class="col">
                     <!-- Line Name -->
                     <div class="mb-3">
-                        
+
                         <select class="selectfillter form-control" list="SectionName" name="SectionName" id="SectionName" style="width:100%">
                             <option value="" selected>Choose Section Name</option>
                             @foreach (var item in Model.tbSection)
@@ -408,7 +408,7 @@
                         <option value="Leave"> Leave</option>
                     </select>
                 </div>
-                
+
             </div>
 
 
