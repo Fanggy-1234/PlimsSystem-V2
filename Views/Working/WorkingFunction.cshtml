@@ -196,7 +196,7 @@
             <div class="row" style="height:80px">
                 <div class="col-2" style=" align-content: center;"><label class="FillterLabel">Product ID:</label></div>
                 <div class="col-8">
-                     <select class="selectfillter" style="width:100%; height:100%" list="ProductID" name="productId" id="ProductID">
+                    <select class="selectfillter" style="width:100%; height:100%" list="ProductID" name="productId" id="ProductID">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                         {
@@ -523,7 +523,8 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-
+        var initialVal = $('#ProductID').val();
+        $('#ProductID').data('original-value', initialVal);
 
         var typingTimer;                // Timer identifier
         var doneTypingInterval = 500;   // Time in ms (500ms = 0.5 seconds)
@@ -565,6 +566,23 @@
             $('#ProductIDMinus').select2({
                 dropdownParent: $('#SpecialModal')
             });
+        });
+
+        $('#ProductID').change(function () {
+            var currentVal = $(this).val();
+            var originalVal = $(this).data('original-value');
+            if (originalVal != '') {
+                if (currentVal !== originalVal) {
+                    var confirmChange = confirm('Confirm to change ProductID?');
+                    if (confirmChange) {
+                        $(this).data('original-value', currentVal);
+                    } else {
+                        $(this).val(originalVal);
+                    }
+                }
+            } else {
+                $(this).data('original-value', currentVal);
+            }
         });
 
 
