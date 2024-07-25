@@ -89,7 +89,7 @@
 
     //Edit to modal
     function EditFns(ID) {
-        console.log('IDs:', ID);
+        //console.log('IDs:', ID);
         $.ajax({
             url: '/Master/PLPSEdit/' + ID,
             type: 'GET',
@@ -97,7 +97,7 @@
             dataType: 'json',
             success: function (response) {
                 if (response == null || response == undefined) {
-                    console.log('AJAX request unsuccessful:', response);
+                 //   console.log('AJAX request unsuccessful:', response);
                     alert("This data can't read1!")
                 }
                 else if (response.length == 0) {
@@ -105,7 +105,7 @@
                     alert("This data can't id!" + PLPSID)
                 }
                 else {
-                    console.log('AJAX request successful:', response);
+                  //  console.log('AJAX request successful:', response);
                     $('#ModalPLPSID').val(response.plpsid);
 
                     // $('#ModalPlantName').append('<option value="' + response.plantName + '">' + response.plantName + '</option>');

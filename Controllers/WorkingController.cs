@@ -1381,7 +1381,7 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).Distinct().ToList()
+                view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).ToList()
             };
 
 
