@@ -438,7 +438,7 @@
                     tableBody.append(newRow);
                 }
             }
-
+            console.log('first');
             // Clear the selected options in the dropdowns
             // $("#ServicesID").prop('selectedIndex', 0);
             // $("#SectionID").prop('selectedIndex', 0);
@@ -537,12 +537,14 @@
         console.log('test');
 
         // Update the hidden input value
-        $("#TableData").val(JSON.stringify(tableData));
+       $("#TableData").val(JSON.stringify(tableData));
+      //  $("#tablecreate_id").val(JSON.stringify(tableData));
     }
 
     function RemoveRow(button) {
         // Remove the row when the "Remove" button is clicked
         $(button).closest("tr").remove();
+        UpdateTableData();
     }
 
 

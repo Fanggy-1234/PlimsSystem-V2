@@ -1308,7 +1308,7 @@ namespace Plims.Controllers
             }
             var Employee = new ViewModelAll
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals("1")).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
@@ -1580,7 +1580,7 @@ namespace Plims.Controllers
             }
             var Employee = new ViewModelAll
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals("1")).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
@@ -1889,7 +1889,7 @@ namespace Plims.Controllers
             }
             var Employee = new ViewModelAll
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals("1")).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
@@ -1990,8 +1990,8 @@ namespace Plims.Controllers
                 //  view_Employee = db.View_Employee.ToList()
             };
             ViewBag.VBRoleServicesClockOut = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(19)).Select(x => x.RoleAction).FirstOrDefault();
-            if (EmployeeIDchk.Count() == 0)  //if (action == "Search" || action == "ServicesClockOut")
-            {
+            //if (EmployeeIDchk.Count() == 0)  //if (action == "Search" || action == "ServicesClockOut")
+            //{
 
                 if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(TransactionDateFillter))
                 {
@@ -2039,6 +2039,115 @@ namespace Plims.Controllers
 
                     return View(mymodel);
                 }
+           // }
+            //else
+            //{
+            //    // Create Function
+            //    int datacnt = EmployeeIDchk.Count();
+
+            //    for (int i = 0; i < datacnt; ++i)
+            //    {
+            //        var Empdb = new TbServicesTransaction();
+            //        string empid = EmployeeIDchk[i];
+            //        if (empid != "on")
+            //        {
+
+
+            //            // var EmpClockView = db.TbEmployeeMaster.Where(x => x.ID.Equals(Convert.ToInt32(empid))).Select(x => x.EmployeeID).SingleOrDefault();
+            //            var ViewEmpTran = db.View_ServicesClocktime.Where(x => x.TransactionNo.Equals(Convert.ToInt32(empid))).First();
+
+            //            var EmpTran = db.TbServicesTransaction.Where(x => x.TransactionNo.Equals(Convert.ToInt32(empid))).SingleOrDefault();
+            //            // check clockout beofre endtime?
+            //            var EmpMaster = db.View_EmployeeMaster.Where(x => x.EmployeeID.Equals(EmpTran.EmployeeID) && x.PlantID.Equals(PlantID)).SingleOrDefault();
+
+            //            var startTime = Convert.ToDateTime(EmpMaster.StartTime);
+            //            var endTime = Convert.ToDateTime(EmpMaster.EndTime);
+            //            var clockinvar = Convert.ToDateTime(EmpTran.ClockIn);
+            //            var clockoutvar = Convert.ToDateTime(obj.ClockOut);
+
+
+            //            // Calculate time span
+            //            TimeSpan timeSpan = endTime - startTime;
+            //            TimeSpan timeclockspan = clockoutvar - clockinvar;
+            //            // Now you have the time span, you can use it as needed
+
+
+            //            // var durationInHours = timeSpan.TotalHours;
+            //            var durationInMinutes = timeSpan.TotalMinutes;
+            //            // var durationInHours = timeSpan.TotalHours;
+            //            var durationInMinutesclock = timeclockspan.TotalMinutes;
+            //            var workingvar = "";
+            //            //if (durationInMinutesclock < durationInMinutes)
+            //            //{
+            //            //    if (obj.WorkingStatus == null)
+            //            //    {
+            //            //        workingvar = "Rotate";
+            //            //    }
+            //            //    else
+            //            //    { workingvar = obj.WorkingStatus; }
+
+            //            //}
+            //            //else
+            //            //{
+            //            //    workingvar = "Working";
+            //            //}
+            //            //  var EmpTran = db.TbServicesTransaction.Where(x => x.TransactionNo ==Convert.ToInt32(tranNo)).SingleOrDefault();
+            //            // check TbServicesTransaction == Null ?
+
+            //            if (EmpTran != null && !string.IsNullOrEmpty(EmpTran.ClockIn))
+            //            {
+            //                //Update Transaction
+            //                EmpTran.ClockOut = obj.ClockOut.ToString();
+            //                EmpTran.WorkingStatus = obj.WorkingStatus;
+            //                EmpTran.UpdateBy = EmpID;
+            //                EmpTran.UpdateDate = DateTime.Now;
+            //                db.SaveChanges();
+
+            //            }
+            //        }
+            //    }
+            //    return RedirectToAction("ServicesClockOut");
+
+            //}
+
+
+
+        }
+
+
+        public ActionResult ServicesClockOutSave(View_ServicesClocktime obj, string[] EmployeeIDchk, string[] ID, string[] EmployeeIDlist, string TransactionDateFillter, string action)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            //var TransactionDateVar = obj.TransactionDate;
+            var TransactionDateVar = DateTime.Today;
+
+            if (string.IsNullOrEmpty(TransactionDateFillter))
+            {
+                TransactionDateFillter = DateTime.Today.ToString("yyyy-MM-dd");
+            }
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var mymodel = new ViewModelAll
+            {
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                view_ServicesClocktime = db.View_ServicesClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x => x.EmployeeID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                // tbServicesTransaction = db.TbServicesTransaction.Where(x =>  x.Plant.Equals(PlantID)).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                //  view_Employee = db.View_Employee.ToList()
+            };
+            ViewBag.VBRoleServicesClockOut = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(19)).Select(x => x.RoleAction).FirstOrDefault();
+            if (EmployeeIDchk.Length == 0)
+            {
+                return View(mymodel);
+
             }
             else
             {
@@ -2107,13 +2216,9 @@ namespace Plims.Controllers
                     }
                 }
                 return RedirectToAction("ServicesClockOut");
-
             }
 
-
-
         }
-
 
 
         //2.  Function service Clock in Edit Transaction : ฟังก์ชั่นนี้ใช่ร่วมกับ Update function

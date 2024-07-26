@@ -5415,7 +5415,7 @@ namespace Plims.Controllers
                 mymodel.tbLine = mymodel.tbLine.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbProduct = mymodel.tbProduct.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbSection = mymodel.tbSection.Where(x => x.PlantID.Equals(PlantID)).ToList();
-                mymodel.view_PLPS = mymodel.view_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList();
+                mymodel.view_PLPS = mymodel.view_PLPS.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x=>x.PLPSID).ToList();
                 mymodel.tbPLPS = mymodel.tbPLPS.Where(x => x.PlantID.Equals(PlantID)).ToList();
             }
 

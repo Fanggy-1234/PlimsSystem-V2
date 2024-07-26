@@ -945,7 +945,7 @@ namespace Plims.Controllers
                 }
 
 
-
+                var extrans = db.TbProductionTransaction.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.TransactionNo).FirstOrDefault();
                 var collection = mymodel.tbProductionTransaction.ToList();
                 ExcelPackage Ep = new ExcelPackage();
                 ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("ImportManualData");
@@ -955,117 +955,102 @@ namespace Plims.Controllers
 
                 Sheet.Cells["D1"].Value = "SectionID";
                 Sheet.Cells["E1"].Value = "ProductID";
-                Sheet.Cells["F1"].Value = "Formular";
+                Sheet.Cells["F1"].Value = "Prefix";
 
-                Sheet.Cells["G1"].Value = "Prefix";
-                Sheet.Cells["H1"].Value = "QRCode";
-                Sheet.Cells["I1"].Value = "Qty";
+                Sheet.Cells["G1"].Value = "QRCode";
+                Sheet.Cells["H1"].Value = "Qty";
+                Sheet.Cells["I1"].Value = "QtyPerQR";
 
-                Sheet.Cells["J1"].Value = "QtyPerQR";
-                Sheet.Cells["K1"].Value = "EmployeeRef";
-                Sheet.Cells["L1"].Value = "DataType";
+                Sheet.Cells["J1"].Value = "EmployeeRef";
+                Sheet.Cells["K1"].Value = "DataType";
 
-                Sheet.Cells["M1"].Value = "Reason";
-                Sheet.Cells["N1"].Value = "GroupRef";
-                Sheet.Cells["O1"].Value = "Note";
+                Sheet.Cells["L1"].Value = "Reason";
+                Sheet.Cells["M1"].Value = "GroupRef";
+                Sheet.Cells["N1"].Value = "Note";
 
                 int row = 2;
 
                 Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
                 Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
+                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
 
-                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
-                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
-                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
+                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
+                Sheet.Cells[string.Format("H{0}", row)].Value = "1";
 
-                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
-                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("I{0}", row)].Value = "50";
+                Sheet.Cells[string.Format("J{0}", row)].Value = "";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "Count";
+
+                Sheet.Cells[string.Format("L{0}", row)].Value = "";
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+
+                row++;
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
+
+                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+
+                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
+                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
+                Sheet.Cells[string.Format("H{0}", row)].Value = "1000";
+
+                Sheet.Cells[string.Format("I{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("J{0}", row)].Value = "";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "FG";
+
+                Sheet.Cells[string.Format("L{0}", row)].Value = "";
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+
+
+                row++;
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
+
+                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
+
+                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
+                Sheet.Cells[string.Format("H{0}", row)].Value = "50";
                 Sheet.Cells[string.Format("I{0}", row)].Value = "1";
 
-                Sheet.Cells[string.Format("J{0}", row)].Value = "50";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "Count";
+                Sheet.Cells[string.Format("J{0}", row)].Value = "";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "Defect";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "";
 
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("M{0}", row)].Value = "00001";
                 Sheet.Cells[string.Format("N{0}", row)].Value = "";
-                Sheet.Cells[string.Format("O{0}", row)].Value = "";
 
                 row++;
 
                 Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
                 Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
+                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
 
-                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
-                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
-                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
 
-                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
-                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
-                Sheet.Cells[string.Format("I{0}", row)].Value = "1000";
-
-                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "FG";
-
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "";
-                Sheet.Cells[string.Format("O{0}", row)].Value = "";
-
-
-                row++;
-
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
-
-                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
-                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
-                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
-
-                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
-                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
+                Sheet.Cells[string.Format("H{0}", row)].Value = "1";
                 Sheet.Cells[string.Format("I{0}", row)].Value = "50";
 
-                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "Defect";
+                Sheet.Cells[string.Format("J{0}", row)].Value = "";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "Count";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "";
 
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("M{0}", row)].Value = "00001";
                 Sheet.Cells[string.Format("N{0}", row)].Value = "";
-                Sheet.Cells[string.Format("O{0}", row)].Value = "";
-
-
-
-                row++;
-
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
-
-                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
-                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
-                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
-
-                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
-                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
-                Sheet.Cells[string.Format("I{0}", row)].Value = "50";
-
-                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "Defect";
-
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "00001";
-                Sheet.Cells[string.Format("O{0}", row)].Value = "";
-
-
-
 
                 //   row++;
                 //  }
@@ -1083,7 +1068,7 @@ namespace Plims.Controllers
             }
             else
             {
-
+                var extrans = db.TbProductionTransaction.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x=>x.TransactionNo).FirstOrDefault();
                 var collection = mymodel.tbProductionTransaction.ToList();
                 ExcelPackage Ep = new ExcelPackage();
                 ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("ImportManualData");
@@ -1093,115 +1078,126 @@ namespace Plims.Controllers
 
                 Sheet.Cells["D1"].Value = "SectionID";
                 Sheet.Cells["E1"].Value = "ProductID";
-                Sheet.Cells["F1"].Value = "Formular";
 
-                Sheet.Cells["G1"].Value = "Prefix";
-                Sheet.Cells["H1"].Value = "QRCode";
-                Sheet.Cells["I1"].Value = "Qty";
+                Sheet.Cells["F1"].Value = "Prefix";
+                Sheet.Cells["G1"].Value = "QRCode";
+                Sheet.Cells["H1"].Value = "Qty";
 
-                Sheet.Cells["J1"].Value = "QtyPerQR";
-                Sheet.Cells["K1"].Value = "EmployeeRef";
-                Sheet.Cells["L1"].Value = "DataType";
+                Sheet.Cells["I1"].Value = "QtyPerQR";
+                Sheet.Cells["J1"].Value = "EmployeeRef";
+                Sheet.Cells["K1"].Value = "DataType";
 
-                Sheet.Cells["M1"].Value = "Reason";
-                Sheet.Cells["N1"].Value = "GroupRef";
-                Sheet.Cells["O1"].Value = "Note";
+                Sheet.Cells["L1"].Value = "Reason";
+                Sheet.Cells["M1"].Value = "GroupRef";
+                Sheet.Cells["N1"].Value = "Note";
                 int row = 2;
                 //foreach (var item in collection)
                 //{
 
                 Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
                 Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
+                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
 
-                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
-                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
-                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
+                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
+                Sheet.Cells[string.Format("H{0}", row)].Value = "1";
 
-                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
-                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("I{0}", row)].Value = "50";
+                Sheet.Cells[string.Format("J{0}", row)].Value = "";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "Count";
+
+                Sheet.Cells[string.Format("L{0}", row)].Value = "";
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+
+                row++;
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
+
+                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+
+                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
+                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
+                Sheet.Cells[string.Format("H{0}", row)].Value = "1000";
+
+                Sheet.Cells[string.Format("I{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("J{0}", row)].Value = "";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "FG";
+
+                Sheet.Cells[string.Format("L{0}", row)].Value = "";
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+
+
+                row++;
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
+
+                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
+
+                Sheet.Cells[string.Format("G{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("H{0}", row)].Value = "50";
                 Sheet.Cells[string.Format("I{0}", row)].Value = "1";
 
-                Sheet.Cells[string.Format("J{0}", row)].Value = "50";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "Count";
+                Sheet.Cells[string.Format("J{0}", row)].Value = "";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "Defect";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "00001";
 
                 Sheet.Cells[string.Format("M{0}", row)].Value = "";
                 Sheet.Cells[string.Format("N{0}", row)].Value = "";
-                Sheet.Cells[string.Format("O{0}", row)].Value = "";
 
-                row++;
-
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
-
-                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
-                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
-                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
-
-                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
-                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
-                Sheet.Cells[string.Format("I{0}", row)].Value = "1000";
-
-                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "FG";
-
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "";
-                Sheet.Cells[string.Format("O{0}", row)].Value = "";
 
 
                 row++;
 
                 Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
                 Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
+                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
 
-                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
-                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
-                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
+                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
 
-                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
-                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
+                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
+                Sheet.Cells[string.Format("H{0}", row)].Value = "50";
+                Sheet.Cells[string.Format("I{0}", row)].Value = "1";
+
+                Sheet.Cells[string.Format("J{0}", row)].Value = "";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "Defect";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "00001";
+
+                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+
+                row++;
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
+
+                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
+
+                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
+                Sheet.Cells[string.Format("H{0}", row)].Value = "1";
                 Sheet.Cells[string.Format("I{0}", row)].Value = "50";
 
-                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "Defect";
+                Sheet.Cells[string.Format("J{0}", row)].Value = "";
+                Sheet.Cells[string.Format("K{0}", row)].Value = "Count";
+                Sheet.Cells[string.Format("L{0}", row)].Value = "";
 
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
+                Sheet.Cells[string.Format("M{0}", row)].Value = "GroupID";
                 Sheet.Cells[string.Format("N{0}", row)].Value = "";
-                Sheet.Cells[string.Format("O{0}", row)].Value = "";
-
-
-                row++;
-
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                // Sheet.Cells[string.Format("B{0}", row)].Value = item.PlanDate;
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = "00001";
-
-                Sheet.Cells[string.Format("D{0}", row)].Value = PlantID + "00001";
-                Sheet.Cells[string.Format("E{0}", row)].Value = "00001";
-                Sheet.Cells[string.Format("F{0}", row)].Value = "1";
-
-                Sheet.Cells[string.Format("G{0}", row)].Value = "DS";
-                Sheet.Cells[string.Format("H{0}", row)].Value = "xxxxxxx";
-                Sheet.Cells[string.Format("I{0}", row)].Value = "50";
-
-                Sheet.Cells[string.Format("J{0}", row)].Value = "1";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "Defect";
-
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "00001";
-                Sheet.Cells[string.Format("O{0}", row)].Value = "";
-
 
 
                 //    row++;
@@ -1267,12 +1263,12 @@ namespace Plims.Controllers
                             string LineVar = worksheet.Cells[row, 3].Text;
                             string SectionVar = worksheet.Cells[row, 4].Text;
                             string ProductVar = worksheet.Cells[row, 5].Text;
-                            string Prefixvar = worksheet.Cells[row, 7].Text;
-                            string EmployeeVar = worksheet.Cells[row, 8].Text;
-                            string EmployeeRefVar = worksheet.Cells[row, 11].Text;
+                            string Prefixvar = worksheet.Cells[row, 6].Text;
+                            string EmployeeVar = worksheet.Cells[row, 7].Text;
+                            string EmployeeRefVar = worksheet.Cells[row, 10].Text;
 
                             //Check Employee Clockin
-                            var ClockinDb = db.View_ClockTime.Where(x => x.TransactionDate == TransactionDateVar && x.EmployeeID.Equals(EmployeeVar) && x.ClockIn != null).ToList();
+                            var ClockinDb = db.View_ClockTime.Where(x => x.TransactionDate == TransactionDateVar && x.EmployeeID.Equals(EmployeeVar) && x.ClockIn != null ).ToList();
                             if (ClockinDb.Count == 0)
                             {
                                 int rowerror = row - 1;
@@ -1285,6 +1281,11 @@ namespace Plims.Controllers
                             var SectionIDDb = mymodel.tbSection.Where(x => x.SectionID.Equals(SectionVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.SectionID).SingleOrDefault();
                             var EmployeeIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.EmployeeID).SingleOrDefault();
                             var PLPSIDDb = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb) && x.Status.Equals(1)).Select(x => x.FormularID).SingleOrDefault();
+                            //Check PLPS , Incentive , ProductSTD
+                            var incentivecheck = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb) && x.Status.Equals(1)).ToList();
+                            var plplcheck = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb) && x.Status.Equals(1)).ToList();
+                            var productstdcheck = db.TbProductSTD.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb) && x.Status.Equals(1)).ToList();
+
                             var EmployeeRefIDDb = "";
 
                             if (EmployeeRefVar != "")
@@ -1299,10 +1300,10 @@ namespace Plims.Controllers
                             }
 
 
-                            if (LineIDDb == null || ProductIDDb == null || SectionIDDb == null || EmployeeIDDb == null || EmployeeRefIDDb == null)
+                            if (LineIDDb == null || ProductIDDb == null || SectionIDDb == null || EmployeeIDDb == null || EmployeeRefIDDb == null || incentivecheck.Count == 0 || plplcheck.Count == 0 || productstdcheck.Count == 0)
                             {
                                 int rowerror = row - 1;
-                                TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake ";
+                                TempData["AlertMessage"] = "Data Row : " + rowerror + "   Mistake  please check.";
                                 return RedirectToAction("ImportManualData");
 
                             }
@@ -1327,14 +1328,14 @@ namespace Plims.Controllers
                                     FormularID = PLPSIDDb,
                                     Prefix = Prefixvar,
                                     QRCode = EmployeeIDDb,
-                                    Qty = Convert.ToInt32(worksheet.Cells[row, 9].Text),
-                                    QtyPerQR = Convert.ToInt32(worksheet.Cells[row, 10].Text),
-                                    DataType = worksheet.Cells[row, 12].Text,
-                                    Reason = worksheet.Cells[row, 13].Text,
-                                    Note = worksheet.Cells[row, 15].Text,
+                                    Qty = Convert.ToInt32(worksheet.Cells[row, 8].Text),
+                                    QtyPerQR = Convert.ToInt32(worksheet.Cells[row, 9].Text),
+                                    DataType = worksheet.Cells[row, 11].Text,
+                                    Reason = worksheet.Cells[row, 12].Text,
+                                    Note = worksheet.Cells[row, 14].Text,
                                     PackageRef = 1,
-                                    GroupRef = worksheet.Cells[row, 14].Text,
-                                    EmployeeRef = worksheet.Cells[row, 11].Text,
+                                    GroupRef = worksheet.Cells[row, 13].Text,
+                                    EmployeeRef = worksheet.Cells[row, 10].Text,
                                     CreateDate = DateTime.Now,
                                     CreateBy = EmpID,
                                     UpdateDate = DateTime.Now,
