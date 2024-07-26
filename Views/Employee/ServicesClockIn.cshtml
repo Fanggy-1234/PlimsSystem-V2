@@ -129,7 +129,7 @@
             },
             order: [[1, 'asc']],
             lengthMenu: [10, 25, 50, 75, 100],
-            pageLength: 100
+            pageLength: 200
         });
 
         $('#checkallHeader').click(function () {
@@ -613,7 +613,7 @@
         <a href="@Url.Action("EmployeeBreakAdjust", "Employee")" class="break-time-button break-time-button-text">Break time</a>
     </div>
     <div class="col-2">
-        <a href="@Url.Action("EmployeeLeaveHoliday", "Employee")" class="leave-holiday-button leave-holiday-button-text">Leave/Holiday</a>
+        <a href="@Url.Action("EmployeeAdjustLine", "Employee")" class="leave-holiday-button leave-holiday-button-text">Employee Adjust Line</a>
     </div>
     <div class="col-2">
         <a href="@Url.Action("ServicesClockIn", "Employee")" class="service-clock-in-button service-clock-in-button-text">Service clock in</a>

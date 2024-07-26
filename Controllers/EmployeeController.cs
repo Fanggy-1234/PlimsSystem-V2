@@ -2077,20 +2077,20 @@ namespace Plims.Controllers
                         // var durationInHours = timeSpan.TotalHours;
                         var durationInMinutesclock = timeclockspan.TotalMinutes;
                         var workingvar = "";
-                        if (durationInMinutesclock < durationInMinutes)
-                        {
-                            if (obj.WorkingStatus == null)
-                            {
-                                workingvar = "Rotate";
-                            }
-                            else
-                            { workingvar = obj.WorkingStatus; }
+                        //if (durationInMinutesclock < durationInMinutes)
+                        //{
+                        //    if (obj.WorkingStatus == null)
+                        //    {
+                        //        workingvar = "Rotate";
+                        //    }
+                        //    else
+                        //    { workingvar = obj.WorkingStatus; }
 
-                        }
-                        else
-                        {
-                            workingvar = "Working";
-                        }
+                        //}
+                        //else
+                        //{
+                        //    workingvar = "Working";
+                        //}
                         //  var EmpTran = db.TbServicesTransaction.Where(x => x.TransactionNo ==Convert.ToInt32(tranNo)).SingleOrDefault();
                         // check TbServicesTransaction == Null ?
 
@@ -2098,7 +2098,7 @@ namespace Plims.Controllers
                         {
                             //Update Transaction
                             EmpTran.ClockOut = obj.ClockOut.ToString();
-                            EmpTran.WorkingStatus = workingvar;
+                            EmpTran.WorkingStatus = obj.WorkingStatus;
                             EmpTran.UpdateBy = EmpID;
                             EmpTran.UpdateDate = DateTime.Now;
                             db.SaveChanges();
