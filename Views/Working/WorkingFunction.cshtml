@@ -280,7 +280,7 @@
 
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Employee ID:</label>
-                        <input class="form-control" name="EmployeeID" id="EmployeeIDFG" placeholder="Scan QR Code" onchange="filterProductByEmployeeClockin()">
+                        <input class="form-control" name="EmployeeID" id="EmployeeIDFG" placeholder="Scan QR Code" oninput="filterProductByEmployeeClockin()">
 
                     </div>
 
@@ -347,7 +347,7 @@
 
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Employee ID:</label>
-                        <input class="form-control" name="EmployeeID" id="EmployeeIDDefect" placeholder="Scan QR Code" onchange="filterSectionsByProductEdit()" />
+                        <input class="form-control" name="EmployeeID" id="EmployeeIDDefect" placeholder="Scan QR Code" oninput="filterSectionsByProductEdit()" />
 
                     </div>
 
@@ -918,7 +918,6 @@
 
 
     function filterSectionsByProductEdit() {
-
         // Clear previous options
         $("#ProductIDDefect").empty();
         // Add a default option
