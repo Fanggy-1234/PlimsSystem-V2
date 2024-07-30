@@ -951,12 +951,13 @@
         $("#ModalSectionName").empty();
         // Add a default option
         $("#ModalSectionName").append("<option value='' default selected disabled>Please Select ..</option>");
-
+        console.log("testsection");
         // Get the selected Product ID
 
-        var selectedProductID = $("#PModalroductName").val().toString();
+        var selectedProductID = $("#ModalProductName").val().toString();
         var selectedLineID = $("#ModalLineName").val().toString();
-
+        // console.log(selectedProductID);
+        // console.log(selectedLineID);
         // Check if a product is selected
         if (selectedProductID !== "") {
             // Use AJAX to filter sections based on the selected Product ID

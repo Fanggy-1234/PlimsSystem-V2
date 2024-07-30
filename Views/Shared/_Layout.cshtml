@@ -257,6 +257,18 @@
                    //
                    <a href="@Url.Action("Shift", "Master")" class="w3-bar-item w3-button w3-hover-blue">Shift Management</a>
                     }
+
+                     @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(14) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                {
+                    //
+                   <a href="@Url.Action("PLPS", "Master")" class="w3-bar-item w3-button w3-hover-blue">PLPS Management</a>
+                    }
+
+                    @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(13) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                    {
+                        //
+                        <a href="@Url.Action("ProductSTD", "Master")" class="w3-bar-item w3-button w3-hover-blue">Product Standard Management</a>
+                    }
                 @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(10) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
                 {
                    //
@@ -271,16 +283,8 @@
                 {
                       <a href="@Url.Action("Reason", "Master")" class="w3-bar-item w3-button w3-hover-blue">Defect Management</a>
                     }
-                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(13) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
-                    {
-                        //
-                   <a href="@Url.Action("ProductSTD", "Master")" class="w3-bar-item w3-button w3-hover-blue">Product Standard Management</a>
-                    }
-                @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(14) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
-                {
-                    //
-                   <a href="@Url.Action("PLPS", "Master")" class="w3-bar-item w3-button w3-hover-blue">PLPS Management</a>
-                    }
+             
+               
                 @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(15) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
                     {
                         //
