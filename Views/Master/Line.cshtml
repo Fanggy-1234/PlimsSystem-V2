@@ -110,8 +110,56 @@
 
 
 
+
+
+</script>
+
+<script>
+
+
+    $(document).ready(function () {
+        $('#btnSelectFile').on('click', function () {
+            $('#FileUpload').click();
+        });
+
+        $('#FileUpload').on('change', function () {
+            var selectedFile = this.files[0];
+
+            // Create FormData object
+            var formData = new FormData();
+            formData.append('FileUpload', selectedFile);  // Use the correct name
+            console.log(formData)
+            // Send the file to the controller using AJAX
+            $.ajax({
+                url: '/Master/LineUpload',
+                type: 'POST',
+                processData: false,
+                contentType: false,  // Set this to false when using FormData
+                data: formData,
+                success: function (response) {  // Expecting JSON response
+                    if (response.success) {
+                        alert(response.message);  // Success message
+                        location.reload();  // Reload or do other success-related tasks
+                    } else {
+                        alert(response.message);  // Error message
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error uploading file:', error);
+                    alert('Error uploading file');
+                }
+            });
+        });
+    });
+
+
+</script>
+
+<script>
+
         //Edit to modal
         function EditFn(id) {
+            console.log(id);
             $.ajax({
                 url: '/Master/LineEdit/' + id,
                 type: 'GET',
@@ -183,50 +231,7 @@
             });
         }
 
-    });
-
-
-
-</script>
-
-<script>
-
-
-    $(document).ready(function () {
-        $('#btnSelectFile').on('click', function () {
-            $('#FileUpload').click();
-        });
-
-        $('#FileUpload').on('change', function () {
-            var selectedFile = this.files[0];
-
-            // Create FormData object
-            var formData = new FormData();
-            formData.append('FileUpload', selectedFile);  // Use the correct name
-            console.log(formData)
-            // Send the file to the controller using AJAX
-            $.ajax({
-                url: '/Master/LineUpload',
-                type: 'POST',
-                processData: false,
-                contentType: false,  // Set this to false when using FormData
-                data: formData,
-                success: function (response) {  // Expecting JSON response
-                    if (response.success) {
-                        alert(response.message);  // Success message
-                        location.reload();  // Reload or do other success-related tasks
-                    } else {
-                        alert(response.message);  // Error message
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error uploading file:', error);
-                    alert('Error uploading file');
-                }
-            });
-        });
-    });
-
+    
 
 </script>
 
@@ -377,7 +382,7 @@
                             }
                             else
                             {
-                                <a href="#" id="btnEdit">Edit</a>
+                                <a href="#" id="btnEdit">Edits</a>
 
                             }
                         </td>
