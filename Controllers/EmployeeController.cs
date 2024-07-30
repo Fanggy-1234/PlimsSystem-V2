@@ -962,7 +962,7 @@ namespace Plims.Controllers
             }
             var Employee = new ViewModelAll
             {
-                tbTransactionRate = db.TbTransactionRate.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+               
                 tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
@@ -1046,7 +1046,7 @@ namespace Plims.Controllers
                             foreach(var item in incentiverateGrade)
                             {
 
-                                var checkincentive = Employee.tbTransactionRate.Where(x =>  x.TransactionDate.Equals(Convert.ToDateTime(EmpTran.TransactionDate))
+                                var checkincentive = db.TbTransactionRate.Where(x =>  x.TransactionDate.Equals(Convert.ToDateTime(EmpTran.TransactionDate))
                                 && x.LineID.Equals(EmpTran.Line)
                                 && x.SectionID.Equals(EmpTran.Section)
                                 && x.EmployeeID.Equals(EmpTran.EmployeeID) 

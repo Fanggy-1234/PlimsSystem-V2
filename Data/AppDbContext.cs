@@ -107,6 +107,9 @@ namespace Plims.Data
         public DbSet<TbTransactionRate> TbTransactionRate { get; set; }
 
 
+
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -128,9 +131,7 @@ namespace Plims.Data
             modelBuilder.Entity<View_EmployeeGroup>()
               .HasKey(v => new { v.GroupID, v.EmployeeID, v.PlantID });
 
-            modelBuilder.Entity<TbTransactionRate>()
-        .HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID, v.SectionID, v.EmployeeID, v.Type , v.Grade });
-
+  
 
             //ID and plant ID key
             //modelBuilder.Entity<TbLine>()
@@ -209,6 +210,13 @@ namespace Plims.Data
 
             modelBuilder.Entity<View_PermissionMaster>()
  .HasKey(v => new { v.PageID, v.PlantID ,v.UserEmpID,v.ID});
+
+
+
+            modelBuilder.Entity<TbTransactionRate>()
+        .HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID, v.SectionID, v.EmployeeID, v.Type, v.Grade });
+
+
 
             modelBuilder.Entity<View_PagePermission>()
 .HasKey(v => new { v.PermissionID, v.PlantID });
