@@ -5500,7 +5500,7 @@ namespace Plims.Controllers
             };
             var startDate = FGPlanDate.Date;
             var endDate = startDate.AddDays(1);
-
+            //fang edit 30/07/2024
             //Check ALL , Employee , Employee > 1
             int checkPrdAdjust = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(FGPlanDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift)).ToList().Count();
             if (checkPrdAdjust == TransactionID.Count())
