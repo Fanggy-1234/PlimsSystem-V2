@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
 using NuGet.Packaging;
 using Microsoft.CodeAnalysis.Elfie.Extensions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace Plims.Controllers
@@ -536,6 +537,8 @@ namespace Plims.Controllers
                             WorkingStatus = "Working",
                             BreakFlag = "",
                             Remark = "",
+                            Rate = 0,
+                            Grade = "",
                             CreateDate = DateTime.Now,
                             CreateBy = EmpID,//User.Identity.Name,
                             UpdateDate = DateTime.Now,
@@ -959,7 +962,8 @@ namespace Plims.Controllers
             }
             var Employee = new ViewModelAll
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
+                tbTransactionRate = db.TbTransactionRate.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
@@ -1018,14 +1022,72 @@ namespace Plims.Controllers
                     if (EmpTrancheck.Count() == 1)
                     {
                         var EmpTran = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(EmpClockNo)).SingleOrDefault();
+                        //count stamp qty 
+                        var qtyperht = db.TbProductionTransaction.Where(x=> x.PlantID.Equals(PlantID) &&  x.TransactionDate.Equals(obj.TransactionDate) && x.LineID.Equals(obj.LineID) && x.SectionID.Equals(obj.SectionID)).FirstOrDefault();
+                        //Check incentive
+                        var incentiverateGrade = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.SectionID.Equals(EmpTran.Section) && x.LineID.Equals(EmpTran.Line))
+                            .Select(x => new
+                            {
+                                x.Grade,
+                                x.Rate,
+                                x.ProductID,
+                                x.Min,
+                                x.Max
+                            }).ToList();
+                        // insert record
+
+                        
 
 
                         if (EmpTran != null)
                         {
+                            //check มีแล้วหรือยังถ้ามีแล้วไม่แอด 
+
+                            foreach(var item in incentiverateGrade)
+                            {
+
+                                var checkincentive = Employee.tbTransactionRate.Where(x =>  x.TransactionDate.Equals(Convert.ToDateTime(EmpTran.TransactionDate))
+                                && x.LineID.Equals(EmpTran.Line)
+                                && x.SectionID.Equals(EmpTran.Section)
+                                && x.EmployeeID.Equals(EmpTran.EmployeeID) 
+                                && x.Grade.Equals(item.Grade)).ToList();
+
+
+                                if(checkincentive.Count == 0 )
+                                {
+                                    // Table : TbTransactionRate  Create
+                                    db.TbTransactionRate.Add(new TbTransactionRate()
+                                    {
+                                        TransactionDate = Convert.ToDateTime(EmpTran.TransactionDate),
+                                        PlantID = PlantID,
+                                        LineID = EmpTran.Line,
+                                        SectionID = EmpTran.Section,
+                                        ProductID = item.ProductID,
+                                        EmployeeID = EmpTran.EmployeeID,
+                                        Type = "Employee",
+                                        Rate = item.Rate,
+                                        Grade = item.Grade,
+                                        Min = item.Min,
+                                        Max = item.Max,
+                                        CreateDate = DateTime.Now,
+                                        CreateBy = EmpID,
+                                        UpdateBy = EmpID,
+                                        UpdateDate = DateTime.Now
+                                    });
+
+                                }
+                              
+
+                            }
+
+
+
                             //Update Transaction
                             // Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(EmpClockView) && x.TransactionDate == TransactionDateVar && (x.Remark == null || x.Remark == "") && x.WorkingStatus.Equals("Working")).SingleOrDefault();
                             EmpTran.ClockOut = obj.ClockOut.ToString();
                             EmpTran.WorkingStatus = obj.WorkingStatus;
+                            EmpTran.Rate = 0;
+                            EmpTran.Grade = "";
                             EmpTran.UpdateBy = EmpID;//User.Identity.Name;
                             EmpTran.UpdateDate = DateTime.Now;
                             db.SaveChanges();

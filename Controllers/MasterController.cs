@@ -5035,7 +5035,7 @@ namespace Plims.Controllers
                 PLPSdb.YieldIncentive = obj.YieldIncentive;
                 PLPSdb.EFFSTD = obj.EFFSTD;
                 PLPSdb.Unit = obj.Unit;
-                if (obj.Status == 1)
+                if (obj.Status == 1 || obj.Status ==  null )
                 {
                     PLPSdb.Status = 1;
                 }

@@ -23,7 +23,10 @@ namespace Plims.Models
         public string ClockIn { get; set; }
         public string ClockOut { get; set; }
         public string BreakFlag { get; set; }
-        public string? Remark { get; set; }
+        public string Remark { get; set; }
+        public decimal Rate { get; set; }
+        public string Grade { get; set; }
+
         public DateTime CreateDate { get; set; }
         public string CreateBy { get; set; }
         public DateTime UpdateDate { get; set; }

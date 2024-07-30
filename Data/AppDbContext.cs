@@ -104,7 +104,7 @@ namespace Plims.Data
 
 
         public DbSet<View_EmployeeGroupWorking> view_EmployeeGroupWorking { get; set; }
-
+        public DbSet<TbTransactionRate> TbTransactionRate { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -127,6 +127,9 @@ namespace Plims.Data
 
             modelBuilder.Entity<View_EmployeeGroup>()
               .HasKey(v => new { v.GroupID, v.EmployeeID, v.PlantID });
+
+            modelBuilder.Entity<TbTransactionRate>()
+        .HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID, v.SectionID, v.EmployeeID, v.Type , v.Grade });
 
 
             //ID and plant ID key

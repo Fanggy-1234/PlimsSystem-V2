@@ -639,7 +639,7 @@
                         <td>
                             @if (ViewBag.VBRoleIncentive == "Full")
                             {
-                                <a href="#" id="Inactive" onclick="InactiveFn(@item.IncentiveID)">Inactive</a>
+                                <a href="#" id="Inactive" onclick="InactiveFn('@item.IncentiveID')">Inactive</a>
                             }
                             else
                             {
@@ -658,7 +658,7 @@
                         <td>
                             @if (ViewBag.VBRoleIncentive == "Full")
                             {
-                                <a href="#" id="Active" onclick="ActiveFn(@item.IncentiveID)">Active</a>
+                                <a href="#" id="Active" onclick="ActiveFn('@item.IncentiveID')">Active</a>
                             }
                             else
                             {

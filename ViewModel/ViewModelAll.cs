@@ -90,6 +90,11 @@ namespace Plims.ViewModel
 
         public IEnumerable<View_ProductionTransactionAj> view_ProductionTransactionAj { get; set; }
 
+
+        public IEnumerable<TbTransactionRate> tbTransactionRate { get; set; }
+
+
+
         public List<ViewModelAll> Permissions { get; set; }
         public string PageName { get; set; }
         public string PermissionValue { get; set; }
