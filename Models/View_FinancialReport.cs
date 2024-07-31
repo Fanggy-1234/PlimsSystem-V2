@@ -37,9 +37,9 @@ namespace Plims.Models
         public string  Reason { get; set; }
         public string  Note { get; set; }
         public decimal TotalCountQty { get; set; }
-        public int TotalFGQty { get; set; }
+        public decimal TotalFGQty { get; set; }
         public decimal TotalQty { get; set; }
-        public int Defect { get; set; }
+        public decimal Defect { get; set; }
         public decimal ProductSTD { get; set; }
         public decimal PercentSTD { get; set; }
         public decimal PercentYield { get; set; }

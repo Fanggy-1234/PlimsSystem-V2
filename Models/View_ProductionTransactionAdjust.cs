@@ -33,10 +33,10 @@ namespace Plims.Models
         [Column(TypeName = "decimal(28,8)")]
         public decimal QtyPerQR { get; set; }
 
-        public int CountQty { get; set; }
-        public int FGInputQty { get; set; }  //int
-        public int DefectQty { get; set; }  //int
-        public int MinusQty { get; set; }  //int
+        public decimal CountQty { get; set; }
+        public decimal FGInputQty { get; set; }  //int
+        public decimal DefectQty { get; set; }  //int
+        public decimal MinusQty { get; set; }  //int
 
         public decimal FG { get; set; }  //int
         public decimal TotalPiece { get; set; }

@@ -32,7 +32,7 @@ namespace Plims.Models
         public decimal PercentYield { get; set; }
         public decimal WorkinghourSTD { get; set; } // decimal
         public decimal FinishGood { get; set; }
-        public int Defect { get; set; }
+        public decimal Defect { get; set; }
         public string Unit { get; set; }
         public decimal EFF1 { get; set; } // decimal
         public decimal WorkinghourACT { get; set; } // decimal

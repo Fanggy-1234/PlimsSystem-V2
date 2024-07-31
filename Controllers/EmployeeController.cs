@@ -1075,6 +1075,7 @@ namespace Plims.Controllers
                                         UpdateBy = EmpID,
                                         UpdateDate = DateTime.Now
                                     });
+                                    db.SaveChanges();
 
                                 }
                               

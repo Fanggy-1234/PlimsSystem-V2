@@ -20,7 +20,7 @@ namespace Plims.Models
         public string ProductID { get; set; }
         
         public string QRCode { get; set; }
-        public int Qty { get; set; }
+        public decimal Qty { get; set; }
 
         [Column(TypeName = "decimal(28,8)")]
         public decimal QtyPerQR { get; set; }

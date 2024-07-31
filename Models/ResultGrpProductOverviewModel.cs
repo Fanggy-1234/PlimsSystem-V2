@@ -4,7 +4,7 @@
     {
 
         //Display Box
-        public int SumEmp { get; set; } //View_EFFReport  => sum(CountQRCode)
+        public decimal SumEmp { get; set; } //View_EFFReport  => sum(CountQRCode)
         public decimal SumFG { get; set; }
         public decimal CapHr { get; set; } //View_EFFReport  => sum(FinidGood)/sum(CountQRCode)
 

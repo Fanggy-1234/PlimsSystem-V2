@@ -16,7 +16,7 @@ namespace Plims.Models
         public int FormularID { get; set; }
         public string Prefix { get; set; }
         public string QRCode { get; set; }
-        public int Qty { get; set; }
+        public decimal Qty { get; set; }
         public decimal QtyPerQR { get; set; }
       //  public int QtyPerQR { get; set; }
         public string DataType { get; set; }

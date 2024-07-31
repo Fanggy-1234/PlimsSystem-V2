@@ -26,8 +26,8 @@ namespace Plims.Models
         [Key]
         public string SectionID { get; set; }
         public string SectionName { get; set; }
-        public int CountQty { get; set; }  //int
-        public int DefectQty { get; set; }  //int
+        public decimal CountQty { get; set; }  //int
+        public decimal DefectQty { get; set; }  //int
         public decimal FG_Count_Qty { get; set; }  //int
         [Column(TypeName = "decimal(18,3)")]
         public decimal YieldDefect { get; set; }
@@ -62,7 +62,7 @@ namespace Plims.Models
         public decimal TotalDefect { get; set; }
 
         public decimal ActualFG { get; set; }
-        public int FGAdjust { get; set; } //int
+        public decimal FGAdjust { get; set; } //int
 
     }
 }

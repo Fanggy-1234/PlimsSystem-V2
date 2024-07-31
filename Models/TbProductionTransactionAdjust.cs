@@ -19,7 +19,7 @@ namespace Plims.Models
         public string Prefix { get; set; }
         [Key]
         public string Type { get; set; }
-        public int QTY { get; set; }
+        public decimal QTY { get; set; } //int
         public string Remark { get; set; }
         public DateTime CreateDate { get; set; }
         public string CreateBy { get; set; }

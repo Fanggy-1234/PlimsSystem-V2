@@ -337,7 +337,7 @@
                     <td>
                         @if (ViewBag.VBRoleProducSTD == "Full")
                         {
-                            <a href="#" id="Inactive" onclick="InactiveFn(@item.ProductSTDID)">Inactive</a>
+                            <a href="#" id="Inactive" onclick="InactiveFn('@item.ProductSTDID')">Inactive</a>
                         }
                         else
                         {
@@ -356,7 +356,7 @@
                     <td>
                         @if (ViewBag.VBRoleProducSTD == "Full")
                         {
-                            <a href="#" id="Active" onclick="ActiveFn(@item.ProductSTDID)">Active</a>
+                            <a href="#" id="Active" onclick="ActiveFn('@item.ProductSTDID')">Active</a>
                         }
                         else
                         {
