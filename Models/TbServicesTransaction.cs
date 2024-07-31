@@ -22,6 +22,8 @@ namespace Plims.Models
         public string WorkingStatus { get; set; }
         public string ClockIn { get; set; }
         public string ClockOut { get; set; }
+
+        public Decimal Rate { get; set; }
         public string BreakFlag { get; set; }
 
         public string Remark { get; set; }

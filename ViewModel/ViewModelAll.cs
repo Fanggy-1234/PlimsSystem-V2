@@ -91,7 +91,7 @@ namespace Plims.ViewModel
         public IEnumerable<View_ProductionTransactionAj> view_ProductionTransactionAj { get; set; }
 
 
-        public IEnumerable<TbTransactionRate> tbTransactionRate { get; set; }
+        public IEnumerable<TbRateTransaction> tbRateTransaction { get; set; }
 
 
 

@@ -537,8 +537,6 @@ namespace Plims.Controllers
                             WorkingStatus = "Working",
                             BreakFlag = "",
                             Remark = "",
-                            Rate = 0,
-                            Grade = "",
                             CreateDate = DateTime.Now,
                             CreateBy = EmpID,//User.Identity.Name,
                             UpdateDate = DateTime.Now,
@@ -1046,24 +1044,27 @@ namespace Plims.Controllers
                             foreach(var item in incentiverateGrade)
                             {
 
-                                var checkincentive = db.TbTransactionRate.Where(x =>  x.TransactionDate.Equals(Convert.ToDateTime(EmpTran.TransactionDate))
+                                //var checkincentive = db.tbRateTransaction.ToList();
+
+
+
+                                var checkincentive = db.tbRateTransaction.Where(x => x.PlantID.Equals(PlantID)
+                                && x.TransactionDate.Equals(Convert.ToDateTime(EmpTran.TransactionDate))
                                 && x.LineID.Equals(EmpTran.Line)
-                                && x.SectionID.Equals(EmpTran.Section)
-                                && x.EmployeeID.Equals(EmpTran.EmployeeID) 
-                                && x.Grade.Equals(item.Grade)).ToList();
+                                && x.Grade.Equals(item.Grade)
+                                && x.Type.Equals("Employee")).ToList();
 
 
-                                if(checkincentive.Count == 0 )
+                                if (checkincentive.Count == 0 )
                                 {
                                     // Table : TbTransactionRate  Create
-                                    db.TbTransactionRate.Add(new TbTransactionRate()
+                                    db.tbRateTransaction.Add(new TbRateTransaction()
                                     {
                                         TransactionDate = Convert.ToDateTime(EmpTran.TransactionDate),
                                         PlantID = PlantID,
                                         LineID = EmpTran.Line,
                                         SectionID = EmpTran.Section,
                                         ProductID = item.ProductID,
-                                        EmployeeID = EmpTran.EmployeeID,
                                         Type = "Employee",
                                         Rate = item.Rate,
                                         Grade = item.Grade,
@@ -1086,8 +1087,6 @@ namespace Plims.Controllers
                             // Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(EmpClockView) && x.TransactionDate == TransactionDateVar && (x.Remark == null || x.Remark == "") && x.WorkingStatus.Equals("Working")).SingleOrDefault();
                             EmpTran.ClockOut = obj.ClockOut.ToString();
                             EmpTran.WorkingStatus = obj.WorkingStatus;
-                            EmpTran.Rate = 0;
-                            EmpTran.Grade = "";
                             EmpTran.UpdateBy = EmpID;//User.Identity.Name;
                             EmpTran.UpdateDate = DateTime.Now;
                             db.SaveChanges();
@@ -1767,9 +1766,16 @@ namespace Plims.Controllers
 
                     if (EmpTran.Count() != 0)
                     {
+
+
+
+
+
+
                         //Update Transaction
                         Empdb = db.TbServicesTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == TransactionDateVar && x.SectionID.Equals(sectionsplit[0].Trim()) && x.ServicesID.Equals(servicesplit[0].Trim())).SingleOrDefault();
                         Empdb.ClockIn = obj.ClockIn.ToString();
+                        Empdb.Rate = -1;
                         Empdb.UpdateBy = EmpID;
                         Empdb.UpdateDate = DateTime.Now;
                         db.SaveChanges();
@@ -1804,6 +1810,7 @@ namespace Plims.Controllers
                                 WorkingStatus = "Working",
                                 ClockIn = obj.ClockIn,
                                 ClockOut = "",
+                                Rate = -1,
                                 Remark = remark,
                                 BreakFlag = "",
                                 StatusClocktime = "",
@@ -1829,6 +1836,7 @@ namespace Plims.Controllers
                                 EndTime = Endt,
                                 Line = obj.LineID,//obj.LineName,
                                 ClockIn = obj.ClockIn,
+                                Rate = -1,
                                 CreateDate = DateTime.Now,
                                 CreateBy = EmpID,//User.Identity.Name,
                                 UpdateDate = DateTime.Now,
@@ -2267,8 +2275,14 @@ namespace Plims.Controllers
 
                         if (EmpTran != null && !string.IsNullOrEmpty(EmpTran.ClockIn))
                         {
+
+                            //get rate
+                            var ratenow = db.TbService.Where(x=>x.PlantID.Equals(PlantID) 
+                            && x.ServicesID.Equals(EmpTran.ServicesID)).Select(x=>x.ServicesRate).FirstOrDefault();
+
                             //Update Transaction
                             EmpTran.ClockOut = obj.ClockOut.ToString();
+                            EmpTran.Rate = ratenow;
                             EmpTran.WorkingStatus = obj.WorkingStatus;
                             EmpTran.UpdateBy = EmpID;
                             EmpTran.UpdateDate = DateTime.Now;
@@ -2786,7 +2800,7 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now),
+                tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.Plant.Equals(PlantID)).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 // view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_Employee = db.View_Employee,
@@ -2814,7 +2828,9 @@ namespace Plims.Controllers
                 // var EmpTran = new object();
                 List<TbEmployeeTransaction> EmpTran;
                 //check current line not clockin
-                var Empcheckclockout = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.Plant.Equals(PlantID) && x.Remark != "Adjust" && x.ClockOut == "").ToList();
+               // var Empcheckclockouttest = db.TbEmployeeTransaction.ToList();
+
+                var Empcheckclockout = Employee.tbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.WorkingStatus == "Working" && x.ClockOut == "" && x.Remark != "Adjust").ToList();
                 //   var EmpTran = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.Plant.Equals(PlantID) && x.Line.Equals(ToLine) && x.Section.Equals(ToSection) && x.Remark == "Adjust").ToList();
                 if (StartTime == null)
                 {
@@ -2852,12 +2868,113 @@ namespace Plims.Controllers
                     }
                     if (EndTime != null)
                     {
-                        Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.Plant.Equals(PlantID) && x.ClockOut == "" && x.Remark == "Adjust").SingleOrDefault();
 
+                        //Check incentive
+                        var incentiverateGrade = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.SectionID.Equals(ToSection) && x.LineID.Equals(ToLine))
+                            .Select(x => new
+                            {
+                                x.Grade,
+                                x.Rate,
+                                x.ProductID,
+                                x.Min,
+                                x.Max
+                            }).ToList();
+                        // insert record
+
+                        //check มีแล้วหรือยังถ้ามีแล้วไม่แอด 
+                        foreach (var item in incentiverateGrade)
+                        {
+
+                            var checkincentive = db.tbRateTransaction.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(thisday))
+                            && x.LineID.Equals(ToLine)
+                            && x.SectionID.Equals(ToSection)
+                            && x.Grade.Equals(item.Grade)).ToList();
+
+
+                            if (checkincentive.Count == 0)
+                            {
+                                // Table : TbTransactionRate  Create
+                                db.tbRateTransaction.Add(new TbRateTransaction()
+                                {
+                                    TransactionDate = Convert.ToDateTime(thisday),
+                                    PlantID = PlantID,
+                                    LineID = ToLine,
+                                    SectionID = ToSection,
+                                    ProductID = item.ProductID,
+                                    Type = "Employee",
+                                    Rate = item.Rate,
+                                    Grade = item.Grade,
+                                    Min = item.Min,
+                                    Max = item.Max,
+                                    CreateDate = DateTime.Now,
+                                    CreateBy = EmpID,
+                                    UpdateBy = EmpID,
+                                    UpdateDate = DateTime.Now
+                                });
+                                db.SaveChanges();
+
+                            }
+
+
+                        }
+
+
+                        Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.Plant.Equals(PlantID) && x.ClockOut == "" && x.Remark == "Adjust").SingleOrDefault();
                         Empdb.ClockOut = EndTime;
                     }
                     if (StartTime != null && EndTime != null)
                     {
+
+
+                        //Check incentive
+                        var incentiverateGrade = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.SectionID.Equals(ToSection) && x.LineID.Equals(ToLine))
+                            .Select(x => new
+                            {
+                                x.Grade,
+                                x.Rate,
+                                x.ProductID,
+                                x.Min,
+                                x.Max
+                            }).ToList();
+                        // insert record
+
+                        //check มีแล้วหรือยังถ้ามีแล้วไม่แอด 
+                        foreach (var item in incentiverateGrade)
+                        {
+
+                            var checkincentive = db.tbRateTransaction.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(thisday))
+                            && x.LineID.Equals(ToLine)
+                            && x.SectionID.Equals(ToSection)
+                            && x.Grade.Equals(item.Grade)).ToList();
+
+
+                            if (checkincentive.Count == 0)
+                            {
+                                // Table : TbTransactionRate  Create
+                                db.tbRateTransaction.Add(new TbRateTransaction()
+                                {
+                                    TransactionDate = Convert.ToDateTime(thisday),
+                                    PlantID = PlantID,
+                                    LineID = ToLine,
+                                    SectionID = ToSection,
+                                    ProductID = item.ProductID,
+                                    Type = "Employee",
+                                    Rate = item.Rate,
+                                    Grade = item.Grade,
+                                    Min = item.Min,
+                                    Max = item.Max,
+                                    CreateDate = DateTime.Now,
+                                    CreateBy = EmpID,
+                                    UpdateBy = EmpID,
+                                    UpdateDate = DateTime.Now
+                                });
+                                db.SaveChanges();
+
+                            }
+
+
+                        }
+
                         Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == thisday && x.Plant.Equals(PlantID)).SingleOrDefault();
                         Empdb.ClockIn = StartTime;
                         Empdb.ClockOut = EndTime;

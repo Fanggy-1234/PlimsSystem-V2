@@ -155,6 +155,9 @@
     </script>
 }
 
+
+
+
 <div class="row" style="height:10px"></div>
 <h2 class="page-name">Working Function </h2>
 <div class="row" style="height:30px"> </div>
@@ -172,13 +175,15 @@
             </div>
 
             <div class="col-2">
-                <button class="InputDefect-button" data-bs-toggle="modal" data-bs-target="#DefectModal">
+                <button id="inputDefectButton" class="InputDefect-button" data-bs-toggle="modal" data-bs-target="#DefectModal">
                     Input Defect
                 </button>
 
             </div>
             <div class="col-2">
-                <button class="InputProduct-button" data-bs-toggle="modal" data-bs-target="#FGModal">
+              @*   <button id ="inputProductButton" class="InputProduct-button" data-bs-toggle="modal" data-bs-target="#FGModal">   </button> *@
+              @*   <button  class="InputProduct-button"  id="inputProductButton" data-bs-toggle="modal" data-bs-target="#FGModal"> *@
+                <button id="inputProductButton" class="InputProduct-button"  data-bs-toggle="modal" data-bs-target="#FGModal">
                     Input Product Qty
                 </button>
             </div>
@@ -196,7 +201,7 @@
             <div class="row" style="height:80px">
                 <div class="col-2" style=" align-content: center;"><label class="FillterLabel">Product ID:</label></div>
                 <div class="col-8">
-                    <select class="selectfillter" style="width:100%; height:100%" list="ProductID" name="productId" id="ProductID">
+                    <select class="selectfillter" style="width:100%; height:100%"  name="productId" id="ProductID">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                         {
@@ -286,7 +291,7 @@
 
                     <div class="mb-3">
                         <label class="FillterLabel">Product ID:</label>
-                        <select class="selectfillter form-control" style="width:100%" list="ProductID" name="productId" id="ProductIDFG" onchange="filterSectionsByProductEditFG()">
+                        <select class="selectfillter form-control" style="width:100%"  name="productId" id="ProductIDFG" onchange="filterSectionsByProductEditFG()">
                             <option value="" default selected>Select Value ...</option>
                             @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
@@ -521,6 +526,25 @@
 </script>
 
 <script type="text/javascript">
+
+    document.getElementById('inputProductButton').addEventListener('click', function () {
+        var selectedProductID = document.getElementById('ProductID').value;
+        var modalProductIDDropdown = document.getElementById('ProductIDFG');  //
+        // Set the modal ProductID dropdown value to the selected value
+        modalProductIDDropdown.value = selectedProductID;
+    });
+
+
+    
+    document.getElementById('inputDefectButton').addEventListener('click', function () {
+        var selectedProductID = document.getElementById('ProductID').value;
+        var modalProductIDDropdown = document.getElementById('ProductIDDefect');  //
+     
+        // Set the modal ProductID dropdown value to the selected value
+        modalProductIDDropdown.value = selectedProductID;
+    });
+
+
 
     $(document).ready(function () {
         var initialVal = $('#ProductID').val();
@@ -991,8 +1015,6 @@
             });
         }
     }
-
-
 
 
 

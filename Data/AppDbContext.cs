@@ -104,7 +104,7 @@ namespace Plims.Data
 
 
         public DbSet<View_EmployeeGroupWorking> view_EmployeeGroupWorking { get; set; }
-        public DbSet<TbTransactionRate> TbTransactionRate { get; set; }
+        public DbSet<TbRateTransaction> tbRateTransaction { get; set; }
 
 
 
@@ -157,7 +157,7 @@ namespace Plims.Data
           .HasKey(v => new { v.TransactionNo });
 
             modelBuilder.Entity<TbEmployeeMaster>()
-           .HasKey(v => new { v.ID, v.EmployeeID, v.LineID, v.PlantID, v.SectionID });
+           .HasKey(v => new { v.ID, v.EmployeeID,  v.PlantID, });
 
             //            modelBuilder.Entity<TbEmployeeMaster>()
             //.HasKey(v => new { v.ID, v.PlantID ,v.EmployeeID  });
@@ -210,12 +210,18 @@ namespace Plims.Data
 
             modelBuilder.Entity<View_PermissionMaster>()
  .HasKey(v => new { v.PageID, v.PlantID ,v.UserEmpID,v.ID});
+            modelBuilder.Entity<TbEmployeeTransaction>()
+.HasKey(v => new { v.TransactionNo });
 
 
 
-            modelBuilder.Entity<TbTransactionRate>()
-        .HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID, v.SectionID, v.EmployeeID, v.Type, v.Grade });
 
+            modelBuilder.Entity<TbRateTransaction>()
+        .HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID, v.SectionID,v.ProductID,  v.Type, v.Grade });
+
+
+            modelBuilder.Entity<TbProductionTransactionAdjust>()
+        .HasKey(v => new { v.TransactionID});
 
 
             modelBuilder.Entity<View_PagePermission>()
