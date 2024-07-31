@@ -51,6 +51,12 @@
 
 </style>
 
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
 
 <div class="row" style="height:10px"></div>
 <h2 class="page-name">Import Manual Data</h2>

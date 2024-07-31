@@ -1328,8 +1328,8 @@ namespace Plims.Controllers
                                     FormularID = PLPSIDDb,
                                     Prefix = Prefixvar,
                                     QRCode = EmployeeIDDb,
-                                    Qty = Convert.ToInt32(worksheet.Cells[row, 8].Text),
-                                    QtyPerQR = Convert.ToInt32(worksheet.Cells[row, 9].Text),
+                                    Qty = Convert.ToDecimal(worksheet.Cells[row, 8].Text),
+                                    QtyPerQR = Convert.ToDecimal(worksheet.Cells[row, 9].Text),
                                     DataType = worksheet.Cells[row, 11].Text,
                                     Reason = worksheet.Cells[row, 12].Text,
                                     Note = worksheet.Cells[row, 14].Text,
@@ -1357,8 +1357,8 @@ namespace Plims.Controllers
                 }
 
             }
-
-            ViewBag.Success = "Data imported and updated successfully!";
+            TempData["AlertMessage"] = "Data imported and updated successfully!";
+           // ViewBag.Success = "Data imported and updated successfully!";
             return RedirectToAction("ImportManualData");
 
         }
