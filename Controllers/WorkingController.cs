@@ -5881,6 +5881,8 @@ namespace Plims.Controllers
 
                     if (checkClockout.Count() >= 1)
                     {
+                        mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                        ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
 
                         TempData["AlertMessage"] = "Please Clockout First ,Some Employee in this section not Clock out!";
                         return View("ProductionTransactionAdjustByEmployee", mymodel);

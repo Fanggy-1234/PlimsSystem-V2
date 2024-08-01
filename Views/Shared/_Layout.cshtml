@@ -455,11 +455,11 @@
                         ViewBag.VBRoleManualImport = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(30)).Select(x => x.RoleAction).FirstOrDefault();
                         <a href="@Url.Action("ImportManualData", "Working")" class="w3-bar-item w3-button w3-hover-blue">Manual Import Data </a>
                 }   
-                  @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(32) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
+                @*   @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(32) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
                 {
                     ViewBag.VBPRoductionPlan = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
                         <a href="@Url.Action("ProductionPlan", "Working")" class="w3-bar-item w3-button w3-hover-blue">ProductionPlan </a>
-                }
+                } *@
               
             </div>
           
