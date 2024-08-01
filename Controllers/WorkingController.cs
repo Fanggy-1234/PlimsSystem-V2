@@ -2154,7 +2154,7 @@ namespace Plims.Controllers
                     {
 
                         //select group
-                        var objgroup = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(employeeId) && x.PlantID.Equals(PlantID)).ToList();
+                        var objgroup = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(employeeId) && x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList();
                         foreach (var item in objgroup)
                         {
 

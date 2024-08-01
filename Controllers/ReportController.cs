@@ -169,8 +169,8 @@ namespace Plims.Controllers
                                             ProductName = grouped.Key.ProductName,
                                             SectionName = grouped.Key.SectionName,
                                             STD = Convert.ToInt32(grouped.Key.STD),
-                                            Actual = Convert.ToInt32(grouped.Sum(x => x.FG_Count_Qty)),
-                                            Diff = Convert.ToInt32((grouped.Sum(x => x.FG_Count_Qty) * 100) / grouped.Key.STD)
+                                            Actual = Convert.ToInt32(grouped.Sum(x => x.PcsPerHr)  ),
+                                            Diff = Convert.ToInt32((grouped.Sum(x => x.PcsPerHr)  * 100) / grouped.Key.STD)
                                         }).ToList();
 
 
