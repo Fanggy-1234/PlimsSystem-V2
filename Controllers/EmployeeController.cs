@@ -2831,7 +2831,7 @@ namespace Plims.Controllers
                 //check current line not clockin
                // var Empcheckclockouttest = db.TbEmployeeTransaction.ToList();
 
-                var Empcheckclockout = Employee.tbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.WorkingStatus == "Working" && x.ClockOut == "" && x.Remark != "Adjust").ToList();
+                var Empcheckclockout = Employee.tbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.WorkingStatus == "Working" && x.ClockOut == "" ).ToList();
                 //   var EmpTran = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.Plant.Equals(PlantID) && x.Line.Equals(ToLine) && x.Section.Equals(ToSection) && x.Remark == "Adjust").ToList();
                 if (StartTime == null)
                 {
@@ -2861,6 +2861,8 @@ namespace Plims.Controllers
                     //Update Transaction
                     if (StartTime != null)
                     {
+                        
+                        //Insert clockin
                         Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == thisday && x.Plant.Equals(PlantID)).SingleOrDefault();
 
                         Empdb.ClockIn = StartTime;
