@@ -5553,7 +5553,7 @@ namespace Plims.Controllers
                     {
                         //Check Clockout
                         var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
-                        var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "").ToList();
+                        var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.TransactionDate >= startDate && x.TransactionDate < endDate && x.ClockOut == "").ToList();
 
                         if (checkClockout.Count() >= 1)
                         {
@@ -5603,7 +5603,7 @@ namespace Plims.Controllers
                     {
                         //Check Clockout
                         var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
-                        var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "").ToList();
+                        var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.TransactionDate >= startDate && x.TransactionDate < endDate &&  x.ClockOut == "").ToList();
 
                         if (checkClockout.Count() >= 1)
                         {
@@ -5652,7 +5652,7 @@ namespace Plims.Controllers
 
                     //Check Clockout
                     var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim().Trim()) && x.SectionID.Equals(FGSectionID[0].Trim().Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
-                    var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "" & x.WorkingStatus == "Working").ToList();
+                    var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) &&  x.TransactionDate >= startDate && x.TransactionDate < endDate  && x.ClockOut == "" & x.WorkingStatus == "Working").ToList();
 
                     if (checkClockout.Count() >= 1)
                     {
@@ -5793,7 +5793,7 @@ namespace Plims.Controllers
 
                     //Check Clockout
                     var EmpIDtrancheck = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
-                    var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "").ToList();
+                    var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && x.ClockOut == "").ToList();
 
                     if (checkClockout.Count() >= 1)
                     {

@@ -132,6 +132,7 @@
                                                 int totalStd = 0;
                                                 int totalActual = 0;
                                                 double totalDiff = 0.0;
+                                                double totaldiffsum = 0.0;
                                             }
                                             @foreach (var item in Model.ResultGrpProduct)
                                             {
@@ -140,6 +141,8 @@
                                                     <td style="text-align: left;">@item.SectionName</td>
                                                     <td style="text-align: right;">@item.STD.ToString("#,##0.00")</td>
                                                     <td style="text-align: right;">@item.Actual.ToString("#,##0.00")</td>
+                                                  
+
                                                     @if (@item.Diff >= 100)
                                                     {
                                                         <td style="background-color:limegreen;text-align: right;">@item.Diff.ToString("#,##0")</td>
@@ -150,15 +153,18 @@
                                                     }
 
                                                 </tr>
+
                                                 totalStd += item.STD;
                                                 totalActual += item.Actual;
                                                 totalDiff += item.Diff;
+                                                totaldiffsum = (totalActual - item.STD) / totalDiff;
                                             }
                                             <tr>
                                                 <td style="font-weight:bold;text-align: center;" colspan="2">Total</td>
                                                 <td style="font-weight:bold;text-align: right;">@totalStd.ToString("#,##0.00")</td>
                                                 <td style="font-weight:bold;text-align: right;">@totalActual.ToString("#,##0.00")</td>
-                                                <td style="font-weight:bold;text-align: right;">@totalDiff.ToString("#,##0")</td>
+                                                @* <td style="font-weight:bold;text-align: right;">@totalDiff.ToString("#,##0")</td> *@
+                                                <td style="font-weight:bold;text-align: right;">@totaldiffsum.ToString("#,##0")</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -190,11 +196,14 @@
                                                     int totalEmp = 0;
                                                     double totalPercent = 0.0;
                                                     decimal totalPerPce = 0M;
+                                                    decimal totalavg = 0M;
+                                                    decimal totalavgsum = 0M;
                                                 }
                                                 @foreach (var item in Model.ResultGrpGrade)
                                                 {
+                                                    @*  <td style="text-align: right;">@item.PcsPerHr.ToString("#,##0.00")</td>  *@
                                                     <tr>
-
+                                                      
                                                         <td style="font-weight:bold;text-align: center;">@item.Grade</td>
                                                         <td style="text-align: right;">@item.PcsPerHr.ToString("#,##0.00")</td>
                                                         <td style="text-align: center;">@item.Cnt</td>
@@ -203,11 +212,14 @@
                                                     totalEmp += item.Cnt;
                                                     totalPercent += item.Percent;
                                                     totalPerPce += @item.PcsPerHr;
-                                                  //  totalPercent = totalEmp / totalPercent;
+
+                                                    totalavgsum = totalPerPce / totalEmp;
+                                                    //  totalPercent = totalEmp / totalPercent;
                                                 }
                                                 <tr>
                                                     <td style="font-weight:bold;text-align: center;">Total</td>
-                                                    <td style="font-weight:bold;text-align: right;">@totalStd.ToString("#,##0.00")</td>
+                                                    @* <td style="font-weight:bold;text-align: right;">@totalStd.ToString("#,##0.00")</td> *@
+                                                    <td style="font-weight:bold;text-align: right;">@totalavgsum.ToString("#,##0.00")</td>
                                                     <td style="font-weight:bold;text-align: center;">@totalEmp.ToString("#,##0")</td> 
                                                     <td style="font-weight:bold;text-align: center;">@totalPercent.ToString("#,##0")</td>
                                                 </tr>
