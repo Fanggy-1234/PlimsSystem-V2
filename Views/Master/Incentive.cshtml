@@ -765,7 +765,8 @@
                         <label for="recipient-name" class="col-form-label">Line Name:</label>
 
 
-                        <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineNameCreate" onchange="filterProductsByLine()" required>
+                        <div>
+                            <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineNameCreate" onchange="filterProductsByLine()" required>
                             <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
@@ -776,14 +777,14 @@
 
                             }
                         </select>
-
+                            </div>
                     </div>
 
 
                     @* Product Name*@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Product Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductNameCreate" onchange="filterSectionsByProduct()" required>
+                        <div> <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductNameCreate" onchange="filterSectionsByProduct()" required>
                             <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.ProductID))
                             {
@@ -794,14 +795,15 @@
 
                             }
                         </select>
-
+                            </div>
                     </div>
 
 
                     @* Section Name*@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Section Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionNameCreate" required>
+                        <div>
+                            <select class="selectfillter form-control" style="width:100%" name="SectionName" id="SectionNameCreate" required>
                             <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.SectionID))
                             {
@@ -812,7 +814,7 @@
 
                             }
                         </select>
-
+                            </div>
                     </div>
                     <div class="mb-3">
                         <label for="recipient-STD" class="col-form-label">STD:</label>

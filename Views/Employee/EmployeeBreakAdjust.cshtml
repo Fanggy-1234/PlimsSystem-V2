@@ -56,6 +56,7 @@
 <script>
 
     function RevertFn(id) {
+        console.log(id);
         $.ajax({
             url: '/Employee/EmployeeBreakAdjustRevert/' + id,
             type: 'GET',
@@ -222,6 +223,9 @@
         <thead style="background-color:gainsboro; height:20px;">
             <tr>
                 <th ><input type="checkbox" id="checkall" /></th>
+                <th>
+                    no
+                </th>
                 <th >
                     Employee ID
                 </th>
@@ -257,12 +261,15 @@
             {
                 <tr>
                 @*     @Html.HiddenFor(modelItem => item.TransactionNo) *@
+                   
                     <td>
                         <input type="checkbox" id="@item.TransactionNo" value="@item.TransactionNo" class="checkthis" Name="EmployeeIDchk" />
                     </td>
                     @*<input id="@fruit.Value" type="checkbox" name="Fruit" value="@fruit.Value" checked="@fruit.Selected" />*@
 
-
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TransactionNo)
+                    </td>
                     <td >
                         @Html.DisplayFor(modelItem => item.EmployeeID)
                     </td>

@@ -445,19 +445,21 @@
 
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Line Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" list="LineName" name="LineName" id="LineNameCreate" onchange="filterProductsByLine()" required>
+                        <div>
+                            <select class="selectfillter form-control" style="width:100%" list="LineName" name="LineName" id="LineNameCreate" onchange="filterProductsByLine()" required>
                             <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
                             {
 
                                 <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineName) </option>
                             }
-                        </select>
+                            </select></div>
 
                     </div>
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Product Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" list="ProductName" name="ProductName" id="ProductNameCreate" onchange="filterSectionsByProduct()" required>
+                        <div>
+                            <select class="selectfillter form-control" style="width:100%" list="ProductName" name="ProductName" id="ProductNameCreate" onchange="filterSectionsByProduct()" required>
                             <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
@@ -465,13 +467,14 @@
                                 <option value="@item.ProductID">@Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName) </option>
                             }
                         </select>
-
+                            </div>
 
 
                     </div>
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Section Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" list="SectionName" name="SectionName" id="SectionNameCreate" required>
+                        <div>
+                            <select class="selectfillter form-control" style="width:100%" list="SectionName" name="SectionName" id="SectionNameCreate" required>
                             <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
                             {
@@ -479,7 +482,7 @@
                                 <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName) </option>
                             }
                         </select>
-
+                            </div>
                     </div>
 
                     <div class="mb-3">

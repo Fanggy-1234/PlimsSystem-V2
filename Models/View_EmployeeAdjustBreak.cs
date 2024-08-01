@@ -5,6 +5,8 @@ namespace Plims.Models
     public class View_EmployeeAdjustBreak
     {
         [Key]
+        public int TransactionNo { get; set; }
+        [Key]
         public int ID { get; set; }
         public string EmployeeID { get; set; }
         public string EmployeeName { get; set; }
@@ -29,9 +31,8 @@ namespace Plims.Models
         public string WorkingStatus { get; set; }
         //  public Nullable<int> QRCodePerUnit { get; set; }
         public Nullable<int> QRCodePerEmployee { get; set; }
+
         [Key]
-        public int TransactionNo { get; set; }
-    
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public Nullable<System.DateTime> TransactionDate { get; set; }
     }

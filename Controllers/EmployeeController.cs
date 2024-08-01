@@ -2491,7 +2491,17 @@ namespace Plims.Controllers
                     string empid = EmployeeIDchk[i];
                     var varclockin = "";
                     var varclockout = "";
+                    //Check clockin first
+                    var EmpCheckclock = db.View_ClockTime.Where(x => x.EmployeeID.Equals(empid) && x.WorkingStatus == "Working"  && x.ClockOut == "").Select(x=>x.TransactionDate).ToList();
 
+                    if(EmpCheckclock.Count > 0)
+                    {
+                        TempData["AlertMessage"] = "Please Clock Out !  " ;
+                        return RedirectToAction("EmployeeLeaveHoliday");
+                    }
+
+
+                    //Check Insert or Update
                     var EmpTran = db.TbEmployeeLeaveHoliday.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == TreansactionDateCreate && (x.WorkingStatus == "Leave" || x.WorkingStatus == "Holiday")).ToList();
                     if (obj.ClockIn == null && obj.ClockOut == null)
                     {
@@ -3368,16 +3378,37 @@ namespace Plims.Controllers
             };
 
             //var thisday = DateTime.Now.Date;
+           
+            var EmpDbfillter = db.View_EmployeeAdjustBreak.Where(p => p.TransactionNo.Equals(id)).SingleOrDefault();
 
-            var EmpDb = db.TbEmployeeTransaction.Where(p => p.TransactionNo.Equals(id)).SingleOrDefault();
-            if (EmpDb != null)
+            DateTime datestart = EmpDbfillter.TransactionDate.Value.Date;
+            DateTime dateend = EmpDbfillter.TransactionDate.Value.AddDays(1);
+            //&& p.ClockIn.Equals(EmpDbfillter.ClockIn) && p.ClockOut.Equals(EmpDbfillter.ClockOut)
+            if(EmpDbfillter.Type == "E")
             {
-                EmpDb.BreakFlag = "";
-                EmpDb.UpdateBy = EmpID;
-                EmpDb.UpdateDate = DateTime.Now;
-                db.SaveChanges();
+                var EmpDb = db.TbEmployeeTransaction.Where(p => p.TransactionNo.Equals(id)).SingleOrDefault();
+                if (EmpDb != null)
+                {
+                    EmpDb.BreakFlag = "";
+                    EmpDb.UpdateBy = EmpID;
+                    EmpDb.UpdateDate = DateTime.Now;
+                    db.SaveChanges();
 
+                }
             }
+            else
+            {
+                var SerDb = db.TbServicesTransaction.Where(p => p.TransactionNo.Equals(id)).SingleOrDefault();
+                if (SerDb != null)
+                {
+                    SerDb.BreakFlag = "";
+                    SerDb.UpdateBy = EmpID;
+                    SerDb.UpdateDate = DateTime.Now;
+                    db.SaveChanges();
+
+                }
+            }
+           
             return Json(new { success = true });
 
         }

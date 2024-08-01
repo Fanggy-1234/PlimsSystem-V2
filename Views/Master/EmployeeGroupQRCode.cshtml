@@ -304,7 +304,7 @@
                         <td>
                             @if (ViewBag.VBRoleEmpGroup == "Full")
                             {
-                                <a href="#" id="Inactive" onclick="InactiveFn(@item.GroupID)">Inactive</a>
+                                <a href="#" id="Inactive" onclick="InactiveFn('@item.GroupID')">Inactive</a>
                             }
                             else
                             {
@@ -323,7 +323,7 @@
                         <td>
                             @if (ViewBag.VBRoleEmpGroup == "Full")
                             {
-                                <a href="#" id="Active" onclick="ActiveFn(@item.GroupID)">Active</a>
+                                <a href="#" id="Active" onclick="ActiveFn('@item.GroupID')">Active</a>
                             }
                             else
                             {
