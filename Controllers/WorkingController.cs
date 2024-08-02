@@ -2058,6 +2058,10 @@ namespace Plims.Controllers
                                 {
                                     if (objPLPS != null)
                                     {
+
+                                       
+
+
                                         var LastTransactionTime = db.TbProductionTransaction
                                        .Where(x => x.QRCode.Equals(employeeId) && x.CreateDate.Date == currentDate)
                                        .OrderByDescending(x => x.CreateDate)
@@ -2065,8 +2069,13 @@ namespace Plims.Controllers
                                        .FirstOrDefault();
 
                                         //Check last count
-                                        var LastTransactionCount = db.TbProductionTransaction
-                                      .Where(x => x.QRCode.Equals(employeeId) && x.SectionID.Equals(objEmp.SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Count();
+                                       
+
+
+                                       
+                                        int LastTransactionCount = db.TbProductionTransaction
+                                           .Where(x => x.QRCode.Equals(employeeId) && x.SectionID.Equals(objEmp.SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Count();
+
                                         LastTransactionCount += 1;
 
                                         // Convert TimeSpan to total seconds
@@ -2168,6 +2177,18 @@ namespace Plims.Controllers
                                          x.ClockOut == "" &&
                                         x.PlantID.Equals(PlantID))
                             .ToList();
+
+                            var objEmpselect = db.View_ClockTime.Where(x => x.EmployeeID.Equals(item.EmployeeID) && x.PlantID.Equals(PlantID) && x.Type != "Service" && x.WorkingStatus != "Leave" && x.ClockIn != "" && x.ClockOut == "" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)).FirstOrDefault();
+
+
+                            var empfirst = db.TbProductionTransaction
+                               .Where(x => x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpselect.SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Select(x => x.QRCode).FirstOrDefault();
+                                int  LastTransactionCount = db.TbProductionTransaction
+                              .Where(x => x.QRCode.Equals(empfirst) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpselect.SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Count();
+
+                            LastTransactionCount += 1;
+
+
                             double roundedDifftime = 0.0;
                             var sectionvalalert = new
                             {
@@ -2260,7 +2281,9 @@ namespace Plims.Controllers
                                         }
                                          sectionvalalert = new
                                         {
-                                            message = items.Section.ToString(),
+                                             message = items.Section.ToString() + " : " + objPLPS.SectionName.ToString() + "  =>  " + LastTransactionCount,
+
+                                            // message = items.Section.ToString(),
                                             status = true
                                         };
                                         //sectionval = objEmp.SectionID.ToString();

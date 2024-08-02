@@ -641,11 +641,10 @@
 
 
 
-
 @*Modal Create*@
 <div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <form method="post" asp-action="PLPSCreate" asp-controller="Master">
+    <div class="modal-dialog" role="document"  novalidate >
+        <form method="post" asp-action="PLPSCreate" asp-controller="Master" >
             <div class="modal-content">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Plant Line Product Section Create</h1>
@@ -656,59 +655,65 @@
                     <div class="mb-3">
                         <label class="col-form-label">Line Name:</label>
                         <div>
-                            <select class="selectfillter form-control" style="width:100%" list="LineName" name="LineName" id="LineNameCreate" required>
-                            <option value="" default selected>Please Select ..</option>
+                            <select class="form-control" style="width:100%" list="LineName" name="LineName" id="LineNameCreate" required="">
+                                <option value="" default selected>Please Select ..</option>
 
-                            @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
-                            {
+                                @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
+                                {
 
-                                <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineID)  : @Html.DisplayFor(modelItem => item.LineName) </option>
-                            }
-                            </select> </div>
+                                    <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineID)  : @Html.DisplayFor(modelItem => item.LineName) </option>
+                                }
+                            </select>
+                            
+                        </div>
                     </div>
 
                     <div class="mb-3">
                         <div><label class="col-form-label">Product Name:</label></div>
-                    <div>
-                        <select class="selectfillter form-control" style="width:100%" list="ProductName" name="ProductName" id="ProductNameCreate" required>
-                            <option value="" default selected disabled>Please Select ..</option>
-                            @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
-                            {
+                        <div>
+                            <select class="selectfillter form-control" style="width:100%" list="ProductName" name="ProductName" id="ProductNameCreate" required>
+                                <option value="" default selected disabled>Please Select ..</option>
+                                @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
+                                {
 
-                                <option value="@item.ProductID">@Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName) </option>
-                            }
-                        </select>
-                    </div>
+                                    <option value="@item.ProductID">@Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName) </option>
+                                }
+                            </select>
+                        </div>
 
                     </div>
 
                     <div class="mb-3">
                         <div>
-                            <label class="col-form-label">Section Name:</label> </div>
+                            <label class="col-form-label">Section Name:</label>
+                        </div>
                         <div>
                             <select class="selectfillter form-control" style="width:100%" list="SectionName" name="SectionName" id="SectionNameCreate" required>
-                            <option value="" default selected disabled>Please Select ..</option>
-                            @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
-                            {
+                                <option value="" default selected disabled>Please Select ..</option>
+                                @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
+                                {
 
-                                <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName) </option>
-                            }
-                            </select> </div>
+                                    <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName) </option>
+                                }
+                            </select>
+                        </div>
 
                     </div>
 
                     <div class="mb-3">
                         <div>
-                            <label class="col-form-label">Formula:</label> </div>
+                            <label class="col-form-label">Formula:</label>
+                        </div>
                         <div>
                             <select class="selectfillter form-control" style="width:100%" list="FormularID" name="FormularID" id="FormularIDCreate" required>
-                            <option value="" default selected disabled>Please Select ..</option>
-                            @foreach (var item in Model.tbFormular)
-                            {
+                                <option value="" default selected disabled>Please Select ..</option>
+                                @foreach (var item in Model.tbFormular)
+                                {
 
-                                <option value="@item.FormularID">@Html.DisplayFor(modelItem => item.FormularID) : @Html.DisplayFor(modelItem => item.FormularName) </option>
-                            }
-                            </select> </div>
+                                    <option value="@item.FormularID">@Html.DisplayFor(modelItem => item.FormularID) : @Html.DisplayFor(modelItem => item.FormularName) </option>
+                                }
+                            </select>
+                        </div>
 
                     </div>
 
@@ -747,6 +752,7 @@
         </form>
     </div>
 </div>
+
 
 
 
