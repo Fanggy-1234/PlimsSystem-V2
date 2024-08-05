@@ -637,7 +637,7 @@ namespace Plims.Controllers
         }
 
         [HttpPost]
-        public ActionResult RoleCreate(string RoleNames)
+        public ActionResult RoleNameCreate(string RoleNames)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -675,26 +675,6 @@ namespace Plims.Controllers
 
                         });
                     }
-
-                   // create plant
-                //for (int i = 1; i <= db.TbPageMaster.Count(); i++)
-                //{
-                //    var pagenamevar = db.TbPageMaster.Where(x => x.PageID.Equals(i)).Select(x => x.PageName).ToString();
-
-                //    db.TbPage.Add(new TbPage()
-                //    {
-                //        PageID = i,
-                //        PageName = pagenamevar,
-                //        PageStatus =1,
-                //        PlantID = PlantID,
-                //        CreateDate = DateTime.Today,
-                //        CreateBy = EmpID,//User.Identity.Name,
-                //        UpdateDate = DateTime.Today,
-                //        UpdateBy = EmpID,//User.Identity.Name
-
-                //    });
-
-                //}
 
                 db.SaveChanges();
 
@@ -807,51 +787,6 @@ namespace Plims.Controllers
             return RedirectToAction("RoleManagement");
 
         }
-
-
- 
-
-
-        /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*///
-        /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*///
-
-
-        //       public ActionResult SetUpRefreshtime()
-        //       {
-
-        //           return View();
-        //       }
-
-
-        //       public ActionResult RollBackDataProduction()
-        //       {
-
-        //           return View();
-        //       }
-
-
-        //       public ActionResult ManualImportData()
-        //       {
-
-        //           return View();
-        //       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

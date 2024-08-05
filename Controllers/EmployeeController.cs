@@ -495,7 +495,7 @@ namespace Plims.Controllers
                     var empdbcheck = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "").ToList();
                     if (empdbcheck.Count() != 0)
                     {
-                        TempData["AlertMessage"] = "Please Services Clock out Employee ID :" + empid;
+                        TempData["AlertMessage"] = "Please Services Clock out Employee ID :" + empid + " Date :" + empdbcheck.First().TransactionDate;
                         return RedirectToAction("EmployeeClockIn");
                     }
 
@@ -504,7 +504,7 @@ namespace Plims.Controllers
                     if (EmpTrans.Count() != 0)
                     {
 
-                        TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid;
+                        TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid + " Date :" + EmpTrans.First().TransactionDate;
                         return RedirectToAction("EmployeeClockIn");
                         //var Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.Plant.Equals(PlantID)).SingleOrDefault();
                         //Empdb.ClockIn = ClockIn;
@@ -1725,7 +1725,7 @@ namespace Plims.Controllers
                             var clockinvar = Convert.ToDateTime(itm.ClockIn);
                             if (itm.ClockOut == "")
                             {
-                                TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empidvar;
+                                TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empidvar + "Date :" + empdbcheck.First().TransactionDate;
                                 return RedirectToAction("ServicesClockIn");
                             }
                             var clockoutvar = Convert.ToDateTime(itm.ClockOut);

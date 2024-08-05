@@ -6273,18 +6273,18 @@ namespace Plims.Controllers
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrCodeText, QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(qrCodeData);
-            Bitmap qrBitmap = qrCode.GetGraphic(20);
+            Bitmap qrBitmap = qrCode.GetGraphic(30);
 
             // Add label to the QR code
             using (Graphics g = Graphics.FromImage(qrBitmap))
             {
                 g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                Font font = new Font("Arial", 36, FontStyle.Bold);
+                Font font = new Font("Arial", 70, FontStyle.Bold);
                 SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                 // Calculate where to draw the text
-                float x = 160; // Left margin
-                float y = qrBitmap.Height - 40; // Position at the bottom
+                float x = 100; // Left margin
+                float y = qrBitmap.Height - 100; // Position at the bottom
 
                 g.DrawString(labelText, font, brush, new System.Drawing.PointF(x, y)); // Draw the label
             }
@@ -6349,7 +6349,7 @@ namespace Plims.Controllers
                 QRCodeData QrCodeInfo = QrGenerator.CreateQrCode(qrCodeText, QRCodeGenerator.ECCLevel.Q); //qRCode.EmployeeID
 
                 QRCode QrCode = new QRCode(QrCodeInfo);
-                Bitmap QrBitmap = QrCode.GetGraphic(20);
+                Bitmap QrBitmap = QrCode.GetGraphic(30);
                 byte[] BitmapArray = QrBitmap.BitmapToByteArray();
 
                 // Convert Bitmap to byte array
@@ -6423,18 +6423,18 @@ namespace Plims.Controllers
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrCodeText, QRCodeGenerator.ECCLevel.Q);
                 QRCode qrCode = new QRCode(qrCodeData);
-                Bitmap qrBitmap = qrCode.GetGraphic(20);
+                Bitmap qrBitmap = qrCode.GetGraphic(30);
 
                 // Add label to the QR code
                 using (Graphics g = Graphics.FromImage(qrBitmap))
                 {
                     g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                    Font font = new Font("Arial", 36, FontStyle.Bold);
+                    Font font = new Font("Arial", 70, FontStyle.Bold);
                     SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                     // Calculate where to draw the text
-                    float x = 150; // Left margin
-                    float y = qrBitmap.Height - 40; // Position at the bottom
+                    float x = 100; // Left margin
+                    float y = qrBitmap.Height - 100; // Position at the bottom
 
                     g.DrawString(labelText, font, brush, new System.Drawing.PointF(x, y)); // Draw the label
                 }
@@ -6519,25 +6519,38 @@ namespace Plims.Controllers
             {
                 string qrCodeText = item.Trim();
                 string labelText = $"{item.Trim()}";
+               
+
 
                 // Generate the QR code
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrCodeText, QRCodeGenerator.ECCLevel.Q);
                 QRCode qrCode = new QRCode(qrCodeData);
-                Bitmap qrBitmap = qrCode.GetGraphic(20);
+                Bitmap qrBitmapFirst = qrCode.GetGraphic(30);
+
+
+                // Define the desired height and calculate the new bitmap dimensions
+                int desiredHeight = qrBitmapFirst.Height + 100; // Increase height to accommodate label
+                int desiredWidth = qrBitmapFirst.Width;
+
+                // Create a new bitmap with the desired dimensions
+                Bitmap qrBitmap = new Bitmap(desiredWidth, desiredHeight);
+
+
 
                 // Add label to the QR code
                 using (Graphics g = Graphics.FromImage(qrBitmap))
                 {
                     g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                    Font font = new Font("Arial", 36, FontStyle.Bold);
+                    Font font = new Font("Arial", 70, FontStyle.Bold);
                     SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                     // Calculate where to draw the text
-                    float x = 160; // Left margin
-                    float y = qrBitmap.Height - 50; // Position at the bottom
+                    float x = 100; // Left margin
+                    float y = qrBitmap.Height - 100; // Position at the bottom
 
                     g.DrawString(labelText, font, brush, new System.Drawing.PointF(x, y)); // Draw the label
+                    
                 }
 
                 byte[] bitmapArray;
@@ -7223,7 +7236,7 @@ namespace Plims.Controllers
                                     QRCodeData QrCodeInfo = QrGenerator.CreateQrCode(qrCodeText, QRCodeGenerator.ECCLevel.Q); //qRCode.EmployeeID
 
                                     QRCode QrCode = new QRCode(QrCodeInfo);
-                                    Bitmap QrBitmap = QrCode.GetGraphic(20);
+                                    Bitmap QrBitmap = QrCode.GetGraphic(30);
                                     byte[] BitmapArray = QrBitmap.BitmapToByteArray();
                                     QrBitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
                                     ViewBag.QRCodeImage = "data:image/png;base64," + Convert.ToBase64String(stream.ToArray());
@@ -7368,7 +7381,7 @@ namespace Plims.Controllers
                 QRCodeData QrCodeInfo = QrGenerator.CreateQrCode(qrCodeText, QRCodeGenerator.ECCLevel.Q); //qRCode.EmployeeID
 
                 QRCode QrCode = new QRCode(QrCodeInfo);
-                Bitmap QrBitmap = QrCode.GetGraphic(20);
+                Bitmap QrBitmap = QrCode.GetGraphic(30);
                 byte[] BitmapArray = QrBitmap.BitmapToByteArray();
 
                 // Convert Bitmap to byte array
@@ -7569,7 +7582,7 @@ namespace Plims.Controllers
             QRCodeGenerator QrGenerator = new QRCodeGenerator();
             QRCodeData QrCodeInfo = QrGenerator.CreateQrCode(qRCode.GroupID, QRCodeGenerator.ECCLevel.Q);
             QRCode QrCode = new QRCode(QrCodeInfo);
-            Bitmap QrBitmap = QrCode.GetGraphic(60);
+            Bitmap QrBitmap = QrCode.GetGraphic(30);
             byte[] BitmapArray = QrBitmap.BitmapToByteArray();
 
 
@@ -8432,18 +8445,18 @@ namespace Plims.Controllers
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrCodeText, QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(qrCodeData);
-            Bitmap qrBitmap = qrCode.GetGraphic(20);
+            Bitmap qrBitmap = qrCode.GetGraphic(30);
 
             // Add label to the QR code
             using (Graphics g = Graphics.FromImage(qrBitmap))
             {
                 g.TextRenderingHint = TextRenderingHint.AntiAlias; // For smooth text
-                Font font = new Font("Arial", 36, FontStyle.Bold);
+                Font font = new Font("Arial", 70, FontStyle.Bold);
                 SolidBrush brush = new SolidBrush(System.Drawing.Color.Black);
 
                 // Calculate where to draw the text
-                float x = 150; // Left margin
-                float y = qrBitmap.Height - 30; // Position at the bottom
+                float x = 100; // Left margin
+                float y = qrBitmap.Height - 100; // Position at the bottom
          
                 g.DrawString(labelText, font, brush, new System.Drawing.PointF(x, y)); // Draw the label
             }

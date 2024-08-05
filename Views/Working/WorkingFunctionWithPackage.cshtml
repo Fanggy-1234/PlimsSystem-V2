@@ -162,6 +162,16 @@
 
 </style>
 
+
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
+
+
+
 <div class="row" style="height:10px"></div>
 <h2 class="page-name">Working Function [Key]</h2>
 <div class="row" style="height:30px"> </div>
@@ -544,55 +554,7 @@
 
 <script>
 
-    // $(document).ready(function () {
-
-    //        // Listen for input changes to handle typing or pasting
-    //     $('#EmployeeID').on('input', function () {
-    //         processInput(); // Trigger AJAX request
-    //     });
-
-    //     // Listen for 'keypress' to handle "Enter" or "Tab"
-    //     $('#EmployeeID').on('keyup', function (event) {
-    //         var key = event.which || event.keyCode;
-    //         if (key === 13 || key === 9) { // 13 for "Enter", 9 for "Tab"
-    //             event.preventDefault();
-    //             processInput(); // Trigger AJAX request
-    //         }
-    //     });
-
-    //     function processInput() {
-    //         var employeeId = $('#EmployeeID').val().trim();
-    //         var productId = $('#ProductID').val();
-    //        // var packageRef = $('#PackageRef').val();
-    //        // console.log(employeeId);
-    //         if (employeeId !== '') { // Only process if there's valid input
-    //             // AJAX request to the controller
-    //             $.ajax({
-    //                 url: '/Working/WorkingFunctionCreateWithRef', // Update with your endpoint
-    //                 type: 'GET',
-    //                 data: {
-    //                     employeeId: employeeId,
-    //                     productId: productId
-    //                 },
-    //                 success: function (section) {
-    //                     if (section === "EmployeeRefSectionEnabled") {
-    //                         $('#EmployeeRefsection').prop('disabled', false).val('').focus();
-    //                     } else {
-    //                         $('#EmployeeRefsection').prop('disabled', true);
-    //                         $('#SectionName').val(section);
-    //                         $('#EmployeeID').val('').focus(); // Clear and refocus
-    //                     }
-    //                 },
-    //                 error: function (err) {
-    //                     console.error('Error occurred while fetching section:', err);
-    //                 }
-    //             });
-    //         }
-    //     }
-
-    // });
-
-
+ 
      var debounceTimer;
 
     function runScript(e) {
@@ -613,7 +575,7 @@
                // if (employeeIdlength == 6) {
                     if (employeeId !== '' && productId !== '') {
                         $.ajax({
-                            url: '/Working/WorkingFunctionCreateWithRef',
+                        url: '/Working/WorkingFunctionCreateWithRef',
                             type: 'GET',
                             data: {
                                 employeeId: employeeId,
@@ -635,12 +597,8 @@
                             }
                         });
                    }
-                //}
-                // Move DOM manipulation inside debounce timeout
-                //document.getElementById("demo").innerHTML = "2 employeeId is: " + employeeId + " length: " + employeeIdlength;
-               // document.getElementById("demo").innerHTML = "EmployeeId is: " + employeeId;
             }
-        }, 100); // Adjust the debounce delay as needed
+        }, 30); // Adjust the debounce delay as needed
     }
 
 
@@ -648,41 +606,7 @@
 
 
 <script>
-    // $(document).ready(function () {
-    //     $('#EmployeeID').on('input', function () {
-    //         var employeeId = $(this).val(); // Fetch value using $(this)
-    //         var productId = $('#ProductID').val();
-    //         var PackageRef = $('#PackageRef').val();
-    //       //  console.log(employeeId);
-    //         if (employeeId.trim() !== '') {
-    //             // AJAX request to the controller
-    //             $.ajax({
-    //                 url: '/Working/WorkingFunctionCreateWithRef',
-    //                 type: 'GET',
-    //                 data: { employeeId: employeeId, productId: productId, PackageRef: PackageRef },
-    //                 success: function (section) {    
-    //                     if (section == "EmployeeRefSectionEnabled") {
-    //                         $('#EmployeeRefsection').prop('disabled', false);
-    //                         $('#EmployeeRefsection').val('');
-    //                         $('#EmployeeRefsection').focus();
-    //                     } else {
-    //                         $('#EmployeeRefsection').prop('disabled', true);
-    //                         $('#SectionName').val(section);
-    //                         $('#EmployeeID').val("");
-    //                         $('#EmployeeID').focus();
-
-                            
-    //                     }
-    //                     $('#EmployeeRefsection').val(''); // Clear EmployeeRefSection input
-    //                 },
-    //                 error: function () {
-    //                     console.log('Error occurred while fetching section.');
-    //                 }
-    //             });
-    //         }
-    //     });
-
-
+  
 
         $('#EmployeeRefsection').on('input', function () {
             var employeeId = $('#EmployeeID').val(); // Fetch EmployeeID value
@@ -793,43 +717,6 @@
         }
     }
 
-
-
-
-    //////////////////// 30042024 FANG ///////////////////////////////////////
-
-    // function filterSectionsByProductEdit() {
-    //     console.log('0');
-    //     // Clear previous options
-    //     $("#ProductIDDefect").empty();
-    //     // Add a default option
-    //     $("#ProductIDDefect").append("<option value='' default selected>Please Select ..</option>");
-    //     console.log('1');
-    //     // Get the selected Product ID
-
-    //     var selectedEmpID = $("#EmployeeIDDefect").val().toString();
-    //     // var selectedLineID = $("#ModalLineName").val().toString();
-
-    //     // Check if a product is selected
-    //     if (selectedEmpID !== "") {
-    //         // Use AJAX to filter sections based on the selected Product ID
-    //         $.ajax({
-    //             type: "GET",
-    //             url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
-    //             data: { selectedEmpID: selectedEmpID },
-    //             success: function (filteredproduct) {
-    //                 console.log(filteredproduct)
-    //                 // Add filtered sections to the dropdown
-    //                 filteredproduct.forEach(function (product) {
-    //                     $("#ProductIDDefect").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
-    //                 });
-    //             },
-    //             error: function (error) {
-    //                 console.log("Error filtering product: " + error);
-    //             }
-    //         });
-    //     }
-    // }
 
 
 

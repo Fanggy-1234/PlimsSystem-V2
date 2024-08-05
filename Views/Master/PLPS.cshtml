@@ -641,10 +641,12 @@
 
 
 
+
+
 @*Modal Create*@
 <div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document"  novalidate >
-        <form method="post" asp-action="PLPSCreate" asp-controller="Master" >
+    <div class="modal-dialog" role="document" novalidate>
+        <form method="post" asp-action="PLPSCreate" asp-controller="Master">
             <div class="modal-content">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Plant Line Product Section Create</h1>
@@ -664,7 +666,7 @@
                                     <option value="@item.LineID">@Html.DisplayFor(modelItem => item.LineID)  : @Html.DisplayFor(modelItem => item.LineName) </option>
                                 }
                             </select>
-                            
+
                         </div>
                     </div>
 
@@ -753,6 +755,26 @@
     </div>
 </div>
 
+
+<script>
+document.getElementById('createForm').addEventListener('submit', function(event) {
+    let isValid = true;
+    const selects = this.querySelectorAll('select[required]');
+    selects.forEach(select => {
+        if (!select.value) {
+            isValid = false;
+            select.classList.add('is-invalid');
+        } else {
+            select.classList.remove('is-invalid');
+        }
+    });
+
+    if (!isValid) {
+        event.preventDefault();
+        alert('Please fill out all required fields.');
+    }
+});
+</script>
 
 
 

@@ -21,22 +21,7 @@
 <link href="~/Content/main.css" rel="stylesheet" />
 
 <style>
-/* 
-    .form-control {
-        width: 100%;
-        padding: 12px 20px;
-        margin: 8px 0;
-        display: inline-block;
-        border: 1px solid #808080;
-        border-radius: 2px;
-        box-sizing: border-box;
-    } */
 
-/*     div .dataTables_wrapper {
-        width: 800px;
-        margin: 0 auto;
-    }
- */
     table.dataTable {
         border-collapse: collapse;
         border: 1px solid grey; 
@@ -163,7 +148,7 @@
                     <div class="row" style="height:30px">
                         <div class="col-4"></div>
                         <div class="col-4"><button type="button" id="btncanclerole" class="create-button" data-bs-dismiss="modal">Cancel</button></div>
-                        <div class="col-4"><button type="button" id="btncreaterole" asp-action="RoleCreate" class="create-button">Create</button></div>
+                        <div class="col-4"><button type="button" id="btncreaterole" asp-action="RoleNameCreate" class="create-button">Create</button></div>
                     </div>
                     <div class="row" style="height:10px"></div>
                     <div class="mb-3">
@@ -292,7 +277,7 @@
             var RoleNames = $("#RoleNameCreate").val();
             console.log(RoleNames);
             $.ajax({
-                url: '@Url.Action("RoleCreate", "Home")',
+                url: '@Url.Action("RoleNameCreate", "Home")',
                 type: 'POST',
                 data: { RoleNames: RoleNames}, // Add data if needed
                 success: function (data) {
