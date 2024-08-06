@@ -74,166 +74,6 @@
 }
 
 
-<script>
-
-    $(document).ready(function () {
-        var table = $('#table_id').DataTable({
-            dom: 'Bfrtip',
-            ordering: false,
-            searching: false,
-            // scrollX: true,
-            // scrollY: true,
-            // order: [[1, 'asc']],
-            lengthMenu: [10, 25, 50, 75, 100],
-            pageLength: 20, // Default page length
-            paging: true, // Enable paging
-        });
-
-    });
-</script>
-
-
-
-<script type="text/javascript" charset="utf8">
-    $(document).ready(function () {
-        // Ensure that the checkbox state is included in the form submission
-        document.getElementById("inactivestatus").addEventListener("change", function () {
-            if (this.checked) {
-                // Set the value of the hidden input field to "true" when checked
-                document.getElementById("inactivestatus-hidden").value = "true";
-            } else {
-                // Set the value of the hidden input field to "false" when unchecked
-                document.getElementById("inactivestatus-hidden").value = "false";
-            }
-        });
-
-
-
-
-
-
-</script>
-
-<script>
-
-
-    $(document).ready(function () {
-        $('#btnSelectFile').on('click', function () {
-            $('#FileUpload').click();
-        });
-
-        $('#FileUpload').on('change', function () {
-            var selectedFile = this.files[0];
-
-            // Create FormData object
-            var formData = new FormData();
-            formData.append('FileUpload', selectedFile);  // Use the correct name
-            console.log(formData)
-            // Send the file to the controller using AJAX
-            $.ajax({
-                url: '/Master/LineUpload',
-                type: 'POST',
-                processData: false,
-                contentType: false,  // Set this to false when using FormData
-                data: formData,
-                success: function (response) {  // Expecting JSON response
-                    if (response.success) {
-                        alert(response.message);  // Success message
-                        location.reload();  // Reload or do other success-related tasks
-                    } else {
-                        alert(response.message);  // Error message
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error uploading file:', error);
-                    alert('Error uploading file');
-                }
-            });
-        });
-    });
-
-
-</script>
-
-<script>
-
-        //Edit to modal
-        function EditFn(id) {
-            console.log(id);
-            $.ajax({
-                url: '/Master/LineEdit/' + id,
-                type: 'GET',
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'json',
-                success: function (response) {
-                    if (response == null || response == undefined) {
-
-                        alert("This data can't read1!")
-                    }
-                    else if (response.length == 0) {
-
-                        alert("This data can't id!" + id)
-                    }
-                    else {
-                        // console.log('AJAX request successful:', response);
-                        $('#ModalLineID').val(response.lineID);
-                        $('#ModalLineName').val(response.lineName);
-                        $('#ModalStatus').prop('checked', response.status == 1)
-                        $('#EditModal').modal('show');
-
-
-                    }
-                },
-                error: function (response) {
-                    alert(response.responseText);
-                }
-
-            });
-        }
-
-
-
-        //Function Inactive
-        function InactiveFn(id) {
-            $.ajax({
-                url: '/Master/LineInactive/' + id,
-                type: 'GET',
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'json',
-                success: function (response) {
-                    alert("Inactive Finish");
-                    location.reload();
-                },
-                error: function (response) {
-                    alert("Inactive something went wrong.");
-                }
-
-            });
-        }
-
-
-
-        //Function Inactive
-        function ActiveFn(id) {
-            $.ajax({
-                url: '/Master/LineActive/' + id,
-                type: 'GET',
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'json',
-                success: function (response) {
-                    location.reload();
-                    alert("Active Finish");
-                },
-                error: function (response) {
-                    alert("Active something went wrong.");
-                }
-
-            });
-        }
-
-    
-
-</script>
 
 <div class="row" style="height:10px"></div>
 <h2 class="page-name">Line Management</h2>
@@ -293,6 +133,9 @@
                 <label class="form-check-label" for="inactivestatus">Inactive Status</label>
                 <input type="hidden" id="inactivestatus-hidden" name="inactivestatus" value="@((ViewBag.InactiveStatus ?? false).ToString().ToLower())">
             </div>
+
+
+
         </div>
         <div class="col-6"></div>
     </div>
@@ -549,3 +392,181 @@
     </div>
 </div>
 
+
+<script>
+
+    $(document).ready(function () {
+        var table = $('#table_id').DataTable({
+            dom: 'Bfrtip',
+            ordering: false,
+            searching: false,
+            // scrollX: true,
+            // scrollY: true,
+            // order: [[1, 'asc']],
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 20, // Default page length
+            paging: true, // Enable paging
+        });
+
+    });
+
+
+
+    // Ensure that the checkbox state is included in the form submission
+    document.getElementById("inactivestatus").addEventListener("change", function () {
+        if (this.checked) {
+            // Set the value of the hidden input field to "true" when checked
+            document.getElementById("inactivestatus-hidden").value = "true";
+        } else {
+            // Set the value of the hidden input field to "false" when unchecked
+            document.getElementById("inactivestatus-hidden").value = "false";
+        }
+    });
+
+
+</script>
+
+@*
+
+<script type="text/javascript" charset="utf8">
+    $(document).ready(function () {
+        // Ensure that the checkbox state is included in the form submission
+        document.getElementById("inactivestatus").addEventListener("change", function () {
+            if (this.checked) {
+                // Set the value of the hidden input field to "true" when checked
+                document.getElementById("inactivestatus-hidden").value = "true";
+            } else {
+                // Set the value of the hidden input field to "false" when unchecked
+                document.getElementById("inactivestatus-hidden").value = "false";
+            }
+        });
+
+
+
+
+
+
+
+
+</script>
+ *@
+<script>
+
+
+    $(document).ready(function () {
+        $('#btnSelectFile').on('click', function () {
+            $('#FileUpload').click();
+        });
+
+        $('#FileUpload').on('change', function () {
+            var selectedFile = this.files[0];
+
+            // Create FormData object
+            var formData = new FormData();
+            formData.append('FileUpload', selectedFile);  // Use the correct name
+            // console.log(formData)
+            // Send the file to the controller using AJAX
+            $.ajax({
+                url: '/Master/LineUpload',
+                type: 'POST',
+                processData: false,
+                contentType: false,  // Set this to false when using FormData
+                data: formData,
+                success: function (response) {  // Expecting JSON response
+                    if (response.success) {
+                        alert(response.message);  // Success message
+                        location.reload();  // Reload or do other success-related tasks
+                    } else {
+                        alert(response.message);  // Error message
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error uploading file:', error);
+                    alert('Error uploading file');
+                }
+            });
+        });
+    });
+
+
+</script>
+
+<script>
+
+    //Edit to modal
+    function EditFn(id) {
+        console.log(id);
+        $.ajax({
+            url: '/Master/LineEdit/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response == null || response == undefined) {
+
+                    alert("This data can't read1!")
+                }
+                else if (response.length == 0) {
+
+                    alert("This data can't id!" + id)
+                }
+                else {
+                    // console.log('AJAX request successful:', response);
+                    $('#ModalLineID').val(response.lineID);
+                    $('#ModalLineName').val(response.lineName);
+                    $('#ModalStatus').prop('checked', response.status == 1)
+                    $('#EditModal').modal('show');
+
+
+                }
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+
+        });
+    }
+
+
+
+    //Function Inactive
+    function InactiveFn(id) {
+        $.ajax({
+            url: '/Master/LineInactive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                alert("Inactive Finish");
+                location.reload();
+            },
+            error: function (response) {
+                alert("Inactive something went wrong.");
+            }
+
+        });
+    }
+
+
+
+    //Function Inactive
+    function ActiveFn(id) {
+        $.ajax({
+            url: '/Master/LineActive/' + id,
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function (response) {
+                location.reload();
+                alert("Active Finish");
+            },
+            error: function (response) {
+                alert("Active something went wrong.");
+            }
+
+        });
+    }
+
+
+
+</script>

@@ -439,7 +439,7 @@ namespace Plims.Controllers
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
-
+            
 
             if (EmpID == null)
             {
@@ -473,15 +473,15 @@ namespace Plims.Controllers
                     {
                         mymodel.tbLine = db.TbLine.Where(x => x.LineName == obj.LineName).ToList();
                         ViewBag.SelectedLineName = obj.LineName;
-                        ViewBag.InactiveStatus = true;
+                       
                     }
                     if (!string.IsNullOrEmpty(obj.LineID))
                     {
                         mymodel.tbLine = mymodel.tbLine.Where(x => x.LineID == obj.LineID).ToList();
                         ViewBag.SelectedLineID = obj.LineID;
-                        ViewBag.InactiveStatus = true;
+                       
                     }
-
+                   
                     if (inactivestatus == true)
                     {
                         mymodel.tbLine = mymodel.tbLine.ToList();
@@ -489,7 +489,7 @@ namespace Plims.Controllers
                     }
                     else
                     {
-                        mymodel.tbLine = mymodel.tbLine.Where(x => x.Status == 1).OrderByDescending(x => x.Status).ToList();
+                        mymodel.tbLine = mymodel.tbLine.Where(x => x.Status == 1).ToList();
                         ViewBag.InactiveStatus = false;
                     }
 
@@ -6490,7 +6490,7 @@ namespace Plims.Controllers
 
 
             ViewBag.VBRoleEmployee = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(3)).Select(x => x.RoleAction).FirstOrDefault();
-
+            TempData["AlertMessage"] = "Qrcode regenerate susscessful!";
             return View("EmployeeManagement", mymodel);
 
 
@@ -6600,7 +6600,7 @@ namespace Plims.Controllers
 
 
             ViewBag.VBRoleEmpGroup = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(15)).Select(x => x.RoleAction).FirstOrDefault();
-
+            TempData["AlertMessage"] = "Qrcode regenerate susscessful!";
             return View("EmployeeGroupQRCode", mymodel);
 
 

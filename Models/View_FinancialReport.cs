@@ -23,37 +23,37 @@ namespace Plims.Models
         public string SectionID { get; set; }
         public string SectionName { get; set; }
         [Key]
-        public string ProductID { get; set; }
-        public string ProductName { get; set; }
-        public string Unit { get; set; }
+      //  public string ProductID { get; set; }
+       // public string ProductName { get; set; }
+     //   public string Unit { get; set; }
         public decimal QTYPerQRCode { get; set; }
-        public int FormularID { get; set; }
+       // public int FormularID { get; set; }
         public string QRCode { get; set; }
         public string EmployeeName { get; set; }
 
-        public string ShiftName { get; set; }
-        public string StartTime { get; set; }
-        public string EndTime { get; set; }
-        public string  Reason { get; set; }
-        public string  Note { get; set; }
+     //   public string ShiftName { get; set; }
+  //      public string StartTime { get; set; }
+    //    public string EndTime { get; set; }
+    //    public string  Reason { get; set; }
+    //    public string  Note { get; set; }
         public decimal TotalCountQty { get; set; }
         public decimal TotalFGQty { get; set; }
         public decimal TotalQty { get; set; }
         public decimal Defect { get; set; }
-        public decimal ProductSTD { get; set; }
-        public decimal PercentSTD { get; set; }
-        public decimal PercentYield { get; set; }
+     //   public decimal ProductSTD { get; set; }
+     //   public decimal PercentSTD { get; set; }
+     //   public decimal PercentYield { get; set; }
         public string ClockIn { get; set; }
         public string ClockOut { get; set; }
-        public DateTime CurrentTime { get; set; }   // time
-        public string TransactionDateTime { get; set; }
-        public decimal hourSinceClockIn { get; set; }
+    //    public DateTime CurrentTime { get; set; }   // time
+    //    public string TransactionDateTime { get; set; }
+   //     public decimal hourSinceClockIn { get; set; }
         public decimal ShiftHour { get; set; }
 
         public decimal PiecePerHr { get; set; }
         [Key]
-        public string IncentiveID { get; set; }
-        public string IncentiveName { get; set; }
+     //   public string IncentiveID { get; set; }
+     //   public string IncentiveName { get; set; }
         public decimal Rate { get; set; }
         public decimal Min { get; set; }
         public decimal Max { get; set; }

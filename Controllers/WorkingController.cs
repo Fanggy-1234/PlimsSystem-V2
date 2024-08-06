@@ -2063,6 +2063,7 @@ namespace Plims.Controllers
                                                 UpdateBy = EmpID
                                             });
                                             db.SaveChanges();
+
                                             var sectionvalalert = new
                                             {
                                                 message = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString() + "  =>  " + LastTransactionCount ,
@@ -2107,20 +2108,20 @@ namespace Plims.Controllers
 
                             //Select EmployeeTransaction
                             var objEmpcount = db.View_ClockTime
-                            .Where(x => x.EmployeeID.Equals(item.EmployeeID) &&  x.Type != "Service" &&
+                            .Where(x => x.EmployeeID.Equals(item.EmployeeID) &&  x.Type != "Service" && x.WorkingStatus != "Leave" &&
                                          (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) &&
                                          x.ClockOut == "" &&
                                         x.PlantID.Equals(PlantID))
                             .ToList();
 
-                            var objEmpselect = db.View_ClockTime.Where(x => x.EmployeeID.Equals(item.EmployeeID) && x.PlantID.Equals(PlantID) && x.Type != "Service" && x.WorkingStatus != "Leave" && x.ClockIn != "" && x.ClockOut == "" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)).FirstOrDefault();
+                          //  var objEmpselect = db.View_ClockTime.Where(x => x.EmployeeID.Equals(item.EmployeeID) && x.PlantID.Equals(PlantID) && x.Type != "Service" && x.WorkingStatus != "Leave" && x.ClockIn != "" && x.ClockOut == "" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)).FirstOrDefault();
 
 
-                            var empfirst = db.TbProductionTransaction
-                               .Where(x => x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpselect.SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Select(x => x.QRCode).FirstOrDefault();
-                                int  LastTransactionCount = db.TbProductionTransaction
-                              .Where(x => x.QRCode.Equals(empfirst) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpselect.SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Count();
+                            //var empfirst = db.TbProductionTransaction
+                            //   .Where(x => x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Select(x => x.QRCode).FirstOrDefault();
+                            //int LastTransactionCount = db.TbProductionTransaction.Where(x => x.QRCode.Equals(empfirst) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Count();
 
+                            int LastTransactionCount = db.TbProductionTransaction .Where(x => x.QRCode.Equals(objEmpcount.First().EmployeeID) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Count();
                             LastTransactionCount += 1;
 
 

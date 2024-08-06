@@ -199,7 +199,7 @@
         <div class="col-2">
             @if (ViewBag.VBRoleEmployeeBreakAdjust == "Full")
             {
-                <button class="clear-button" type="submit" asp-action="EmployeeBreakAdjust">
+                <button class="clear-button" type="submit" asp-action="EmployeeBreakAdjust" onclick="return checkconfirm()">
                     Add Break-time for OT
                 </button>
             }
@@ -301,7 +301,7 @@
                         }
                         else
                         {
-                            @if (ViewBag.VBRoleEmployeeBreakAdjust == "Full")
+                            @if (ViewBag.VBRoleEmployeeBreakAdjust == "Full" && @item.BreakFlag == "Y")
                             {
                                 <a href="#" id="Revertid" data-id="@item.TransactionNo" onclick="RevertFn(@item.TransactionNo)">Revert</a>
                             }
@@ -375,6 +375,17 @@
             }
         });
     });
+
+
+
+
+    //check confirm
+    function checkconfirm() {
+        if (confirm('Are you sure?')) {
+            return true
+        }
+        return false
+    }
 
 
 

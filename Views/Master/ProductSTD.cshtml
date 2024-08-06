@@ -556,8 +556,9 @@
 
 
                     <div class="mb-3">
-                        <label for="recipient-name" class="col-form-label">Line Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName" required onchange="filterProductsByLineEdit()">
+                        <input type="text" name="LineID" id="ModalLineNamehid" hidden>
+                        <label for="recipient-name" class="col-form-label">Line Name:</label> @* //onchange="filterProductsByLineEdit()" *@
+                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName" required >
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -569,8 +570,9 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="recipient-name" class="col-form-label">Product Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductName" required onchange="filterSectionsByProductEdit()">
+                        <label for="recipient-name" class="col-form-label">Product Name:</label> @* onchange="filterSectionsByProductEdit()" *@
+                        <input type="text" name="ModalProductNamehid" id="ModalProductNamehid" hidden/>
+                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductName" required >
                          @*    @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
 
@@ -589,7 +591,9 @@
                     </div>
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Section Name:</label>
+                        <input type="text" name="ModalSectionNamehid" id="ModalSectionNamehid" hidden>
                         <select class="selectfillter form-control" style="width:100%" name="SectionID" id="ModalSectionName" required>
+                          
                            @*  @foreach (var item in Model.tbSection.Where(x => x.Status.Equals(1)))
                             {
 
@@ -695,7 +699,7 @@
             success: function (response) {
                 if (response == null || response == undefined) {
 
-                    alert("This data can't read1!")
+                    alert("This data can't read!")
                 }
                 else if (response.length == 0) {
 
@@ -705,24 +709,24 @@
 
                     console.log('AJAX request successful:', response);
                     $('#ModalProductSTDID').val(response.productSTDID);
-
+                 
 
                    // $('#ModalPlantName').append('<option value="' + response.plantID + '">' + response.plantID + " : " + response.plantName + '</option>');
                     $('#ModalPlantName').val(response.plantID).trigger('change');
-
+               
                    // $('#ModalLineName').append('<option value="' + response.lineID + '">' + response.lineID + " : " + response.lineName + '</option>');
                     $('#ModalLineName').val(response.lineID).trigger('change');
-
-
+                    $('ModalLineNamehid').val(response.lineID);
+      
                   //  $('#ModalProductName').append('<option value="' + response.productID + '">' +  response.productID + " : " + response.productName + '</option>');
                     $('#ModalProductName').val(response.productID).trigger('change');
-
+                    $('ModalProductNamehid').val(response.productID);
                   //  $('#ModalSectionName').append('<option value="' + response.sectionID + '">' + response.sectionID + " : " + response.sectionName + '</option>');
                     $('#ModalSectionName').val(response.sectionID).trigger('change');
-
-                   // $('#ModalUnit').append('<option value="' + response.unit + '">' + response.unit + '</option>');
+                    $('ModalSectionNamehid').val(response.sectionID);
+                          // $('#ModalUnit').append('<option value="' + response.unit + '">' + response.unit + '</option>');
                     $('#ModalUnit').val(response.unit).trigger('change');
-
+                
                     $('#ModalSTD').val(response.std);
                     $('#ModalPercentSTD').val(response.percentSTD);
                     $('#ModalPercentYield').val(response.percentYield);
@@ -730,6 +734,8 @@
                     $('#ModalEFFSTD').val(response.effstd);
                     $('#ModalStatus').prop('checked', response.status == 1);
                     $('#EditModal').modal('show');
+
+                    
                 }
             },
             error: function (response) {
@@ -917,13 +923,17 @@
 
     /// Fillter Edit
     function filterProductsByLineEdit() {
-        // Clear previous options
 
+        console.log('Producttest');
+        // Clear previous options
+        var Linevalue = $("#ModalLineNamehid").val().toString();
+        var Productvalue = $("#ModalProductNamehid").val().toString();
         $("#ModalProductName").empty();
         // Add a default option
 
         $("#ModalProductName").append("<option value='' default selected disabled>Please Select ..</option>");
-
+        console.log(Productvalue);
+        console.log(Linevalue);
 
         // Get the selected Line ID
         var selectedLineID = $("#ModalLineName").val().toString();
@@ -939,6 +949,7 @@
                     // Add filtered products to the dropdown
                     filteredProducts.forEach(function (product) {
                         $("#ModalProductName").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                     
                     });
                 },
                 error: function (error) {
@@ -954,13 +965,13 @@
         $("#ModalSectionName").empty();
         // Add a default option
         $("#ModalSectionName").append("<option value='' default selected disabled>Please Select ..</option>");
-        console.log("testsection");
+       
         // Get the selected Product ID
-
+        var SectionValue = $("#ModalSectionNamehid").val().toString();
         var selectedProductID = $("#ModalProductName").val().toString();
         var selectedLineID = $("#ModalLineName").val().toString();
-        // console.log(selectedProductID);
-        // console.log(selectedLineID);
+        console.log(SectionValue);
+         console.log('test');
         // Check if a product is selected
         if (selectedProductID !== "") {
             // Use AJAX to filter sections based on the selected Product ID

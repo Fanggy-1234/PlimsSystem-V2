@@ -468,7 +468,8 @@ namespace Plims.Controllers
             ViewBag.VBRoleEmpClockIn = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
             if (EmployeeIDchk.Length == 0)
             {
-                return View(mymodel);
+                return RedirectToAction("EmployeeClockIn", "Employee");
+                //return View(mymodel);
 
             }
             else
@@ -641,7 +642,7 @@ namespace Plims.Controllers
             if (EmpTran.Count() != 0)
             {
                 //Update Transaction
-                Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == obj.EmployeeID && x.TransactionDate == obj.TransactionDate).SingleOrDefault();
+                Empdb = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(obj.TransactionNo) && x.EmployeeID == obj.EmployeeID && x.TransactionDate == obj.TransactionDate).SingleOrDefault();
                 if (obj.TransactionDate != DateTime.MinValue)
                 {
                     Empdb.TransactionDate = obj.TransactionDate;
@@ -980,7 +981,7 @@ namespace Plims.Controllers
             ViewBag.VBRoleEmpClockOut = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
             if (EmployeeIDchk.Length == 0)
             {
-                return View(Employee);
+                return RedirectToAction("EmployeeClockOut", "Employee");
 
             }
             else
@@ -1287,11 +1288,11 @@ namespace Plims.Controllers
             // 1. check TbEmployeeTransaction == Null ?
             var Empdb = new TbEmployeeTransaction();
 
-            var EmpTran = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionDate == obj.TransactionDate).ToList();
+            var EmpTran = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(obj.TransactionNo) ).ToList();
             if (EmpTran.Count() != 0)
             {
                 //Update Transaction
-                Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == obj.EmployeeID && x.TransactionDate == obj.TransactionDate).SingleOrDefault();
+                Empdb = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(obj.TransactionNo) ).SingleOrDefault();
                 Empdb.ClockOut = obj.ClockOut;
                 Empdb.UpdateBy = EmpID;//User.Identity.Name,
                 Empdb.UpdateDate = DateTime.Now;
@@ -1768,11 +1769,6 @@ namespace Plims.Controllers
                     if (EmpTran.Count() != 0)
                     {
 
-
-
-
-
-
                         //Update Transaction
                         Empdb = db.TbServicesTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == TransactionDateVar && x.SectionID.Equals(sectionsplit[0].Trim()) && x.ServicesID.Equals(servicesplit[0].Trim())).SingleOrDefault();
                         Empdb.ClockIn = obj.ClockIn.ToString();
@@ -2217,7 +2213,7 @@ namespace Plims.Controllers
             ViewBag.VBRoleServicesClockOut = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(19)).Select(x => x.RoleAction).FirstOrDefault();
             if (EmployeeIDchk.Length == 0)
             {
-                return View(mymodel);
+                return RedirectToAction("ServicesClockOut");
 
             }
             else
@@ -2345,7 +2341,7 @@ namespace Plims.Controllers
             // 1. check TbEmployeeTransaction == Null ?
             var Empdb = new TbServicesTransaction();
 
-            var EmpTran = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionDate == obj.TransactionDate).ToList();
+            var EmpTran = db.TbServicesTransaction.Where(x => x.TransactionNo.Equals(obj.TransactionNo) && x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionDate == obj.TransactionDate).ToList();
             if (EmpTran.Count() != 0)
             {
                 //Update TbServicesTransaction
@@ -2492,7 +2488,7 @@ namespace Plims.Controllers
                     var varclockin = "";
                     var varclockout = "";
                     //Check clockin first
-                    var EmpCheckclock = db.View_ClockTime.Where(x => x.EmployeeID.Equals(empid) && x.WorkingStatus == "Working"  && x.ClockOut == "").Select(x=>x.TransactionDate).ToList();
+                    var EmpCheckclock = db.View_ClockTime.Where(x => x.EmployeeID.Equals(empid) && x.WorkingStatus == "Working" && x.ClockIn != ""  && x.ClockOut == "").Select(x=>x.TransactionDate).ToList();
 
                     if(EmpCheckclock.Count > 0)
                     {

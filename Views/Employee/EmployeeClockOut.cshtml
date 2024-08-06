@@ -203,6 +203,8 @@
                     var formattedDate = `${year}-${month}-${day}`;
 
                     console.log('AJAX request successful:', response)
+
+                    $('#ModalTranID').val(response.transactionNo);
                     $('#ModalEmployeeID').val(response.employeeID);
                     $('#ModalClockOut').val(response.clockOut);
                     $('#ModalTransactionDate').val(formattedDate);
@@ -601,10 +603,12 @@
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Clock Out Edit</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
                 </div>
                 <div class="modal-body">
                     <!-- Employee ID -->
                     <div class="mb-3">
+                        <input type="hidden" class="form-control" style="background-color:gainsboro" name="TransactionNo" id="ModalTranID">
                         <label for="recipient-name" class="col-form-label">Employee ID:</label>
                         <input type="text" class="form-control" style="background-color:gainsboro" name="EmployeeID" id="ModalEmployeeID" readonly>
                     </div>
