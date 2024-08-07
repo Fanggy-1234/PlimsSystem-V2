@@ -4862,14 +4862,14 @@ namespace Plims.Controllers
             if (PlantID != 0)
             {
 
-                //  mymodel.view_Reason = mymodel.view_Reason.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbPlants = mymodel.tbPlants.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbLine = mymodel.tbLine.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbProduct = mymodel.tbProduct.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbSection = mymodel.tbSection.Where(x => x.PlantID.Equals(PlantID)).ToList();
-                mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.PlantID.Equals(PlantID)).ToList();
-                mymodel.tbProductSTD = mymodel.tbProductSTD.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.view_PLPS = mymodel.view_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList();
+                mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.PlantID.Equals(PlantID)).ToList();
+
+
             }
             ViewBag.InactiveStatus = true;
             return RedirectToAction("ProductSTD");
