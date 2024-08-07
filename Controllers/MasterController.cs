@@ -6526,17 +6526,9 @@ namespace Plims.Controllers
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrCodeText, QRCodeGenerator.ECCLevel.Q);
                 QRCode qrCode = new QRCode(qrCodeData);
-                Bitmap qrBitmapFirst = qrCode.GetGraphic(30);
+                Bitmap qrBitmap = qrCode.GetGraphic(30);
 
-
-                // Define the desired height and calculate the new bitmap dimensions
-                int desiredHeight = qrBitmapFirst.Height + 100; // Increase height to accommodate label
-                int desiredWidth = qrBitmapFirst.Width;
-
-                // Create a new bitmap with the desired dimensions
-                Bitmap qrBitmap = new Bitmap(desiredWidth, desiredHeight);
-
-
+           
 
                 // Add label to the QR code
                 using (Graphics g = Graphics.FromImage(qrBitmap))
@@ -6588,6 +6580,7 @@ namespace Plims.Controllers
             // Check Admin
             if (PlantID != 0)
             {
+              
 
                 mymodel.view_PermissionMaster = mymodel.view_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbEmployeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID)).ToList();
@@ -8088,11 +8081,12 @@ namespace Plims.Controllers
                 Sheet.Cells["C1"].Value = "Status";
                 int row = 2;
 
-                var groupfirst = db.TbEmployeeGroupQR
-                .Where(x => x.EmployeeID.Equals(obj.EmployeeID) && x.PlantID.Equals(PlantID))
-                .GroupBy(x => x.GroupID)
-                .Select(group => group.Key)
-                .ToList().First();
+
+                //var groupfirst = db.TbEmployeeGroupQR
+                //.Where(x => x.EmployeeID.Equals(obj.EmployeeID) && x.PlantID.Equals(PlantID))
+                //.GroupBy(x => x.GroupID)
+                //.Select(group => group.Key)
+                //.ToList().First();
                 var employeelist = "";
                 foreach (var item in grouplist)
                 {
