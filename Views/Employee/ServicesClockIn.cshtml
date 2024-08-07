@@ -590,6 +590,47 @@
 
 
 
+
+
+    
+
+    function filterServicesBySection() {
+
+        var SelectLineID = $("#LineID").val().toString();
+        var SelectSectionID = $("#SectionID").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+
+        // Check if a product is selected
+        if (SelectLineID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Employee/FilterServiceBySection", // Update the URL to your controller action
+                data: { LineID: SelectLineID, SectionID: SelectSectionID },
+                success: function (data) {
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        alert(data.message);
+
+                    } else {
+
+                        $("#ServicesID").empty();
+                        $("#ServicesID").append("<option value='All'>All</option>");
+
+                        data.forEach(function (section) {
+                            $("#ServicesID").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
+
 </script>
 
 @if (TempData.ContainsKey("AlertMessage"))
@@ -784,7 +825,7 @@
                     <label> Section :</label>
                 </div>
                 <div class="col d-flex align-items-center">
-                    <select class="selectfillter form-control" list="SectionID" name="SectionID" id="SectionID" style="width:100%">
+                    <select class="selectfillter form-control" list="SectionID" name="SectionID" id="SectionID" style="width:100%" onchange="filterServicesBySection()">
                         <option value="" default selected></option>
                         <option value="ALL"> ALL</option>
                         @*  @foreach (var item in Model.tbSection.Where(x=>x.Status.Equals(1)))

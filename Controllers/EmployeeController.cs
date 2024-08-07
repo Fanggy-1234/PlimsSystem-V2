@@ -2019,6 +2019,49 @@ namespace Plims.Controllers
 
 
 
+
+        [HttpGet]
+        public IActionResult FilterServiceBySection(string LineID , string SectionID)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            // Replace this with your logic to filter products based on the lineId
+
+            if (PlantID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            // var emp = db.View_EmployeeClocktime.Where(x=>x.EmployeeID == selectedEmpID && x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today ).ToList();
+
+            // Query with time-based filtering in addition to date and other conditions
+            var sectioncheck = db.TbService
+                .Where(x => x.LineID == LineID && x.SectionID == SectionID
+                            && x.PlantID.Equals(PlantID))
+                 .GroupBy(x => new { x.PlantID, x.LineID, x.SectionID,x.ServicesID,x.ServicesName })
+                 .Select(group => new
+                 {
+                     SectionID = group.Key.ServicesID,
+                     SectionName = group.Key.ServicesName
+
+                 }).ToList();
+
+            if (sectioncheck.Count() == 0)
+            {
+
+                //TempData["AlertMessage"] = "Data haven't clockin or Data already clock out. : " + selectedEmpID ;
+                //return View("WorkingFunction", mymodel);
+
+                return Json(new { success = false, message = "Please Services master! " });
+
+            }
+
+
+
+
+            return Json(sectioncheck);
+        }
+
+
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
