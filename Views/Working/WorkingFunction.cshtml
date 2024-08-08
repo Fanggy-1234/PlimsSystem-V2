@@ -873,7 +873,7 @@
 
 
     function filterSectionsByProductEditFG() {
-        console.log('test');
+        
         var selectedEmpID = $("#EmployeeIDFG").val().toString();
         var selectedProductIDFG = $("#ProductIDFG").val().toString();
         // var selectedLineID = $("#ModalLineName").val().toString();
@@ -1018,6 +1018,25 @@
 
 
 
+    // * Modal scanner 
+
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+
+        };
+    }
+
+    function filterProductByEmployeeClockin() {
+        // Your filtering logic here
+        console.log("Filtering product by employee clock-in");
+    }
+
+    const debouncedFilterProductByEmployeeClockin = debounce(filterProductByEmployeeClockin, 500);
+
+    document.getElementById('EmployeeIDFG').addEventListener('input', debouncedFilterProductByEmployeeClockin);
 
     function CallfunctionInputproductQty() {
         // Clear previous options
@@ -1033,10 +1052,8 @@
                 url: "/Working/ProductQTYPieceWithReffn", // Update the URL to your controller action
                 data: { EmployeeID: EmployeeID, ProductID: ProductID, SectionID: SectionID, QTY: QTY },
                 success: function (data) {
-
-                    $('#EmployeeID').focus();
+                    $('#productId').focus();
                     location.reload();
-
                 },
                 error: function (error) {
                     console.log("Error filtering product: " + error);
@@ -1046,6 +1063,37 @@
     }
 
 
+    // *End Modal scanner
+
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+    // function CallfunctionInputproductQty() {
+    //     // Clear previous options
+    //     var EmployeeID = $("#EmployeeIDFG").val().toString();
+    //     var ProductID = $("#ProductIDFG").val().toString();
+    //     var SectionID = $("#SectionNameFG").val().toString();
+    //     var QTY = $("#QTYFG").val().toString();
+
+    //     if (EmployeeID !== "") {
+    //         // Use AJAX to filter sections based on the selected Product ID
+    //         $.ajax({
+    //             type: "GET",
+    //             url: "/Working/ProductQTYPieceWithReffn", // Update the URL to your controller action
+    //             data: { EmployeeID: EmployeeID, ProductID: ProductID, SectionID: SectionID, QTY: QTY },
+    //             success: function (data) {
+
+    //                 $('#EmployeeID').focus();
+    //                 location.reload();
+
+    //             },
+    //             error: function (error) {
+    //                 console.log("Error filtering product: " + error);
+    //             }
+    //         });
+    //     }
+    // }
+
+    ///////////////////////////////////////////////////////////////////////////////////////
     function CallfunctionInputDefectQty() {
         // Clear previous options
         var EmployeeID = $("#EmployeeIDDefect").val().toString();

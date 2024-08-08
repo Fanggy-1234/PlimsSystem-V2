@@ -2893,6 +2893,14 @@ namespace Plims.Controllers
                 }
                 else
                 {
+                    var Empcheckclockoutadjust = Employee.tbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.WorkingStatus == "Working" && x.ClockOut == "" && x.Remark == "Adjust").ToList();
+
+                    if (Empcheckclockoutadjust.Count != 0)
+                    {
+                        TempData["AlertMessage"] = "Please Employee Clock out Employee Adjust :" + empid;
+                        return RedirectToAction("EmployeeAdjustLine");
+                    }
+
                     EmpTran = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == thisday && x.Plant.Equals(PlantID) && x.Line.Equals(ToLine) && x.Section.Equals(ToSection) && x.Remark == "Adjust").ToList();
 
                 }
@@ -2914,7 +2922,7 @@ namespace Plims.Controllers
                     //Update Transaction
                     if (StartTime != null)
                     {
-                        
+
                         //Insert clockin
                         Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == thisday && x.Plant.Equals(PlantID)).SingleOrDefault();
 

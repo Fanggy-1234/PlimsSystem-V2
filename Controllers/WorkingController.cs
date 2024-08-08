@@ -1976,7 +1976,7 @@ namespace Plims.Controllers
                 try
                 {
                     //check employee or Group
-                    if (db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)).Count() != 0) // case Employee
+                    if (employeeId.Length > 5) // (db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)).Count() != 0) // case Employee
                     {
 
                         //Check EmployeeClockin  change adjust clockout                   
@@ -2937,7 +2937,7 @@ namespace Plims.Controllers
 
 
 
-        public ActionResult ProductQTYPieceWithReffn(string EmployeeID, string ProductID, string SectionID, int QTY)
+        public ActionResult ProductQTYPieceWithReffn(string EmployeeID, string ProductID, string SectionID, decimal QTY)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
