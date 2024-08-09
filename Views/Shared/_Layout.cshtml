@@ -400,7 +400,7 @@
                 @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(24) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
                 {
                     ViewBag.VBRoleFinancial = Model.view_PermissionMaster.Where(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(24)).Select(x => x.RoleAction).FirstOrDefault();
-                        <a href="@Url.Action("FinancialReport", "Working")" class="w3-bar-item w3-button w3-hover-blue">Finacial Report</a>
+                        <a href="@Url.Action("FinancialReport", "Working")" class="w3-bar-item w3-button w3-hover-blue">Financial Report</a>
                 }
                 @if (Model.view_PermissionMaster.Any(x => x.UserEmpID == UserEmpIDs && x.PageID.Equals(25) && (x.RoleAction.Equals("Full") || x.RoleAction.Equals("View"))) == true)
                 {

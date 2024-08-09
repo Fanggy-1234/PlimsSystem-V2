@@ -491,8 +491,6 @@ namespace Plims.Controllers
                     DateTime clockoutvar;
                     DateTime clockinvar;
 
-
-
                     var empdbcheck = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "").ToList();
                     if (empdbcheck.Count() != 0)
                     {
@@ -2744,7 +2742,7 @@ namespace Plims.Controllers
         /// <returns></returns>
 
         [HttpGet]
-        public ActionResult EmployeeAdjustLine(View_EmployeeClocktime obj, string[] EmployeeIDchk, string StartTime, string EndTime, string ToLine, string ToSection, string FromLine, DateTime TransactionDateFillter)
+        public ActionResult EmployeeAdjustLine(View_EmployeeClocktime obj, string[] EmployeeIDchk, string StartTime, string EndTime, string ToLine, string ToSection, string FromLine, DateTime TransactionDateFillter, string SectionIDFillter)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -2766,6 +2764,7 @@ namespace Plims.Controllers
                 // view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EmployeeAdjustLine = db.View_EmployeeAdjustLine.Where(x => x.PlantID.Equals(PlantID))
                 .OrderByDescending(x => x.TransactionDate)
+                 .ThenBy(x => x.SectionID)
                 .ThenBy(x => x.EmployeeID)
                 .ToList(),
 
@@ -2775,7 +2774,7 @@ namespace Plims.Controllers
             ViewBag.VBRoleEmployeeAdjustLine = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(31)).Select(x => x.RoleAction).FirstOrDefault();
 
 
-            if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || TransactionDateFillter != DateTime.MinValue)
+            if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(SectionIDFillter) || TransactionDateFillter != DateTime.MinValue)
             {
 
                 if (!string.IsNullOrEmpty(obj.EmployeeID))
@@ -2788,10 +2787,10 @@ namespace Plims.Controllers
                     ViewBag.SelectedLineName = obj.LineName;
                     Employee.view_EmployeeAdjustLine = Employee.view_EmployeeAdjustLine.Where(p => p.LineName == obj.LineName).ToList();
                 }
-                if (!string.IsNullOrEmpty(obj.SectionID))
+                if (!string.IsNullOrEmpty(SectionIDFillter))
                 {
-                    ViewBag.SelectedSectionID = obj.SectionID;
-                    Employee.view_EmployeeAdjustLine = Employee.view_EmployeeAdjustLine.Where(p => p.SectionID == obj.SectionID).ToList();
+                    ViewBag.SelectedSectionID = SectionIDFillter;
+                    Employee.view_EmployeeAdjustLine = Employee.view_EmployeeAdjustLine.Where(p => p.FromSectionID == SectionIDFillter).ToList();
                 }
 
                 if (TransactionDateFillter != DateTime.Today && Convert.ToDateTime(TransactionDateFillter) == DateTime.MinValue)

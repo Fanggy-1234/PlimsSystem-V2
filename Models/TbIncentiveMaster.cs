@@ -15,7 +15,7 @@ namespace Plims.Models
         //public int ProdID { get; set; }
         public string ProductID { get; set; }
         public string SectionID { get; set; }
-        public int STD { get; set; }
+        public decimal STD { get; set; }
 
         [Column(TypeName = "decimal(18,3)")]
         public decimal? Min { get; set; }

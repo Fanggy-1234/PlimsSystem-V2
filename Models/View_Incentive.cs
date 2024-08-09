@@ -12,7 +12,7 @@ namespace Plims.Models
         public string ProductName { get; set; }
         public string SectionName { get; set; }
         public Nullable<int> Status { get; set; }
-        public Nullable<int> STD { get; set; }
+        public decimal STD { get; set; }
         [DisplayFormat(DataFormatString = "{0:N3}")]
         public Nullable<decimal> Min { get; set; }
         [DisplayFormat(DataFormatString = "{0:N3}")]

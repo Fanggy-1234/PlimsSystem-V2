@@ -15,6 +15,7 @@ namespace Plims.Models
         public string WorkingStatus { get; set; }
         public string ClockIn { get; set; }
         public string ClockOut { get; set; }
+        [StringLength(255, ErrorMessage = "Remark cannot be longer than 255 characters.")]
         public string? Remark { get; set; }
         public DateTime CreateDate { get; set; }
         public string CreateBy { get; set; }

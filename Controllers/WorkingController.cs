@@ -2025,7 +2025,7 @@ namespace Plims.Controllers
 
                                         //Check last count                                      
                                         int LastTransactionCount = db.TbProductionTransaction
-                                           .Where(x => x.QRCode.Equals(employeeId) && x.SectionID.Equals(objEmp.SectionID) && x.TransactionDate.Date == currentDate && x.DataType.Equals("Count")).Count();
+                                           .Where(x => x.QRCode.Equals(employeeId) && x.SectionID.Equals(objEmp.SectionID) && x.TransactionDate.Date == objEmp.TransactionDate && x.DataType.Equals("Count")).Count();
                                         LastTransactionCount += 1;
                                         
                                         // Convert TimeSpan to total seconds
@@ -2121,7 +2121,7 @@ namespace Plims.Controllers
                             //   .Where(x => x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Select(x => x.QRCode).FirstOrDefault();
                             //int LastTransactionCount = db.TbProductionTransaction.Where(x => x.QRCode.Equals(empfirst) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Count();
 
-                            int LastTransactionCount = db.TbProductionTransaction .Where(x => x.QRCode.Equals(objEmpcount.First().EmployeeID) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Count();
+                            int LastTransactionCount = db.TbProductionTransaction .Where(x => x.QRCode.Equals(objEmpcount.First().EmployeeID) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.TransactionDate.Date == objEmpcount.First().TransactionDate && x.DataType.Equals("Count")).Count();
                             LastTransactionCount += 1;
 
 
@@ -5827,8 +5827,10 @@ namespace Plims.Controllers
                 {
 
                     //Check Clockout Employee
-                    var EmpIDtrancheck = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
-                    var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "").ToList();
+                 //   var EmpIDtrancheck = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                //    var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "").ToList();
+                    var checkClockout = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(FGEmployeeID) && x.ClockOut == "").ToList();
+
 
                     if (checkClockout.Count() >= 1)
                     {

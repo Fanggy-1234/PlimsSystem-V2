@@ -267,7 +267,7 @@
                 </div>
                 <div class="col" style="padding-bottom:0.5em">
                     <!-- Line Name -->
-                  
+                   
                         <select class="selectfillter form-control" list="LineName" name="LineName" id="LineName" style="width:100%">
                             <option value="" default selected></option>
                             @foreach (var item in Model.tbLine)
@@ -280,7 +280,7 @@
                         </select>
 
 
-
+                       
                 </div>
 
 
@@ -303,15 +303,36 @@
                                 </option>
                             }
                         </select>
-
-                       
-
-
-                   
-                </div>
+                   </div>
+               
 
 
             </div>
+
+
+
+
+              <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:0.1em">
+                <div class="col-3 label" style="padding-bottom:0.1em">
+                    <label for="recipient-name" class="col-form-label"> Section ID:</label>
+                </div>
+                <div class="col" style="padding-bottom:0.1em">
+                    <!-- Section ID -->
+                
+                    <select class="selectfillter form-control" list="SectionIDFillter" name="SectionIDFillter" id="SectionIDFillter" style="width:100%">
+                            <option value="" default selected></option>
+                        @foreach (var item in Model.tbSection)
+                            {
+
+                            <option value="@item.SectionID" selected="@(item.SectionID == ViewBag.SelectedSectionID? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
+                                </option>
+                            }
+                        </select>
+                     
+                </div>
+            </div>
+
 
 
             <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:1em">
