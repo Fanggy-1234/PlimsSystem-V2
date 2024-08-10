@@ -5734,7 +5734,7 @@ namespace Plims.Controllers
                 {
 
                     //Update  TbProductionTransactionAdjust      
-                    var TranFGAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.Type.Equals("Employee")).SingleOrDefault();
+                    var TranFGAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.Remark.Equals(FGEmployeeID) && x.Type.Equals("Employee")).SingleOrDefault();
                     TranFGAdjust.QTY = FGQTY;
                     db.SaveChanges();
 
