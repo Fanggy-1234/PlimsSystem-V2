@@ -4987,7 +4987,7 @@ namespace Plims.Controllers
                 if (!string.IsNullOrEmpty(obj.QRCode))
                 {
                     mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.QRCode.Equals(obj.QRCode)).ToList();
-                    ViewBag.SelectedPrefix = obj.Prefix;
+                    ViewBag.SelectedEmployeeID = obj.QRCode;
                 }
 
                 return View(mymodel);
@@ -5381,7 +5381,7 @@ namespace Plims.Controllers
                 if (!string.IsNullOrEmpty(obj.QRCode))
                 {
                     mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.QRCode.Equals(obj.QRCode)).ToList();
-                    ViewBag.SelectedPrefix = obj.Prefix;
+                    ViewBag.SelectedEmployee = obj.QRCode;
                 }
 
                 return View(mymodel);
