@@ -5455,6 +5455,9 @@ namespace Plims.Controllers
             };
             var startDate = FGPlanDate.Date;
             var endDate = startDate.AddDays(1);
+            DateTime mindate;
+            DateTime maxdate;
+
             string[] FGLineID = FGLine.Split(":");
             string[] FGSectionID = FGSection.Split(":");
             //fang edit 30/07/2024
@@ -5841,20 +5844,7 @@ namespace Plims.Controllers
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
                     }
 
-                    // Table : TbProductionTransactionAdjust  Create
-                    db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
-                    {
-                        TransactionDate = Convert.ToDateTime(FGPlanDate),
-                        PlantID = PlantID,
-                        LineID = FGLineID[0].Trim(),
-                        SectionID = FGSectionID[0].Trim(),
-                        Prefix = FGShift,
-                        Type = "Employee",
-                        Remark = FGEmployeeID,
-                        QTY = FGQTY,
-                        CreateDate = DateTime.Now,
-                        CreateBy = EmpID
-                    });
+                  
                     //  db.SaveChanges();
 
 
@@ -5862,18 +5852,43 @@ namespace Plims.Controllers
                     //CountQRCode
                     int sumQRCodeEmp = 0;
                     string employeeIDvar = "";
+                    
+                    decimal inputqty = 0;
                     foreach (int item in TransactionID)
                     {
+                        
+                        var QREmp = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionID.Equals(item))
+                             .Select(x => new { x.QRCode, x.TransactionDate }).SingleOrDefault();
+                        employeeIDvar = QREmp.QRCode;
 
-                        var QREmp = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionID.Equals(item)).Select(x => x.QRCode).SingleOrDefault();
-                        employeeIDvar = QREmp;
+                         startDate = QREmp.TransactionDate;
+                         endDate = QREmp.TransactionDate.AddDays(1);
 
-                        var ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp) && x.DataType.Equals("Count")).ToList();
+                        var ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp.QRCode) && x.DataType.Equals("Count")).ToList();
 
                         int cntProductionTrand = ProductionTrand.Count();
                         sumQRCodeEmp += cntProductionTrand;
 
+                        // Table : TbProductionTransactionAdjust  Create
+                        db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                        {
+                            TransactionDate = Convert.ToDateTime(startDate),
+                            PlantID = PlantID,
+                            LineID = FGLineID[0].Trim(),
+                            SectionID = FGSectionID[0].Trim(),
+                            Prefix = FGShift,
+                            Type = "Employee",
+                            Remark = QREmp.QRCode,
+                            QTY = FGQTY,
+                            CreateDate = DateTime.Now,
+                            CreateBy = EmpID
+                        });
+                       
+
+                        inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(employeeIDvar) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList().Sum();
+
                     }
+                    //Test now //
                     if (sumQRCodeEmp == 0)
                     {
 
@@ -5883,11 +5898,7 @@ namespace Plims.Controllers
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
 
                     }
-                    decimal inputqty = 0;
-                    //var inputqtytest = mymodel.view_ProductionTransactionAj.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLine) && x.SectionID.Equals(FGSection) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList();
-
-                    inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(employeeIDvar) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList().Sum();
-
+                  
                     // Calculate FG/Count for QTYPerQR
                     decimal QRPerAdjustinsert = Math.Round(((decimal)FGQTY - inputqty) / sumQRCodeEmp, 8);
 
@@ -5897,7 +5908,7 @@ namespace Plims.Controllers
                         int datacnt = TransactionID.Count();
                         for (int i = 0; i < datacnt; ++i)
                         {
-
+                            //Test now //
                             int empid = TransactionID[i];
                             var EmpIDtran = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionID.Equals(empid)).Select(x => x.QRCode).ToList();
 
