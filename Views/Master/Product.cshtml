@@ -102,11 +102,11 @@
         <div class="col-3 d-flex align-items-center">
             <select class="selectfillter form-control" style="width:100%" name="ProductName" id="ProductName">
                 <option value="" default selected></option>
-                @foreach (var item in Model.tbProduct)
+                @foreach (var item in Model.tbProduct.Select(x=>x.ProductName).Distinct().ToList())
                 {
 
-                    <option value="@item.ProductName" selected="@(item.ProductName == ViewBag.SelectedProductName ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => item.ProductName)
+                    <option value="@item" selected="@(item == ViewBag.SelectedProductName ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => item)
                     </option>
                 }
             </select>

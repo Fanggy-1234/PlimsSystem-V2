@@ -104,10 +104,10 @@
 
             <select class="selectfillter form-control" style="width:100%" name="LineName" id="LineName">
                 <option value="" default selected></option>
-                @foreach (var item in Model.tbLine)
+                @foreach (var item in Model.tbLine.Select(x=>x.LineName).Distinct().ToList())
                 {
-                    <option value="@item.LineName" selected="@(ViewBag.SelectedLineName != null && ViewBag.SelectedLineName.Contains(item.LineName) ? "selected" : null)">
-                        @Html.DisplayFor(modelItem => item.LineName)
+                    <option value="@item" selected="@(ViewBag.SelectedLineName != null && ViewBag.SelectedLineName.Contains(item) ? "selected" : null)">
+                        @Html.DisplayFor(modelItem => item)
                     </option>
                 }
             </select>
