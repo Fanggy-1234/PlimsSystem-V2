@@ -639,12 +639,25 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.EndTime)
                     </td>
-                    <td style="color:darkblue">
-                        @Html.DisplayFor(modelItem => item.ClockIn)
-                    </td>
-                    <td style="color:darkblue">
-                        @Html.DisplayFor(modelItem => item.ClockOut)
-                    </td>
+                    @if (string.IsNullOrEmpty(item.Remark))
+                    {
+                        <td style="color:darkblue">
+                            @Html.DisplayFor(modelItem => item.ClockIn)
+                        </td>
+                        <td style="color:darkblue">
+                            @Html.DisplayFor(modelItem => item.ClockOut)
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="color:green">
+                            @Html.DisplayFor(modelItem => item.ClockIn)
+                        </td>
+                        <td style="color:green">
+                            @Html.DisplayFor(modelItem => item.ClockOut)
+                        </td>
+                    }
+                 
                     <td>
                         @Html.DisplayFor(modelItem => item.WorkingStatus)
                     </td>

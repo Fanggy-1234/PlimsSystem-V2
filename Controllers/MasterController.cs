@@ -1327,105 +1327,7 @@ namespace Plims.Controllers
         }
 
 
-
-        //[HttpPost]
-        //public IActionResult ProductProcessDataTable([FromBody] List<Dictionary<string, string>> tableData)
-        //{
-        //    int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
-        //    string EmpID = HttpContext.Session.GetString("UserEmpID");
-
-
-        //    if (EmpID == null)
-        //    {
-        //        return RedirectToAction("Login", "Home");
-        //    }
-        //    var mymodel = new ViewModelAll
-        //    {
-        //        view_PermissionMaster = db.View_PermissionMaster.ToList(),
-        //        tbProduct = db.TbProduct.Where(p=>p.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-        //    };
-
-        //    try
-        //    {
-        //        // Create a DataTable
-        //        DataTable dataTable = new DataTable("Product");
-
-        //        // Add headers to the DataTable
-        //        //var headers = tableData.First().Keys.ToList();
-        //        var headers = tableData.First().Keys.Take(3).ToList();
-        //        foreach (var header in headers)
-        //        {
-        //            dataTable.Columns.Add(header.Trim());
-
-        //        }
-
-        //        // Add data to the DataTable
-        //        foreach (var rowData in tableData)
-        //        {
-        //            var dataRow = dataTable.NewRow();
-        //            foreach (var header in headers)
-        //            {
-        //                dataRow[header.Trim()] = rowData[header].Trim();
-        //            }
-        //            dataTable.Rows.Add(dataRow);
-        //        }
-
-        //        using (var package = new ExcelPackage())
-        //        {
-        //            // Create a worksheet
-        //            var worksheet = package.Workbook.Worksheets.Add("Product");
-
-        //            // Add headers to the worksheet
-        //            for (int col = 1; col <= dataTable.Columns.Count; col++)
-        //            {
-        //                var headername = dataTable.Columns[col - 1].ColumnName;
-        //                worksheet.Cells[1, col].Value = headername;
-        //            }
-
-        //            // Add data to the worksheet
-        //            for (int row = 0; row < dataTable.Rows.Count; row++)
-        //            {
-        //                for (int col = 1; col <= dataTable.Columns.Count; col++)
-        //                {
-        //                    try
-        //                    {
-        //                        var DataName = dataTable.Rows[row][col - 1].ToString();
-        //                        worksheet.Cells[row + 2, col].Value = DataName;
-        //                    }
-        //                    catch (Exception ex)
-        //                    {
-        //                        Console.WriteLine($"Error accessing data at row {row}, col {col}: {ex.Message}");
-        //                        // Log the error using your logging framework (e.g., Serilog, NLog)
-        //                        return StatusCode(500, $"Error exporting data: {ex.Message}");
-        //                    }
-        //                }
-        //            }
-
-        //            var filePath = startpath + "ProductMaster.xls";
-        //            System.IO.File.WriteAllBytes(filePath, package.GetAsByteArray());
-
-        //            //// Save the Excel package to a stream
-        //            // var stream = new MemoryStream(package.GetAsByteArray());
-        //            //// Set the position to the beginning of the stream
-        //            //stream.Position = 0;
-        //            //// Return the Excel file as a FileStreamResult
-        //            //File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "LineReport.xlsx");
-        //            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-        //            return File(fileStream, "application/vnd.ms-excel", "ProductMaster.xls");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error generating Excel file: {ex.Message}");
-        //        // Log the error using your logging framework (e.g., Serilog, NLog)
-        //        return StatusCode(500, $"Error exporting data: {ex.Message}");
-        //    }
-        //}
-
-
-
-
-
+        // Function นี้สำหรับการ export Product master
         [HttpGet]
         public ActionResult ProductExport(TbProduct obj, bool? inactivestatus)
         {
@@ -1538,7 +1440,7 @@ namespace Plims.Controllers
 
 
 
-
+        // Function สำหรับการ Import master product
         [HttpPost]
         public IActionResult ProductUpload(IFormFile FileUpload)
         {
