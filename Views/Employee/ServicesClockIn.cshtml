@@ -383,6 +383,8 @@
 
     // }
     function AddserviceFn() {
+
+        var selectedLine = $("#LineID option:selected");
         var selectedService = $("#ServicesID option:selected");
         var selectedSection = $("#SectionID option:selected");
         var tableBody = $("#tablecreate_id tbody");
@@ -534,7 +536,7 @@
             var service = $(this).find("td:eq(1)").text();
             tableData.push({ Section: section, Service: service });
         });
-        console.log('test');
+        //console.log('test');
 
         // Update the hidden input value
        $("#TableData").val(JSON.stringify(tableData));
@@ -599,7 +601,7 @@
         var SelectLineID = $("#LineID").val().toString();
         var SelectSectionID = $("#SectionID").val().toString();
         // var selectedLineID = $("#ModalLineName").val().toString();
-
+       
         // Check if a product is selected
         if (SelectLineID !== "") {
             // Use AJAX to filter sections based on the selected Product ID
@@ -613,12 +615,12 @@
                         alert(data.message);
 
                     } else {
-
+                    
                         $("#ServicesID").empty();
                         $("#ServicesID").append("<option value='All'>All</option>");
 
                         data.forEach(function (section) {
-                            $("#ServicesID").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
+                            $("#ServicesID").append("<option value='" + section.servicename + "'>" + section.servicename +  "</option>");
                         });
                     }
                 },
@@ -851,10 +853,10 @@
                 <div class="col d-flex align-items-center">
                     <select class="selectfillter form-control" list="ServicesID" name="ServicesID" id="ServicesID" style="width:100%">
                         <option value="" default selected></option>
-                        @foreach (var item in Model.tbService.Where(x => x.ServicesStatus.Equals(1)))
+                        @foreach (var item in Model.tbService.Where(x => x.ServicesStatus.Equals(1)).DistinctBy(x => x.ServicesName))
                         {
 
-                            <option value="@item.ServicesID">@Html.DisplayFor(modelItem => item.ServicesID) :  @Html.DisplayFor(modelItem => item.ServicesName)   </option>
+                            <option value="@item.ServicesName">@Html.DisplayFor(modelItem => item.ServicesID)  : @Html.DisplayFor(modelItem => item.ServicesName)   </option>
                         }
                     </select>
                 </div>

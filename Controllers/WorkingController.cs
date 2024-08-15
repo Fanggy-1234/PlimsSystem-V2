@@ -2929,7 +2929,7 @@ namespace Plims.Controllers
             }
             catch (Exception ex)
             {
-                TempData["AlertMessage"] = "Working page had problem! please contact IT";
+                TempData["AlertMessage"] = "Connection loss! please contact IT";
                 return RedirectToAction("Login");
             }
 
@@ -3038,7 +3038,7 @@ namespace Plims.Controllers
             }
             catch (Exception ex)
             {
-                TempData["AlertMessage"] = "Working page had problem! please contact IT";
+                TempData["AlertMessage"] = "Connection loss! please contact IT";
                 return RedirectToAction("Login");
             }
 
@@ -3137,7 +3137,7 @@ namespace Plims.Controllers
             }
             catch (Exception ex)
             {
-                TempData["AlertMessage"] = "Working page had problem! please contact IT";
+                TempData["AlertMessage"] = "Connection loss! please contact IT";
                 return RedirectToAction("Login");
             }
 
@@ -3243,7 +3243,7 @@ namespace Plims.Controllers
             }
             catch (Exception ex)
             {
-                TempData["AlertMessage"] = "Working page had problem! please contact IT";
+                TempData["AlertMessage"] = "Connection loss! please contact IT";
                 return RedirectToAction("Login");
             }
 
@@ -4854,12 +4854,7 @@ namespace Plims.Controllers
 
             if (empsectioncheck.Count() == 0)
             {
-
-                //TempData["AlertMessage"] = "Data haven't clockin or Data already clock out. : " + selectedEmpID ;
-                //return View("WorkingFunction", mymodel);
-
                 return Json(new { success = false, message = "Data haven't clockin or Data already clock out. " });
-
             }
 
             var empsection = db.View_EmployeeClocktime
@@ -4910,6 +4905,8 @@ namespace Plims.Controllers
 
                 return Json(new { success = false, message = "Data haven't clockin or Data already clock out. " });
             }
+            
+
 
             var empsection = db.View_EmployeeClocktime
                 .Where(x => x.EmployeeID.Equals(selectedEmpID)

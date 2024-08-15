@@ -200,11 +200,11 @@
                     Input Product Qty
                 </button>
             </div>
-            <div class="col-2">
+          @*   <div class="col-2">
                 <button class="RemoveProduct-button" data-bs-toggle="modal" data-bs-target="#SpecialModal">
                     Remove Product Qty
                 </button>
-            </div>
+            </div> *@
 
         </div>
 
@@ -250,7 +250,7 @@
             </div>
 
             <div class="row" style="height:20px"></div>
-            <div class="row" style="height:80px">
+           @*  <div class="row" style="height:80px">
                 <div class="col-2" style=" align-content: center;"><label class="FillterLabel"> Employee Refer :</label> </div>
                 <div class="col-8">
                     <input class="form-control" name="EmployeeRefsection" id="EmployeeRefsection" placeholder="Employee Refer" disabled>
@@ -258,7 +258,7 @@
 
                 <div class="col-2">
                 </div>
-            </div>
+            </div> *@
             <div class="row" style="height:20px"></div>
             <div class="row" style="height:80px"></div>
                 <div class="col-2" style=" align-content: center;"></div>
@@ -284,7 +284,7 @@
 <div class="modal fade" id="FGModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" controller="Working" action="ProductQTYPieceWithRef">
+            <form id="fgForm" method="post" controller="Working" action="ProductQTYPieceWithRef">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Product QTY Piece</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -353,7 +353,7 @@
 <div class="modal fade" id="DefectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" controller="Working" action="ProductQtyDefectWithRef">
+            <form id="defectForm" method="post" controller="Working" action="ProductQtyDefectWithRef">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Input Defect</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -499,7 +499,21 @@
 
 <script>
 
+    // document.getElementById('defectForm').addEventListener('submit', function (event) {
+    //     var reasonDefect = document.getElementById('SectionNameDefect').value;
+    //     if (!reasonDefect) {
+    //         event.preventDefault(); // Prevent form submission
+    //         alert('Please Clockin QRcode.');
+    //     }
+    // });
 
+    // document.getElementById('fgForm').addEventListener('submit', function (event) {
+    //     var reasonDefect = document.getElementById('SectionNameFG').value;
+    //     if (!reasonDefect) {
+    //         event.preventDefault(); // Prevent form submission
+    //         alert('Please Clockin QRcode.');
+    //     }
+    // });
 
 
     // Modal FG
@@ -804,6 +818,8 @@
 <script>
 
     function filterProductByEmployeeClockin() {
+
+        Console.log('error1');
         // Clear previous options
         $("#ProductIDFG").empty();
         // Add a default option
@@ -812,8 +828,10 @@
         // Get the selected Product ID
 
         var selectedEmpID = $("#EmployeeIDFG").val().toString();
+      
         // var selectedLineID = $("#ModalLineName").val().toString();
         Console.log(selectedEmpID);
+
         // Check if a product is selected
         if (selectedEmpID !== "") {
             // Use AJAX to filter sections based on the selected Product ID
@@ -822,11 +840,13 @@
                 url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
                 data: { selectedEmpID: selectedEmpID },
                 success: function (data) {
-                    console.log(data);
+                    //console.log(data);
                     if (data.success === false) {
                         // Show an alert message if the response indicates failure
                         alert(data.message);
-      
+                       // Console.log('error2');
+                        location.reload();
+                       // $('#EmployeeIDFG').val('').focus();
                     } else {
                         // Add filtered products to the dropdown if the response indicates success
                         data.forEach(function (product) {
@@ -868,7 +888,8 @@
                     if (data.success === false) {
                         // Show an alert message if the response indicates failure
                         alert(data.message);
-
+                        location.reload();
+                       // $('#EmployeeIDDefect').val('').focus();
                     } else {
                         data.forEach(function (product) {
                             $("#ProductIDDefect").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
@@ -905,8 +926,10 @@
                 success: function (data) {
                     if (data.success === false) {
                         // Show an alert message if the response indicates failure
+                        
                         alert(data.message);
-
+                        location.reload();
+                        //$('#EmployeeIDMinus').val('').focus();
                     } else {
                         data.forEach(function (product) {
                             $("#ProductIDMinus").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");

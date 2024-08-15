@@ -292,7 +292,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.view_Service)
+            @foreach (var item in Model.view_Service.OrderBy(x => x.ServicesID))
             {
                 <tr>
                     @Html.HiddenFor(modelItem => item.ServicesID)
@@ -561,7 +561,7 @@
                         }
                         </select> *@
 
-                        <select class="selectfillter form-control" style="width:100%" name="LineName" id="ModalLineName" required>
+                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName" required>
                             <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var dataGroup in Model.tbLine.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {

@@ -500,6 +500,27 @@ namespace Plims.Controllers
 
 
                     var EmpTrans = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "" && x.Plant.Equals(PlantID) && x.Remark == "" && x.WorkingStatus == "Working").ToList();
+                    var EmpTransSumtime = db.TbEmployeeTransaction
+                                        .Where(x => x.EmployeeID.Equals(empid) &&  x.TransactionDate.Equals(TransactionDateVar) &&
+                                        !string.IsNullOrEmpty(x.ClockOut) &&  x.Plant.Equals(PlantID) )
+                                        .Select(x => new
+                                        {
+                                            x.ClockIn,
+                                            x.ClockOut,
+                                            Duration = (DateTime.Parse(x.ClockOut) - DateTime.Parse(x.ClockIn)).TotalMinutes // Calculate the difference in minutes
+                                        })
+                                        .ToList();
+
+                    foreach( var item in EmpTransSumtime)
+                    {
+                       if(item.Duration > 540)
+                        {
+                            TempData["AlertMessage"] = "Please Check Time";
+                            return RedirectToAction("EmployeeClockIn");
+                        }
+                    }
+
+
                     if (EmpTrans.Count() != 0)
                     {
 
@@ -984,6 +1005,7 @@ namespace Plims.Controllers
             }
             else
             {
+               
 
                 if (obj.ClockOut == null || obj.ClockOut == "")
                 {
@@ -1008,17 +1030,50 @@ namespace Plims.Controllers
                     var EmpClockView = db.TbEmployeeMaster.Where(x => x.ID.Equals(Convert.ToInt32(empid))).Select(x => x.EmployeeID).SingleOrDefault();
                     //  var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(EmpClockView) && (x.TransactionDate == TransactionDateVar || (x.TransactionDate == TransactionDateVar.AddDays(-1) && x.ClockOut == "")) && (x.Remark == null || x.Remark == "") && x.WorkingStatus == "Working").ToList();
 
+                    //Check time for use 
+                    var EmpTransSumtime = db.TbEmployeeTransaction
+                                      .Where(x => x.EmployeeID.Equals(EmpClockView) && x.TransactionDate.Equals(TransactionDateVar) &&
+                                      !string.IsNullOrEmpty(x.ClockOut) && x.Plant.Equals(PlantID) )
+                                      .Select(x => new
+                                      {
+                                          x.ClockIn,
+                                          x.ClockOut,
+                                          Duration = (DateTime.Parse(x.ClockOut) - DateTime.Parse(x.ClockIn)).TotalMinutes // Calculate the difference in minutes
+                                      })
+                                      .ToList();
 
-
+                   
                     //   DateTime dateFilter = DateTime.Parse(TransactionDateFillter);&& x.TransactionDate.Equals(dateFilter)//
-                    var EmpClockNo = db.View_EmployeeClocktime.Where(x => x.ID.Equals(Convert.ToInt32(empid)) && x.ClockIn != "" && x.ClockOut == "").Select(x => x.TransactionNo).SingleOrDefault();
+                    var EmpClockNo = db.View_EmployeeClocktime.Where(x => x.ID.Equals(Convert.ToInt32(empid)) && x.ClockIn != "" && x.ClockOut == "")
+                                    .Select(x => new
+                                    { x.TransactionNo ,
+                                        x.ClockIn
+                                    }).SingleOrDefault();
 
 
-                    var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(EmpClockNo)).ToList();
+                    foreach (var item in EmpTransSumtime)
+                    {
+
+                        var outtime = obj.ClockOut;
+                        var intime = EmpClockNo.ClockIn;
+                        double diffoutin = (DateTime.Parse(outtime) - DateTime.Parse(intime)).TotalMinutes;
+                        double absDuration = 540 - Math.Abs(item.Duration);
+                        if (diffoutin > absDuration)
+                        {
+                            TempData["AlertMessage"] = "Please check time";
+                            return RedirectToAction("EmployeeClockOut", "Employee");
+                        }
+                    }
+
+
+
+                    var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(EmpClockNo.TransactionNo)).ToList();
+
+
 
                     if (EmpTrancheck.Count() == 1)
                     {
-                        var EmpTran = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(EmpClockNo)).SingleOrDefault();
+                        var EmpTran = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(EmpClockNo.TransactionNo)).SingleOrDefault();
                         //count stamp qty 
                         var qtyperht = db.TbProductionTransaction.Where(x=> x.PlantID.Equals(PlantID) &&  x.TransactionDate.Equals(obj.TransactionDate) && x.LineID.Equals(obj.LineID) && x.SectionID.Equals(obj.SectionID)).FirstOrDefault();
                         //Check incentive
@@ -1671,7 +1726,7 @@ namespace Plims.Controllers
             foreach (var itmservice in tableRows)
             {
                 var servicesplit = itmservice.Service.Split(":");
-                var servicerate = db.TbService.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineID) && x.ServicesID.Equals(servicesplit[0])).Select(x => x.ServicesRate).SingleOrDefault();
+                var servicerate = db.TbService.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineID) && x.ServicesName.Equals(servicesplit[1])).Select(x => x.ServicesRate).SingleOrDefault();
                 decimal rate = Convert.ToDecimal(servicerate);
                 if (servicesplit.Length > 0)
                 {
@@ -2034,11 +2089,11 @@ namespace Plims.Controllers
             var sectioncheck = db.TbService
                 .Where(x => x.LineID == LineID && x.SectionID == SectionID
                             && x.PlantID.Equals(PlantID))
-                 .GroupBy(x => new { x.PlantID, x.LineID, x.SectionID,x.ServicesID,x.ServicesName })
+                 .GroupBy(x => new { x.PlantID, x.LineID, x.SectionID,x.ServicesID, x.ServicesName })
                  .Select(group => new
                  {
-                     SectionID = group.Key.ServicesID,
-                     SectionName = group.Key.ServicesName
+                     serviceid = group.Key.ServicesID,
+                     servicename = group.Key.ServicesName
 
                  }).ToList();
 
@@ -2286,14 +2341,12 @@ namespace Plims.Controllers
                         // Calculate time span
                         TimeSpan timeSpan = endTime - startTime;
                         TimeSpan timeclockspan = clockoutvar - clockinvar;
-                        // Now you have the time span, you can use it as needed
 
-
-                        // var durationInHours = timeSpan.TotalHours;
                         var durationInMinutes = timeSpan.TotalMinutes;
-                        // var durationInHours = timeSpan.TotalHours;
                         var durationInMinutesclock = timeclockspan.TotalMinutes;
                         var workingvar = "";
+
+
                         //if (durationInMinutesclock < durationInMinutes)
                         //{
                         //    if (obj.WorkingStatus == null)

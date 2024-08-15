@@ -323,7 +323,7 @@
             </tr>
         </thead>
         <tbody style="width:100%">
-            @foreach (var item in Model.view_DailyReportSummary)
+            @foreach (var item in Model.view_DailyReportSummary.Distinct())
             {
                 <tr>
                     @* @Html.HiddenFor(modelItem => item.TransactionDate) *@

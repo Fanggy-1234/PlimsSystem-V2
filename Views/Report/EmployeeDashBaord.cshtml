@@ -129,8 +129,8 @@
                                         </thead>
                                         <tbody>
                                             @{
-                                                int totalStd = 0;
-                                                int totalActual = 0;
+                                                double totalStd = 0.0;
+                                                double totalActual = 0.0;
                                                 double totalDiff = 0.0;
                                                 double totaldiffsum = 0.0;
                                             }
@@ -145,16 +145,16 @@
 
                                                     @if (@item.Diff >= 100)
                                                     {
-                                                        <td style="background-color:limegreen;text-align: right;">@item.Diff.ToString("#,##0")</td>
+                                                        <td style="background-color:limegreen;text-align: right;">@item.Diff.ToString("#,##0.00")</td>
                                                     }
                                                     else if (@item.Diff < 100)
                                                     {
-                                                        <td style="background-color:indianred;text-align: right;">@item.Diff.ToString("#,##0")</td>
+                                                        <td style="background-color:indianred;text-align: right;">@item.Diff.ToString("#,##0.00")</td>
                                                     }
 
                                                 </tr>
 
-                                                totalStd += item.STD;
+                                                totalStd = totalStd + item.STD;
                                                 totalActual += item.Actual;
                                                 totalDiff += item.Diff;
                                                 totaldiffsum = (totalActual - item.STD) / totalDiff;

@@ -852,9 +852,12 @@
                         // Show an alert message if the response indicates failure
                         // alert(data.message);
                         // $('#FGForm')[0].reset();
-                        $('#ProductIDFG').val('').focus();
+                        $('#EmployeeIDFG').val('').focus();
+                        alert('Please clock-in QR code');
+                        //$('#ProductIDFG').val('').focus();
                     } else {
-                        $('#ProductIDFG').focus();
+                        $('#ProductIDFG').val('').focus();
+                       // $('#EmployeeIDFG').val('').focus();
                         // Add filtered products to the dropdown if the response indicates success
                         data.forEach(function (product) {
                             $("#ProductIDFG").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
@@ -963,9 +966,10 @@
 
                     if (data.success === false) {
                         // Show an alert message if the response indicates failure
-                        alert(data.message);
-
+                        $('#EmployeeIDDefect').val('').focus();
+                        alert('Please clock-in QR code');
                     } else {
+                        $('#ProductIDDefect').val('').focus();
                         data.forEach(function (product) {
                             $("#ProductIDDefect").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
                         });
@@ -1004,6 +1008,8 @@
                         alert(data.message);
 
                     } else {
+
+                        $('#ProductIDMinus').val('').focus();
                         data.forEach(function (product) {
                             $("#ProductIDMinus").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
                         });
@@ -1029,10 +1035,10 @@
         };
     }
 
-    function filterProductByEmployeeClockin() {
-        // Your filtering logic here
-        console.log("Filtering product by employee clock-in");
-    }
+    // function filterProductByEmployeeClockin() {
+    //     // Your filtering logic here
+    //     console.log("Filtering product by employee clock-in");
+    // }
 
     const debouncedFilterProductByEmployeeClockin = debounce(filterProductByEmployeeClockin, 500);
 

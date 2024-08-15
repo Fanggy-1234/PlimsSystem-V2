@@ -12,6 +12,7 @@ using System.Drawing.Imaging;
 using System.Text;
 using System.Drawing.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Linq;
 
 
 namespace Plims.Controllers
@@ -3401,7 +3402,12 @@ namespace Plims.Controllers
                             var ProductIDDb = db.TbProduct.Where(x => x.ProductID.Equals(worksheet.Cells[row, 4].Text.Trim()) && x.PlantID.Equals(PlantID)).Select(x => x.ProductID).SingleOrDefault();
                             var SectionIDDb = db.TbSection.Where(x => x.SectionID.Equals(worksheet.Cells[row, 5].Text.Trim()) && x.PlantID.Equals(PlantID)).Select(x => x.SectionID).SingleOrDefault();
 
-                            if (LineIDDb == null || ProductIDDb == null || SectionIDDb == null && (Convert.ToInt32(worksheet.Cells[row, 11].Text) != 1 || Convert.ToInt32(worksheet.Cells[row, 11].Text) != 0))
+                            var PLPSDDb = db.TbPLPS.Where(x => x.LineID.Equals(LineIDDb) &&
+                                                          x.PlantID.Equals(PlantID) &&
+                                                          x.SectionID.Equals(SectionIDDb) &&
+                                                          x.ProductID.Equals(ProductIDDb)).ToList();
+
+                            if (LineIDDb == null || ProductIDDb == null || SectionIDDb == null && (Convert.ToInt32(worksheet.Cells[row, 11].Text) != 1 || Convert.ToInt32(worksheet.Cells[row, 11].Text) != 0) || PLPSDDb.Count == 0)
                             {
                                 int rowerror = row - 1;
                                 var incentives = new ViewModelAll
@@ -3572,8 +3578,6 @@ namespace Plims.Controllers
                 Mymodel.view_PLPS = Mymodel.view_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList();
 
             }
-
-
 
             ViewBag.VBRoleServices = Mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(11)).Select(x => x.RoleAction).FirstOrDefault();
 
@@ -4115,7 +4119,6 @@ namespace Plims.Controllers
                             {
                                 int rowerror = row - 1;
                                 TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake please check Master ";
-                                // ViewBag.Success = "Data Row : " + row + "=>  Mistake ";
                                 return RedirectToAction("Services");
 
                             }
@@ -4126,26 +4129,27 @@ namespace Plims.Controllers
                                 id = worksheet.Cells[row, 1].Value.ToString();
                             }
 
-                            // var DataDb = db.TbService.Find(id);
+                            
                             var DataDb = db.TbService.Where(x => x.ServicesID.Equals(id.PadLeft(5, '0'))).SingleOrDefault();
-
-
+                            //Check Duplicate 
 
                             var LineIDDb = db.TbLine.Where(x => x.LineID.Equals(worksheet.Cells[row, 3].Text.Trim()) && x.PlantID.Equals(PlantID)).Select(x => x.LineID).SingleOrDefault();
                             //check section
                             var SectionIDDb = db.TbSection.Where(x => x.SectionID.Equals(worksheet.Cells[row, 4].Text.Trim()) && x.PlantID.Equals(PlantID)).Select(x => x.SectionID).SingleOrDefault();
 
-                            if (LineIDDb == null || SectionIDDb == null)
+                            //check PLPS
+
+                            var PLPSDDb = db.TbPLPS.Where(x => x.LineID.Equals(LineIDDb) &&
+                                                             x.PlantID.Equals(PlantID) &&
+                                                             x.SectionID.Equals(SectionIDDb)).ToList();
+
+                            if (LineIDDb == null || SectionIDDb == null || PLPSDDb.Count == 0)
                             {
                                 int rowerror = row - 1;
-                                // TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake ";
-                                // ViewBag.Success = "Data Row : " + row + "=>  Mistake ";
-                                //return RedirectToAction("Services");
                                 return Json(new { success = false, message = "Data Row : " + rowerror + " =>  Mistake Please check!" });
 
                             }
-
-
+                            //Update
                             if (DataDb != null)
                             {
 
@@ -4158,9 +4162,22 @@ namespace Plims.Controllers
                                 DataDb.UpdateDate = DateTime.Now;
                                 DataDb.UpdateBy = EmpID; //User.Identity.Name;
                             }
-                            else
+                            else //Create
                             {
+                                //Check Duplicate 
+                                var DataDbDuplicate = db.TbService.Where(x => x.ServicesName.Equals(worksheet.Cells[row, 2].Text) 
+                                                                           && x.PlantID.Equals(PlantID)
+                                                                           && x.LineID.Equals(LineIDDb)
+                                                                           && x.SectionID.Equals(SectionIDDb)
+                                                                          ).ToList();
 
+
+                                if (DataDbDuplicate.Count > 0)
+                                {
+                                    int rowerror = row - 1;
+                                    return Json(new { success = false, message = "Data Row : " + rowerror + " =>  Mistake Please check!" });
+
+                                }
                                 // int CntDb = db.TbService.ToList().Count;
                                 CntDbnext = CntDbnext + 1;
                                 // Insert new record
@@ -4190,9 +4207,6 @@ namespace Plims.Controllers
 
             }
             return Json(new { success = true, message = "Data imported and updated successfully!" });
-
-            // ViewBag.Success = "Data imported and updated successfully!";
-            // return RedirectToAction("Services");
 
         }
 
