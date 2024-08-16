@@ -577,9 +577,10 @@
 
                         $("#SectionID").empty();
                         $("#SectionID").append("<option value='All'>All</option>");
-
+           
                         data.forEach(function (section) {
                             $("#SectionID").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
+                           
                         });
                     }
                 },
@@ -587,6 +588,34 @@
                     console.log("Error filtering product: " + error);
                 }
             });
+
+
+            $.ajax({
+                type: "GET",
+                url: "/Employee/FilterServiceByLine", // Update the URL to your controller action
+                data: { LineID: SelectLineID },
+                success: function (data) {
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        alert(data.message);
+
+                    } else {
+
+                        $("#ServicesID").empty();
+                        $("#ServicesID").append("<option value='All'>All</option>");
+                        data.forEach(function (section) {
+                          //  $("#SectionID").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
+                            $("#ServicesID").append("<option value='" + section.servicename + "'>" + section.servicename + "</option>");
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+
+
+
         }
     }
 

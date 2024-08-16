@@ -10,9 +10,12 @@ namespace Plims.Models
         public DateTime TransactionDate { get; set; }
         public int PlantID { get; set; }
         public string LineID { get; set; }
+        public string LineName { get; set; }
         public string SectionID { get; set; }
+        public string SectionName { get; set; }
         //public int ProdID { get; set; }
         public string ProductID { get; set; }
+        public string ProductName { get; set; }
         public int FormularID { get; set; }
         public string Prefix { get; set; }
         public string QRCode { get; set; }

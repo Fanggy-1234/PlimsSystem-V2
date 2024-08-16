@@ -6316,6 +6316,16 @@ namespace Plims.Controllers
 
 
 
+        private void DeleteDirectory(string directoryPath)
+        {
+            if (Directory.Exists(directoryPath))
+            {
+                Directory.Delete(directoryPath, true); // true to indicate recursive delete
+            }
+        }
+
+
+
 
         [HttpGet]
         public ActionResult EmployeeRegenerate()
@@ -6331,6 +6341,16 @@ namespace Plims.Controllers
             var Employeevar = db.TbEmployeeMaster
                 .Where(x => x.Status.Equals(1) && x.PlantID.Equals(PlantID))
                 .ToList();
+
+            // Create directory
+            string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes", PlantID.ToString());
+          //  DeleteDirectory(directoryPath);
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+
 
             foreach (var item in Employeevar)
             {
@@ -6366,12 +6386,8 @@ namespace Plims.Controllers
                 }
 
                 // string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes");
-                string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes", PlantID.ToString());
-                if (!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
-
+             
+                
                 string filePath = Path.Combine(directoryPath, $"{qrCodeText}_QRCode.png");
                 System.IO.File.WriteAllBytes(filePath, bitmapArray);
                 string QrUri = Url.Content("~/qrcodes/" + PlantID.ToString() + "/" + $"{qrCodeText}_QRCode.png"); //qRCode.EmployeeID

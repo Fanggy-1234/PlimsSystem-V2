@@ -26,8 +26,9 @@ namespace Plims.Models
         public string EndTime { get; set; }
 
         public string Line { get; set; }
+        public string LineName { get; set; }
         public string Section { get; set; }
-
+        public string SectionName { get; set; }
         public string WorkingStatus { get; set; }
 
         public string ClockIn { get; set; }

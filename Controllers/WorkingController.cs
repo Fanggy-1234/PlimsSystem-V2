@@ -136,8 +136,11 @@ namespace Plims.Controllers
                                     TransactionDate = DateTime.Now,
                                     PlantID = Convert.ToInt32(objEmp.Plant),
                                     LineID = objEmp.Line,
+                                    LineName = objPLPS.LineName,
                                     SectionID = objEmp.Section,
+                                    SectionName = objPLPS.SectionName,
                                     ProductID = productId,
+                                    ProductName = objPLPS.ProductName,
                                     FormularID = objPLPS.FormularID,
                                     QRCode = employeeId,
                                     Qty = 1,
@@ -313,16 +316,17 @@ namespace Plims.Controllers
                            .FirstOrDefault();
 
 
-
-
                 db.TbProductionTransaction.Add(new TbProductionTransaction()
                 {
                     // TransactionNo = db.TbProductionTransaction.Count() + 1,
                     TransactionDate = DateTime.Now,
                     PlantID = PlantID,
                     LineID = objEmp.Line,
+                    LineName = objPLPS.LineName,
                     SectionID = objEmp.Section,
+                    SectionName = objPLPS.SectionName,
                     ProductID = productID,
+                    ProductName = objPLPS.ProductName,
                     FormularID = objPLPS.FormularID,
                     QRCode = employeeID,
                     Qty = obj.Qty,
@@ -413,8 +417,11 @@ namespace Plims.Controllers
                     TransactionDate = DateTime.Now,
                     PlantID = PlantID,
                     LineID = objEmp.LineID,
+                    LineName = objEmp.LineName,
                     SectionID = objEmp.SectionID,
+                    SectionName = objEmp.SectionName,
                     ProductID = productID,
+                    ProductName = objPLPS.ProductName,
                     FormularID = objPLPS.FormularID,
                     Prefix = objEmp.Prefix,
                     QRCode = employeeID,
@@ -506,8 +513,11 @@ namespace Plims.Controllers
                     TransactionDate = DateTime.Now,
                     PlantID = PlantID,
                     LineID = objEmp.LineID,
+                    LineName = objEmp.LineName,
                     SectionID = objEmp.SectionID,
+                    SectionName = objEmp.SectionName,
                     ProductID = ProductID,
+                    ProductName = objPLPS.ProductName,
                     FormularID = objPLPS.FormularID,
                     Prefix = objEmp.Prefix,
                     QRCode = EmployeeID,
@@ -582,11 +592,11 @@ namespace Plims.Controllers
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+               // tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                 tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                view_Employee = db.View_Employee.ToList(),
+               // view_Employee = db.View_Employee.ToList(),
                 tbProductionTransaction = db.TbProductionTransaction.ToList(),
                 tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList()
             };
@@ -613,17 +623,17 @@ namespace Plims.Controllers
                            .FirstOrDefault();
 
 
-
-
-
                 db.TbProductionTransaction.Add(new TbProductionTransaction()
                 {
                     // TransactionNo = db.TbProductionTransaction.Count() + 1,
                     TransactionDate = DateTime.Now,
                     PlantID = PlantID,
                     LineID = objEmp.Line,
+                    LineName = objPLPS.LineName,
                     SectionID = objEmp.Section,
+                    SectionName = objPLPS.SectionName,
                     ProductID = productID,
+                    ProductName = objPLPS.ProductName,
                     FormularID = objPLPS.FormularID,
                     QRCode = employeeID,
                     Qty = obj.Qty,
@@ -798,18 +808,22 @@ namespace Plims.Controllers
 
                     //Check PLPS
 
-                    var PLPSdata = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(selectview.LineID) && x.ProductID.Equals(ProductTo)).ToList();
+                    var PLPSdata = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(selectview.LineID) && x.ProductID.Equals(ProductTo)).ToList();
                     if (PLPSdata.Count == 0)
                     {
                         TempData["AlertMessage"] = "Please check PLPS ";
                     }
+                    var PLPSdataproduct = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(selectview.LineID) && x.ProductID.Equals(ProductTo)).Select(z => new { z.ProductID, z.ProductName,z.QTYPerQRCode,z.FormularID }).FirstOrDefault();
+
                     foreach (var product in TransactiodbUpdate)
                     {
+
                         // Apply changes to the list
                         product.ProductID = ProductTo; // Apply a 10% discount
-                        product.QtyPerQR = product.QtyPerQR;
-                        int PLPSdataselect = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.SectionID.Equals(selectview.SectionID) && x.LineID.Equals(selectview.LineID) && x.ProductID.Equals(ProductTo)).Select(x=>x.FormularID).SingleOrDefault();
-                        product.FormularID = PLPSdataselect;
+                        product.ProductName = PLPSdataproduct.ProductName;
+                        product.QtyPerQR = PLPSdataproduct.QTYPerQRCode;
+                       // int PLPSdataselect =  db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.SectionID.Equals(selectview.SectionID) && x.LineID.Equals(selectview.LineID) && x.ProductID.Equals(ProductTo)).Select(x=>x.FormularID).SingleOrDefault();
+                        product.FormularID = PLPSdataproduct.FormularID;
                         product.UpdateDate = DateTime.Now;
                         product.UpdateBy = EmpID;
                     }
@@ -1276,9 +1290,9 @@ namespace Plims.Controllers
                                 return RedirectToAction("ImportManualData");
                             }
 
-                            var LineIDDb = db.TbLine.Where(x => x.LineID.Equals(LineVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.LineID).SingleOrDefault();
-                            var ProductIDDb = mymodel.tbProduct.Where(x => x.ProductID.Equals(ProductVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.ProductID).SingleOrDefault();
-                            var SectionIDDb = mymodel.tbSection.Where(x => x.SectionID.Equals(SectionVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.SectionID).SingleOrDefault();
+                            var LineIDDb = db.TbLine.Where(x => x.LineID.Equals(LineVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.LineID, x.LineName }).SingleOrDefault();
+                            var ProductIDDb = mymodel.tbProduct.Where(x => x.ProductID.Equals(ProductVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.ProductID, x.ProductName }).SingleOrDefault();
+                            var SectionIDDb = mymodel.tbSection.Where(x => x.SectionID.Equals(SectionVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.SectionID, x.SectionName }).SingleOrDefault();
                             var EmployeeIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.EmployeeID).SingleOrDefault();
                             var PLPSIDDb = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb) && x.Status.Equals(1)).Select(x => x.FormularID).SingleOrDefault();
                             //Check PLPS , Incentive , ProductSTD
@@ -1322,9 +1336,12 @@ namespace Plims.Controllers
 
                                     TransactionDate = Convert.ToDateTime(worksheet.Cells[row, 1].Text),
                                     PlantID = PlantID,
-                                    LineID = LineIDDb,
-                                    SectionID = SectionIDDb,
-                                    ProductID = ProductIDDb,
+                                    LineID = LineIDDb.LineID,
+                                    LineName = LineIDDb.LineName,
+                                    SectionID = SectionIDDb.SectionID,
+                                    SectionName = SectionIDDb.SectionName,
+                                    ProductID = ProductIDDb.ProductID,
+                                    ProductName = ProductIDDb.ProductName,
                                     FormularID = PLPSIDDb,
                                     Prefix = Prefixvar,
                                     QRCode = EmployeeIDDb,
@@ -2043,8 +2060,11 @@ namespace Plims.Controllers
                                                 TransactionDate = objEmp.TransactionDate,//DateTime.Now,
                                                 PlantID = Convert.ToInt32(objEmp.PlantID),
                                                 LineID = objEmp.LineID,
+                                                LineName = objEmp.LineName,
                                                 SectionID = objEmp.SectionID,
+                                                SectionName = objEmp.SectionName,
                                                 ProductID = productId,
+                                                ProductName = objPLPS.ProductName,
                                                 Prefix = objEmp.Prefix,
                                                 FormularID = objPLPS.FormularID,
                                                 QRCode = employeeId,
@@ -2185,8 +2205,11 @@ namespace Plims.Controllers
                                                 TransactionDate = items.TransactionDate,//DateTime.Now,
                                                 PlantID = Convert.ToInt32(items.PlantID),
                                                 LineID = items.Line,
+                                                LineName = items.LineName,
                                                 SectionID = items.Section,
+                                                SectionName = items.SectionName,
                                                 ProductID = productId,
+                                                ProductName = objPLPS.ProductName,
                                                 FormularID = objPLPS.FormularID,
                                                 Prefix = items.Prefix,
                                                 QRCode = items.EmployeeID,
@@ -2362,8 +2385,11 @@ namespace Plims.Controllers
                                             TransactionDate = objEmp.TransactionDate, //DateTime.Now,
                                             PlantID = Convert.ToInt32(objEmp.PlantID),
                                             LineID = objEmp.LineID,
+                                            LineName = objEmp.LineName,
                                             SectionID = objEmp.SectionID,
+                                            SectionName = objEmp.SectionName,
                                             ProductID = productId,
+                                            ProductName = objPLPS.ProductName,
                                             FormularID = objPLPS.FormularID,
                                             QRCode = employeeId,
                                             Qty = 1,
@@ -2470,8 +2496,11 @@ namespace Plims.Controllers
                                                 TransactionDate = objEmp.TransactionDate,// DateTime.Now,
                                                 PlantID = Convert.ToInt32(objEmp.PlantID),
                                                 LineID = objEmp.LineID,
+                                                LineName = objEmp.LineName,
                                                 SectionID = objEmp.SectionID,
+                                                SectionName = objEmp.SectionName,
                                                 ProductID = productId,
+                                                ProductName = objPLPS.ProductName,
                                                 FormularID = objPLPS.FormularID,
                                                 QRCode = objEmp.EmployeeID,
                                                 Qty = 1,
@@ -2904,8 +2933,11 @@ namespace Plims.Controllers
                     TransactionDate = objEmp.TransactionDate.Date,
                     PlantID = PlantID,
                     LineID = objEmp.LineID,
+                    LineName = objEmp.LineName,
                     SectionID = objEmp.SectionID,
+                    SectionName = objEmp.SectionName,
                     ProductID = productID,
+                    ProductName = objPLPS.ProductName,
                     FormularID = objPLPS.FormularID,
                     Prefix = objEmp.Prefix,
                     QRCode = employeeID,
@@ -3013,8 +3045,11 @@ namespace Plims.Controllers
                     TransactionDate = objEmp.TransactionDate.Date,
                     PlantID = PlantID,
                     LineID = objEmp.LineID,
+                    LineName = objEmp.LineName,
                     SectionID = objEmp.SectionID,
+                    SectionName = objEmp.SectionName,
                     ProductID = ProductID,
+                    ProductName = objPLPS.ProductName,
                     FormularID = objPLPS.FormularID,
                     Prefix = objEmp.Prefix,
                     QRCode = EmployeeID,
@@ -3112,8 +3147,11 @@ namespace Plims.Controllers
                     TransactionDate = objEmp.TransactionDate.Date,
                     PlantID = PlantID,
                     LineID = objEmp.LineID,
+                    LineName = objEmp.LineName,
                     SectionID = objEmp.SectionID,
+                    SectionName = objEmp.SectionName,
                     ProductID = productID,
+                    ProductName = objPLPS.ProductName,
                     FormularID = objPLPS.FormularID,
                     Prefix = objEmp.Prefix,
                     QRCode = employeeID,
@@ -3218,8 +3256,11 @@ namespace Plims.Controllers
                     TransactionDate = objEmp.TransactionDate.Date,
                     PlantID = PlantID,
                     LineID = objEmp.LineID,
+                    LineName = objEmp.LineName,
                     SectionID = objEmp.SectionID,
+                    SectionName = objEmp.SectionName,
                     ProductID = ProductID,
+                    ProductName = objPLPS.ProductName,
                     FormularID = objPLPS.FormularID,
                     Prefix = objEmp.Prefix,
                     QRCode = EmployeeID,

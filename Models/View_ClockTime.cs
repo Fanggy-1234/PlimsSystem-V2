@@ -22,9 +22,10 @@ namespace Plims.Models
         public string ClockOut { get; set; }
         [Key]
         public string LineID { get; set; }
+        public string LineName { get; set; }
         [Key]
         public string SectionID { get; set; }
-
+        public string SectionName { get; set; }
         public string WorkingStatus { get; set; }
         [Key]
         public string Type { get; set; }

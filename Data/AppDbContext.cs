@@ -167,7 +167,8 @@ namespace Plims.Data
             modelBuilder.Entity<View_EmployeeAdjustBreak>()
                .HasKey(v => new {  v.TransactionNo ,v.ID , v.TransactionDate});
 
-
+            modelBuilder.Entity < View_EmployeeLeaveHolidayClocktime>()
+                  .HasKey(v => new { v.TransactionNo, v.ID, v.TransactionDate });
 
             modelBuilder.Entity<View_EmployeeClocktime>()
     .HasKey(v => new { v.ID, v.TransactionNo , v.TransactionDate });

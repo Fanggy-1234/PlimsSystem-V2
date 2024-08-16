@@ -2045,7 +2045,7 @@ namespace Plims.Controllers
             // Query with time-based filtering in addition to date and other conditions
             var sectioncheck = db.View_PLPS
                 .Where(x => x.LineID == LineID
-                            && x.PlantID.Equals(PlantID))
+                            && x.PlantID.Equals(PlantID) && x.Status.Equals(1))
                  .GroupBy(x => new { x.PlantID, x.LineID, x.SectionID, x.SectionName })
                  .Select(group => new
                  {
@@ -2060,7 +2060,47 @@ namespace Plims.Controllers
                 //TempData["AlertMessage"] = "Data haven't clockin or Data already clock out. : " + selectedEmpID ;
                 //return View("WorkingFunction", mymodel);
 
-                return Json(new { success = false, message = "Data haven't clockin or Data already clock out. " });
+                return Json(new { success = false, message = "Section no data." });
+
+            }
+
+
+            return Json(sectioncheck);
+        }
+
+
+
+
+        [HttpGet]
+        public IActionResult FilterServiceByLine(string LineID)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            // Replace this with your logic to filter products based on the lineId
+
+            if (PlantID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var sectioncheck = db.TbService
+               .Where(x => x.LineID == LineID 
+                           && x.PlantID.Equals(PlantID) & x.ServicesStatus.Equals(1))
+                .GroupBy(x => new { x.PlantID, x.LineID, x.ServicesID, x.ServicesName })
+                .Select(group => new
+                {
+                    serviceid = group.Key.ServicesID,
+                    servicename = group.Key.ServicesName
+
+                }).ToList();
+
+
+            if (sectioncheck.Count() == 0)
+            {
+
+                //TempData["AlertMessage"] = "Data haven't clockin or Data already clock out. : " + selectedEmpID ;
+                //return View("WorkingFunction", mymodel);
+
+                return Json(new { success = false, message = "Service no data." });
 
             }
 
@@ -2069,6 +2109,10 @@ namespace Plims.Controllers
 
             return Json(sectioncheck);
         }
+
+
+
+
 
 
 
@@ -2088,7 +2132,7 @@ namespace Plims.Controllers
             // Query with time-based filtering in addition to date and other conditions
             var sectioncheck = db.TbService
                 .Where(x => x.LineID == LineID && x.SectionID == SectionID
-                            && x.PlantID.Equals(PlantID))
+                            && x.PlantID.Equals(PlantID) && x.ServicesStatus.Equals(1))
                  .GroupBy(x => new { x.PlantID, x.LineID, x.SectionID,x.ServicesID, x.ServicesName })
                  .Select(group => new
                  {
@@ -2103,7 +2147,7 @@ namespace Plims.Controllers
                 //TempData["AlertMessage"] = "Data haven't clockin or Data already clock out. : " + selectedEmpID ;
                 //return View("WorkingFunction", mymodel);
 
-                return Json(new { success = false, message = "Please Services master! " });
+                return Json(new { success = false, message = "Service no data! " });
 
             }
 
@@ -2525,7 +2569,7 @@ namespace Plims.Controllers
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbEmployeeLeaveHoliday = db.TbEmployeeLeaveHoliday.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                view_EmployeeLeaveHolidayClocktime = db.View_EmployeeLeaveHolidayClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                view_EmployeeLeaveHolidayClocktime = db.View_EmployeeLeaveHolidayClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.TransactionDate).ThenBy(x => x.EmployeeID).ToList(),
             };
             ViewBag.VBRoleEmployeeLeaveHoliday = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(21)).Select(x => x.RoleAction).FirstOrDefault();
 
@@ -2547,8 +2591,9 @@ namespace Plims.Controllers
 
                     if (obj.TransactionDate.HasValue != false)
                     {
-                        mymodel.view_EmployeeLeaveHolidayClocktime = mymodel.view_EmployeeLeaveHolidayClocktime.Where(p => p.TransactionDate == obj.TransactionDate).ToList();
                         ViewBag.SelectedTransactionDate = obj.TransactionDate.Value.ToString("yyyy-MM-dd");
+                        mymodel.view_EmployeeLeaveHolidayClocktime = mymodel.view_EmployeeLeaveHolidayClocktime.Where(p => p.TransactionDate == obj.TransactionDate).ToList();
+                        
                     }
                     if (!string.IsNullOrEmpty(obj.WorkingStatus))
                     {
@@ -3402,7 +3447,7 @@ namespace Plims.Controllers
                     //   var Empdb = new TbEmployeeTransaction();
                     string empid = EmployeeIDchk[i];
                     int IDtran = Convert.ToInt32(empid);
-                    string EmpType = db.View_EmployeeAdjustBreak.Where(p => p.TransactionNo.Equals(IDtran) && p.TransactionDate == DateTime.Today).Select(x => x.Type).SingleOrDefault();
+                    string EmpType = db.View_EmployeeAdjustBreak.Where(p => p.TransactionNo.Equals(IDtran)).Select(x => x.Type).SingleOrDefault();
                     if (EmpType == "E")
                     {
                         var EmpDbtran = db.TbEmployeeTransaction.Where(p => p.TransactionNo.Equals(IDtran) && p.ClockIn != null && p.ClockOut != null).SingleOrDefault();
@@ -3428,7 +3473,7 @@ namespace Plims.Controllers
                         }
 
                     }
-                    var EmpDb = db.TbEmployeeTransaction.Where(p => p.TransactionNo.Equals(IDtran) && p.ClockIn != null && p.ClockOut != null).SingleOrDefault();
+                   // var EmpDb = db.TbEmployeeTransaction.Where(p => p.TransactionNo.Equals(IDtran) && p.ClockIn != null && p.ClockOut != null).SingleOrDefault();
 
 
                 }

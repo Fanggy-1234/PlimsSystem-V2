@@ -288,7 +288,7 @@
                 </div>
 
                 <div class="col-3">
-                    <button class="search-button" type="submit" asp-action="RollBackDataProduction">
+                    <button class="search-button" type="submit" asp-action="RollBackDataProduction" onclick="return Checkdata()">
                         Search
                     </button>
                 </div>
@@ -459,6 +459,18 @@
         });
     });
 
+
+
+      function Checkdata() {
+        if (!$('#ProductTo').val() ) {
+            alert('Please fill Product.')
+            return false
+        }
+        if (confirm('Are you sure?')) {
+            return true
+        }
+        return false
+    }
 
 
 </script>

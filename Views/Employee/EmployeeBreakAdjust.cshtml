@@ -240,6 +240,9 @@
                 <th >
                     Section
                 </th>
+                <th>
+                    Type
+                </th>
                 <th >
                     Date
                 </th>
@@ -283,9 +286,21 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
                     </td>
-                    <td>
 
-                        @Html.DisplayFor(modelItem => item.TransactionDate)
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Type) 
+                    </td>
+
+                    <td style="color:darkblue">
+                        @if (item.TransactionDate == DateTime.MinValue)
+                        {
+                            <!-- Display a placeholder or leave empty -->
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.TransactionDate)
+                        }
+
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ClockIn)

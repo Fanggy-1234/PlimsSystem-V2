@@ -436,8 +436,16 @@
                         @Html.DisplayFor(modelItem => item.EndTime)
                     </td>
 
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TransactionDate)
+                    <td style="color:darkblue">
+                        @if (item.TransactionDate == DateTime.MinValue)
+                        {
+                            <!-- Display a placeholder or leave empty -->
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.TransactionDate)
+                        }
+
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ClockIn)
