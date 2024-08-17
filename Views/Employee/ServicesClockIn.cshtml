@@ -579,7 +579,7 @@
                         $("#SectionID").append("<option value='All'>All</option>");
            
                         data.forEach(function (section) {
-                            $("#SectionID").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
+                            $("#SectionID").append("<option value='" + section.sectionID + "'>" + section.sectionID + " :" + section.sectionName + "</option>");
                            
                         });
                     }
@@ -605,7 +605,7 @@
                         $("#ServicesID").append("<option value='All'>All</option>");
                         data.forEach(function (section) {
                           //  $("#SectionID").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
-                            $("#ServicesID").append("<option value='" + section.servicename + "'>" + section.servicename + "</option>");
+                            $("#ServicesID").append("<option value='" + section.serviceid + "'>" + section.serviceid + " : " + section.servicename + "</option>");
                         });
                     }
                 },
@@ -647,9 +647,10 @@
                     
                         $("#ServicesID").empty();
                         $("#ServicesID").append("<option value='All'>All</option>");
-
+                       
                         data.forEach(function (section) {
-                            $("#ServicesID").append("<option value='" + section.servicename + "'>" + section.servicename +  "</option>");
+                            console.log(section);
+                            $("#ServicesID").append("<option value='" + section.serviceid + "'>" + section.serviceid + " : " + section.servicename + "</option>");
                         });
                     }
                 },

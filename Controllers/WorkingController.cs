@@ -4888,7 +4888,7 @@ namespace Plims.Controllers
             var empsectioncheck = db.View_EmployeeClocktime
                 .Where(x => x.EmployeeID == selectedEmpID
                             && x.PlantID.Equals(PlantID)
-                            && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
+                          //  && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
                             && x.ClockIn != ""
                             && x.ClockOut == "" && x.WorkingStatus.Equals("Working"))
                 .ToList();

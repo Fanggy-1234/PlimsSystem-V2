@@ -1225,7 +1225,7 @@ namespace Plims.Controllers
             }
 
             //Check Duplication
-            var Productdbcheck = mymodel.tbProduct.Where(p =>  p.ProductName.Equals(obj.ProductName)).ToList();
+            var Productdbcheck = mymodel.tbProduct.Where(p =>  p.ProductID.Equals(obj.ProductID)).ToList();
             if (Productdbcheck.Count != 0)
             {
                 TempData["AlertMessage"] = "Data Duplicate!";

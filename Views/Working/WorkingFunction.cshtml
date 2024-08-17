@@ -168,30 +168,26 @@
     <div class="col">
         <div class="row" style="height:50px">
             <div class="col-2"><label class="FillterLabel"></label></div>
-            <div class="col-2">
+            <div class="col-3">
                 <button class="WorkingFunction-button">
                     <a href="@Url.Action("DailyReport", "Working")" style=" text-decoration: none; font-size: 18px;">Daily Report</a>
                 </button>
             </div>
 
-            <div class="col-2">
+            <div class="col-3">
                 <button id="inputDefectButton" class="InputDefect-button" data-bs-toggle="modal" data-bs-target="#DefectModal">
                     Input Defect
                 </button>
 
             </div>
-            <div class="col-2">
+            <div class="col-3">
               @*   <button id ="inputProductButton" class="InputProduct-button" data-bs-toggle="modal" data-bs-target="#FGModal">   </button> *@
               @*   <button  class="InputProduct-button"  id="inputProductButton" data-bs-toggle="modal" data-bs-target="#FGModal"> *@
                 <button id="inputProductButton" class="InputProduct-button"  data-bs-toggle="modal" data-bs-target="#FGModal">
                     Input Product Qty
                 </button>
             </div>
-            <div class="col-2">
-                <button class="RemoveProduct-button" data-bs-toggle="modal" data-bs-target="#SpecialModal">
-                    Remove Product Qty
-                </button>
-            </div>
+         
 
         </div>
 
@@ -200,7 +196,7 @@
             @* Get Product from plant and line *@
             <div class="row" style="height:80px">
                 <div class="col-2" style=" align-content: center;"><label class="FillterLabel">Product ID:</label></div>
-                <div class="col-8">
+                <div class="col-9">
                     <select class="selectfillter" style="width:100%; height:100%"  name="productId" id="ProductID">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
@@ -221,7 +217,7 @@
             @*  Get Section from EmployeeClock-In *@
             <div class="row" style="height:80px">
                 <div class="col-2" style=" align-content: center;"><label class="FillterLabel">Section ID:</label></div>
-                <div class="col-8">
+                <div class="col-9">
                     <input class="form-control" name="SectionName" id="SectionName" style="background-color:gainsboro;width:100%" readonly>
                 </div>
                 <div class="col-2">
@@ -231,23 +227,14 @@
             <div class="row" style="height:20px"></div>
             <div class="row" style="height:80px">
                 <div class="col-2" style=" align-content: center;"><label class="FillterLabel"> QR Code :</label> </div>
-                <div class="col-8">
+                <div class="col-9">
                     <input class="form-control" name="EmployeeID" id="EmployeeID" style="width:100%" placeholder="Scan QR Code">
                 </div>
                 <div class="col-2">
                 </div>
             </div>
 
-            <div class="row" style="height:20px"></div>
-            <div class="row" style="height:80px">
-                <div class="col-2" style=" align-content: center;"><label class="FillterLabel"> Employee Refer :</label> </div>
-                <div class="col-8">
-                    <input class="form-control" name="EmployeeRefsection" id="EmployeeRefsection" placeholder="Employee Refer" disabled>
-                </div>
-
-                <div class="col-2">
-                </div>
-            </div>
+         
             <div class="row" style="height:20px"></div>
             <div class="row" style="height:80px">
                 <div class="col-2" style=" align-content: center;"></div>
@@ -686,51 +673,6 @@
         });
     }
 
-
-    // $(document).ready(function () {
-    //     function toggleRadioInputs(enable) {
-    //         $("#PackageRadio, #EmployeeRadio").prop("disabled", !enable);
-    //     }
-
-    //     $("#PackageCheckbox").change(function () {
-    //         if ($(this).is(":checked")) {
-    //             // Enable Package radio and input
-    //             $("#PackageRadio").prop("disabled", false).prop("checked", true);
-    //             $("#PackageRef").prop("disabled", false);
-    //             // Uncheck Employee radio and disable input
-    //             //    $("#EmployeeRadio").prop("disabled", false).prop("checked", false);
-    //             //   $("#EmployeeRef").prop("disabled", true);
-
-    //         } else {
-    //             // Disable all radio buttons and inputs
-    //             toggleRadioInputs(false);
-    //             $("#PackageRef").prop("disabled", true).val("");
-    //             // $("#PackageRef, #EmployeeRef").prop("disabled", true).val("");
-
-    //         }
-    //     });
-
-    //     $("#PackageRadio").change(function () {
-    //         if ($(this).is(":checked")) {
-    //             // Enable Package input
-    //             $("#PackageRef").prop("disabled", false);
-    //             // Disable Employee input and uncheck its radio
-    //             //   $("#EmployeeRef").prop("disabled", true).val("");
-    //             //   $("#EmployeeRadio").prop("checked", false);
-    //         }
-    //     });
-
-    //     $("#EmployeeRadio").change(function () {
-    //         if ($(this).is(":checked")) {
-    //             // Enable Employee input
-    //             //  $("#EmployeeRef").prop("disabled", false);
-    //             // Disable Package input and uncheck its radio
-    //             $("#PackageRef").prop("disabled", true).val("");
-    //             $("#PackageRadio").prop("checked", false);
-    //         }
-    //     });
-    // });
-
     /// Fillter Create
     function filterReasonByProduct() {
 
@@ -830,15 +772,14 @@
 
     function filterProductByEmployeeClockin() {
         // Clear previous options
+        console.log('1');
         $("#ProductIDFG").empty();
         // Add a default option
         $("#ProductIDFG").append("<option value='' default selected>Please Select ..</option>");
-
         // Get the selected Product ID
-
+        console.log('2');
         var selectedEmpID = $("#EmployeeIDFG").val().toString();
-        // var selectedLineID = $("#ModalLineName").val().toString();
-
+        console.log(selectedEmpID);
         // Check if a product is selected
         if (selectedEmpID !== "") {
             // Use AJAX to filter sections based on the selected Product ID
@@ -847,17 +788,18 @@
                 url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
                 data: { selectedEmpID: selectedEmpID },
                 success: function (data) {
-                    console.log(data);
+                   // console.log(data);
                     if (data.success === false) {
                         // Show an alert message if the response indicates failure
                         // alert(data.message);
-                        // $('#FGForm')[0].reset();
+                        //// $('#FGForm')[0].reset();
                         $('#EmployeeIDFG').val('').focus();
+                        console.log('3');
                         alert('Please clock-in QR code');
                         //$('#ProductIDFG').val('').focus();
                     } else {
                         $('#ProductIDFG').val('').focus();
-                       // $('#EmployeeIDFG').val('').focus();
+                        console.log('4');
                         // Add filtered products to the dropdown if the response indicates success
                         data.forEach(function (product) {
                             $("#ProductIDFG").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");

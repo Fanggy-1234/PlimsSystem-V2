@@ -1842,7 +1842,7 @@ namespace Plims.Controllers
                             var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.StartTime).SingleOrDefault();
                             var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID)).Select(x => x.EndTime).SingleOrDefault();
                             var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
-
+                            //var serID = db.TbService.Where(x => x.LineID.Equals(obj.LineID) && x.PlantID.Equals(PlantID) && x.SectionID.Equals(sectionsplit[0].Trim()) && x.ServicesName.Equals(servicesplit[0].Trim())).SingleOrDefault();
                             db.TbServicesTransaction.Add(new TbServicesTransaction()
                             {
                                 TransactionDate = Convert.ToDateTime(TransactionDateVar),
@@ -1853,7 +1853,7 @@ namespace Plims.Controllers
                                 StartTime = startt,
                                 EndTime = Endt,
                                 Line = obj.LineID,//obj.LineName,
-                                SectionID = sectionsplit[0].Trim(),
+                                SectionID =  sectionsplit[0].Trim(),
                                 SectionName = sectionsplit[1].Trim(),
                                 ServicesID = servicesplit[0].Trim(),
                                 ServicesName = servicesplit[1].Trim(),
