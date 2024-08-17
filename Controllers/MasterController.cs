@@ -1233,7 +1233,7 @@ namespace Plims.Controllers
             }
 
 
-            var Productdb = mymodel.tbProduct.Where(p => p.ProductID.Equals(obj.ProductID) && p.ProductName.Equals(obj.ProductName));
+            var Productdb = mymodel.tbProduct.Where(p => p.ProductID.Equals(obj.ProductID));
             int cnt = db.TbProduct.Count() + 1;
 
             // Insert new Product               
@@ -5377,10 +5377,6 @@ namespace Plims.Controllers
                     ViewBag.InactiveStatus = false;
                 }
 
-
-                // mymodel.view_PLPS = mymodel.view_PLPS.Where(x => x.PlantName == obj.PlantName || x.LineName == obj.LineName || x.ProductName == obj.ProductName || x.SectionName == obj.SectionName).ToList();
-
-
                 return View(mymodel);
             }
             else
@@ -5459,8 +5455,8 @@ namespace Plims.Controllers
             }
             else
             {
-                TempData["AlertMessage"] = "Standard Duplicate!";
-                ViewBag.Error = "Standard Duplicate!";
+                TempData["AlertMessage"] = "Data Duplicate!";
+                ViewBag.Error = "Data Duplicate!";
             }
             return RedirectToAction("PLPS");
         }
@@ -5928,9 +5924,6 @@ namespace Plims.Controllers
                             if (LineDb == null || ProductDb == null || SectionDb == null && (Convert.ToInt32(worksheet.Cells[row, 8].Text) != 1 || Convert.ToInt32(worksheet.Cells[row, 8].Text) != 0))
                             {
                                 int rowerror = row - 1;
-                                // TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake ";
-                                // ViewBag.Success = "Data Row : " + row + "=>  Mistake ";
-                                // return RedirectToAction("PLPS");
                                 return Json(new { success = false, message = "Data Row : " + rowerror + " =>  Mistake please check. " });
                             }
                             else
@@ -5940,19 +5933,6 @@ namespace Plims.Controllers
                                 if (DataDb != null)
                                 {
 
-                                    //int Status;
-                                    //if (worksheet.Cells[row, 7].Text == "Active")
-                                    //{
-                                    //    Status = 1;
-                                    //}
-                                    //else
-                                    //{
-                                    //    Status = 0;
-                                    //}
-
-                                    // case code
-                                    // Update existing record
-                                    //DataDb.ProductSTDID = worksheet.Cells[row, 2].Text;
                                     DataDb.LineID = LineDb;
                                     DataDb.ProductID = ProductDb;
                                     DataDb.SectionID = SectionDb;
@@ -5972,16 +5952,6 @@ namespace Plims.Controllers
 
 
                                     CntDbnext = CntDbnext + 1;
-                                    // int Status;
-                                    //if (worksheet.Cells[row,7].Text == "Active")
-                                    //{
-                                    //    Status = 1;
-                                    //}
-                                    //else
-                                    //{
-                                    //    Status = 0;
-                                    //}
-                                    //Data Code
                                     // Insert new record
                                     var newData = new TbPLPS
                                     {

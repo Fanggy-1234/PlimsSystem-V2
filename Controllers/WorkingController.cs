@@ -3832,7 +3832,7 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
-                view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).ToList()
+                view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).Distinct().ToList()
             };
 
             ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster
