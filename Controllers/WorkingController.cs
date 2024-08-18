@@ -819,10 +819,9 @@ namespace Plims.Controllers
                     {
 
                         // Apply changes to the list
-                        product.ProductID = ProductTo; // Apply a 10% discount
+                        product.ProductID = ProductTo; 
                         product.ProductName = PLPSdataproduct.ProductName;
                         product.QtyPerQR = PLPSdataproduct.QTYPerQRCode;
-                       // int PLPSdataselect =  db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.SectionID.Equals(selectview.SectionID) && x.LineID.Equals(selectview.LineID) && x.ProductID.Equals(ProductTo)).Select(x=>x.FormularID).SingleOrDefault();
                         product.FormularID = PLPSdataproduct.FormularID;
                         product.UpdateDate = DateTime.Now;
                         product.UpdateBy = EmpID;
@@ -834,8 +833,6 @@ namespace Plims.Controllers
             }
             TempData["SuccessMessage"] = "Data successfully updated.";
             return RedirectToAction("RollBackDataProduction");
-            //// Return section and unit as JSON
-            //return Json(new { refrestime = refrestime });
 
         }
 
@@ -873,8 +870,6 @@ namespace Plims.Controllers
             mymodel.View_RollBackData = db.View_RollBackData.Where(x => x.PlantID.Equals(PlantID) && x.ProductionDate == DateTime.Today).ToList();
 
             return View("RollBackDataProduction", mymodel);
-            //// Return section and unit as JSON
-            //return Json(new { refrestime = refrestime });
 
         }
 
@@ -908,9 +903,6 @@ namespace Plims.Controllers
 
 
             return View(mymodel);
-            //// Return section and unit as JSON
-            //return Json(new { refrestime = refrestime });
-
         }
 
 
@@ -5325,12 +5317,10 @@ namespace Plims.Controllers
             string[] DefectSectionID = DefectSection.Split(":");
             //Check Duplicate
             int checkDuplicate = mymodel.tbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(DefectPlanDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect")).ToList().Count();
-
-            //   int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(DefectPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect")).ToList().Count();
             if (checkDuplicate > 0)
             {
 
-                //Update  TbProductionTransactionAdjust      
+                //Update  Table : TbProductionTransactionAdjust       
                 var TranDefectAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(DefectPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect")).SingleOrDefault();
                 TranDefectAdjust.QTY = DefectQTY;
                 db.SaveChanges();
@@ -5338,7 +5328,7 @@ namespace Plims.Controllers
             else
             {
 
-                // Table : TbProductionTransactionAdjust  Create
+                //Create Table : TbProductionTransactionAdjust  
                 db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
                 {
                     TransactionDate = Convert.ToDateTime(DefectPlanDate),
@@ -5868,8 +5858,6 @@ namespace Plims.Controllers
                 {
 
                     //Check Clockout Employee
-                 //   var EmpIDtrancheck = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
-                //    var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.ClockOut == "").ToList();
                     var checkClockout = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(FGEmployeeID) && x.ClockOut == "").ToList();
 
 

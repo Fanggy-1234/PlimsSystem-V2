@@ -2998,7 +2998,7 @@ namespace Plims.Controllers
             }
             else
             {
-                TempData["AlertMessage"] = "Incentive Duplicate! please Inactive old data";
+                TempData["AlertMessage"] = "Data Duplicate!";
                 // ViewBag.Error = "Incentive Duplicate!";
                 //  return PartialView("Plant",obj);
             }
@@ -3845,6 +3845,7 @@ namespace Plims.Controllers
             return RedirectToAction("Services");
         }
 
+
         // Function Services Inactive transaction
         public JsonResult ServicesInactive(string id)
         {
@@ -3932,7 +3933,7 @@ namespace Plims.Controllers
 
 
 
-
+        
 
         [HttpGet]
         public ActionResult ServicesExport(View_Service obj, bool? inactivestatus)
@@ -4033,10 +4034,6 @@ namespace Plims.Controllers
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                 Response.Headers.Add("content-disposition", "attachment; filename=Services-Master.xlsx"); // Fix typo ':' should be ';'
                 Response.Body.WriteAsync(Ep.GetAsByteArray());
-
-
-
-                // Mymodel.view_Service = db.View_Service.Where(x => x.ServicesID.Equals(obj.ServicesID) || x.ServicesName.Equals(obj.ServicesName) || x.PlantName.Equals(obj.PlantName) || x.LineName.Equals(obj.LineName)).ToList();
 
                 return RedirectToAction("Services", Mymodel);
 
@@ -4297,11 +4294,7 @@ namespace Plims.Controllers
                     reason.view_Reason = reason.view_Reason.Where(x => x.Status == 1).ToList();
                     ViewBag.InactiveStatus = false;
                 }
-
-
-
-                // reason.view_Reason = reason.view_Reason.Where(p => p.PlantName.Equals(obj.PlantName) || p.LineName.Equals(obj.LineName) || p.ProductName.Equals(obj.ProductName) || p.SectionName.Equals(obj.SectionName));
-                return View(reason);
+                    return View(reason);
             }
             else
             {
@@ -7306,11 +7299,17 @@ namespace Plims.Controllers
 
                 var mymodel = new ViewModelAll
                 {
+                    //view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                    //tbEmployeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                    //tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                    //view_EmployeeGroup = db.View_EmployeeGroup.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                    //view_EmployeeGroupList = db.View_EmployeeGroupList.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+
                     view_PermissionMaster = db.View_PermissionMaster.ToList(),
                     tbEmployeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                     tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                     view_EmployeeGroup = db.View_EmployeeGroup.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                    view_EmployeeGroupList = db.View_EmployeeGroupList.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+                    view_EmployeeGroupList = db.View_EmployeeGroupList.Where(x => x.PlantID.Equals(PlantID)).ToList(),
 
 
                 };
@@ -7837,99 +7836,6 @@ namespace Plims.Controllers
 
 
 
-
-        //[HttpPost]
-        //public IActionResult EmployeeGroupProcessDataTable([FromBody] List<Dictionary<string, string>> tableData)
-        //{
-        //    int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
-        //    var incentives = new ViewModelAll
-        //    {
-        //        view_PermissionMaster = db.View_PermissionMaster.ToList(),
-        //        tbEmployeeGroupQR = db.TbEmployeeGroupQR.ToList(),
-        //        tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
-        //        view_EmployeeGroup = db.View_EmployeeGroup.ToList(),
-        //        view_EmployeeGroupList = db.View_EmployeeGroupList.ToList(),
-        //        temp_Group = db.Temp_Group.ToList()
-
-
-        //    };
-
-        //    try
-        //    {
-        //        // Create a DataTable
-        //        DataTable dataTable = new DataTable("EmployeeGroup");
-
-        //        // Add headers to the DataTable
-        //        //var headers = tableData.First().Keys.ToList();
-        //        var headers = tableData.First().Keys.Take(3).ToList();
-        //        foreach (var header in headers)
-        //        {
-        //            dataTable.Columns.Add(header.Trim());
-
-        //        }
-
-        //        // Add data to the DataTable
-        //        foreach (var rowData in tableData)
-        //        {
-        //            var dataRow = dataTable.NewRow();
-        //            foreach (var header in headers)
-        //            {
-        //                dataRow[header.Trim()] = rowData[header].Trim();
-        //            }
-        //            dataTable.Rows.Add(dataRow);
-        //        }
-
-        //        using (var package = new ExcelPackage())
-        //        {
-        //            // Create a worksheet
-        //            var worksheet = package.Workbook.Worksheets.Add("EmployeeGroup");
-
-        //            // Add headers to the worksheet
-        //            for (int col = 1; col <= dataTable.Columns.Count; col++)
-        //            {
-        //                var headername = dataTable.Columns[col - 1].ColumnName;
-        //                worksheet.Cells[1, col].Value = headername;
-        //            }
-
-        //            // Add data to the worksheet
-        //            for (int row = 0; row < dataTable.Rows.Count; row++)
-        //            {
-        //                for (int col = 1; col <= dataTable.Columns.Count; col++)
-        //                {
-        //                    try
-        //                    {
-        //                        var DataName = dataTable.Rows[row][col - 1].ToString();
-        //                        worksheet.Cells[row + 2, col].Value = DataName;
-        //                    }
-        //                    catch (Exception ex)
-        //                    {
-        //                        Console.WriteLine($"Error accessing data at row {row}, col {col}: {ex.Message}");
-        //                        // Log the error using your logging framework (e.g., Serilog, NLog)
-        //                        return StatusCode(500, $"Error exporting data: {ex.Message}");
-        //                    }
-        //                }
-        //            }
-
-
-        //            var filePath = startpath + "EmployeeGroup.xls";
-        //            System.IO.File.WriteAllBytes(filePath, package.GetAsByteArray());
-
-        //            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-        //            return File(fileStream, "application/vnd.ms-excel", "EmployeeGroup.xls");
-
-
-
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error generating Excel file: {ex.Message}");
-        //        // Log the error using your logging framework (e.g., Serilog, NLog)
-        //        return StatusCode(500, $"Error exporting data: {ex.Message}");
-        //    }
-        //}
-
-
         public ActionResult EmployeeGroupQRCodeExport(TbEmployeeGroupQR obj, bool? inactivestatus)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -7986,11 +7892,6 @@ namespace Plims.Controllers
                 int row = 2;
 
 
-                //var groupfirst = db.TbEmployeeGroupQR
-                //.Where(x => x.EmployeeID.Equals(obj.EmployeeID) && x.PlantID.Equals(PlantID))
-                //.GroupBy(x => x.GroupID)
-                //.Select(group => group.Key)
-                //.ToList().First();
                 var employeelist = "";
                 foreach (var item in grouplist)
                 {
@@ -8104,7 +8005,6 @@ namespace Plims.Controllers
                             {
                                 int rowerror = row - 1;
                                 TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake please check Master ";
-                                // ViewBag.Success = "Data Row : " + row + "=>  Mistake ";
                                 return RedirectToAction("EmployeeManagementGroup");
 
                             }
@@ -8131,31 +8031,52 @@ namespace Plims.Controllers
 
                                     string emp = employeeList[j].Trim();
 
-                                    var DataDb = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(id) && x.EmployeeID.Equals(emp) && x.PlantID.Equals(PlantID)).SingleOrDefault();
+                                    var DataDbcheck = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(id)  && x.PlantID.Equals(PlantID)).ToList();
                                     var linedb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(emp) && x.PlantID.Equals(PlantID)).Select(x => x.LineID).SingleOrDefault();
                                     var Sectiondb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(emp) && x.PlantID.Equals(PlantID)).Select(x => x.SectionID).SingleOrDefault();
 
-                                    if (DataDb != null)
+                                    //Update
+                                    if (DataDbcheck.Count > 0)
                                     {
+                                        var DataDb = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(id) && x.EmployeeID.Equals(emp) && x.PlantID.Equals(PlantID) && x.Status.Equals(1)).SingleOrDefault();
+                                        //insert new or update
+                                        if(DataDb == null)
+                                        {
 
-                                        //int Status;
-                                        //if (worksheet.Cells[row, 4].Text == "Active")
-                                        //{
-                                        //    Status = 1;
-                                        //}
-                                        //else
-                                        //{
-                                        //    Status = 0;
-                                        //}
-                                        DataDb.EmployeeID = employeeList[j].Trim();// worksheet.Cells[row, 2].Value.ToString();// worksheet.Cells[row, 2].Text;
-                                        DataDb.PlantID = PlantID;
-                                        DataDb.LineID = linedb;
-                                        DataDb.SectionID = Sectiondb;
-                                        DataDb.Status = Convert.ToInt32(worksheet.Cells[row, 3].Value);
-                                        DataDb.UpdateDate = DateTime.Now;
-                                        DataDb.UpdateBy = EmpID; //User.Identity.Name;
+                                            //insert
+                                            var newData = new TbEmployeeGroupQR
+                                            {
+                                                GroupID = id,
+                                                EmployeeID = employeeList[j].Trim(), // worksheet.Cells[row, 2].Value.ToString(),
+                                                PlantID = PlantID,//int.Parse(worksheet.Cells[row, 5].Text),
+                                                LineID = linedb,
+                                                SectionID = Sectiondb,
+                                                Status = Convert.ToInt32(worksheet.Cells[row, 3].Value),
+                                                CreateDate = DateTime.Now,
+                                                CreateBy = EmpID,//User.Identity.Name;
+                                                UpdateDate = DateTime.Now,
+                                                UpdateBy = EmpID//User.Identity.Name;
+
+                                            };
+                                            db.TbEmployeeGroupQR.Add(newData);
+                                        }
+                                        else
+                                        {
+                                            //update
+                                            DataDb.EmployeeID = employeeList[j].Trim();// worksheet.Cells[row, 2].Value.ToString();// worksheet.Cells[row, 2].Text;
+                                            DataDb.PlantID = PlantID;
+                                            DataDb.LineID = linedb;
+                                            DataDb.SectionID = Sectiondb;
+                                            DataDb.Status = Convert.ToInt32(worksheet.Cells[row, 3].Value);
+                                            DataDb.UpdateDate = DateTime.Now;
+                                            DataDb.UpdateBy = EmpID; //User.Identity.Name;
+                                        }
+                                       
+
+
+
                                     }
-                                    else
+                                    else //Insert
                                     {
                                         int Status;
                                         // 
@@ -8197,9 +8118,9 @@ namespace Plims.Controllers
 
             }
 
-            ViewBag.Success = "Data imported and updated successfully!";
-            return RedirectToAction("EmployeeGroupQRCode");
-
+            //ViewBag.Success = "Data imported and updated successfully!";
+           // return RedirectToAction("EmployeeGroupQRCode");dfdfdsf
+                 return Json(new { success = true, message = "Data imported and updated successfully!" });
         }
 
 
