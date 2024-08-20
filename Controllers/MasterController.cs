@@ -4571,7 +4571,7 @@ namespace Plims.Controllers
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// ProductSTD management
+        /// s management
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -5173,7 +5173,7 @@ namespace Plims.Controllers
                             var LineIDDb = db.TbLine.Where(x => x.LineID.Equals(worksheet.Cells[row, 2].Text) && x.PlantID.Equals(PlantID)).Select(x => x.LineID).SingleOrDefault();
                             var ProductIDDb = db.TbProduct.Where(x => x.ProductID.Equals(worksheet.Cells[row, 3].Text) && x.PlantID.Equals(PlantID)).Select(x => x.ProductID).SingleOrDefault();
                             var SectionIDDb = db.TbSection.Where(x => x.SectionID.Equals(worksheet.Cells[row, 4].Text) && x.PlantID.Equals(PlantID)).Select(x => x.SectionID).SingleOrDefault();
-                            var DataDb = db.TbProductSTD.Where(x => x.ProductSTDID.Equals(prodStdID) && x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.SectionID.Equals(SectionIDDb) && x.ProductID.Equals(ProductIDDb)).SingleOrDefault();
+                            var DataDb = db.TbProductSTD.Where(x => x.ProductSTDID.Equals(prodStdID) && x.PlantID.Equals(PlantID)).SingleOrDefault();
 
                             if (LineIDDb == null || ProductIDDb == null || SectionIDDb == null && (Convert.ToInt32(worksheet.Cells[row, 9].Text) != 1 || Convert.ToInt32(worksheet.Cells[row, 9].Text) != 0))
                             {
@@ -5275,8 +5275,6 @@ namespace Plims.Controllers
 
             }
 
-            //ViewBag.Success = "Data imported and updated successfully!";
-            // return RedirectToAction("ProductSTD");
             return Json(new { success = true, message = "Data imported and updated successfully!" });
 
         }
@@ -5912,7 +5910,7 @@ namespace Plims.Controllers
                             var ProductDb = db.TbProduct.Where(x => x.ProductID.Equals(Productvar) && x.PlantID.Equals(PlantID)).Select(x => x.ProductID).SingleOrDefault();
                             //check section
                             var SectionDb = db.TbSection.Where(x => x.SectionID.Equals(Sectionvar) && x.PlantID.Equals(PlantID)).Select(x => x.SectionID).SingleOrDefault();
-                            var DataDb = db.TbPLPS.Where(x => x.PLPSID.Equals(PLPSvar) && x.PlantID.Equals(PlantID) && x.LineID.Equals(LineDb) && x.SectionID.Equals(SectionDb) && x.ProductID.Equals(ProductDb)).SingleOrDefault();
+                            var DataDb = db.TbPLPS.Where(x => x.PLPSID.Equals(PLPSvar) && x.PlantID.Equals(PlantID)).SingleOrDefault();
 
                             if (LineDb == null || ProductDb == null || SectionDb == null && (Convert.ToInt32(worksheet.Cells[row, 8].Text) != 1 || Convert.ToInt32(worksheet.Cells[row, 8].Text) != 0))
                             {
@@ -6018,7 +6016,7 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.ToList(),
                 tbShift = db.TbShift.ToList(),
                 tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
-                view_EmployeeMaster = db.View_EmployeeMaster.ToList(),
+                view_EmployeeMaster = db.View_EmployeeMaster.OrderBy(x => x.SectionID).ThenBy(x => x.StartTime).ToList(),
                 view_PLPS = db.View_PLPS.ToList()
 
             };
@@ -6111,7 +6109,7 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.ToList(),
                 tbShift = db.TbShift.ToList(),
                 tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
-                view_EmployeeMaster = db.View_EmployeeMaster.ToList(),
+                view_EmployeeMaster = db.View_EmployeeMaster.OrderBy(x => x.SectionID).ThenBy(x => x.StartTime).ToList(),
                 view_PLPS = db.View_PLPS.ToList()
 
             };
@@ -6206,77 +6204,7 @@ namespace Plims.Controllers
 
         }
 
-        [HttpGet]
-        public ActionResult EmployeeRegenerate1()
-        {
-            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
-            string EmpID = HttpContext.Session.GetString("UserEmpID");
-
-
-            if (EmpID == null)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            var Employeevar = db.TbEmployeeMaster.Where(x => x.Status.Equals(1) && PlantID.Equals(PlantID)).ToList();
-            foreach (var item in Employeevar)
-            {
-
-                // Text data to be encoded in the QR code
-                string qrCodeText = item.EmployeeID.Trim();
-
-
-                QRCodeGenerator QrGenerator = new QRCodeGenerator();
-                QRCodeData QrCodeInfo = QrGenerator.CreateQrCode(qrCodeText, QRCodeGenerator.ECCLevel.Q); //qRCode.EmployeeID
-
-                QRCode QrCode = new QRCode(QrCodeInfo);
-                Bitmap QrBitmap = QrCode.GetGraphic(30);
-                byte[] BitmapArray = QrBitmap.BitmapToByteArray();
-
-                // Convert Bitmap to byte array
-                using (MemoryStream stream = new MemoryStream())
-                {
-                    QrBitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                    ViewBag.QRCodeImage = "data:image/png;base64," + Convert.ToBase64String(stream.ToArray());
-                }
-
-                // Pass label value to the view
-                ViewBag.LabelValue = qrCodeText;
-
-
-                // string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes");
-                string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes", PlantID.ToString());
-                if (!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
-
-                string filePath = Path.Combine(directoryPath, $"{qrCodeText}_QRCode.png"); //qRCode.EmployeeID
-                System.IO.File.WriteAllBytes(filePath, BitmapArray);
-                string QrUri = Url.Content("~/qrcodes/" + PlantID.ToString() + "/" + $"{qrCodeText}_QRCode.png"); //qRCode.EmployeeID
-
-
-            }
-            var mymodel = new ViewModelAll()
-            {
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                tbPlants = db.TbPlant.ToList().Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                tbLine = db.TbLine.ToList().Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                tbSection = db.TbSection.ToList().Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                tbShift = db.TbShift.ToList().Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                view_EmployeeMaster = db.View_EmployeeMaster.Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                view_PLPS = db.View_PLPS.Where(p => p.PlantID.Equals(PlantID)).ToList()
-
-            };
-            ViewBag.VBRoleEmployee = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(3)).Select(x => x.RoleAction).FirstOrDefault();
-
-            return View("EmployeeManagement", mymodel);
-
-
-
-        }
-
+     
 
 
         private void DeleteDirectory(string directoryPath)
@@ -6364,7 +6292,7 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.ToList(),
                 tbShift = db.TbShift.ToList(),
                 tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
-                view_EmployeeMaster = db.View_EmployeeMaster.ToList(),
+                view_EmployeeMaster = db.View_EmployeeMaster.OrderBy(x => x.SectionID).ThenBy(x => x.StartTime).ToList(),
                 view_PLPS = db.View_PLPS.ToList()
 
             };
@@ -6573,9 +6501,6 @@ namespace Plims.Controllers
 
         private void SaveQRCodeToServer(string filePath)
         {
-            // Implement the logic to save the file to the server
-            // This might include copying the file to a specific directory, storing the path in a database, etc.
-            // Example:
             var destinationPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", Path.GetFileName(filePath));
             System.IO.File.Copy(filePath, destinationPath, true);
         }
@@ -7299,11 +7224,6 @@ namespace Plims.Controllers
 
                 var mymodel = new ViewModelAll
                 {
-                    //view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                    //tbEmployeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                    //tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                    //view_EmployeeGroup = db.View_EmployeeGroup.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                    //view_EmployeeGroupList = db.View_EmployeeGroupList.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
 
                     view_PermissionMaster = db.View_PermissionMaster.ToList(),
                     tbEmployeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID)).ToList(),
@@ -7344,7 +7264,7 @@ namespace Plims.Controllers
                 }
                 else
                 {
-                    TempData["AlertMessage"] = "EmployeeGroupQRCode duplicate!";
+                    TempData["AlertMessage"] = "Data duplicate!";
                     ViewBag.Error = "EmployeeGroupQRCode Duplicate!";
                 }
 
@@ -7412,7 +7332,7 @@ namespace Plims.Controllers
             }
             else
             {
-                TempData["AlertMessage"] = "EmployeeGroupQRCode Duplicate!";
+                TempData["AlertMessage"] = "Data Duplicate!";
             }
 
             var employees = db.View_Temp_Group
@@ -7458,13 +7378,13 @@ namespace Plims.Controllers
                 }
                 else
                 {
-                    TempData["AlertMessage"] = "EmployeeGroupQRCode not found!";
+                    TempData["AlertMessage"] = "Data not found!";
                 }
             }
             catch (Exception ex)
             {
                 // Log the exception or handle it appropriately
-                TempData["AlertMessage"] = "An error occurred while deleting the record.";
+                TempData["AlertMessage"] = "Connection loss.";
             }
 
             return Json(null);
@@ -7750,8 +7670,7 @@ namespace Plims.Controllers
                 var lineidvar = db.View_EmployeeMaster.Where(p => p.EmployeeID.Equals(DataEmpID) && p.PlantID.Equals(PlantID) && p.Status != 0).Select(x => x.LineID).SingleOrDefault();
                 var Sectionidvar = db.View_EmployeeMaster.Where(p => p.EmployeeID.Equals(DataEmpID) && p.PlantID.Equals(PlantID) && p.Status != 0).Select(x => x.SectionID).SingleOrDefault();
                 var checkmoveline = db.TbEmployeeTransaction.Where(p => p.EmployeeID.Equals(DataEmpID) && p.Line.Equals(lineidvarFisrt) && p.Plant.Equals(PlantID) && p.TransactionDate.Equals(DateTime.Today.Date) && p.Remark.Equals("Adjust")).ToList();
-                //var checkmoveline = db.TbEmployeeTransaction.Where(p => p.EmployeeID.Equals(DataEmpID) && p.Line.Equals(lineidvarFisrt) && p.Section.Equals(SectionidvarFisrt) && p.Plant.Equals(PlantID) && p.TransactionDate.Equals(DateTime.Today.Date) && p.Remark.Equals("Adjust")).ToList();
-
+               
                 var linetouse = "";
                 var sectiontouse = "";
                 if (Empgrupdb.Count() == 0 && (lineidvar == lineidvarFisrt || checkmoveline.Count() != 0))// && (SectionidvarFisrt == Sectionidvar || checkmoveline.Count() != 0))
@@ -8079,15 +7998,6 @@ namespace Plims.Controllers
                                     else //Insert
                                     {
                                         int Status;
-                                        // 
-                                        //if (worksheet.Cells[row, 4].Text == "Active")
-                                        //{
-                                        //    Status = 1;
-                                        //}
-                                        //else
-                                        //{
-                                        //    Status = 0;
-                                        //}
                                         // Insert new record
                                         var newData = new TbEmployeeGroupQR
                                         {
@@ -8118,8 +8028,6 @@ namespace Plims.Controllers
 
             }
 
-            //ViewBag.Success = "Data imported and updated successfully!";
-           // return RedirectToAction("EmployeeGroupQRCode");dfdfdsf
                  return Json(new { success = true, message = "Data imported and updated successfully!" });
         }
 
@@ -8303,17 +8211,6 @@ namespace Plims.Controllers
             string QrUri = Url.Content("~/qrcodes/" + PlantID.ToString() + "/" + $"{qrCodeText}_QRCode.png"); //qRCode.EmployeeID
             // Save the image to the specified directory
             System.IO.File.WriteAllBytes(filePath, bitmapArray);
-
-
-            //  string directoryPaths = Server.MapPath("~/qrcodes");
-
-            // Assign the URI to the ViewBag
-            //ViewData["QrCodeUri"] = QrUri;
-            //ViewBag.EmployeeID = qrCodeText; //qRCode.EmployeeID;
-            //ViewBag.QRCodeGenerated = true;
-            //fgfgfdg
-
-            //return Content(QrUri = QrUri, employeeID = qrCodeText);
 
 
             // Assign the URI to the ViewBag

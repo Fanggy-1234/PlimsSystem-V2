@@ -460,57 +460,7 @@
     </div>
 </div>
 
-<script type="text/javascript">
 
-    // Modal FG
-    // $(document).ready(function () {
-    //     // Capture change event of ProductIDDefect dropdown
-    //     $('#ProductIDFG').change(function () {
-    //         var employeeID = $('#EmployeeIDFG').val();
-    //         var productID = $(this).val(); // Get the selected product ID from the dropdown
-    //         // Make AJAX request to fetch section and unit
-    //         $.ajax({
-    //             url: '/Working/GetSectionAndUnitWithRef',
-    //             type: 'POST',
-    //             data: { employeeID: employeeID, productID: productID },
-    //             success: function (response) {
-    //                 $('#SectionNameFG').val(response.section);
-    //                 $('#UnitFG').val(response.unit);
-    //             },
-    //             error: function (xhr, status, error) {
-    //                 console.error(error);
-    //             }
-    //         });
-    //     });
-    // });
-
-    // Modal Defect
-    // $(document).ready(function () {
-    //     // Capture change event of Employee ID and Product ID fields
-    //     $('#ProductIDDefect').change(function () {
-    //         var employeeID = $('#EmployeeIDDefect').val();
-    //         var productID = $('#ProductIDDefect').val();
-
-    //         // Make AJAX request to fetch section and unit
-    //         $.ajax({
-    //             url: '/Working/GetSectionAndUnitDefectWithRef',
-    //             type: 'POST',
-    //             data: { employeeID: employeeID, productID: productID },
-    //             success: function (response) {
-    //                 $('#SectionNameDefect').val(response.section);
-    //                 $('#UnitDefect').val(response.unit);
-    //             },
-    //             error: function (xhr, status, error) {
-    //                 console.error(error);
-    //             }
-    //         });
-    //     });
-
-
-    // });
-
-
-</script>
 
 <script type="text/javascript">
 
@@ -604,11 +554,11 @@
             $('#SectionName').css('background-color', 'gainsboro');
             document.getElementById("demo").innerHTML = "";
             // var packageRef = $('#PackageRef').val();
-            // console.log(employeeId);
+             console.log(employeeId);
             if (employeeId !== '') { // Only process if there's valid input
                 // AJAX request to the controller
                 $.ajax({
-                    url: '/Working/WorkingFunctionCreateWithRef', // Update with your endpoint
+                    url: '/Working/WorkingFunctionCreate', // Update with your endpoint
                     type: 'GET',
                     data: {
                         employeeId: employeeId,
@@ -772,14 +722,13 @@
 
     function filterProductByEmployeeClockin() {
         // Clear previous options
-        console.log('1');
-        $("#ProductIDFG").empty();
+//        $("#ProductIDFG").empty();
         // Add a default option
         $("#ProductIDFG").append("<option value='' default selected>Please Select ..</option>");
         // Get the selected Product ID
-        console.log('2');
+       // console.log('2');
         var selectedEmpID = $("#EmployeeIDFG").val().toString();
-        console.log(selectedEmpID);
+        //console.log(selectedEmpID);
         // Check if a product is selected
         if (selectedEmpID !== "") {
             // Use AJAX to filter sections based on the selected Product ID
@@ -794,12 +743,12 @@
                         // alert(data.message);
                         //// $('#FGForm')[0].reset();
                         $('#EmployeeIDFG').val('').focus();
-                        console.log('3');
+                       // console.log('3');
                         alert('Please clock-in QR code');
                         //$('#ProductIDFG').val('').focus();
                     } else {
                         $('#ProductIDFG').val('').focus();
-                        console.log('4');
+                      //  console.log('4');
                         // Add filtered products to the dropdown if the response indicates success
                         data.forEach(function (product) {
                             $("#ProductIDFG").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
@@ -977,12 +926,12 @@
         };
     }
 
-    // function filterProductByEmployeeClockin() {
-    //     // Your filtering logic here
-    //     console.log("Filtering product by employee clock-in");
-    // }
+    function filterProductByEmployeeClockin() {
+        // Your filtering logic here
+        console.log("Filtering product by employee clock-in");
+    }
 
-    const debouncedFilterProductByEmployeeClockin = debounce(filterProductByEmployeeClockin, 500);
+    const debouncedFilterProductByEmployeeClockin = debounce(filterProductByEmployeeClockin, 1000);
 
     document.getElementById('EmployeeIDFG').addEventListener('input', debouncedFilterProductByEmployeeClockin);
 

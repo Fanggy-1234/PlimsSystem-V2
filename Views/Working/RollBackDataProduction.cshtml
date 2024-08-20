@@ -253,7 +253,7 @@
                     <!-- Employee ID -->
                     <select class="selectfillter form-control" name="ProductTo" id="ProductTo" style="width:100%">
                         <option value="" default selected></option>
-                        @foreach (var item in Model.tbProduct)
+                        @foreach (var item in Model.view_PLPS.Select(x => new { ProductID = x.ProductID, ProductName = x.ProductName }).Distinct())
                         {
 
                             <option value="@item.ProductID" selected="@(item.ProductName == ViewBag.SelectedProductName ? "selected" : null)">
@@ -288,7 +288,7 @@
                 </div>
 
                 <div class="col-3">
-                    <button class="search-button" type="submit" asp-action="RollBackDataProduction" onclick="return Checkdata()">
+                    <button class="search-button" type="submit" asp-action="RollBackDataProduction" >
                         Search
                     </button>
                 </div>
@@ -301,7 +301,7 @@
                 <div class="col-3">
                     @if (ViewBag.VBRoleRollBackDataProduction == "Full")
                     {
-                        <button type="submit" class="clear-button" onclick="return confirm('Are you sure?')">Adjust</button>
+                    <button type="submit" class="clear-button" onclick="return Checkdata()">Adjust</button>
                     }
                     else
                     {

@@ -607,9 +607,20 @@
                     <td id="STD">
                         @Html.DisplayFor(modelItem => item.STD)
                     </td>
-                    <td id="Max">
-                        @Html.DisplayFor(modelItem => item.Min)
-                    </td>
+                    
+                    @if(@item.Min == 0)
+                    {
+                        <td id="Max" style="background-color:floralwhite">
+                            @Html.DisplayFor(modelItem => item.Min)
+                        </td>
+                    }
+                    else
+                    {
+                        <td id="Max">
+                            @Html.DisplayFor(modelItem => item.Min)
+                        </td>
+                    }
+
                     <td id="SectionName">
                         @Html.DisplayFor(modelItem => item.Max)
                     </td>

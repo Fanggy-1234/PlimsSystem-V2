@@ -100,10 +100,10 @@ namespace Plims.Data
 
         public DbSet<TbProductionTransactionAdjust> TbProductionTransactionAdjust { get; set; }
 
-        public DbSet<View_ProductionTransactionAj> view_ProductionTransactionAj { get; set; }
+        public DbSet<View_ProductionTransactionAj> View_ProductionTransactionAj { get; set; }
 
 
-        public DbSet<View_EmployeeGroupWorking> view_EmployeeGroupWorking { get; set; }
+        public DbSet<View_EmployeeGroupWorking> View_EmployeeGroupWorking { get; set; }
         public DbSet<TbRateTransaction> tbRateTransaction { get; set; }
 
 
@@ -198,7 +198,7 @@ namespace Plims.Data
 
 
             modelBuilder.Entity<View_EmployeeGroupWorking>()
-.HasKey(v => new { v.TransactionNo, v.ID, v.PlantID,  v.EmployeeID});
+.HasKey(v => new { v.TransactionNo, v.TransactionDate, v.PlantID,  v.EmployeeID,v.GroupID});
 
 
 

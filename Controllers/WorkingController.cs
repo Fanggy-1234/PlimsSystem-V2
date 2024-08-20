@@ -6,6 +6,8 @@ using System.Data;
 using System.Text;
 using OfficeOpenXml;
 using Microsoft.EntityFrameworkCore;
+using Irony.Parsing;
+using System.Globalization;
 
 namespace Plims.Controllers
 {
@@ -63,7 +65,7 @@ namespace Plims.Controllers
         }
 
 
-        public ActionResult WorkingFunctionCreate(string employeeId, string productId)
+        public ActionResult WorkingFunctionCreateWithRef(string employeeId, string productId)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -681,13 +683,6 @@ namespace Plims.Controllers
 
 
             return View(mymodel);
-            //var objPLPS = db.TbSetup
-            //         .Where(x => x.Name.Equals("RefreshTime") && x.PlantID.Equals(PlantID)).FirstOrDefault();
-
-            //int refrestime = objPLPS.Valuesetup;
-
-            //// Return section and unit as JSON
-            //return Json(new { refrestime = refrestime });
 
         }
 
@@ -718,8 +713,6 @@ namespace Plims.Controllers
             }
 
             return View("SetUpRefreshTime", mymodel);
-            //// Return section and unit as JSON
-            //return Json(new { refrestime = refrestime });
 
         }
 
@@ -737,7 +730,6 @@ namespace Plims.Controllers
 
 
 
-
             var mymodel = new ViewModelAll
             {
                 tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
@@ -747,7 +739,7 @@ namespace Plims.Controllers
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                view_PLPS = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                view_PLPS = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 View_RollBackData = db.View_RollBackData.Where(x => x.PlantID.Equals(PlantID)).ToList()
@@ -811,10 +803,11 @@ namespace Plims.Controllers
                     var PLPSdata = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(selectview.LineID) && x.ProductID.Equals(ProductTo)).ToList();
                     if (PLPSdata.Count == 0)
                     {
-                        TempData["AlertMessage"] = "Please check PLPS ";
+                        TempData["AlertMessage"] = "Please check PLPS.";
+                        return RedirectToAction("RollBackDataProduction");
                     }
                     var PLPSdataproduct = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(selectview.LineID) && x.ProductID.Equals(ProductTo)).Select(z => new { z.ProductID, z.ProductName,z.QTYPerQRCode,z.FormularID }).FirstOrDefault();
-
+                   
                     foreach (var product in TransactiodbUpdate)
                     {
 
@@ -1241,7 +1234,8 @@ namespace Plims.Controllers
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 tbProductionTransaction = db.TbProductionTransaction.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 tbProduct = db.TbProduct.Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                tbSection = db.TbSection.Where(p => p.PlantID.Equals(PlantID)).ToList()
+                tbSection = db.TbSection.Where(p => p.PlantID.Equals(PlantID)).ToList(),
+                tbLine = db.TbLine.Where(p => p.PlantID.Equals(PlantID)).ToList(),
             };
 
 
@@ -1263,9 +1257,31 @@ namespace Plims.Controllers
 
                     for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                     {
-                        if (worksheet.Cells[row, 2].Value != null)
+                        string dateString = worksheet.Cells[row, 1].Text;
+                        DateTime TransactionDateVar;
+
+                        string[] formats = { "MM/dd/yyyy", "dd/MM/yyyy", "yyyy-MM-dd" }; // Add the formats you expect
+
+                        bool isValidFormat = DateTime.TryParseExact(dateString, formats,
+                                                                    CultureInfo.InvariantCulture,
+                                                                    DateTimeStyles.None,
+                                                                    out TransactionDateVar);
+
+                        if (isValidFormat)
                         {
-                            DateTime TransactionDateVar = Convert.ToDateTime(worksheet.Cells[row, 1].Text);
+                            
+                            ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
+
+                            TempData["AlertMessage"] = "Please check format date.";
+                            return View("ImportManualData", mymodel);
+                        }
+                        else
+                        {
+                            TransactionDateVar = Convert.ToDateTime(worksheet.Cells[row, 1].Text);
+                        }
+                            if (worksheet.Cells[row, 2].Value != null)
+                        {
+                            TransactionDateVar = Convert.ToDateTime(worksheet.Cells[row, 1].Text);
                             string LineVar = worksheet.Cells[row, 3].Text;
                             string SectionVar = worksheet.Cells[row, 4].Text;
                             string ProductVar = worksheet.Cells[row, 5].Text;
@@ -1275,14 +1291,15 @@ namespace Plims.Controllers
 
                             //Check Employee Clockin
                             var ClockinDb = db.View_ClockTime.Where(x => x.TransactionDate == TransactionDateVar && x.EmployeeID.Equals(EmployeeVar) && x.ClockIn != null ).ToList();
+                            
                             if (ClockinDb.Count == 0)
                             {
                                 int rowerror = row - 1;
-                                TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Please Clockin ";
+                                TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Please Clockin or Format date Incorrect";
                                 return RedirectToAction("ImportManualData");
                             }
-
-                            var LineIDDb = db.TbLine.Where(x => x.LineID.Equals(LineVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.LineID, x.LineName }).SingleOrDefault();
+                           // var LineIDDbtest = db.TbLine.Where(x => x.LineID.Equals(LineVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList();
+                            var LineIDDb = mymodel.tbLine.Where(x => x.LineID.Equals(LineVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.LineID, x.LineName }).SingleOrDefault();
                             var ProductIDDb = mymodel.tbProduct.Where(x => x.ProductID.Equals(ProductVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.ProductID, x.ProductName }).SingleOrDefault();
                             var SectionIDDb = mymodel.tbSection.Where(x => x.SectionID.Equals(SectionVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.SectionID, x.SectionName }).SingleOrDefault();
                             var EmployeeIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.EmployeeID).SingleOrDefault();
@@ -1904,7 +1921,7 @@ namespace Plims.Controllers
             }
             catch
             {
-                TempData["AlertMessage"] = "System Some has Problem in Line, Plese contact IT!";
+                TempData["AlertMessage"] = "Connection loss, Please contact IT!";
                 return RedirectToAction("Login");
 
             }
@@ -1950,7 +1967,7 @@ namespace Plims.Controllers
         }
 
 
-        public ActionResult WorkingFunctionCreateWithRef(string employeeId, string productId, String EmployeeRef)
+        public ActionResult WorkingFunctionCreate(string employeeId, string productId, String EmployeeRef)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -1965,6 +1982,7 @@ namespace Plims.Controllers
                 tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID) &&  x.Status.Equals(1)).ToList(),
                 tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbPLPS = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.ProductID.Equals(productId)).ToList()
+                
             };
 
             // check QRcode in system
@@ -1994,7 +2012,7 @@ namespace Plims.Controllers
                         {
                             var sectionvalalert = new
                             {
-                                message = "Please check clock out!",
+                                message = "Please check clock-out.",
                                 status = false
                             };
                             return Json(sectionvalalert);
@@ -2017,7 +2035,7 @@ namespace Plims.Controllers
                                 {
                                     var sectionvalalert = new
                                     {
-                                        message = "Please check PLPS",
+                                        message = "Please check PLPS.",
                                         status = false
                                     };
                                     //var section = "Please check PLPS";
@@ -2101,7 +2119,7 @@ namespace Plims.Controllers
                             {
                                 var sectionvalalert = new
                                 {
-                                    message = "Check Clock in time",
+                                    message = "Please check Clock-in.",
                                     status = false
                                 };
                                 //var sectionvalalert = "Check Clock in time";
@@ -2148,17 +2166,15 @@ namespace Plims.Controllers
                             {
                                  sectionvalalert = new
                                 {
-                                    message = "Check Clock in time",
+                                    message = "Please check Clock-in.",
                                     status = false
                                 };
                                 //var sectionvalalert = "Check Clock in time";
                                 return Json(sectionvalalert);
                             }
-
-                            var objEmp = db.view_EmployeeGroupWorking
-                           .Where(x => x.GroupID.Equals(item.GroupID) && x.PlantID.Equals(PlantID))
-                           .ToList();
-
+                           
+                            var objEmp = db.View_EmployeeGroupWorking.ToList();
+                            objEmp = db.View_EmployeeGroupWorking.Where(x => x.GroupID.Equals(item.GroupID) && x.PlantID.Equals(PlantID)).ToList();
                             foreach (var items in objEmp)
                             {
 
@@ -2547,224 +2563,7 @@ namespace Plims.Controllers
         }
 
 
-        // Backup
-        //public ActionResult WorkingFunctionCreateWithRef(string employeeId, string productId, int PackageRef, String EmployeeRef)
-        //{
-        //    int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
-        //    string EmpID = HttpContext.Session.GetString("UserEmpID");
-
-        //    if (EmpID == null)
-        //    {
-        //        return RedirectToAction("Login", "Home");
-        //    }
-        //    var mymodel = new ViewModelAll
-        //    {
-        //        view_PermissionMaster = db.View_PermissionMaster.ToList(),
-        //        tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-        //        tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-        //        tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-        //        tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-        //        view_Employee = db.View_Employee.ToList(),
-        //        tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList()
-        //        //  tbProductionTransaction = db.TbProductionTransaction.ToList()
-        //    };
-
-        //    // check QRcode in system
-        //    if (db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)) == null || db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(employeeId)) == null)
-        //    {
-        //        TempData["AlertMessage"] = "QR Code is not available in the system!";
-        //        return Json(mymodel);
-        //    }
-
-        //    if (db.View_PermissionMaster.Where(x => x.UserEmpID.Equals(EmpID) && x.PageID.Equals(22)).Select(x => x.RoleAction).SingleOrDefault() == "Full")
-        //    {
-        //        var currentDateTime = DateTime.Now;
-        //        var currentDate = currentDateTime.Date;
-        //        var currentTime = currentDateTime.TimeOfDay;
-        //        string sectionval = "";
-        //        try
-        //        {
-        //            //check employee or Group
-        //            if (db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)).Count() != 0) // case Employee
-        //            {
-        //                //Select EmployeeTransaction
-        //                var objEmp = db.TbEmployeeTransaction
-        //                .Where(x => x.EmployeeID.Equals(employeeId) &&
-        //                            x.TransactionDate.Date == currentDate &&
-        //                            x.Plant.Equals(PlantID))
-        //                .OrderByDescending(x => x.TransactionNo)
-        //                .FirstOrDefault();
-        //                if (objEmp != null)
-        //                {
-        //                    var objPLPS = db.View_PLPS
-        //                    .Where(x => x.PlantID.Equals(PlantID) &&
-        //                                x.LineID.Equals(objEmp.Line.ToString()) &&
-        //                                x.ProductID.Equals(productId) &&
-        //                                x.SectionID.Equals(objEmp.Section.ToString()))
-        //                    .FirstOrDefault();
-
-        //                    if (objPLPS != null)
-        //                    {
-        //                        var LastTransactionTime = db.TbProductionTransaction
-        //                       .Where(x => x.QRCode.Equals(employeeId) && x.TransactionDate.Date == currentDate)
-        //                       .OrderByDescending(x => x.TransactionDate)
-        //                       .Select(x => x.TransactionDate.TimeOfDay)
-        //                       .FirstOrDefault();
-
-
-        //                        // Convert TimeSpan to total seconds
-        //                        double lastTransactionSeconds = LastTransactionTime.TotalSeconds;
-        //                        double delayTimeSeconds = Convert.ToDouble(objPLPS.Delaytime);
-
-        //                        if (lastTransactionSeconds + delayTimeSeconds < currentTime.TotalSeconds)
-        //                        {
-        //                            // Perform actions if LastTransactionTime is greater than or equal to objPLPS.Delaytime                  
-        //                            db.TbProductionTransaction.Add(new TbProductionTransaction()
-        //                            {
-        //                                // TransactionNo = db.TbProductionTransaction.Count() + 1,
-        //                                TransactionDate = DateTime.Now,
-        //                                PlantID = Convert.ToInt32(objEmp.Plant),
-        //                                LineID = objEmp.Line,
-        //                                SectionID = objEmp.Section,
-        //                                ProductID = productId,
-        //                                QRCode = employeeId,
-        //                                Qty = 1,
-        //                                QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
-        //                                DataType = "Count",
-        //                                Reason = "",
-        //                                Note = "",
-        //                                PackageRef = PackageRef,
-        //                                EmployeeRef = string.IsNullOrEmpty(EmployeeRef) ? "" : EmployeeRef,
-        //                                GroupRef = "",
-        //                                CreateDate = DateTime.Now,
-        //                                CreateBy = EmpID,
-        //                                UpdateDate = DateTime.Now,
-        //                                UpdateBy = EmpID
-        //                            });
-        //                            db.SaveChanges();
-        //                            sectionval = objEmp.Section.ToString() + " : " + objPLPS.SectionName.ToString();
-        //                            return Json(sectionval);
-
-        //                        }
-        //                        else
-        //                        {
-        //                            TempData["AlertMessage"] = "please check time!";
-        //                            var sectionvalalert = "check time";
-        //                            return Json(sectionvalalert);
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        var sectionvalalert = "Check Master PLPS";
-        //                        return Json(sectionvalalert);
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    var sectionvalalert = "Check Clock in time";
-        //                    return Json(sectionvalalert);
-        //                }
-        //                //End case employee
-        //            }
-        //            else  // case group
-        //            {
-
-        //                //select group
-        //                var objgroup = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(employeeId)).ToList();
-        //                foreach (var item in objgroup)
-        //                {
-
-        //                    //Select EmployeeTransaction
-        //                    var objEmp = db.TbEmployeeTransaction
-        //                    .Where(x => x.EmployeeID.Equals(item.EmployeeID) &&
-        //                                x.TransactionDate.Date == currentDate &&
-        //                                x.Plant.Equals(PlantID))
-        //                    .OrderByDescending(x => x.TransactionNo)
-        //                    .FirstOrDefault();
-        //                    if (objEmp != null)
-        //                    {
-        //                        var objPLPS = db.View_PLPS0
-        //                        .Where(x => x.PlantID.Equals(PlantID) &&
-        //                                    x.LineID.Equals(objEmp.Line.ToString()) &&
-        //                                    x.ProductID.Equals(productId) &&
-        //                                    x.SectionID.Equals(objEmp.Section.ToString()))
-        //                        .FirstOrDefault();
-
-        //                        if (objPLPS != null)
-        //                        {
-        //                            var LastTransactionTime = db.TbProductionTransaction
-        //                           .Where(x => x.QRCode.Equals(objEmp.EmployeeID) && x.TransactionDate.Date == currentDate)
-        //                           .OrderByDescending(x => x.TransactionDate)
-        //                           .Select(x => x.TransactionDate.TimeOfDay)
-        //                           .FirstOrDefault();
-
-
-        //                            // Convert TimeSpan to total seconds
-        //                            double lastTransactionSeconds = LastTransactionTime.TotalSeconds;
-        //                            double delayTimeSeconds = Convert.ToDouble(objPLPS.Delaytime);
-
-        //                            if (lastTransactionSeconds + delayTimeSeconds < currentTime.TotalSeconds)
-        //                            {
-        //                                // Perform actions if LastTransactionTime is greater than or equal to objPLPS.Delaytime                  
-        //                                db.TbProductionTransaction.Add(new TbProductionTransaction()
-        //                                {
-        //                                    // TransactionNo = db.TbProductionTransaction.Count() + 1,
-        //                                    TransactionDate = DateTime.Now,
-        //                                    PlantID = Convert.ToInt32(objEmp.Plant),
-        //                                    LineID = objEmp.Line,
-        //                                    SectionID = objEmp.Section,
-        //                                    ProductID = productId,
-        //                                    QRCode = objEmp.EmployeeID,
-        //                                    Qty = 1,
-        //                                    QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
-        //                                    DataType = "Count",
-        //                                    Reason = "",
-        //                                    Note = "",
-        //                                    PackageRef = PackageRef,
-        //                                    EmployeeRef = string.IsNullOrEmpty(EmployeeRef) ? "" : EmployeeRef,
-        //                                    GroupRef = employeeId,
-        //                                    CreateDate = DateTime.Now,
-        //                                    CreateBy = EmpID,
-        //                                    UpdateDate = DateTime.Now,
-        //                                    UpdateBy = EmpID
-        //                                });
-        //                                db.SaveChanges();
-        //                                sectionval = objEmp.Section.ToString();
-
-
-        //                            }
-        //                            else
-        //                            {
-        //                                TempData["AlertMessage"] = "please check time!";
-        //                                var sectionvalalert = "check time";
-        //                                return Json(sectionvalalert);
-        //                            }
-        //                        }
-        //                    }
-
-        //                }
-
-        //                return Json(sectionval);
-
-        //                //End case group
-        //            }
-
-
-
-
-        //        }
-        //        catch
-        //        {
-        //            TempData["AlertMessage"] = "Please check master data!";
-        //            return Json(mymodel);
-        //        }
-        //    }
-
-
-
-        //    return Json(mymodel);
-        //}
-
+     
 
 
         [HttpPost]
@@ -2798,7 +2597,7 @@ namespace Plims.Controllers
 
             if (objPLPS == null)
             {
-                return Json(new { section = "Please check PLPS", unit = "" });
+                return Json(new { section = "Please check PLPS.", unit = "" });
             }
 
             string section = objEmp.Section;
@@ -2896,7 +2695,7 @@ namespace Plims.Controllers
 
                 if (empsectioncount.Count() > 1)
                 {
-                    TempData["AlertMessage"] = "Please contact IT some data not clock out.Please check. : " + employeeID;
+                    TempData["AlertMessage"] = "Some data not clock out.Please check. : " + employeeID;
                     return View("WorkingFunction", mymodel);
 
                 }
@@ -3005,7 +2804,7 @@ namespace Plims.Controllers
 
                 if (empsectioncount.Count() > 1)
                 {
-                    TempData["AlertMessage"] = "Please contact IT some data not clock out.Please check. : " + EmployeeID;
+                    TempData["AlertMessage"] = "Some data not clock out.Please check. : " + EmployeeID;
                     return View("WorkingFunction", mymodel);
 
                 }
@@ -3113,7 +2912,7 @@ namespace Plims.Controllers
                 if (empsectioncount.Count() > 1)
                 {
 
-                    return Json(new { success = false, message = "Please contact IT some data not clock out.Please check. : " + employeeID });
+                    return Json(new { success = false, message = "Some data not clock out.Please check. : " + employeeID });
                 }
 
                 var objEmp = db.View_ClockTime
@@ -3215,7 +3014,7 @@ namespace Plims.Controllers
                 if (empsectioncount.Count() > 1)
                 {
 
-                    return Json(new { success = false, message = "Please contact IT some data not clock out.Please check. : " + EmployeeID });
+                    return Json(new { success = false, message = "Some data not clock out.Please check. : " + EmployeeID });
                 }
 
                 var objEmp = db.View_ClockTime
@@ -3237,7 +3036,7 @@ namespace Plims.Controllers
                 if (transactionscan.Count() ==  0)
                 {
                    // TempData["AlertMessage"] = "Please Check data before input defect";
-                    return Json(new { success = false, message = "Please Check data before input defect" });
+                    return Json(new { success = false, message = "Please Check data before input defect." });
                     //return View("WorkingFunction", mymodel);
                 }
 
@@ -5065,7 +4864,7 @@ namespace Plims.Controllers
 
 
 
-
+        [HttpPost]
         public IActionResult ProductionTransactionAdjustFG(string FGPlanDate, String FGLine, String FGSection, String FGShift, int FGQTY, string[] TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -5103,6 +4902,7 @@ namespace Plims.Controllers
                     ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                     mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                     ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                    TempData["AlertMessage"] = "Adjust Mistake!";
                     return View("ProductionTransactionAdjustByEmployee", mymodel);
                 }
 
@@ -5183,6 +4983,7 @@ namespace Plims.Controllers
                     ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                     mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                     ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                    TempData["AlertMessage"] = "Adjust Mistake!";
                     return View("ProductionTransactionAdjustByEmployee", mymodel);
                 }
                 decimal inputqty = 0;
@@ -5226,10 +5027,11 @@ namespace Plims.Controllers
             ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
             mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
             ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+            TempData["AlertMessage"] = "Adjust susscessful!";
             return View("ProductionTransactionAdjustByEmployee", mymodel);
 
         }
-
+        [HttpPost]
         public IActionResult ProductionTransactionAdjustDefect(string DefectPlanDate, String DefectLine, String DefectSection, String DefectShift, int DefectQTY, string[] TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -5284,6 +5086,7 @@ namespace Plims.Controllers
             ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
             mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
             ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+            TempData["AlertMessage"] = "Adjust susscessful!";
             return View("ProductionTransactionAdjustByEmployee", mymodel);
 
 
@@ -5477,7 +5280,7 @@ namespace Plims.Controllers
                 tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
-                view_ProductionTransactionAj = db.view_ProductionTransactionAj.Where(x => x.PlantID == PlantID).ToList()
+                view_ProductionTransactionAj = db.View_ProductionTransactionAj.Where(x => x.PlantID == PlantID).ToList()
 
 
             };
@@ -5540,7 +5343,7 @@ namespace Plims.Controllers
                         if (checkClockout.Count() >= 1)
                         {
 
-                            TempData["AlertMessage"] = "Please Clockout First!";
+                            TempData["AlertMessage"] = "Please Clock-out First!";
                             return View("ProductionTransactionAdjustByEmployee", mymodel);
                         }
 
@@ -5590,7 +5393,7 @@ namespace Plims.Controllers
                         if (checkClockout.Count() >= 1)
                         {
 
-                            TempData["AlertMessage"] = "Please Clockout First!";
+                            TempData["AlertMessage"] = "Please Clock-out First!";
                             return View("ProductionTransactionAdjustByEmployee", mymodel);
                         }
 
@@ -5639,7 +5442,7 @@ namespace Plims.Controllers
                     if (checkClockout.Count() >= 1)
                     {
 
-                        TempData["AlertMessage"] = "Please Clockout First!";
+                        TempData["AlertMessage"] = "Please Clock-out First!";
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
                     }
 
@@ -5749,8 +5552,9 @@ namespace Plims.Controllers
                 ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                 mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                 ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
-                return View("ProductionTransactionAdjustByEmployee", mymodel);
-
+                TempData["AlertMessage"] = "Adjust susscessful!";
+                return RedirectToAction("ProductionTransactionAdjustByEmployee");
+               // return View("ProductionTransactionAdjustByEmployee", mymodel);
 
 
                 // END All FG Adjust
@@ -5799,6 +5603,7 @@ namespace Plims.Controllers
                         ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                         mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                         ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                        TempData["AlertMessage"] = "Adjust fail!";
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
 
                     }
@@ -5921,6 +5726,7 @@ namespace Plims.Controllers
                         ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                         mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
                         ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                        TempData["AlertMessage"] = "Adjust fail!";
                         return View("ProductionTransactionAdjustByEmployee", mymodel);
 
                     }
@@ -5971,8 +5777,8 @@ namespace Plims.Controllers
                 ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
                 mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
 
-
-                return View("ProductionTransactionAdjustByEmployee", mymodel);
+                TempData["AlertMessage"] = "Adjust susscessful!";
+                return RedirectToAction("ProductionTransactionAdjustByEmployee");
 
                 // END Employee Adjust
 

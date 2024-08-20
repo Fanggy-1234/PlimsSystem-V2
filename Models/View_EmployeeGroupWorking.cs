@@ -4,7 +4,7 @@ namespace Plims.Models
 {
     public class View_EmployeeGroupWorking
     {
-        [Key]
+      
         public int ID { get; set; }
         [Key]
         public string GroupID { get; set; }
@@ -13,9 +13,9 @@ namespace Plims.Models
         [Key]
         public int PlantID { get; set; }
         public int Status { get; set; }
-
+        [Key]
         public int TransactionNo { get; set; }
-
+        [Key]
         public DateTime TransactionDate { get; set; }
 
         public int Shift { get; set; }

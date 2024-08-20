@@ -330,7 +330,7 @@
 @*Modal Create*@
 <div class="modal fade" id="FGModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form  asp-action="ProductionTransactionAdjustFG" asp-controller="Working">
+        <form method="post"  asp-action="ProductionTransactionAdjustFG" asp-controller="Working">
             <div class="modal-content">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Finish Good Adjust</h1>
@@ -378,7 +378,7 @@
 
 <div class="modal fade" id="DefectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form asp-action="ProductionTransactionAdjustDefect" asp-controller="Working">
+        <form method="post"  asp-action="ProductionTransactionAdjustDefect" asp-controller="Working">
             <div class="modal-content">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Defect Adjust</h1>
