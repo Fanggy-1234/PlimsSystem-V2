@@ -1260,25 +1260,26 @@ namespace Plims.Controllers
                         string dateString = worksheet.Cells[row, 1].Text;
                         DateTime TransactionDateVar;
 
-                        string[] formats = { "MM/dd/yyyy", "dd/MM/yyyy", "yyyy-MM-dd" }; // Add the formats you expect
+                        //string[] formats = { "MM/dd/yyyy", "dd/MM/yyyy", "yyyy-MM-dd" }; // Add the formats you expect
 
-                        bool isValidFormat = DateTime.TryParseExact(dateString, formats,
-                                                                    CultureInfo.InvariantCulture,
-                                                                    DateTimeStyles.None,
-                                                                    out TransactionDateVar);
+                        //bool isValidFormat = DateTime.TryParseExact(dateString, formats,
+                        //                                            CultureInfo.InvariantCulture,
+                        //                                            DateTimeStyles.None,
+                        //                                            out TransactionDateVar);
 
-                        if (isValidFormat)
-                        {
-                            
-                            ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
+                        //if (isValidFormat)
+                        //{
 
-                            TempData["AlertMessage"] = "Please check format date.";
-                            return View("ImportManualData", mymodel);
-                        }
-                        else
-                        {
-                            TransactionDateVar = Convert.ToDateTime(worksheet.Cells[row, 1].Text);
-                        }
+                        //    TransactionDateVar = Convert.ToDateTime(worksheet.Cells[row, 1].Text);
+                         
+                        //}
+                        //else
+                        //{
+                        //    ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
+
+                        //    TempData["AlertMessage"] = "Please check format date.";
+                        //    return View("ImportManualData", mymodel);
+                        //}
                             if (worksheet.Cells[row, 2].Value != null)
                         {
                             TransactionDateVar = Convert.ToDateTime(worksheet.Cells[row, 1].Text);
@@ -1290,24 +1291,24 @@ namespace Plims.Controllers
                             string EmployeeRefVar = worksheet.Cells[row, 10].Text;
 
                             //Check Employee Clockin
-                            var ClockinDb = db.View_ClockTime.Where(x => x.TransactionDate == TransactionDateVar && x.EmployeeID.Equals(EmployeeVar) && x.ClockIn != null ).ToList();
+                            //var ClockinDb = db.View_ClockTime.Where(x => x.TransactionDate == TransactionDateVar && x.EmployeeID.Equals(EmployeeVar) && x.ClockIn != null ).ToList();
                             
-                            if (ClockinDb.Count == 0)
-                            {
-                                int rowerror = row - 1;
-                                TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Please Clockin or Format date Incorrect";
-                                return RedirectToAction("ImportManualData");
-                            }
-                           // var LineIDDbtest = db.TbLine.Where(x => x.LineID.Equals(LineVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList();
+                            //if (ClockinDb.Count == 0)
+                            //{
+                            //    int rowerror = row - 1;
+                            //    TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Please Clockin or Format date Incorrect";
+                            //    return RedirectToAction("ImportManualData");
+                            //}
+                         
                             var LineIDDb = mymodel.tbLine.Where(x => x.LineID.Equals(LineVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.LineID, x.LineName }).SingleOrDefault();
                             var ProductIDDb = mymodel.tbProduct.Where(x => x.ProductID.Equals(ProductVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.ProductID, x.ProductName }).SingleOrDefault();
                             var SectionIDDb = mymodel.tbSection.Where(x => x.SectionID.Equals(SectionVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.SectionID, x.SectionName }).SingleOrDefault();
                             var EmployeeIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.EmployeeID).SingleOrDefault();
-                            var PLPSIDDb = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb) && x.Status.Equals(1)).Select(x => x.FormularID).SingleOrDefault();
+                            var PLPSIDDb = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb.LineID) && x.ProductID.Equals(ProductIDDb.ProductID) && x.SectionID.Equals(SectionIDDb.SectionID) && x.Status.Equals(1)).Select(x => x.FormularID).SingleOrDefault();
                             //Check PLPS , Incentive , ProductSTD
-                            var incentivecheck = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb) && x.Status.Equals(1)).ToList();
-                            var plplcheck = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb) && x.Status.Equals(1)).ToList();
-                            var productstdcheck = db.TbProductSTD.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb) && x.ProductID.Equals(ProductIDDb) && x.SectionID.Equals(SectionIDDb) && x.Status.Equals(1)).ToList();
+                            var incentivecheck = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb.LineID) && x.ProductID.Equals(ProductIDDb.ProductID) && x.SectionID.Equals(SectionIDDb.SectionID) && x.Status.Equals(1)).ToList();
+                            var plplcheck = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb.LineID) && x.ProductID.Equals(ProductIDDb.ProductID) && x.SectionID.Equals(SectionIDDb.SectionID) && x.Status.Equals(1)).ToList();
+                            var productstdcheck = db.TbProductSTD.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb.LineID) && x.ProductID.Equals(ProductIDDb.ProductID) && x.SectionID.Equals(SectionIDDb.SectionID) && x.Status.Equals(1)).ToList();
 
                             var EmployeeRefIDDb = "";
 
@@ -5337,7 +5338,7 @@ namespace Plims.Controllers
                     if (ProductionTrand != 0)
                     {
                         //Check Clockout
-                        var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                        var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.QRCode.Equals(EmpID) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
                         var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.TransactionDate >= startDate && x.TransactionDate < endDate && x.ClockOut == "").ToList();
 
                         if (checkClockout.Count() >= 1)

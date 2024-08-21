@@ -24,7 +24,7 @@ namespace Plims.Models
         [Key]
         public string ServicesID { get; set; }
         public string ServicesName { get; set; }
-
+        public int ShiftID { get; set; }
         public string ShiftName { get; set; }
         public string StartTime { get; set; }
         public string EndTime { get; set; }

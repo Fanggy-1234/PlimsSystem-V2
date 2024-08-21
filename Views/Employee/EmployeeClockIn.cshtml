@@ -153,6 +153,12 @@
             alert('Please fill Time/Date Clockin')
             return false
         }
+        // Check if any checkbox in the table is selected
+        if (!$("input[name='EmployeeIDchk']:checked").length) {
+            alert('Please select at least one employee');
+            return false;
+        }
+
         if (confirm('Are you sure?')) {
             return true
         }
@@ -162,62 +168,6 @@
 </script>
 
 <script>
-
-    // function eventFired(type) {
-    //     let n = document.querySelector('#demo_info');
-    // }
-
-    // $(document).ready(function () {
-    //     $("#table_id #checkall").click(function () {
-    //         if ($("#table_id #checkall").is(':checked')) {
-    //             $("#table_id input[type=checkbox]").each(function () {
-    //                 $(this).prop("checked", true);
-    //             });
-
-    //         } else {
-    //             $("#table_id input[type=checkbox]").each(function () {
-    //                 $(this).prop("checked", false);
-    //             });
-    //         }
-    //     });
-
-    //     $("[data-toggle=tooltip]").tooltip();
-    // });
-
-
-    // new DataTable('#table_id')
-    //     .on('page.dt', () => eventFired('Page'));
-
-
-
-    // $(document).ready(function () {
-    //     var table = $('#table_id').DataTable({
-    //         columnDefs: [{
-    //             orderable: false,
-    //             className: 'select-checkbox',
-    //             targets: 0
-    //         }],
-    //         ordering:false,
-    //         searching:false,
-    //         lengthMenu: [10, 25, 50, 75, 100],
-    //         pageLength: 20, // Default page length
-    //         select: {
-    //             style: 'os',
-    //             selector: 'td:first-child'
-    //         },
-    //         order: [[1, 'asc']]
-    //     });
-
-    //     $('#table_id').on('click', '#checkall', function () {
-    //         if ($('#checkall:checked').val() === 'on') {
-    //             table.rows().select();
-    //         }
-    //         else {
-    //             table.rows().deselect();
-    //         }
-
-    //     });
-    // });
 
 
     //Edit to modal
@@ -240,9 +190,6 @@
                 }
                 else {
 
-                    // console.log('AJAX request successful:', response);
-                    //var transactionDate = new Date(response.transactionDate);
-                    //   var formattedDate = transactionDate.ToString("yyyy-MM-dd");
 
                     var transactionDate = new Date(response.transactionDate);
                     var year = transactionDate.getFullYear();
@@ -250,10 +197,6 @@
                     var day = ('0' + transactionDate.getDate()).slice(-2);
                     var formattedDate = `${year}-${month}-${day}`;
 
-
-
-                    //var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed .ToString("yyyy-MM-dd")
-                    // console.log('AJAX request successful:', transactionDate)
                     $('#ModalEmployeeID').val(response.employeeID);
                     $('#ModalClockIn').val(response.clockIn);
                     $('#ModalTransactionDate').val(formattedDate);

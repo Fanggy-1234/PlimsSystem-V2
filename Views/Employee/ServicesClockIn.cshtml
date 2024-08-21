@@ -150,6 +150,11 @@
             alert('Please select Line');
             return false;
         }
+        // Check if any checkbox in the table is selected
+        if (!$("input[name='EmployeeIDchk']:checked").length) {
+            alert('Please select at least one employee');
+            return false;
+        }
         if ($("#tablecreate_id tbody tr").length <= 0) {
             alert('Please add Section/Service')
             return false

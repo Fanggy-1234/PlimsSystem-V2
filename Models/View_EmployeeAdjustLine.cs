@@ -27,6 +27,7 @@ namespace Plims.Models
         [Key]
         public string SectionID { get; set; }
         public string SectionName { get; set; }
+        public int ShiftID { get; set; }
         public string ShiftName { get; set; }
         public string StartTime { get; set; }
         public string EndTime { get; set; }
