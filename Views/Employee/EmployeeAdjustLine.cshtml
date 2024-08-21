@@ -90,7 +90,6 @@
 
 <script>
 
-
     
     $(document).ready(function () {
         $("#tabledata2 #checkall").click(function () {
@@ -248,14 +247,38 @@
     }
 
 
+
+
+
 </script>
+
+<script>
+    $(document).ready(function () {
+        $('.employee-check').change(function () {
+            var transactionNo = $(this).data('transaction-no');
+            if ($(this).is(':checked')) {
+                $('input.transaction-check[value="' + transactionNo + '"]').prop('checked', true);
+            } else {
+                $('input.transaction-check[value="' + transactionNo + '"]').prop('checked', false);
+            }
+        });
+
+        // Optional: handle 'checkall' functionality
+        $('#checkall').change(function () {
+            var checked = $(this).is(':checked');
+            $('.employee-check').prop('checked', checked).trigger('change');
+        });
+    });
+</script>
+
+
 
 <div class="row" style="height:10px"></div>
 <h2 class="page-name">Employee Adjust Line Section Function</h2>
 
 
 <div class="row" style="height:10px"></div>
-<form method="get" asp-controller="Employee">
+<form  method="get" asp-controller="Employee" >
     <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;">
        @*  //// Fillter ///// *@
         <div class="col left" style="border: solid 1px #d5d5d5; margin-left:2em;">
@@ -541,7 +564,15 @@
                 <tr>
                     @* @Html.HiddenFor(modelItem => item.ID) *@
                     <td >
-                        <input type="checkbox" id="@item.EmployeeID" value="@item.EmployeeID" class="checkthis" Name="EmployeeIDchk" />
+                      @*  <input type="checkbox" id="@item.EmployeeID" value="@item.EmployeeID" class="checkthis" Name="EmployeeIDchk" />
+                        <label id="@item.TransactionNo" value="@item.TransactionNo" Name="TransactionNochk" hidden/> *@
+                        @*   <input type="hidden" name="TransactionNo" value="@item.TransactionNo" class="transaction-no" /> *@
+
+
+                        <input type="checkbox" id="@item.EmployeeID" value="@item.EmployeeID:@item.TransactionNo" class="checkthis employee-check"Name="EmployeeIDchk" />
+                      @*   <input type="checkbox" id="@item.TransactionNo" value="@item.TransactionNo" class="checkthis transaction-check" Name="TransactionNochk" hidden />
+ *@
+
                     </td>
                     <td >
                         @Html.DisplayFor(modelItem => item.EmployeeID)

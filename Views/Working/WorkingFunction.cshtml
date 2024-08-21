@@ -931,9 +931,18 @@
         console.log("Filtering product by employee clock-in");
     }
 
+    function filterSectionsByProductEdit() {
+        // Your filtering logic here
+        console.log("Filtering product by employee clock-in");
+    }
+
     const debouncedFilterProductByEmployeeClockin = debounce(filterProductByEmployeeClockin, 1000);
+    const debouncedFilterProductByEmployeeClockinDefect = debounce(filterSectionsByProductEdit, 1000);
+
 
     document.getElementById('EmployeeIDFG').addEventListener('input', debouncedFilterProductByEmployeeClockin);
+    document.getElementById('EmployeeIDDefect').addEventListener('input', debouncedFilterProductByEmployeeClockinDefect);
+
 
     function CallfunctionInputproductQty() {
         // Clear previous options
