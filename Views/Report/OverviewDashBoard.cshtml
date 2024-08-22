@@ -89,6 +89,7 @@
     <br />
     <div class="row" id="dataContainer">
         <div class="col-md-2">
+            <div class="table-responsive">
             <table class="table  table-bordered" style="color: black;font-size:28px ; height:100%">
                 <tbody>
                     <tr>
@@ -109,7 +110,8 @@
                 <td style="background-color:red;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.DefectAll.ToString("#,##0.00") </h3>Defect All</td>
                 </tr>
                 </tbody>
-            </table>
+                </table>
+            </div>
         </div>
         <div class="col-md-10">
             <div class="row">
@@ -161,7 +163,7 @@
               }
                             @foreach (var item in Model.ResultGrpProductOverviewModel)
                             {
-                                <tr style="text-align: center;font-size:28px">
+                                 <tr style="text-align: center;font-size:28px"> 
                                     <td>@item.ProductName</td>
                                     <td>@item.SectionName</td>
                                     <td style="text-align: right;">@item.EffTarget.ToString("#,##0.00")</td>
