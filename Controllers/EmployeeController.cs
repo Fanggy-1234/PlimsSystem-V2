@@ -1638,8 +1638,10 @@ namespace Plims.Controllers
                             
                             if(serviceID == null)
                             {
-                                TempData["AlertMessage"] = "Please check ServicesID , Section :" + sectionsplit[0].Trim() ;
-                                return RedirectToAction("ServicesClockIn");
+                                 serviceID = db.TbService.Where(x => x.SectionID.Equals(servicesplit[0].Trim()) && x.ServicesStatus.Equals(1) && x.PlantID.Equals(PlantID) && LineID.Equals(obj.LineID) && x.SectionID.Equals(sectionsplit[0].Trim())).Select(x => x.ServicesID).SingleOrDefault();
+
+                              //  TempData["AlertMessage"] = "Please check ServicesID , Section :" + sectionsplit[0].Trim() ;
+                              //  return RedirectToAction("ServicesClockIn");
                             }
                             
                             //var serID = db.TbService.Where(x => x.LineID.Equals(obj.LineID) && x.PlantID.Equals(PlantID) && x.SectionID.Equals(sectionsplit[0].Trim()) && x.ServicesName.Equals(servicesplit[0].Trim())).SingleOrDefault();
@@ -2933,7 +2935,7 @@ namespace Plims.Controllers
 
                     if (Empcheckclockout.Count != 0)
                     {
-                        TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid;
+                        TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid + " Date : " + EmpTran.First().TransactionDate.Date;
                         return RedirectToAction("EmployeeAdjustLine");
                     }
                     // If has data update
@@ -3083,7 +3085,7 @@ namespace Plims.Controllers
                         var empshift = db.View_EmployeeMaster.Where(x => x.EmployeeID == empid.Trim() && x.PlantID.Equals(PlantID)).SingleOrDefault();
                         if (StartTime == "" || StartTime == null)
                         {
-                            TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid;
+                            TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid ;
                             return RedirectToAction("EmployeeAdjustLine");
                         }
 
