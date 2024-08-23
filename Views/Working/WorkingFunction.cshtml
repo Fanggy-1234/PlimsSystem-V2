@@ -571,13 +571,25 @@
                             $('#EmployeeRefsection').prop('disabled', true);
                             $('#SectionName').val(section.message);
                             $('#EmployeeID').val('').focus(); // Clear and refocus
+                           
+                            console.log(section.message);
                             document.getElementById("demo").innerHTML = "Message Alert : " + section.message;
                             if (section.status) {
                                 $('#SectionName').css('background-color', '#abff6c');
                                 $('#demo').css('color', '#198754');
-                            } else {
-                                $('#SectionName').css('background-color', '#ff4646');
-                                $('#demo').css('color', '#ff4646');
+                            } 
+                            else {
+                                if (section.message === "Please check Clock-in.") {
+                                    $('#SectionName').css('background-color', '#FFD700');
+                                    $('#demo').css('color', '#DAA520');
+                                    console.log('test');
+                                }
+                                else {
+                                    $('#SectionName').css('background-color', '#ff4646');
+                                    $('#demo').css('color', '#ff4646');
+                                    console.log('test2');
+                                }
+                               
                             }
                         }
                     },

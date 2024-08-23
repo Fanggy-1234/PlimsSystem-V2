@@ -184,9 +184,7 @@ namespace Plims.Controllers
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 view_User = db.View_User.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 tbPlants = db.TbPlant.Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                //tbLine = db.TbLine.ToList(),
-                //tb3Master = db.TbEmployeeMaster.ToList(),
-                //view_Employee = db.View_Employee.ToList()
+
 
             };
 
@@ -225,15 +223,6 @@ namespace Plims.Controllers
                     Mymodel.view_User = Mymodel.view_User.Where(x => x.Status == 1).OrderByDescending(x => x.Status).ToList();
                     ViewBag.InactiveStatus = false;
                 }
-                //else
-                //{
-                //    Mymodel.view_User = Mymodel.view_User.Where(x => x.Status == 1).ToList();
-                //    ViewBag.InactiveStatus = false;
-                //}
-
-
-
-                //  Mymodel.view_User = db.View_User.Where(x => x.UserEmpID == obj.UserEmpID && x.UserName == obj.UserName && x.UserLastName == obj.UserLastName && x.RoleName == obj.RoleName).ToList();
 
                 return View(Mymodel);
             }
@@ -687,9 +676,7 @@ namespace Plims.Controllers
                 TempData["AlertMessage"] = "Role is Duplicate!";
                // ViewBag.Error = "Role is Duplicate!";
             }
-            // Return a response if needed
             return Json(new { success = true, message = "Operation successful" });
-          //  return RedirectToAction("RoleManagement");
 }
 
 

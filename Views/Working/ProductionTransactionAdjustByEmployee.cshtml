@@ -375,7 +375,7 @@
 
 <div class="modal fade" id="DefectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form method="post" asp-action="ProductionTransactionAdjustDefectByEmployee" asp-controller="Working">
+        <form method="post"  id="modalFormdefect" asp-action="ProductionTransactionAdjustDefectByEmployee" asp-controller="Working">
             <div class="modal-content">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Defect Adjust</h1>
@@ -389,7 +389,7 @@
                     <div class="mb-3">
                         <label class="col-form-label">Production Date:</label>
                         <input class="form-control" type="datetime" name="DefectPlanDate" id="DefectPlanDate" style="background-color:beige" readonly>
-                        @*   <input class="form-control" type="date" name="PlanDate" id="CreatePlanDate" required> *@
+                        <input type="text" name="DefectEmployeeID" id="DefectEmployeeID" hidden>
                     </div>
                     <div class="mb-3">
                         <label class="col-form-label">Line :</label>
@@ -674,12 +674,15 @@
                 var lineName = selectedRow.cells[3].innerText;
                 var sectionName = selectedRow.cells[4].innerText;
                 var prefix = selectedRow.cells[6].innerText;
+                var EmployeeID = selectedRow.cells[5].innerText;
 
                 
                 document.getElementById('DefectPlanDate').value = formatDate(transactionDate);
                 document.getElementById('DefectLine').value = lineName;
                 document.getElementById('DefectSection').value = sectionName;
                 document.getElementById('DefectShift').value = prefix;
+                document.getElementById('DefectEmployeeID').value = EmployeeID;
+
 
                 $('#DefectQTY').val('').focus();
 
@@ -704,12 +707,16 @@
             var lineName = selectedRow.cells[3].innerText;
             var sectionName = selectedRow.cells[4].innerText;
             var prefix = selectedRow.cells[6].innerText;
+            var EmployeeID = selectedRow.cells[5].innerText;
 
-            console.log(sectionName.Text);
+
+           // console.log(sectionName.Text);
             document.getElementById('DefectPlanDate').value = formatDate(transactionDate);
             document.getElementById('DefectLine').value = lineName;
             document.getElementById('DefectSection').value = sectionName;
             document.getElementById('DefectShift').value = prefix;
+            document.getElementById('DefectEmployeeID').value = EmployeeID;
+
 
             $('#DefectQTY').val('').focus();
 
@@ -724,7 +731,7 @@
 
     function submitModalFormDefect() {
         var selectedCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]:checked');
-        var modalForm = document.getElementById('modalForm');
+        var modalForm = document.getElementById('modalFormdefect');
         selectedCheckboxes.forEach(function (checkbox) {
             var hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
@@ -733,8 +740,27 @@
             modalForm.appendChild(hiddenInput);
         });
         
-        modalForm.submit();
-        location.reload();
+        // modalForm.submit();
+        // location.reload();
+
+
+        
+        fetch(modalForm.action, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('There was an error processing your request.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+
+
+    
     }
 
        ////// Defect Adjust //////////////////////////////////////////////////////////

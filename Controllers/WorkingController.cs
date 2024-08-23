@@ -5094,8 +5094,128 @@ namespace Plims.Controllers
         }
 
 
+        [HttpPost]
+        public IActionResult ProductionTransactionAdjustDefectByEmployee(DateTime DefectPlanDate, String DefectLine, String DefectSection, String DefectShift, decimal DefectQTY, List<int> TransactionID)
+        {
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
 
-        public IActionResult ProductionTransactionAdjustDefectByEmployee(DateTime DefectPlanDate, String DefectLine, String DefectSection, String DefectShift, decimal DefectQTY, string[] TransactionID)
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var mymodel = new ViewModelAll
+            {
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
+                tbProductionTransactionAdjust = db.TbProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
+
+            };
+
+            string[] DefectLineID = DefectLine.Split(":");
+            string[] DefectSectionID = DefectSection.Split(":");
+
+            //Check ALL , Employee , Employee > 1
+            int checkPrdAdjust = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(DefectPlanDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift)).ToList().Count();
+            if (checkPrdAdjust == TransactionID.Count())
+            {
+                //Adjust All
+                //Check Duplicate
+                int checkDuplicate = mymodel.tbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(DefectPlanDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect")).ToList().Count();
+                if (checkDuplicate > 0)
+                {
+
+                    //Update  Table : TbProductionTransactionAdjust       
+                    var TranDefectAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(DefectPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect") && x.Remark.Equals("")).SingleOrDefault();
+                    TranDefectAdjust.QTY = DefectQTY;
+                    db.SaveChanges();
+                }
+                else
+                {
+
+                    //Create Table : TbProductionTransactionAdjust  
+                    db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                    {
+                        TransactionDate = Convert.ToDateTime(DefectPlanDate),
+                        PlantID = PlantID,
+                        LineID = DefectLineID[0].Trim(),
+                        SectionID = DefectSectionID[0].Trim(),
+                        Prefix = DefectShift,
+                        Type = "Defect",
+                        QTY = DefectQTY,
+                        Remark = "",
+                        CreateDate = DateTime.Now,
+                        CreateBy = EmpID
+                    });
+                    db.SaveChanges();
+
+                }
+
+
+            }
+            else
+            {
+                //Adjust Employee
+
+                foreach (int item in TransactionID)
+                {
+                    //selectEmployeeID
+                    string EmployeeNo = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionID.Equals(item)).Select(x=>x.QRCode).SingleOrDefault();
+
+                    //Check Duplicate
+                    int checkDuplicate = mymodel.tbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(DefectPlanDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect") && x.Remark.Equals(EmployeeNo)).ToList().Count();
+                    if (checkDuplicate > 0)
+                    {
+
+                        //Update  Table : TbProductionTransactionAdjust       
+                        var TranDefectAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(DefectPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect") && x.Remark.Equals(EmployeeNo)).SingleOrDefault();
+                        TranDefectAdjust.QTY = DefectQTY;
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+
+                        //Create Table : TbProductionTransactionAdjust  
+                        db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                        {
+                            TransactionDate = Convert.ToDateTime(DefectPlanDate),
+                            PlantID = PlantID,
+                            LineID = DefectLineID[0].Trim(),
+                            SectionID = DefectSectionID[0].Trim(),
+                            Prefix = DefectShift,
+                            Type = "Defect",
+                            QTY = DefectQTY,
+                            Remark = EmployeeNo,
+                            CreateDate = DateTime.Now,
+                            CreateBy = EmpID
+                        });
+                        db.SaveChanges();
+
+                    }
+
+                }
+
+
+
+            }
+                
+
+            ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+            mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+            ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+            return View("ProductionTransactionAdjustByEmployee", mymodel);
+
+
+        }
+
+
+
+        public IActionResult ProductionTransactionAdjustDefectByEmployeeCurrent(DateTime DefectPlanDate, String DefectLine, String DefectSection, String DefectShift, decimal DefectQTY, string[] TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -5156,6 +5276,8 @@ namespace Plims.Controllers
 
 
         }
+
+
 
 
 

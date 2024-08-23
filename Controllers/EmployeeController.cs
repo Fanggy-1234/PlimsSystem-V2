@@ -313,13 +313,25 @@ namespace Plims.Controllers
                     DateTime clockinvar;
 
                     var empdbcheck = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "").ToList();
-                    var empcheckduplicate = db.View_EmployeeClocktime.Where(x => x.EmployeeID.Equals(empid) && x.ClockIn == ClockIn && x.TransactionDate.Equals(TransactionDate)).ToList();
+                    var empcheckduplicate = db.View_EmployeeClocktime.Where(x => x.EmployeeID.Equals(empid) && x.ClockIn == ClockIn && x.ClockIn != x.ClockOut && x.TransactionDate.Equals(TransactionDate)).ToList();
+
+                    // Fetch data as much as possible using SQL
+                    var data = db.View_EmployeeClocktime
+                        .Where(x => x.EmployeeID.Equals(empid)
+                                    && x.TransactionDate.Equals(TransactionDateVar))
+                        .ToList(); // This brings the data into memory
+
+                    // Perform the DateTime comparison in memory
+                    var empcheckduplicate2 = data.Where(x => DateTime.Parse(x.ClockIn) <= DateTime.Parse(ClockIn)
+                                    && DateTime.Parse(ClockIn) <= DateTime.Parse(x.ClockOut)).ToList();
+
+
                     if (empdbcheck.Count() != 0)
                     {
                         TempData["AlertMessage"] = "Please Services Clock out Employee ID :" + empid + " Date :" + empdbcheck.First().TransactionDate;
                         return RedirectToAction("EmployeeClockIn");
                     }
-                    if(empcheckduplicate.Count != 0)
+                    if(empcheckduplicate.Count != 0 && empcheckduplicate2.Count != 0)
                     {
                         TempData["AlertMessage"] = "Please Clock in Duplicate , Employee :" + empid + " Date :" + empcheckduplicate.First().TransactionDate;
                         return RedirectToAction("EmployeeClockIn");
@@ -1566,11 +1578,23 @@ namespace Plims.Controllers
                             }
 
 
-                            var empcheckduplicate = db.View_EmployeeClocktime.Where(x => x.EmployeeID.Equals(empid) && x.ClockIn == obj.ClockIn.ToString() && x.TransactionDate.Equals(TransactionDateVar)).ToList();
-                            if (empcheckduplicate.Count != 0)
+                            var empcheckduplicate = db.View_EmployeeClocktime.Where(x => x.EmployeeID.Equals(empid) && x.ClockIn == obj.ClockIn.ToString() && x.ClockIn != x.ClockOut && x.TransactionDate.Equals(TransactionDateVar)).ToList();
+                           
+
+                            // Fetch data as much as possible using SQL
+                            var data = db.View_EmployeeClocktime
+                                .Where(x => x.EmployeeID.Equals(empid)
+                                            && x.TransactionDate.Equals(TransactionDateVar))
+                                .ToList(); // This brings the data into memory
+
+                            // Perform the DateTime comparison in memory
+                            var empcheckduplicate2 = data.Where(x => DateTime.Parse(x.ClockIn) <= DateTime.Parse(obj.ClockIn)
+                                            && DateTime.Parse(obj.ClockIn) <= DateTime.Parse(x.ClockOut)).ToList();
+
+                            if (empcheckduplicate.Count != 0 && empcheckduplicate2.Count != 0)
                             {
                                 TempData["AlertMessage"] = "Clock in Duplicate , Employee :" + empid + " Date :" + empcheckduplicate.First().TransactionDate;
-                                return RedirectToAction("EmployeeClockIn");
+                                return RedirectToAction("ServicesClockIn");
                             }
 
 
@@ -2813,14 +2837,19 @@ namespace Plims.Controllers
 
                 //Check Toline Tosection
                 var checklinesection = Employee.tbEmployeeMaster.Where(x => x.EmployeeID.Equals(empid) && x.LineID.Equals(ToLine) && x.SectionID.Equals(ToSection)).ToList();
+                var checkclockinhold = db.View_ClockTime.Where(x => x.ClockIn != "" && x.ClockOut == "" && x.EmployeeID.Equals(empid)&& x.WorkingStatus.Equals("Working")).ToList();
                 if(checklinesection.Count() > 0)
                 {
                     TempData["AlertMessage"] = "Please clock in Employee Page!";
                     return RedirectToAction("EmployeeAdjustLine");
                 }
+                if (checkclockinhold.Count() > 0)
+                {
+                    TempData["AlertMessage"] = "Please clock out. Employee : " + checkclockinhold.First().EmployeeID + " Date :" + checkclockinhold.First().TransactionDate;
+                    return RedirectToAction("EmployeeAdjustLine");
+                }
 
-              
-               List <TbEmployeeTransaction> EmpTran;
+                List <TbEmployeeTransaction> EmpTran;
               
 
                 //Check View_EmployeeAdjustLine เพื่อดูว่าเป้นการ clockoutใช่ไหม จาก EmployeeID , EndTime

@@ -476,7 +476,7 @@
                             @foreach (var item in Model.tbRole.Where(x => x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
                             {
                                 var dataitem = item.First(); // Take the first item in the group
-                                <option value="@dataitem.RoleID" selected="@(dataitem.RoleName == ViewBag.SelectedRoleName ? "selected" : null)">
+                                <option value="@dataitem.RoleName" selected="@(dataitem.RoleName == ViewBag.SelectedRoleName ? "selected" : null)">
                                     @Html.DisplayFor(modelItem => dataitem.RoleName)
                                 </option>
 
@@ -555,7 +555,7 @@
                             @foreach (var item in Model.tbRole.Where(x => x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
                             {
                                 var dataitem = item.First(); // Take the first item in the group
-                                <option value="@dataitem.RoleID" selected=@(dataitem.RoleID == ViewBag.SelectedRoleName ? "selected" : null)>
+                                <option value="@dataitem.RoleID" selected=@(dataitem.RoleName == ViewBag.SelectedRoleName ? "selected" : null)>
                                     @Html.DisplayFor(modelItem => dataitem.RoleName)
                                 </option>
 
