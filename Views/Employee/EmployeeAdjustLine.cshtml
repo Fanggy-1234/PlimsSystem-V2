@@ -360,6 +360,29 @@
             </div>
 
 
+            
+              <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:0.1em">
+                <div class="col-3 label" style="padding-bottom:0.1em">
+                    <label for="recipient-name" class="col-form-label"> To Section ID:</label>
+                </div>
+                <div class="col" style="padding-bottom:0.1em">
+                    <!-- Section ID -->
+                
+                    <select class="selectfillter form-control" list="ToSectionIDFillter" name="ToSectionIDFillter" id="ToSectionIDFillter" style="width:100%">
+                            <option value="" default selected></option>
+                        @foreach (var item in Model.tbSection)
+                            {
+
+                            <option value="@item.SectionID" selected="@(item.SectionID == ViewBag.SelectedToSectionID? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
+                                </option>
+                            }
+                        </select>
+                     
+                </div>
+            </div>
+
+
 
             <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:1em">
                 <div class="col-3 label" style="padding-bottom:0.1em">
@@ -414,7 +437,7 @@
                         @foreach (var item in Model.view_PLPS.GroupBy(x => x.SectionID))
                         {
                             var dataFrist = item.First();
-                            <option value="@dataFrist.SectionID" selected="@(dataFrist.SectionID == ViewBag.SelectedSectionID ? "selected" : null)">
+                            <option value="@dataFrist.SectionID">
                                 @Html.DisplayFor(modelItem => dataFrist.SectionID) : @Html.DisplayFor(modelItem => dataFrist.SectionName)
                             </option>
                         }

@@ -824,6 +824,8 @@ namespace Plims.Controllers
                     var EmpClockView = db.TbEmployeeMaster.Where(x => x.ID.Equals(Convert.ToInt32(empid))).Select(x => x.EmployeeID).SingleOrDefault();
                     //  var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(EmpClockView) && (x.TransactionDate == TransactionDateVar || (x.TransactionDate == TransactionDateVar.AddDays(-1) && x.ClockOut == "")) && (x.Remark == null || x.Remark == "") && x.WorkingStatus == "Working").ToList();
 
+
+                
                     //Check time for use 
                     var EmpTransSumtime = db.TbEmployeeTransaction
                                       .Where(x => x.EmployeeID.Equals(EmpClockView) && x.TransactionDate.Equals(TransactionDateVar) &&
@@ -859,8 +861,7 @@ namespace Plims.Controllers
                         }
                     }
 
-
-
+                  
                     var EmpTrancheck = db.TbEmployeeTransaction.Where(x => x.TransactionNo.Equals(EmpClockNo.TransactionNo)).ToList();
 
 
@@ -2670,7 +2671,7 @@ namespace Plims.Controllers
         /// <returns></returns>
 
         [HttpGet]
-        public ActionResult EmployeeAdjustLine(View_EmployeeClocktime obj, string[] EmployeeIDchk, string StartTime, string EndTime, string ToLine, string ToSection, string FromLine, DateTime TransactionDateFillter, string SectionIDFillter)
+        public ActionResult EmployeeAdjustLine(View_EmployeeClocktime obj, string[] EmployeeIDchk, string StartTime, string EndTime, string ToLine, string ToSection, string FromLine, DateTime TransactionDateFillter, string SectionIDFillter, string ToSectionIDFillter)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -2726,7 +2727,11 @@ namespace Plims.Controllers
                     ViewBag.SelectedSectionID = SectionIDFillter;
                     Employee.view_EmployeeAdjustLine = Employee.view_EmployeeAdjustLine.Where(p => p.FromSectionID == SectionIDFillter).ToList();
                 }
-
+                if (!string.IsNullOrEmpty(ToSectionIDFillter))
+                {
+                    ViewBag.SelectedToSectionID = ToSectionIDFillter;
+                    Employee.view_EmployeeAdjustLine = Employee.view_EmployeeAdjustLine.Where(p => p.SectionID == ToSectionIDFillter).ToList();
+                }
                 if (TransactionDateFillter != DateTime.Today && Convert.ToDateTime(TransactionDateFillter) == DateTime.MinValue)
                 {
 
@@ -2838,12 +2843,12 @@ namespace Plims.Controllers
                 //Check Toline Tosection
                 var checklinesection = Employee.tbEmployeeMaster.Where(x => x.EmployeeID.Equals(empid) && x.LineID.Equals(ToLine) && x.SectionID.Equals(ToSection)).ToList();
                 var checkclockinhold = db.View_ClockTime.Where(x => x.ClockIn != "" && x.ClockOut == "" && x.EmployeeID.Equals(empid)&& x.WorkingStatus.Equals("Working")).ToList();
-                if(checklinesection.Count() > 0)
+                if(checklinesection.Count() > 0) //Check ว่า Section เดิมที่ผูกไว้ใน master หรือไม่
                 {
                     TempData["AlertMessage"] = "Please clock in Employee Page!";
                     return RedirectToAction("EmployeeAdjustLine");
                 }
-                if (checkclockinhold.Count() > 0)
+                if (checkclockinhold.Count() > 1) // check ว่ามี adjust ค้างหรือไม่
                 {
                     TempData["AlertMessage"] = "Please clock out. Employee : " + checkclockinhold.First().EmployeeID + " Date :" + checkclockinhold.First().TransactionDate;
                     return RedirectToAction("EmployeeAdjustLine");
