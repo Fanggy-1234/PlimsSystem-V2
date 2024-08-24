@@ -312,7 +312,7 @@ namespace Plims.Controllers
                     DateTime clockoutvar;
                     DateTime clockinvar;
 
-                    var empdbcheck = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "").ToList();
+                    var empdbcheck = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "" ).ToList();
                     var empcheckduplicate = db.View_EmployeeClocktime.Where(x => x.EmployeeID.Equals(empid) && x.ClockIn == ClockIn && x.ClockIn != x.ClockOut && x.TransactionDate.Equals(TransactionDate)).ToList();
 
                     // Fetch data as much as possible using SQL
@@ -2837,7 +2837,7 @@ namespace Plims.Controllers
 
                 //Check Toline Tosection
                 var checklinesection = Employee.tbEmployeeMaster.Where(x => x.EmployeeID.Equals(empid) && x.LineID.Equals(ToLine) && x.SectionID.Equals(ToSection)).ToList();
-                var checkclockinhold = db.View_ClockTime.Where(x => x.ClockIn != "" && x.ClockOut == "" && x.EmployeeID.Equals(empid)&& x.WorkingStatus.Equals("Working")).ToList();
+                var checkclockinhold = db.View_ClockTime.Where(x => x.ClockIn != "" && x.ClockOut == "" && x.EmployeeID.Equals(empid)&& x.WorkingStatus.Equals("Working") && x.Remark != "Adjust").ToList();
                 if(checklinesection.Count() > 0)
                 {
                     TempData["AlertMessage"] = "Please clock in Employee Page!";

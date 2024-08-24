@@ -5536,7 +5536,7 @@ namespace Plims.Controllers
                             foreach (var transaction in ProdUpdate)
                             {
 
-                                transaction.Qty = Convert.ToInt32(QRPerAdjustinsert);
+                                transaction.QtyPerQR = Convert.ToInt32(QRPerAdjustinsert);
 
                                 note = transaction.Note.Split(":");
                                 if (note.Length > 0)
