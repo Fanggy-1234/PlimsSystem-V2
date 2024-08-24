@@ -312,7 +312,7 @@ namespace Plims.Controllers
                     DateTime clockoutvar;
                     DateTime clockinvar;
 
-                    var empdbcheck = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "").ToList();
+                    var empdbcheck = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "" ).ToList();
                     var empcheckduplicate = db.View_EmployeeClocktime.Where(x => x.EmployeeID.Equals(empid) && x.ClockIn == ClockIn && x.ClockIn != x.ClockOut && x.TransactionDate.Equals(TransactionDate)).ToList();
 
                     // Fetch data as much as possible using SQL
