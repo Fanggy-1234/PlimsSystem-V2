@@ -364,9 +364,10 @@ namespace Plims.Controllers
 
                     if (EmpTrans.Count() != 0)
                     {
+                        var EmpTransval = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "" && x.Plant.Equals(PlantID) && x.WorkingStatus == "Working").Select(x=>x.TransactionDate).FirstOrDefault();
 
-                        TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid + " Date :" + EmpTrans.First().TransactionDate;
-                        return RedirectToAction("EmployeeClockIn",mymodel);
+                        TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid + " Date :" + EmpTransval;
+                        return RedirectToAction("EmployeeClockIn");
 
                     }
                     else
@@ -1587,7 +1588,7 @@ namespace Plims.Controllers
                             // Fetch data as much as possible using SQL
                             var data = db.View_EmployeeClocktime
                                 .Where(x => x.EmployeeID.Equals(empid)
-                                            && x.TransactionDate.Equals(TransactionDateVar))
+                                            && x.TransactionDate.Equals(TransactionDateVar) && x.ClockIn != "" && x.ClockOut != "")
                                 .ToList(); // This brings the data into memory
 
                             // Perform the DateTime comparison in memory
