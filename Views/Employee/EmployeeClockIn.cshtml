@@ -533,9 +533,19 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.EndTime)
                     </td>
-                    <td style="color:darkblue">
-                        @Html.DisplayFor(modelItem => item.ClockIn)
-                    </td>
+                    @if(item.Remark == "Adjust")
+                    {
+                        <td style="color:green">
+                            @Html.DisplayFor(modelItem => item.ClockIn)
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="color:darkblue">
+                            @Html.DisplayFor(modelItem => item.ClockIn)
+                        </td>
+                    }
+                   
                     <td>
                         @Html.DisplayFor(modelItem => item.WorkingStatus)
                     </td>

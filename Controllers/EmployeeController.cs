@@ -325,12 +325,14 @@ namespace Plims.Controllers
                     var empcheckduplicate2 = data.Where(x => DateTime.Parse(x.ClockIn) <= DateTime.Parse(ClockIn)
                                     && DateTime.Parse(ClockIn) <= DateTime.Parse(x.ClockOut)).ToList();
 
-
+                    //Alert Clockout Service
                     if (empdbcheck.Count() != 0)
                     {
                         TempData["AlertMessage"] = "Please Services Clock out Employee ID :" + empid + " Date :" + empdbcheck.First().TransactionDate;
                         return RedirectToAction("EmployeeClockIn");
                     }
+
+                    //Alert Duplicate transaction and Alert Clockin has Range clockin berfore
                     if(empcheckduplicate.Count != 0 && empcheckduplicate2.Count != 0)
                     {
                         TempData["AlertMessage"] = "Please Clock in Duplicate , Employee :" + empid + " Date :" + empcheckduplicate.First().TransactionDate;
@@ -364,7 +366,7 @@ namespace Plims.Controllers
                     {
 
                         TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid + " Date :" + EmpTrans.First().TransactionDate;
-                        return RedirectToAction("EmployeeClockIn");
+                        return RedirectToAction("EmployeeClockIn",mymodel);
 
                     }
                     else
@@ -3232,7 +3234,7 @@ namespace Plims.Controllers
 
                     if (Empcheckclockout.Count != 0)
                     {
-                        TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid + " Date : " + EmpTran.First().TransactionDate.Date;
+                        TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid + " Date : " + Empcheckclockout.First().TransactionDate.Date;
                         return RedirectToAction("EmployeeAdjustLine");
                     }
                     // If has data update

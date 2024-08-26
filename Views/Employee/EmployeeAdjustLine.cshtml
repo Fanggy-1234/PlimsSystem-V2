@@ -273,8 +273,36 @@
 
 
 
+
+
+
 <div class="row" style="height:10px"></div>
 <h2 class="page-name">Employee Adjust Line Section Function</h2>
+
+
+@*Button Link*@
+
+<div class="row employee-button-container">
+    <div class="col-2">
+        <a href="@Url.Action("EmployeeClockIn", "Employee")" class="clock-in-button clock-in-button-text">Employee Clock in</a>
+    </div>
+    <div class="col-2">
+        <a href="@Url.Action("EmployeeClockOut", "Employee")" class="clock-out-button clock-out-button-text">Employee Clock out</a>
+    </div>
+    <div class="col-2">
+        <a href="@Url.Action("EmployeeBreakAdjust", "Employee")" class="break-time-button break-time-button-text">Break time</a>
+    </div>
+    <div class="col-2">
+        <a href="@Url.Action("EmployeeAdjustLine", "Employee")" class="leave-holiday-button leave-holiday-button-text">Employee Adjust Line</a>
+    </div>
+    <div class="col-2">
+        <a href="@Url.Action("ServicesClockIn", "Employee")" class="service-clock-in-button service-clock-in-button-text">Service clock in</a>
+    </div>
+    <div class="col-2">
+        <a href="@Url.Action("ServicesClockOut", "Employee")" class="service-clock-out-button service-clock-out-button-text">Service clock out</a>
+    </div>
+</div>
+
 
 
 <div class="row" style="height:10px"></div>

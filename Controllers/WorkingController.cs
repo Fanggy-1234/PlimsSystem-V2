@@ -701,6 +701,11 @@ namespace Plims.Controllers
                 tbSetup = db.TbSetup.Where(x => x.PlantID.Equals(PlantID)).ToList()
             };
 
+            if(obj.Valuesetup < 30)
+            {
+                TempData["AlertMessage"] = "Please input more than or equal 30!";
+                return View("SetUpRefreshTime", mymodel);
+            }
 
             var SetupDb = db.TbSetup.Where(x => x.Name.Equals("RefreshTime") && x.PlantID.Equals(PlantID)).FirstOrDefault();
             if (SetupDb != null)

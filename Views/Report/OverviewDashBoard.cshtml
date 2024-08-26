@@ -90,7 +90,9 @@
     <div class="row" id="dataContainer">
         <div class="col-md-2">
             <div class="table-responsive">
-            <table class="table  table-bordered" style="color: black;font-size:28px ; height:100%">
+           
+
+                  <table class="table  table-bordered" style="color: black;font-size:28px ; height:100%">
                 <tbody>
                     <tr>
                         <td style="background-color:aquamarine;text-align: center;"><h3 style="font-size:40px;font-weight:bold"><i class="fa fa-user blue2_color"></i> @ViewBag.SumEmployee</h3> จำนวนพนักงาน</td>
@@ -107,22 +109,25 @@
                     <tr>
                         <td style="background-color:cornflowerblue;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.SumEFFhr3.ToString("#,##0.00") </h3>Eff.hr 3</td>
                     </tr>
-                <td style="background-color:red;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.DefectAll.ToString("#,##0.00") </h3>Defect All</td>
-                </tr>
+                        <tr>
+                        <td style="background-color:red;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.DefectAll.ToString("#,##0.00") </h3>Defect All</td>
+                    </tr>
                 </tbody>
-                </table>
+                </table> 
+
+
             </div>
         </div>
         <div class="col-md-10">
             <div class="row">
                 <div class="col-md-6">
-                   <div id="container_eff" style="width: 90%; height: 270%;"></div>
+                   <div id="container_eff" style="width: 90%; height: 250%;"></div>
                 </div>
                 <div class="col-md-6">
-                    <div id="container_yield" style="width: 90%; height: 270%;"></div>
+                    <div id="container_yield" style="width: 90%; height: 250%;"></div>
                 </div>
             </div>
-            <div class="row" style="height:35%;">
+            <div class="row" style="height:15%;">
                 <br />&nbsp;<br /> <br />&nbsp;<br />
             </div>
             <div class="row">

@@ -69,7 +69,7 @@
                 <div class="col-8">
                     @{
                         var x = @Model.tbSetup.Select(x => x.Valuesetup).SingleOrDefault();
-                        <input class="form-control" name="Valuesetup" id="RefreshTime" style="width:100%" value="@x">
+                        <input class="form-control" name="Valuesetup" id="RefreshTime" style="width:100%" value="@x" min="30">
                     }
                 </div>
                 <div class="col-2">
