@@ -5437,7 +5437,7 @@ namespace Plims.Controllers
                     db.SaveChanges();
 
 
-                    int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).ToList().Count();
+                    decimal ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).Select(x=>x.Qty).ToList().Sum();
                     decimal inputqty = 0;
                     decimal QRPerAdjustinsert = 0;
                     //Count = 0 or FG = 0 
@@ -5465,7 +5465,7 @@ namespace Plims.Controllers
                     if (ProductionTrand != 0)
                     {
                         //Check Clockout
-                        var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.QRCode.Equals(EmpID) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                        var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim())  && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
                         var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.TransactionDate >= startDate && x.TransactionDate < endDate && x.ClockOut == "").ToList();
 
                         if (checkClockout.Count() >= 1)

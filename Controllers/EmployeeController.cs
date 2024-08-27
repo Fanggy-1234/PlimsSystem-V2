@@ -328,6 +328,7 @@ namespace Plims.Controllers
                     //Alert Clockout Service
                     if (empdbcheck.Count() != 0)
                     {
+
                         TempData["AlertMessage"] = "Please Services Clock out Employee ID :" + empid + " Date :" + empdbcheck.First().TransactionDate;
                         return RedirectToAction("EmployeeClockIn");
                     }

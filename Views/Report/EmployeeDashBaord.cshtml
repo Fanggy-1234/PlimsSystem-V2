@@ -166,7 +166,7 @@
                                                 totalStd = totalStd + item.STD;
                                                 totalActual += item.Actual;
                                                 totalDiff += item.Diff;
-                                                totaldiffsum = (totalActual - item.STD) / totalDiff;
+                                                totaldiffsum = (totalActual * 100) / totalStd;
                                             }
                                             <tr>
                                                 <td style="font-weight:bold;text-align: center;" colspan="2">Total</td>
