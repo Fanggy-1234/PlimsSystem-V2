@@ -3202,6 +3202,7 @@ namespace Plims.Controllers
 
                     Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == empid && x.Plant.Equals(PlantID) && x.ClockOut == "" && x.Remark == "Adjust" && x.TransactionNo.Equals(Convert.ToInt32(empidfillter[1]))).SingleOrDefault();
                     Empdb.ClockOut = EndTime;
+                        Empdb.WorkingStatus = "Working";
                     db.SaveChanges();
                     }
                 }

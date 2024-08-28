@@ -80,10 +80,11 @@
         var table = $('#table_id').DataTable({
             dom: 'Bfrtip',
             buttons: ['copy', 'excel', 'pdf'],
-            fixedHeader: true,
+             fixedHeader: true,
             ordering: false,
             searching: false,
             scrollCollapse: true,
+           // scrollY:true,
             select: {
                 style: 'os',
                 selector: 'td:first-child'

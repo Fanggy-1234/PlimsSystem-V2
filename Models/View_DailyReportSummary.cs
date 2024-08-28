@@ -27,6 +27,7 @@ namespace Plims.Models
         public string SectionID { get; set; }
         public string SectionName { get; set; }
         public decimal CountQty { get; set; }  //int
+        public decimal MinusQty { get; set; }  //int
         public decimal DefectQty { get; set; }  //int
         public decimal FG_Count_Qty { get; set; }  //int
         [Column(TypeName = "decimal(18,3)")]

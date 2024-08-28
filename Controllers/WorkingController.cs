@@ -1590,7 +1590,7 @@ namespace Plims.Controllers
         }
 
         [HttpGet]
-        public ActionResult DailyReportExport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, string SectionID)
+        public ActionResult DailyReportExport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, string SectionID, string Prefix)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -1648,6 +1648,11 @@ namespace Plims.Controllers
                     {
                         mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.SectionID == SectionID).ToList();
                         ViewBag.SelectedSectionID = SectionID;
+                    }
+                    if (!string.IsNullOrEmpty(Prefix))
+                    {
+                        mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.Prefix == Prefix).ToList();
+                        ViewBag.SelectedPrefix = Prefix;
                     }
                     if (StartDate != DateTime.MinValue)
                     {
@@ -5494,7 +5499,7 @@ namespace Plims.Controllers
                                 transaction.QtyPerQR = QRPerAdjustinsert;
 
                                 note = transaction.Note.Split(":");
-                                if (note.Length > 0)
+                                if (note.Length > 1)
                                 {
                                     transaction.Note = "Replace : " + note[1] + "," + transaction.QtyPerQR;
                                 }
