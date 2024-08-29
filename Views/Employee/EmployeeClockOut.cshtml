@@ -156,14 +156,12 @@
             alert('Please fill Working Status')
             return false
         }
-        // // Check if any checkbox in the table is selected
-        // if (!$("input[name='EmployeeIDchk']:checked").length) {
-        //     alert('Please select at least one employee');
-        //     return false;
-        // }
         if (confirm('Are you sure?')) {
             return true
         }
+
+
+
         return false
     }
 
@@ -171,8 +169,6 @@
 <script>
 
     function EditFn(ID, transactionNo) {
-        //var TranDate = $("#TransactionDateFillter").val();
-
         $.ajax({
             url: '/Employee/EmployeeClockOutEdit/' + ID,
             type: 'GET',
@@ -189,17 +185,6 @@
                     alert("This data can't id" + EmployeeID)
                 }
                 else {
-
-                    // console.log('AJAX request successful:', response);
-                    // var transactionDate = new Date(response.transactionDate);
-                    // var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed
-
-                    //        var transactionDate = new Date(response.transactionDate);
-                    // var year = transactionDate.getFullYear();
-                    // var month = ('0' + (transactionDate.getMonth() + 1)).slice(-2);
-                    // var day = ('0' + transactionDate.getDate()).slice(-2);
-                    // var formattedDate = `${year}-${month}-${day}`;
-
 
                     var transactionDate = new Date(response.transactionDate);
                     var year = transactionDate.getFullYear();
@@ -324,7 +309,7 @@
                             @foreach (var item in Model.tbSection)
                             {
                                 <option value="@item.SectionID" selected=@(item.SectionID == ViewBag.SelectedSectionName ? "selected" : null)>
-                                    @Html.DisplayFor(modelItem => item.SectionName)
+                                    @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
                                 </option>
                             }
                         </select>

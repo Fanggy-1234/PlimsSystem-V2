@@ -173,6 +173,7 @@ namespace Plims.Controllers
                 catch
                 {
                     TempData["AlertMessage"] = "Please check master data!";
+
                     return Json(mymodel);
                 }
             }

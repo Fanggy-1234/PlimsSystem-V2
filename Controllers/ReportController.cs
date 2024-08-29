@@ -415,7 +415,7 @@ namespace Plims.Controllers
 
                                                     //1st Graph
                                                     EffSTD = grouped.Average(x => x.STD),
-                                                    EffLine = grouped.Sum(x => x.ValueEFF3),
+                                                    EffLine = grouped.Sum(x => x.WorkinghourACT),
 
                                                     //2nd Graph
                                                     YieldSTD = grouped.Average(x => x.PercentYield),
@@ -425,7 +425,7 @@ namespace Plims.Controllers
                                                     ProductName = grouped.Key.ProductName,
                                                     SectionName = grouped.Key.SectionName,
                                                     EffTarget = grouped.Max(x => x.EFFSTD),
-                                                    EffAct = grouped.Sum(x => x.ValueEFF3),
+                                                    EffAct = grouped.Sum(x => x.WorkinghourACT),
                                                     DiffEff = grouped.Sum(x => x.ValueEFF3) - grouped.Max(x => x.EFFSTD),
                                                     YieldTarget = grouped.Max(x => x.PercentYield),
                                                     YieldActual = grouped.Sum(x => x.YieldDefect),

@@ -582,12 +582,21 @@
                                 if (section.message === "Please check Clock-in.") {
                                     $('#SectionName').css('background-color', '#FFD700');
                                     $('#demo').css('color', '#DAA520');
-                                    console.log('test');
+                                  
+                                }
+                                else if (section.message === "Please check PLPS.")
+                                {
+                                    $('#SectionName').css('background-color', '#00BFFF');
+                                    $('#demo').css('color', '#1E90FF');
+                                }
+                                else if (section.message.startsWith("check time")) {
+                                    $('#SectionName').css('background-color', '#FFC0CB');
+                                    $('#demo').css('color', '#DB7093');
                                 }
                                 else {
                                     $('#SectionName').css('background-color', '#ff4646');
                                     $('#demo').css('color', '#ff4646');
-                                    console.log('test2');
+                                  
                                 }
                                
                             }
