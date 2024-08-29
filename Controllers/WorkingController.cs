@@ -2129,13 +2129,28 @@ namespace Plims.Controllers
                             }
                             else
                             {
-                                var sectionvalalert = new
+                                var empmaster = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)).ToList();
+                                if(empmaster.Count == 0)
                                 {
-                                    message = "Please check Clock-in.",
-                                    status = false
-                                };
-                                //var sectionvalalert = "Check Clock in time";
-                                return Json(sectionvalalert);
+                                    var sectionvalalertno = new
+                                    {
+                                        message = "Employee Mistake!",
+                                        status = false
+                                    };
+                                    //var sectionvalalert = "Check Clock in time";
+                                    return Json(sectionvalalertno);
+                                }
+                                else
+                                {
+                                    var sectionvalalert = new
+                                    {
+                                        message = "Please check Clock-in.",
+                                        status = false
+                                    };
+                                    //var sectionvalalert = "Check Clock in time";
+                                    return Json(sectionvalalert);
+                                }
+                               
                             }
                         }
                         //End case employee

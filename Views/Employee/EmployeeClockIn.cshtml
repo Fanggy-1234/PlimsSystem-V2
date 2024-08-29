@@ -162,7 +162,44 @@
         if (confirm('Are you sure?')) {
             return true
         }
-        return false
+         return false
+
+
+        // ********************************** Add check employee clockin *****************////
+        // if (confirm('Are you sure?')) {
+
+        //     var ClockIn = $('#ClockIn').val();
+        //     var TransactionDate = $('#TransactionDate').val();
+
+        //     var EmployeeIDchk = [];
+        //     /*Initializing array with Checkbox checked values*/
+        //     $("input[name='EmployeeIDchk']:checked").each(function () {
+        //         EmployeeIDchk.push(this.value);
+                
+        //     });
+
+        //     console.log("0");
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "/Employee/EmployeeClockInCheck", // Update the URL to your controller action
+        //         data: { EmployeeIDchk: EmployeeIDchk, ClockIn: ClockIn, TransactionDate: TransactionDate },
+        //         success: function (data) {
+        //             if (data.success === false) {
+        //                 console.log("1");
+        //                 return false
+        //             } else {
+        //                 console.log("2");
+        //                 return true
+        //             }
+        //         },
+        //         error: function (error) {
+        //             console.log("Error filtering products: " + error);
+        //         }
+        //     });
+        // }
+        // ********************************** Add check employee clockin *****************////
+        //console.log("3");
+
     }
 
 </script>

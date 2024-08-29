@@ -415,6 +415,133 @@ namespace Plims.Controllers
         }
 
 
+
+
+        [HttpPost]
+        public ActionResult EmployeeClockInCheck(string[] EmployeeIDchk, string ClockIn, DateTime TransactionDate)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            var TransactionDateVar = TransactionDate;// DateTime.Today;
+
+            //var mymodel = new ViewModelAll
+            //{
+            //    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
+            //    tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+            //    tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+            //    view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).OrderBy(x => x.ShiftID).ThenBy(x => x.EmployeeID).ToList(),
+            //    tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+            //    view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+
+            //};
+
+
+
+            if (EmpID == null)
+            {
+                return Json("Login", "Home");
+            }
+
+
+            //ViewBag.VBRoleEmpClockIn = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
+            if (EmployeeIDchk.Length == 0)
+            {
+
+                 return Json(new { success = false, message = "Please select Employee" });
+              //  return RedirectToAction("EmployeeClockIn", "Employee");
+            }
+            else
+            {
+
+                // Create Function
+
+                int datacnt = EmployeeIDchk.Count();
+                for (int i = 0; i < datacnt; i++)
+                {
+
+                    string empid = EmployeeIDchk[i];
+                   //// DateTime clockoutvar;
+                   // DateTime clockinvar;
+
+                    var empdbcheck = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "").ToList();
+                    var empcheckduplicate = db.View_EmployeeClocktime.Where(x => x.EmployeeID.Equals(empid) && x.ClockIn == ClockIn && x.ClockIn != x.ClockOut && x.TransactionDate.Equals(TransactionDate)).ToList();
+
+                    // Fetch data as much as possible using SQL
+                    var data = db.View_EmployeeClocktime
+                        .Where(x => x.EmployeeID.Equals(empid)
+                                    && x.TransactionDate.Equals(TransactionDateVar) && x.ClockOut != "")
+                        .ToList(); // This brings the data into memory
+
+                    // Perform the DateTime comparison in memory
+                    var empcheckduplicate2 = data.Where(x => DateTime.Parse(x.ClockIn) <= DateTime.Parse(ClockIn)
+                                    && DateTime.Parse(ClockIn) <= DateTime.Parse(x.ClockOut)).ToList();
+
+                    //Alert Clockout Service
+                    if (empdbcheck.Count() != 0)
+                    {
+
+                        return Json(new { success = false, message = "Please Services Clock out Employee ID :" + empid + " Date :" + empdbcheck.First().TransactionDate });
+                    }
+
+                    //Alert Duplicate transaction and Alert Clockin has Range clockin berfore
+                    if (empcheckduplicate.Count != 0 && empcheckduplicate2.Count != 0)
+                    {
+                        
+                        return Json(new { success = false, message = "Please Clock in Duplicate , Employee :" + empid + " Date :" + empcheckduplicate.First().TransactionDate });
+                    }
+
+
+                    var EmpTrans = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "" && x.Plant.Equals(PlantID) && x.WorkingStatus == "Working").ToList();
+                    var EmpTransSumtime = db.TbEmployeeTransaction
+                                        .Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate.Equals(TransactionDateVar) &&
+                                        !string.IsNullOrEmpty(x.ClockOut) && x.Plant.Equals(PlantID))
+                                        .Select(x => new
+                                        {
+                                            x.ClockIn,
+                                            x.ClockOut,
+                                            Duration = (DateTime.Parse(x.ClockOut) - DateTime.Parse(x.ClockIn)).TotalMinutes // Calculate the difference in minutes
+                                        })
+                                        .ToList();
+
+                    foreach (var item in EmpTransSumtime)
+                    {
+                        if (item.Duration > 540)
+                        {
+                            
+                           
+                            return Json(new { success = false, message = "Please Check total time of Employee."});
+
+                            }
+                    }
+
+
+                    if (EmpTrans.Count() != 0)
+                    {
+                        var EmpTransval = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "" && x.Plant.Equals(PlantID) && x.WorkingStatus == "Working").Select(x => x.TransactionDate).FirstOrDefault();
+
+                      
+                        return Json(new { success = false, message = "Please Employee Clock out Employee ID :" + empid + " Date :" + EmpTransval });
+                    }
+                    else
+                    {
+                        return Json(new { success = true });
+
+                    }
+                }
+
+             
+            }
+
+
+           // ViewBag.VBRoleEmpClockIn = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
+           
+            return Json(new { success = true });
+        }
+
+
+
+
         //Function Employee Clock in Edit Transaction : ฟังก์ชั่นนี้ใช่ร่วมกับ Update function
 
         [HttpGet]
