@@ -197,7 +197,7 @@
             <div class="row" style="height:80px">
                 <div class="col-2" style=" align-content: center;"><label class="FillterLabel">Product ID:</label></div>
                 <div class="col-9">
-                    <select class="selectfillter" style="width:100%; height:100%"  name="productId" id="ProductID">
+                    <select  class="form-select" style="border-color:black; border-radius:0; font-size:22px; width:100%; height:100%"  name="productId" id="ProductID">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                         {
@@ -544,6 +544,7 @@
             } else {
                 $(this).data('original-value', currentVal);
             }
+            $('#EmployeeID').val('').focus();
         });
 
 
