@@ -159,50 +159,52 @@
             return false;
         }
 
-        if (confirm('Are you sure?')) {
-            return true
-        }
-         return false
-
-
-        // ********************************** Add check employee clockin *****************////
         // if (confirm('Are you sure?')) {
-
-        //     var ClockIn = $('#ClockIn').val();
-        //     var TransactionDate = $('#TransactionDate').val();
-
-        //     var EmployeeIDchk = [];
-        //     /*Initializing array with Checkbox checked values*/
-        //     $("input[name='EmployeeIDchk']:checked").each(function () {
-        //         EmployeeIDchk.push(this.value);
-                
-        //     });
-
-        //     console.log("0");
-        //     $.ajax({
-        //         type: "POST",
-        //         url: "/Employee/EmployeeClockInCheck", // Update the URL to your controller action
-        //         data: { EmployeeIDchk: EmployeeIDchk, ClockIn: ClockIn, TransactionDate: TransactionDate },
-        //         success: function (data) {
-        //             if (data.success === false) {
-        //                 console.log("1");
-        //                 return false
-        //             } else {
-        //                 console.log("2");
-        //                 return true
-        //             }
-        //         },
-        //         error: function (error) {
-        //             console.log("Error filtering products: " + error);
-        //         }
-        //     });
+        //     return true
         // }
+        //  return false
+
+
         // ********************************** Add check employee clockin *****************////
-        //console.log("3");
+        if (confirm('Are you sure?')) {
+            var ClockIn = $('#ClockIn').val();
+            var TransactionDate = $('#TransactionDate').val();
+            var EmployeeIDchk = [];
+
+            $("input[name='EmployeeIDchk']:checked").each(function () {
+                EmployeeIDchk.push(this.value);
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/Employee/EmployeeClockInCheck", 
+                data: {
+                    EmployeeIDchk: EmployeeIDchk,
+                    ClockIn: ClockIn,
+                    TransactionDate: TransactionDate
+                },
+                success: function (data) {
+                    if (data.success === false) {
+                        alert(data.message);
+                    } else {
+
+                         window.location.href = "/Employee/EmployeeClockInSave?ClockIn=" + ClockIn + "&TransactionDate=" + TransactionDate + "&EmployeeIDchk=" + EmployeeIDchk.join(',');
+                    }
+                },
+                error: function (error) {
+                    console.log("Error processing request: " + error);
+                }
+            });
+        }
+        // ********************************** Add check employee clockin *****************////
+      
 
     }
 
 </script>
+
+
+
 
 <script>
 
@@ -472,8 +474,8 @@
 
                     @if (ViewBag.VBRoleEmpClockIn == "Full")
                     {
-                        <button type="submit" class="clear-button" name="action" value="Save" asp-action="EmployeeClockInsave" onclick="return checkTime()">Create</button>
-                    }
+                        <button type="button" class="clear-button" name="action" value="Save" onclick="return checkTime()">Create</button>
+                    } //asp-action=" EmployeeClockInsave" onclick="return checkTime()"
                     else
                     {
                         <button type="button" class="clear-button">Create</button>
