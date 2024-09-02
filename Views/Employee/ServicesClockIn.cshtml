@@ -159,11 +159,69 @@
             alert('Please add Section/Service')
             return false
         }
+        // if (confirm('Are you sure?')) {
+        //     return true
+        // }
+        // ********************************** Add check employee clockin *****************////
         if (confirm('Are you sure?')) {
-            return true
+            var ClockIn = $('#ClockIn').val();
+            var TransactionDate = $('#TransactionDate').val();
+            var EmployeeIDchk = [];
+            var LineID = $('#LineID').val();
+            var SectionSelect = $('#SectionSelect').val();
+
+            console.log('1');
+            $("input[name='EmployeeIDchk']:checked").each(function () {
+                EmployeeIDchk.push(this.value);
+            });
+
+            var tableData = getTableData();
+            console.log('2');
+            $.ajax({
+                type: "POST",
+                url: "/Employee/ServicesClockInCheck",
+                data: {
+                    EmployeeIDchk: EmployeeIDchk,
+                    tableData: tableData,
+                    LineID: LineID,
+                    SectionSelect: SectionSelect,
+                    ClockIn: ClockIn,
+                    TransactionDate: TransactionDate
+                },
+                success: function (data) {
+                    if (data.success === false) {
+                        alert(data.message);
+                    } else {
+                         
+                        window.location.href = "/Employee/ServicesClockInSave?EmployeeIDchk=" + EmployeeIDchk.join(',') + "&tableData=" + tableData + "&LineID=" + LineID + "&SectionSelect=" + SectionSelect + "&ClockIn=" + ClockIn + " &TransactionDateFillter=" + TransactionDate;
+                    }
+                },
+                error: function (error) {
+                    console.log("Error processing request: " + error);
+                }
+            });
         }
+        // ********************************** Add check employee clockin *****************////
+
         return false
     }
+
+
+
+    function getTableData() {
+    var tableData = [];
+    $('#tablecreate_id tbody tr').each(function () {
+        var section = $(this).find('td').eq(0).text();
+        var service = $(this).find('td').eq(1).text();
+
+        tableData.push({
+            Section: section,
+            Service: service
+        });
+    });
+    return JSON.stringify(tableData);
+}
+
 
 </script>
 
@@ -792,11 +850,6 @@
 
             </div>
 
-
-            @*   <div class="row" style="height:10px"></div>
-            *@
-
-
         </div>
 
 
@@ -824,19 +877,6 @@
             </div>
             <div class="row" style="height:10px"></div>
 
-            @*
-            <div class="row" style="padding-right:2em">
-            <div class="col-3 label">
-            <label for="recipient-name" class="col-form-label">Clock In Date:</label>
-            </div>
-            <div class="col">
-            <!-- Transaction Date -->
-
-            <input type="date" class="form-control" name="TransactionDate" id="TransactionDate" style="width:100%" value="@DateTime.Now.ToString("yyyy-MM-dd")" disabled>
-
-            </div>
-            <div class="col-1"></div>
-            </div> *@
 
             <div class="row" style="padding-right:2em">
                 <div class="col-3 label d-flex align-items-center">
@@ -865,11 +905,7 @@
                     <select class="selectfillter form-control" list="SectionID" name="SectionID" id="SectionID" style="width:100%" onchange="filterServicesBySection()">
                         <option value="" default selected></option>
                         <option value="ALL"> ALL</option>
-                        @*  @foreach (var item in Model.tbSection.Where(x=>x.Status.Equals(1)))
-                        {
 
-                        <option value="@item.SectionID">@Html.DisplayFor(modelItem => item.SectionID) :  @Html.DisplayFor(modelItem => item.SectionName) </option>
-                        } *@
                     </select>
                     <input name="SectionSelect" id="SectionSelect" hidden />
                 </div>
@@ -956,8 +992,8 @@
                 <div class="col-3">
                     @if (ViewBag.VBRoleServicesClockIn == "Full")
                     {
-                        <button type="submit" class="clear-button" asp-action="ServicesClockInSave" onclick="return checkTime()">save</button>
-
+                        <button type="button" class="clear-button" onclick="return checkTime()">save</button>
+                        //asp - action = "ServicesClockInSave"
                     }
                     else
                     {

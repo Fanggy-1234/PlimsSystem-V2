@@ -1609,13 +1609,12 @@ namespace Plims.Controllers
 
                 var mymodel = new ViewModelAll
                 {
-
-                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                    tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                    view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).Distinct().ToList()
+                    tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
+                    tbLine = db.TbLine.ToList(),
+                    tbSection = db.TbSection.ToList(),
+                    tbShift = db.TbShift.ToList(),
+                    view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                    view_DailyReportSummary = db.View_DailyReportSummary.Distinct().ToList()
 
                 };
 
@@ -1623,6 +1622,13 @@ namespace Plims.Controllers
                 if (PlantID != 0)
                 {
                     mymodel.tbLine = mymodel.tbLine.Where(x => x.PlantID.Equals(PlantID)).ToList();
+                    mymodel.tbEmployeeMaster = mymodel.tbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList();
+                    mymodel.tbLine = mymodel.tbLine.Where(x => x.PlantID == PlantID).ToList();
+                    mymodel.tbSection = mymodel.tbSection.Where(x => x.PlantID == PlantID).ToList();
+                    mymodel.tbShift = mymodel.tbShift.Where(x => x.PlantID == PlantID).ToList();
+                    mymodel.view_PermissionMaster = mymodel.view_PermissionMaster.Where(x => x.PlantID == PlantID).ToList();
+                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).Distinct().ToList();
+
                 }
 
 
@@ -1635,16 +1641,20 @@ namespace Plims.Controllers
 
                 if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionID) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
                 {
+
+
                     if (!string.IsNullOrEmpty(EmployeeID))
                     {
                         mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.QRCode == EmployeeID).ToList();
                         ViewBag.SelectedEmpID = EmployeeID;
                     }
+
                     if (!string.IsNullOrEmpty(LineID))
                     {
                         mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.LineID == LineID).ToList();
                         ViewBag.SelectedLineID = LineID;
                     }
+
                     if (!string.IsNullOrEmpty(SectionID))
                     {
                         mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.SectionID == SectionID).ToList();
@@ -1655,22 +1665,35 @@ namespace Plims.Controllers
                         mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.Prefix == Prefix).ToList();
                         ViewBag.SelectedPrefix = Prefix;
                     }
-                    if (StartDate != DateTime.MinValue)
+
+                    if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
+                    {
+                        mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
+                           .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
+                           .ToList();
+
+                        ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+                        ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd"); ;
+
+                    }
+                    else if (StartDate != DateTime.MinValue)
                     {
                         mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
                              .Where(x => x.TransactionDate >= StartDate)
                              .ToList();
 
-                        ViewBag.SelectedStartDate = StartDate;
+                        ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
                     }
-                    if (EndDate != DateTime.MinValue)
+                    else if (EndDate != DateTime.MinValue)
                     {
                         mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
                          .Where(x => x.TransactionDate <= EndDate)
                          .ToList();
 
-                        ViewBag.SelectedEndDate = EndDate;
+                        ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
                     }
+
+
 
 
 
@@ -3947,6 +3970,7 @@ namespace Plims.Controllers
                         for (int i = 6; i < 24; i++)
                         {
                             worksheet.Cells[row, i].Style.Font.Bold = true;
+                            worksheet.Cells[row, i].Style.Numberformat.Format = "0.00";
                         }
 
 
@@ -4115,6 +4139,7 @@ namespace Plims.Controllers
                         for (int i = 6; i < 24; i++)
                         {
                             worksheet.Cells[row, i].Style.Font.Bold = true;
+                            worksheet.Cells[row, i].Style.Numberformat.Format = "0.00";
                         }
 
 
