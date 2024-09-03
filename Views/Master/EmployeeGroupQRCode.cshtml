@@ -901,7 +901,7 @@
                     alert("Error creating Employee Group");
                 }
             });
-        });
+        }); 
     });
 
 
@@ -1084,11 +1084,12 @@
                 data: jsonData,
                 success: function (response) {
                     // alert("Successful");
-                    location.reload();
+                   
                     //  console.log('test test test');
                     $('#EditModal .modal-content').html(response); // Replace EditModal with the correct ID of your modal
                     // Optionally, you can close the modal after updating its content
                     $('#EditModal').modal('hide');
+                    location.reload();
 
                 },
                 error: function (xhr, status, error) {

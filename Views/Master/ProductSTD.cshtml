@@ -557,8 +557,8 @@
 
                     <div class="mb-3">
                         <input type="text" name="ModalLineNamehid" id="ModalLineNamehid" hidden>
-                        <label for="recipient-name" class="col-form-label">Line Name:</label> @* //onchange="filterProductsByLineEdit()" *@
-                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName" required >
+                        <label for="recipient-name" class="col-form-label">Line Name:</label> @*  *@
+                        <select class="selectfillter form-control" style="width:100%" name="LineID" id="ModalLineName" required onchange="filterProductsByLineEdit()">
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
                                 var dataFrist = dataGroup.First(); // Take the first item in the group
@@ -572,7 +572,7 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Product Name:</label> @* onchange="filterSectionsByProductEdit()" *@
                         <input type="text" name="ModalProductNamehid" id="ModalProductNamehid" hidden/>
-                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductName" required >
+                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductName" required onchange="filterSectionsByProductEdit()">
                          @*    @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
 
@@ -882,6 +882,7 @@
                     console.log("Error filtering products: " + error);
                 }
             });
+
         }
     }
 
@@ -924,16 +925,16 @@
     /// Fillter Edit
     function filterProductsByLineEdit() {
 
-        console.log('Producttest');
+       // console.log('Producttest');
         // Clear previous options
         var Linevalue = $("#ModalLineNamehid").val().toString();
         var Productvalue = $("#ModalProductNamehid").val().toString();
         $("#ModalProductName").empty();
         // Add a default option
-
+        console.log('Producttest');
         $("#ModalProductName").append("<option value='' default selected disabled>Please Select ..</option>");
-        console.log(Productvalue);
-        console.log(Linevalue);
+       // console.log(Productvalue);
+       // console.log(Linevalue);
 
         // Get the selected Line ID
         var selectedLineID = $("#ModalLineName").val().toString();
@@ -945,7 +946,7 @@
                 url: "/Master/FilterProductsByLine", // Update the URL to your controller action
                 data: { lineId: selectedLineID },
                 success: function (filteredProducts) {
-                    console.log(filteredProducts)
+                   // console.log(filteredProducts)
                     // Add filtered products to the dropdown
                     filteredProducts.forEach(function (product) {
                         $("#ModalProductName").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
@@ -970,8 +971,8 @@
         var SectionValue = $("#ModalSectionNamehid").val().toString();
         var selectedProductID = $("#ModalProductName").val().toString();
         var selectedLineID = $("#ModalLineName").val().toString();
-        console.log(SectionValue);
-         console.log('test');
+        //console.log(SectionValue);
+      //   console.log('test');
         // Check if a product is selected
         if (selectedProductID !== "") {
             // Use AJAX to filter sections based on the selected Product ID

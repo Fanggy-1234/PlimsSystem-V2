@@ -153,7 +153,7 @@
                         @foreach (var lineGroup in Model.view_PLPS.GroupBy(x => x.LineID))
                         {
                             var line = lineGroup.First(); // Take the first item in the group
-                            <option value="@line.LineID" selected="@(line.LineID == ViewBag.SelectedLineName ? "selected" : null)">
+                            <option value="@line.LineID" selected="@(line.LineID == ViewBag.SelectedLineID ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => line.LineID) : @Html.DisplayFor(modelItem => line.LineName)
                             </option>
 
@@ -180,7 +180,7 @@
                         @foreach (var sectionGroup in Model.view_PLPS.GroupBy(x => x.SectionID))
                         {
                             var sectiond = sectionGroup.First(); // Take the first item in the group
-                            <option value="@sectiond.SectionID" selected="@(sectiond.SectionID == ViewBag.SelectedSectionName ? "selected" : null)">
+                            <option value="@sectiond.SectionID" selected="@(sectiond.SectionID == ViewBag.SelectedSectionID ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => sectiond.SectionID) : @Html.DisplayFor(modelItem => sectiond.SectionName)
                             </option>
 

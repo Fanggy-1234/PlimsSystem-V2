@@ -767,13 +767,13 @@ namespace Plims.Controllers
                     }
                     if (!string.IsNullOrEmpty(obj.LineName))
                     {
-                        ViewBag.SelectedLineName = obj.LineName;
+                        ViewBag.SelectedLineID = obj.LineName;
                         mymodel.View_RollBackData = mymodel.View_RollBackData.Where(p => p.LineID == obj.LineName).ToList();
                     }
 
-                    if (!string.IsNullOrEmpty(obj.SectionID))
+                    if (!string.IsNullOrEmpty(obj.SectionName))
                     {
-                        ViewBag.SelectedSectionName = obj.SectionID;
+                        ViewBag.SelectedSectionID = obj.SectionName;
                         mymodel.View_RollBackData = mymodel.View_RollBackData.Where(p => p.SectionID == obj.SectionName).ToList();
                     }
 
@@ -2194,14 +2194,7 @@ namespace Plims.Controllers
                                         x.PlantID.Equals(PlantID))
                             .ToList();
 
-                          //  var objEmpselect = db.View_ClockTime.Where(x => x.EmployeeID.Equals(item.EmployeeID) && x.PlantID.Equals(PlantID) && x.Type != "Service" && x.WorkingStatus != "Leave" && x.ClockIn != "" && x.ClockOut == "" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)).FirstOrDefault();
-
-
-                            //var empfirst = db.TbProductionTransaction
-                            //   .Where(x => x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Select(x => x.QRCode).FirstOrDefault();
-                            //int LastTransactionCount = db.TbProductionTransaction.Where(x => x.QRCode.Equals(empfirst) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.CreateDate.Date == currentDate && x.DataType.Equals("Count")).Count();
-
-                            int LastTransactionCount = db.TbProductionTransaction .Where(x => x.QRCode.Equals(objEmpcount.First().EmployeeID) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.TransactionDate.Date == objEmpcount.First().TransactionDate && x.DataType.Equals("Count")).Count();
+                            int LastTransactionCount = db.TbProductionTransaction.Where(x => x.QRCode.Equals(objEmpcount.First().EmployeeID) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.TransactionDate.Date == objEmpcount.First().TransactionDate && x.DataType.Equals("Count")).Count();
                             LastTransactionCount += 1;
 
 
@@ -2638,6 +2631,11 @@ namespace Plims.Controllers
                         .OrderByDescending(x => x.TransactionNo)
                         .FirstOrDefault();
 
+            if (objEmp == null)
+            {
+                return Json(new { section = "Please clock in.", unit = "" });
+            }
+
             var objPLPS = db.View_PLPS
                        .Where(x => x.PlantID.Equals(PlantID) &&
                                    x.LineID.Equals(objEmp.Line.ToString()) &&
@@ -2681,6 +2679,12 @@ namespace Plims.Controllers
                         .OrderByDescending(x => x.TransactionNo)
                         .FirstOrDefault();
 
+            if(objEmp == null)
+                {
+                string alert = "Please Clock-in";
+                
+                return Json(new { section = alert });
+            }
             var objPLPS = db.View_PLPS
                        .Where(x => x.PlantID.Equals(PlantID) &&
                                    x.LineID.Equals(objEmp.Line.ToString()) &&
@@ -3829,39 +3833,43 @@ namespace Plims.Controllers
                     {
                         var worksheet = package.Workbook.Worksheets.Add("EFF Report");
 
-                        worksheet.Cells[1, 1].Value = "Line";
-                        worksheet.Cells[1, 2].Value = "Section";
-                        worksheet.Cells[1, 3].Value = "ProductID";
 
-                        worksheet.Cells[1, 4].Value = "ProductName";
-                        worksheet.Cells[1, 5].Value = "Unit";
-                        worksheet.Cells[1, 6].Value = "EFF-STD";
+                        worksheet.Cells[1, 1].Value = "TransactionDate";
+                        worksheet.Cells[1, 2].Value = "Shift";
 
-                        worksheet.Cells[1, 7].Value = "ชม. งาน STD";
-                        worksheet.Cells[1, 8].Value = "ชม. งาน  ACT";
-                        worksheet.Cells[1, 9].Value = "ชิ้นรับเข้า";
+                        worksheet.Cells[1, 3].Value = "Line";
+                        worksheet.Cells[1, 4].Value = "Section";
+                        worksheet.Cells[1, 5].Value = "ProductID";
 
-                        worksheet.Cells[1, 10].Value = "ชั่วโมงจริง";  // EFF1
-                        worksheet.Cells[1, 11].Value = "บริการแยกได้";
-                        worksheet.Cells[1, 12].Value = "บริการแยกไม่ได้";
+                        worksheet.Cells[1, 6].Value = "ProductName";
+                        worksheet.Cells[1, 7].Value = "Unit";
+                        worksheet.Cells[1, 8].Value = "EFF-STD";
 
-                        worksheet.Cells[1, 13].Value = "ชม.จริง+บริการแยกได้"; //EFF2
-                        worksheet.Cells[1, 14].Value = "ชม.จริง+บริการแยกได้+บริการแยกไม่ได้"; //EFF3
-                        worksheet.Cells[1, 15].Value = "EFF ชม.1";
+                        worksheet.Cells[1, 9].Value = "ชม. งาน STD";
+                        worksheet.Cells[1, 10].Value = "ชม. งาน  ACT";
+                        worksheet.Cells[1, 11].Value = "ชิ้นรับเข้า";
 
-                        worksheet.Cells[1, 16].Value = "EFF ชม.2";
-                        worksheet.Cells[1, 17].Value = "EFF ชม.3";
-                        worksheet.Cells[1, 18].Value = "KPI อัตราส่วน";
+                        worksheet.Cells[1, 12].Value = "ชั่วโมงจริง";  // EFF1
+                        worksheet.Cells[1, 13].Value = "บริการแยกได้";
+                        worksheet.Cells[1, 14].Value = "บริการแยกไม่ได้";
 
-                        worksheet.Cells[1, 19].Value = "ค่ากลาง ชม.3";
-                        worksheet.Cells[1, 20].Value = "ค่าที่ได้";
-                        worksheet.Cells[1, 21].Value = "KPI อัตราส่วน";
+                        worksheet.Cells[1, 15].Value = "ชม.จริง+บริการแยกได้"; //EFF2
+                        worksheet.Cells[1, 16].Value = "ชม.จริง+บริการแยกได้+บริการแยกไม่ได้"; //EFF3
+                        worksheet.Cells[1, 17].Value = "EFF ชม.1";
 
-                        worksheet.Cells[1, 22].Value = "ค่ากลาง ชม.1";
-                        worksheet.Cells[1, 23].Value = "ค่าที่ได้";
+                        worksheet.Cells[1, 18].Value = "EFF ชม.2";
+                        worksheet.Cells[1, 19].Value = "EFF ชม.3";
+                        worksheet.Cells[1, 20].Value = "KPI อัตราส่วน";
+
+                        worksheet.Cells[1, 21].Value = "ค่ากลาง ชม.3";
+                        worksheet.Cells[1, 22].Value = "ค่าที่ได้";
+                        worksheet.Cells[1, 23].Value = "KPI อัตราส่วน";
+
+                        worksheet.Cells[1, 24].Value = "ค่ากลาง ชม.1";
+                        worksheet.Cells[1, 25].Value = "ค่าที่ได้";
 
 
-                        for (int i = 1; i < 24; i++)
+                        for (int i = 1; i < 25; i++)
                         {
                             worksheet.Cells[1, i].Style.Font.Bold = true;
                         }
@@ -3886,88 +3894,89 @@ namespace Plims.Controllers
                         decimal sumValEffh1 = 0;
                         foreach (var item in collection)
                         {
+                            worksheet.Cells[row, 1].Value = item.TransactionDate;
+                            worksheet.Cells[row, 2].Value = item.Prefix;
+                            worksheet.Cells[row, 3].Value = item.LineID + " : " + item.LineName;
+                            worksheet.Cells[row, 4].Value = item.SectionID + " : " + item.SectionName;
+                            worksheet.Cells[row, 5].Value = item.ProductID;
 
-                            worksheet.Cells[row, 1].Value = item.LineID + " : " + item.LineName;
-                            worksheet.Cells[row, 2].Value = item.SectionID + " : " + item.SectionName;
-                            worksheet.Cells[row, 3].Value = item.ProductID;
+                            worksheet.Cells[row, 6].Value = item.ProductName;
+                            worksheet.Cells[row, 7].Value = item.Unit;
+                            worksheet.Cells[row, 8].Value = item.EFFSTD;
 
-                            worksheet.Cells[row, 4].Value = item.ProductName;
-                            worksheet.Cells[row, 5].Value = item.Unit;
-                            worksheet.Cells[row, 6].Value = item.EFFSTD;
-
-                            worksheet.Cells[row, 7].Value = item.WorkinghourSTD;
+                            worksheet.Cells[row, 9].Value = item.WorkinghourSTD;
                             sumWorkinghourSTD += item.WorkinghourSTD;
 
-                            worksheet.Cells[row, 8].Value = item.WorkinghourACT;
+                            worksheet.Cells[row, 10].Value = item.WorkinghourACT;
                             sumWorkinghourACT += item.WorkinghourACT;
 
-                            worksheet.Cells[row, 9].Value = item.FinishGood;
+                            worksheet.Cells[row, 11].Value = item.FinishGood;
                             sumFinishGood += item.FinishGood;
 
-                            worksheet.Cells[row, 10].Value = item.EFF1;
+                            worksheet.Cells[row, 12].Value = item.EFF1;
                             sumEFF1 += item.EFF1;
 
-                            worksheet.Cells[row, 11].Value = item.Servicehour;
+                            worksheet.Cells[row, 13].Value = item.Servicehour;
                             sumServicehour += item.Servicehour;
 
-                            worksheet.Cells[row, 12].Value = item.Supporthour;
+                            worksheet.Cells[row, 14].Value = item.Supporthour;
                             sumSupporthour += item.Supporthour;
 
-                            worksheet.Cells[row, 13].Value = item.EFF2;
+                            worksheet.Cells[row, 15].Value = item.EFF2;
                             sumEFF2 += item.EFF2;
 
-                            worksheet.Cells[row, 14].Value = item.EFF3;
+                            worksheet.Cells[row, 16].Value = item.EFF3;
                             sumEFF3 += item.EFF3;
 
-                            worksheet.Cells[row, 15].Value = item.EFFhr1;
+                            worksheet.Cells[row, 17].Value = item.EFFhr1;
                             sumEFFhr1 += item.EFFhr1;
 
-                            worksheet.Cells[row, 16].Value = item.EFFhr2;
+                            worksheet.Cells[row, 18].Value = item.EFFhr2;
                             sumEFFhr2 += item.EFFhr2;
 
-                            worksheet.Cells[row, 17].Value = item.EFFhr3;
+                            worksheet.Cells[row, 19].Value = item.EFFhr3;
                             sumEFFhr3 += item.EFFhr3;
 
-                            worksheet.Cells[row, 18].Value = item.KPIh3;
+                            worksheet.Cells[row, 20].Value = item.KPIh3;
                             sumKPIh3 += item.KPIh3;
 
-                            worksheet.Cells[row, 19].Value = item.MEDh3;
+                            worksheet.Cells[row, 21].Value = item.MEDh3;
                             sumMEDh3 += item.MEDh3;
 
-                            worksheet.Cells[row, 20].Value = item.ValueEFF3;
+                            worksheet.Cells[row, 22].Value = item.ValueEFF3;
                             sumValEffh3 += item.ValueEFF3;
 
-                            worksheet.Cells[row, 21].Value = item.KPIh1;
+                            worksheet.Cells[row, 23].Value = item.KPIh1;
                             sumKPIh1 += item.KPIh1;
 
-                            worksheet.Cells[row, 22].Value = item.MEDh1;
+                            worksheet.Cells[row, 24].Value = item.MEDh1;
                             sumMEDh1 += item.MEDh1;
 
-                            worksheet.Cells[row, 23].Value = item.ValueEFF1;
+                            worksheet.Cells[row, 25].Value = item.ValueEFF1;
                             sumValEffh1 += item.ValueEFF1;
                             row++;
                         }
 
-                        worksheet.Cells[row, 6].Value = "Total";
-                        worksheet.Cells[row, 7].Value = sumWorkinghourSTD;
-                        worksheet.Cells[row, 8].Value = sumWorkinghourACT;
-                        worksheet.Cells[row, 9].Value = sumFinishGood;
-                        worksheet.Cells[row, 10].Value = sumEFF1;
-                        worksheet.Cells[row, 11].Value = sumServicehour;
-                        worksheet.Cells[row, 12].Value = sumSupporthour;
-                        worksheet.Cells[row, 13].Value = sumEFF2;
-                        worksheet.Cells[row, 14].Value = sumEFF3;
-                        worksheet.Cells[row, 15].Value = sumEFFhr1;
-                        worksheet.Cells[row, 16].Value = sumEFFhr2;
-                        worksheet.Cells[row, 17].Value = sumEFFhr3;
-                        worksheet.Cells[row, 18].Value = sumKPIh3;
-                        worksheet.Cells[row, 19].Value = sumMEDh3;
-                        worksheet.Cells[row, 20].Value = sumValEffh3;
-                        worksheet.Cells[row, 21].Value = sumKPIh1;
-                        worksheet.Cells[row, 22].Value = sumMEDh1;
-                        worksheet.Cells[row, 23].Value = sumValEffh1;
+                        worksheet.Cells[row, 8].Value = "Total";
+                        worksheet.Cells[row, 9].Value = sumWorkinghourSTD;
+                        worksheet.Cells[row, 10].Value = sumWorkinghourACT;
+                        worksheet.Cells[row, 11].Value = sumFinishGood;
+                        worksheet.Cells[row, 12].Value = sumEFF1;
+                        worksheet.Cells[row, 13].Value = sumServicehour;
+                        worksheet.Cells[row, 14].Value = sumSupporthour;
+                        worksheet.Cells[row, 15].Value = sumEFF2;
+                        worksheet.Cells[row, 16].Value = sumEFF3;
+                        worksheet.Cells[row, 17].Value = sumEFFhr1;
+                        worksheet.Cells[row, 18].Value = sumEFFhr2;
+                        worksheet.Cells[row, 19].Value = sumEFFhr3;
+                        worksheet.Cells[row, 20].Value = sumKPIh3;
+                        worksheet.Cells[row, 21].Value = sumMEDh3;
+                        worksheet.Cells[row, 22].Value = sumValEffh3;
+                        worksheet.Cells[row, 23].Value = sumKPIh1;
+                        worksheet.Cells[row, 24].Value = sumMEDh1;
+                        worksheet.Cells[row, 25].Value = sumValEffh1;
 
-                        for (int i = 6; i < 24; i++)
+                        for (int i = 8; i < 25; i++)
                         {
                             worksheet.Cells[row, i].Style.Font.Bold = true;
                             worksheet.Cells[row, i].Style.Numberformat.Format = "0.00";
@@ -3996,38 +4005,41 @@ namespace Plims.Controllers
                     {
                         var worksheet = package.Workbook.Worksheets.Add("EFF Report");
 
-                        worksheet.Cells[1, 1].Value = "Line";
-                        worksheet.Cells[1, 2].Value = "Section";
-                        worksheet.Cells[1, 3].Value = "ProductID";
+                        worksheet.Cells[1, 1].Value = "TransactionDate";
+                        worksheet.Cells[1, 2].Value = "Shift";
 
-                        worksheet.Cells[1, 4].Value = "ProductName";
-                        worksheet.Cells[1, 5].Value = "Unit";
-                        worksheet.Cells[1, 6].Value = "EFF-STD";
+                        worksheet.Cells[1, 3].Value = "Line";
+                        worksheet.Cells[1, 4].Value = "Section";
+                        worksheet.Cells[1, 5].Value = "ProductID";
 
-                        worksheet.Cells[1, 7].Value = "ชม. งาน STD";
-                        worksheet.Cells[1, 8].Value = "ชม. งาน  ACT";
-                        worksheet.Cells[1, 9].Value = "ชิ้นรับเข้า";
+                        worksheet.Cells[1, 6].Value = "ProductName";
+                        worksheet.Cells[1, 7].Value = "Unit";
+                        worksheet.Cells[1, 8].Value = "EFF-STD";
 
-                        worksheet.Cells[1, 10].Value = "ชั่วโมงจริง";  // EFF1
-                        worksheet.Cells[1, 11].Value = "บริการแยกได้";
-                        worksheet.Cells[1, 12].Value = "บริการแยกไม่ได้";
+                        worksheet.Cells[1, 9].Value = "ชม. งาน STD";
+                        worksheet.Cells[1, 10].Value = "ชม. งาน  ACT";
+                        worksheet.Cells[1, 11].Value = "ชิ้นรับเข้า";
 
-                        worksheet.Cells[1, 13].Value = "ชม.จริง+บริการแยกได้"; //EFF2
-                        worksheet.Cells[1, 14].Value = "ชม.จริง+บริการแยกได้+บริการแยกไม่ได้"; //EFF3
-                        worksheet.Cells[1, 15].Value = "EFF ชม.1";
+                        worksheet.Cells[1, 12].Value = "ชั่วโมงจริง";  // EFF1
+                        worksheet.Cells[1, 13].Value = "บริการแยกได้";
+                        worksheet.Cells[1, 14].Value = "บริการแยกไม่ได้";
 
-                        worksheet.Cells[1, 16].Value = "EFF ชม.2";
-                        worksheet.Cells[1, 17].Value = "EFF ชม.3";
-                        worksheet.Cells[1, 18].Value = "KPI อัตราส่วน";
+                        worksheet.Cells[1, 15].Value = "ชม.จริง+บริการแยกได้"; //EFF2
+                        worksheet.Cells[1, 16].Value = "ชม.จริง+บริการแยกได้+บริการแยกไม่ได้"; //EFF3
+                        worksheet.Cells[1, 17].Value = "EFF ชม.1";
 
-                        worksheet.Cells[1, 19].Value = "ค่ากลาง ชม.3";
-                        worksheet.Cells[1, 20].Value = "ค่าที่ได้";
-                        worksheet.Cells[1, 21].Value = "KPI อัตราส่วน";
+                        worksheet.Cells[1, 18].Value = "EFF ชม.2";
+                        worksheet.Cells[1, 19].Value = "EFF ชม.3";
+                        worksheet.Cells[1, 20].Value = "KPI อัตราส่วน";
 
-                        worksheet.Cells[1, 22].Value = "ค่ากลาง ชม.1";
-                        worksheet.Cells[1, 23].Value = "ค่าที่ได้";
+                        worksheet.Cells[1, 21].Value = "ค่ากลาง ชม.3";
+                        worksheet.Cells[1, 22].Value = "ค่าที่ได้";
+                        worksheet.Cells[1, 23].Value = "KPI อัตราส่วน";
 
-                        for (int i = 1; i < 24; i++)
+                        worksheet.Cells[1, 24].Value = "ค่ากลาง ชม.1";
+                        worksheet.Cells[1, 25].Value = "ค่าที่ได้";
+
+                        for (int i = 1; i < 25; i++)
                         {
                             worksheet.Cells[1, i].Style.Font.Bold = true;
                         }
@@ -4055,88 +4067,89 @@ namespace Plims.Controllers
                         foreach (var item in collection)
                         {
 
+                            worksheet.Cells[row, 1].Value =  item.TransactionDate;
+                            worksheet.Cells[row, 2].Value =  item.Prefix;
+                            worksheet.Cells[row, 3].Value = item.LineID + " : " + item.LineName;
+                            worksheet.Cells[row, 4].Value = item.SectionID + " : " + item.SectionName;
+                            worksheet.Cells[row, 5].Value = item.ProductID;
 
-                            worksheet.Cells[row, 1].Value = item.LineID + " : " + item.LineName;
-                            worksheet.Cells[row, 2].Value = item.SectionID + " : " + item.SectionName;
-                            worksheet.Cells[row, 3].Value = item.ProductID;
+                            worksheet.Cells[row, 6].Value = item.ProductName;
+                            worksheet.Cells[row, 7].Value = item.Unit;
+                            worksheet.Cells[row, 8].Value = item.EFFSTD;
 
-                            worksheet.Cells[row, 4].Value = item.ProductName;
-                            worksheet.Cells[row, 5].Value = item.Unit;
-                            worksheet.Cells[row, 6].Value = item.EFFSTD;
-
-                            worksheet.Cells[row, 7].Value = item.WorkinghourSTD;
+                            worksheet.Cells[row, 9].Value = item.WorkinghourSTD;
                             sumWorkinghourSTD += item.WorkinghourSTD;
 
-                            worksheet.Cells[row, 8].Value = item.WorkinghourACT;
+                            worksheet.Cells[row, 10].Value = item.WorkinghourACT;
                             sumWorkinghourACT += item.WorkinghourACT;
 
-                            worksheet.Cells[row, 9].Value = item.FinishGood;
+                            worksheet.Cells[row, 11].Value = item.FinishGood;
                             sumFinishGood += item.FinishGood;
 
-                            worksheet.Cells[row, 10].Value = item.EFF1;
+                            worksheet.Cells[row, 12].Value = item.EFF1;
                             sumEFF1 += item.EFF1;
 
-                            worksheet.Cells[row, 11].Value = item.Servicehour;
+                            worksheet.Cells[row, 13].Value = item.Servicehour;
                             sumServicehour += item.Servicehour;
 
-                            worksheet.Cells[row, 12].Value = item.Supporthour;
+                            worksheet.Cells[row, 14].Value = item.Supporthour;
                             sumSupporthour += item.Supporthour;
 
-                            worksheet.Cells[row, 13].Value = item.EFF2;
+                            worksheet.Cells[row, 15].Value = item.EFF2;
                             sumEFF2 += item.EFF2;
 
-                            worksheet.Cells[row, 14].Value = item.EFF3;
+                            worksheet.Cells[row, 16].Value = item.EFF3;
                             sumEFF3 += item.EFF3;
 
-                            worksheet.Cells[row, 15].Value = item.EFFhr1;
+                            worksheet.Cells[row, 17].Value = item.EFFhr1;
                             sumEFFhr1 += item.EFFhr1;
 
-                            worksheet.Cells[row, 16].Value = item.EFFhr2;
+                            worksheet.Cells[row, 18].Value = item.EFFhr2;
                             sumEFFhr2 += item.EFFhr2;
 
-                            worksheet.Cells[row, 17].Value = item.EFFhr3;
+                            worksheet.Cells[row, 19].Value = item.EFFhr3;
                             sumEFFhr3 += item.EFFhr3;
 
-                            worksheet.Cells[row, 18].Value = item.KPIh3;
+                            worksheet.Cells[row, 20].Value = item.KPIh3;
                             sumKPIh3 += item.KPIh3;
 
-                            worksheet.Cells[row, 19].Value = item.MEDh3;
+                            worksheet.Cells[row, 21].Value = item.MEDh3;
                             sumMEDh3 += item.MEDh3;
 
-                            worksheet.Cells[row, 20].Value = item.ValueEFF3;
+                            worksheet.Cells[row, 22].Value = item.ValueEFF3;
                             sumValEffh3 += item.ValueEFF3;
 
-                            worksheet.Cells[row, 21].Value = item.KPIh1;
+                            worksheet.Cells[row, 23].Value = item.KPIh1;
                             sumKPIh1 += item.KPIh1;
 
-                            worksheet.Cells[row, 22].Value = item.MEDh1;
+                            worksheet.Cells[row, 24].Value = item.MEDh1;
                             sumMEDh1 += item.MEDh1;
 
-                            worksheet.Cells[row, 23].Value = item.ValueEFF1;
+                            worksheet.Cells[row, 25].Value = item.ValueEFF1;
                             sumValEffh1 += item.ValueEFF1;
                             row++;
                         }
 
-                        worksheet.Cells[row, 6].Value = "Total";
-                        worksheet.Cells[row, 7].Value = sumWorkinghourSTD;
-                        worksheet.Cells[row, 8].Value = sumWorkinghourACT;
-                        worksheet.Cells[row, 9].Value = sumFinishGood;
-                        worksheet.Cells[row, 10].Value = sumEFF1;
-                        worksheet.Cells[row, 11].Value = sumServicehour;
-                        worksheet.Cells[row, 12].Value = sumSupporthour;
-                        worksheet.Cells[row, 13].Value = sumEFF2;
-                        worksheet.Cells[row, 14].Value = sumEFF3;
-                        worksheet.Cells[row, 15].Value = sumEFFhr1;
-                        worksheet.Cells[row, 16].Value = sumEFFhr2;
-                        worksheet.Cells[row, 17].Value = sumEFFhr3;
-                        worksheet.Cells[row, 18].Value = sumKPIh3;
-                        worksheet.Cells[row, 19].Value = sumMEDh3;
-                        worksheet.Cells[row, 20].Value = sumValEffh3;
-                        worksheet.Cells[row, 21].Value = sumKPIh1;
-                        worksheet.Cells[row, 22].Value = sumMEDh1;
-                        worksheet.Cells[row, 23].Value = sumValEffh1;
+                        worksheet.Cells[row, 8].Value = "Total";
+                        worksheet.Cells[row, 9].Value = sumWorkinghourSTD;
+                        worksheet.Cells[row, 10].Value = sumWorkinghourACT;
+                        worksheet.Cells[row, 11].Value = sumFinishGood;
+                        worksheet.Cells[row, 12].Value = sumEFF1;
+                        worksheet.Cells[row, 13].Value = sumServicehour;
+                        worksheet.Cells[row, 14].Value = sumSupporthour;
+                        worksheet.Cells[row, 15].Value = sumEFF2;
+                        worksheet.Cells[row, 16].Value = sumEFF3;
+                        worksheet.Cells[row, 17].Value = sumEFFhr1;
+                        worksheet.Cells[row, 18].Value = sumEFFhr2;
+                        worksheet.Cells[row, 19].Value = sumEFFhr3;
+                        worksheet.Cells[row, 20].Value = sumKPIh3;
+                        worksheet.Cells[row, 21].Value = sumMEDh3;
+                        worksheet.Cells[row, 22].Value = sumValEffh3;
+                        worksheet.Cells[row, 23].Value = sumKPIh1;
+                        worksheet.Cells[row, 24].Value = sumMEDh1;
+                        worksheet.Cells[row, 25].Value = sumValEffh1;
 
-                        for (int i = 6; i < 24; i++)
+                        for (int i = 8; i < 25; i++)
                         {
                             worksheet.Cells[row, i].Style.Font.Bold = true;
                             worksheet.Cells[row, i].Style.Numberformat.Format = "0.00";

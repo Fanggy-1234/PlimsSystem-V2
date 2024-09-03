@@ -4944,7 +4944,7 @@ namespace Plims.Controllers
                 PLPSdb.YieldIncentive = obj.YieldIncentive;
                 PLPSdb.EFFSTD = obj.EFFSTD;
                 PLPSdb.Unit = obj.Unit;
-                if (obj.Status == 1 || obj.Status ==  null )
+                if (obj.Status == 1  )
                 {
                     PLPSdb.Status = 1;
                 }
@@ -7530,17 +7530,17 @@ namespace Plims.Controllers
             }
 
 
-            var mymodel = new ViewModelAll
-            {
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                tbEmployeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                view_EmployeeGroup = db.View_EmployeeGroup.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                view_EmployeeGroupList = db.View_EmployeeGroupList.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x=>x.Status).ToList(),
+            //var mymodel = new ViewModelAll
+            //{
+            //    view_PermissionMaster = db.View_PermissionMaster.ToList(),
+            //    tbEmployeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+            //    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+            //    view_EmployeeGroup = db.View_EmployeeGroup.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+            //    view_EmployeeGroupList = db.View_EmployeeGroupList.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x=>x.Status).ToList(),
 
-            };
+            //};
 
-            return Json("EmployeeGroupQRCode", mymodel);
+            return Json("EmployeeGroupQRCode");
 
             //  return Json("Finished");
 
@@ -7935,7 +7935,12 @@ namespace Plims.Controllers
                             if (worksheet.Cells[row, 1].Value != null)
                             {
                                 id = worksheet.Cells[row, 1].Value.ToString().PadLeft(5, '0');
+                                if(id == null)
+                                {
+                                    TempData["AlertMessage"] = "Data imported and updated successfully!";
+                                    return RedirectToAction("EmployeeManagementGroup");
 
+                                }
                             }
                             else
                             {
