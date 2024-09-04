@@ -988,6 +988,8 @@
                 data: { EmployeeID: EmployeeID, ProductID: ProductID, SectionID: SectionID, QTY: QTY },
                 success: function (data) {
                     $('#productId').focus();
+                    // $('#SectionNameFG').css('background-color', '#FFC0CB');
+                    // $('#SectionNameFG').val(data.section);
                     location.reload();
                 },
                 error: function (error) {

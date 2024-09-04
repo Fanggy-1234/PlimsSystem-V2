@@ -206,7 +206,7 @@
                         @foreach (var EmpGroup in Model.tbEmployeeMaster.GroupBy(x => x.EmployeeID))
                         {
                             var Empd = EmpGroup.First(); // Take the first item in the group
-                            <option value="@Empd.EmployeeID" selected="@(Empd.EmployeeID == ViewBag.SelectedEmployeeName ? "selected" : null)">
+                            <option value="@Empd.EmployeeID" selected="@(Empd.EmployeeID == ViewBag.SelectedEmployeeID ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => Empd.EmployeeID) : @Html.DisplayFor(modelItem => Empd.EmployeeName)
                             </option>
 

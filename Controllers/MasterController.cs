@@ -7815,7 +7815,7 @@ namespace Plims.Controllers
                 foreach (var item in grouplist)
                 {
                     employeelist = "";
-                    var selectemployee = db.View_EmployeeGroup.Where(x => x.GroupID.Equals(item)).ToList();
+                    var selectemployee = db.View_EmployeeGroup.Where(x => x.GroupID.Equals(item) && x.PlantID.Equals(PlantID)).ToList();
                     foreach (var y in selectemployee)
                     {
                         employeelist = y.EmployeeID + "," + employeelist;
@@ -7864,7 +7864,7 @@ namespace Plims.Controllers
                 foreach (var item in grouplist)
                 {
                     employeelist = "";
-                    var selectemployee = db.View_EmployeeGroup.Where(x => x.GroupID.Equals(item)).ToList();
+                    var selectemployee = db.View_EmployeeGroup.Where(x => x.GroupID.Equals(item) && x.PlantID.Equals(PlantID)).ToList();
                     foreach (var y in selectemployee)
                     {
                         employeelist = y.EmployeeID + "," + employeelist;

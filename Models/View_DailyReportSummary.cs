@@ -34,13 +34,13 @@ namespace Plims.Models
         public decimal YieldDefect { get; set; }
        // public int QtyPerQR { get; set; }
         public decimal QtyPerQR { get; set; }
-        public string Reason { get; set; }
-        public string Note { get; set; }
+       // public string Reason { get; set; }
+       // public string Note { get; set; }
      //   public string IncentiveID { get; set; }
     //    public string IncentiveName { get; set; }
         public decimal STD { get; set; }  //int  std
         public decimal EFFSTD { get; set; }  //int  std
-        public decimal Min { get; set; }
+       public decimal Min { get; set; }
         public decimal Max { get; set; }
         public string Grade { get; set; }
 

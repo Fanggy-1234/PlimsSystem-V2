@@ -487,8 +487,8 @@
 
                     <div class="mb-3">
                         <label class="col-form-label">Line Name:</label>
-                        <select class="form-control selectfillter" style="width:100%" name="LineID" id="ModalLineName" required>
-                           @*  onchange="filterProductsByLineEdit()" *@
+                        <select class="form-control selectfillter" style="width:100%" name="LineID" id="ModalLineName" required oninput="filterProductsByLineEdit()">
+                           
                             <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbLine.Where(x => x.Status.Equals(1)))
                             {
@@ -499,8 +499,8 @@
                     </div>
                     <div class="mb-3">
                         <label class="col-form-label">Product Name:</label>
-                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductName" required>
-                           @*  onchange="filterSectionsByProductEdit()" *@
+                        <select class="selectfillter form-control" style="width:100%" name="ProductID" id="ModalProductName" required oninput="filterSectionsByProductEdit()">
+                       
                             <option value="" default selected disabled>Please Select ..</option>
                             @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
@@ -650,14 +650,14 @@
 
                     //$('#ModalLineName').append('<option value="' + response.lineID + '">' + response.lineName + '</option>');
                     $('#ModalLineName').val(response.lineID).trigger('change');
-
-                    //$('#ModalProductName').append('<option value="' + response.productID + '">' + response.productName + '</option>');
-                    filterProductsByLine(response.productID);
+                    $('#ModalProductName').val(response.productID).trigger('change');
+                   // $('#ModalProductName').append('<option value="' + response.productID + '">' + response.productName + '</option>');
+                   // filterProductsByLine(response.productID);
                   // console.log('productID:', response.productID);
-                    filtersSectionByProduct(response.productID, response.lineID, response.sectionID);
+                //   filtersSectionByProduct(response.productID, response.lineID, response.sectionID);
                     
-                    // $('#ModalSectionName').append('<option value="' + response.sectionID + '">' + response.sectionName + '</option>');
-                 //   $('#ModalSectionName').val(response.sectionID).trigger('change');
+                  //   $('#ModalSectionName').append('<option value="' + response.sectionID + '">' + response.sectionName + '</option>');
+                   $('#ModalSectionName').val(response.sectionID).trigger('change');
 
                     $('#ModalStatus').prop('checked', response.status == 1)
                     $('#EditModal').modal('show');
@@ -710,7 +710,7 @@
     
  
 
-    function filterProductsByLine(productID) {
+    function filterProductsByLine() {
         // Clear previous options
         $("#ModalProductName").empty();
         // Add a default option
@@ -725,13 +725,13 @@
                 type: "GET",
                 url: "/Master/FilterProductsByLine", // Update the URL to your controller action
                 data: { lineId: selectedLineID },
-                success: function (filteredProducts) {
+                success: function (data) {
                     //console.log(filteredProducts)
                     // Add filtered products to the dropdown
-                    filteredProducts.forEach(function (product) {
+                    data.forEach(function (product) {
                         
                         $("#ModalProductName").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
-                        $('#ModalProductName').val(productID).trigger('change');
+                       // $('#ModalProductName').val(productID).trigger('change');
                     });
                 },
                 error: function (error) {
@@ -744,7 +744,7 @@
 
 
     
-    function filtersSectionByProduct(productID,lineID,sectionID) {
+    function filtersSectionByProduct() {
 
        // var selectedLineID = $("#ModalLineName").val().toString();
       // var selectedProductID = $("#ModalProductName").val().toString();
@@ -759,7 +759,7 @@
                 success: function (data) {
                     data.forEach(function (section) {
                         $("#ModalSectionName").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
-                        $('#ModalSectionName').val(sectionID).trigger('change');
+                       // $('#ModalSectionName').val(sectionID).trigger('change');
                     });
                 },
                 error: function (error) {
@@ -768,6 +768,77 @@
             });
        // }
     }
+
+
+
+
+      /// Fillter Create
+    function filterProductsByLineEdit() {
+        // Clear previous options
+        $("#ModalProductName").empty();;
+        // Add a default option
+      //  $("#ProductNameCreate").append("<option value='' default selected>Please Select ..</option>");
+        // Get the selected Line ID
+
+        var selectedLineID = $("#ModalLineName").val().toString();
+        // Check if a line is selected
+        if (selectedLineID !== "") {
+            // Use AJAX to filter products based on the selected Line ID
+            $.ajax({
+                type: "GET",
+                url: "/Master/FilterProductsByLine", // Update the URL to your controller action
+                data: { lineId: selectedLineID },
+                success: function (filteredProducts) {
+                    console.log(filteredProducts)
+                    // Add filtered products to the dropdown
+                    filteredProducts.forEach(function (product) {
+                        $("#ModalProductName").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering products: " + error);
+                }
+            });
+        }
+    }
+
+
+    function filterSectionsByProductEdit() {
+        // Clear previous options
+        $("#ModalSectionName").empty();
+        // Add a default option
+   
+
+
+        // Get the selected Product ID
+        var selectedProductID = $("#ModalProductName").val().toString();
+        var selectedLineID = $("#ModalLineName").val().toString();
+
+
+
+        // Check if a product is selected
+        if (selectedProductID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Master/FilterSectionsByProduct", // Update the URL to your controller action
+                data: { productId: selectedProductID, lineId: selectedLineID },
+                success: function (filteredSections) {
+                    console.log(filteredSections)
+                    // Add filtered sections to the dropdown
+                    filteredSections.forEach(function (section) {
+                        $("#ModalSectionName").append("<option value='" + section.sectionID + "'>" + section.sectionID + " : " + section.sectionName + "</option>");
+                    });
+                },
+                error: function (error) {
+                    console.log("Error filtering sections: " + error);
+                }
+            });
+        }
+    }
+
+
 
 
 </script>

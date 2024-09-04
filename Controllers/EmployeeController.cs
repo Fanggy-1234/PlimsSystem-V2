@@ -2821,11 +2821,14 @@ namespace Plims.Controllers
                         TempData["AlertMessage"] = "Please Clock Out ! Date : " + EmpCheckclock.FirstOrDefault();
                         return RedirectToAction("EmployeeLeaveHoliday");
                     }
+                    
+
+
 
 
                     //Check Insert or Update
                     var EmpTran = db.TbEmployeeLeaveHoliday.Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate == TreansactionDateCreate && (x.WorkingStatus == "Leave" || x.WorkingStatus == "Holiday")).ToList();
-                    if (obj.ClockIn == null && obj.ClockOut == null)
+                    if (StartTime == null && EndTime == null)
                     {
                         var varWorking = db.View_Employee.Where(x => x.EmployeeID.Equals(empid))
                         .Select(x => new
@@ -2840,6 +2843,31 @@ namespace Plims.Controllers
                             varclockout = item.EndTime;
                         }
                     }
+                    else
+                    {
+
+                        varclockin = StartTime;
+                        varclockout = EndTime;
+                    }
+
+
+
+                    // Fetch data as much as possible using SQL
+                    var data = db.View_EmployeeClocktime
+                        .Where(x => x.EmployeeID.Equals(empid)
+                                    && x.TransactionDate.Equals(TreansactionDateCreate))
+                        .ToList(); // This brings the data into memory
+
+                    // Perform the DateTime comparison in memory
+                    var empcheckduplicate2 = data.Where(x => DateTime.Parse(x.ClockIn) <= DateTime.Parse(varclockin)
+                                    && DateTime.Parse(varclockin) <= DateTime.Parse(x.ClockOut)).ToList();
+
+                    if(empcheckduplicate2.Count != 0)
+                    {
+                        TempData["AlertMessage"] = "Clock time duplicate! ";
+                        return RedirectToAction("EmployeeLeaveHoliday");
+                    }
+
 
                     if (EmpTran.Count() != 0)
                     {
@@ -2979,11 +3007,11 @@ namespace Plims.Controllers
             // 1. check TbEmployeeTransaction == Null ?
             var Empdb = new TbEmployeeLeaveHoliday();
 
-            var EmpTran = db.TbEmployeeLeaveHoliday.Where(x => x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionDate == DateTime.Today.Date).ToList();
+            var EmpTran = db.TbEmployeeLeaveHoliday.Where(x => x.EmployeeID.Equals(obj.EmployeeID) && x.TransactionNo == obj.TransactionNo).ToList();
             if (EmpTran.Count() != 0 )
             {
                 //Update Transaction
-                Empdb = db.TbEmployeeLeaveHoliday.Where(x => x.EmployeeID == obj.EmployeeID && x.TransactionDate == DateTime.Today.Date).SingleOrDefault();
+                Empdb = db.TbEmployeeLeaveHoliday.Where(x => x.EmployeeID == obj.EmployeeID && x.TransactionNo == obj.TransactionNo).SingleOrDefault();
                 Empdb.TransactionDate = obj.TransactionDate;
                 Empdb.Remark = obj.Remark;
                 Empdb.WorkingStatus = obj.WorkingStatus;
@@ -3336,7 +3364,7 @@ namespace Plims.Controllers
                         //Update Transaction
                         if (StartTime != null)
                         {
-                          // FANG
+                          
                             //Insert clockin
                             Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == thisday && x.Plant.Equals(PlantID)).SingleOrDefault();
 

@@ -8,6 +8,8 @@ using OfficeOpenXml;
 using Microsoft.EntityFrameworkCore;
 using Irony.Parsing;
 using System.Globalization;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
+using System.Web.WebPages;
 
 namespace Plims.Controllers
 {
@@ -761,7 +763,7 @@ namespace Plims.Controllers
 
                     if (!string.IsNullOrEmpty(obj.EmployeeID))
                     {
-
+                        ViewBag.SelectedEmployeeID = obj.EmployeeID;
                         mymodel.View_RollBackData = mymodel.View_RollBackData.Where(x => x.EmployeeID.Contains(obj.EmployeeID)).ToList();
 
                     }
@@ -1410,15 +1412,33 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelAll
+            var mymodel = new ViewModelAll();
+            if (StartDate == DateTime.MinValue && EndDate == DateTime.MinValue)
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).Distinct().ToList()
-            };
+                 mymodel = new ViewModelAll
+                {
+                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
+                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                    tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                    view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
+                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today).Distinct().ToList()
+                };
+            }
+            else
+            {
+                 mymodel = new ViewModelAll
+                {
+                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
+                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                    tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                    view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
+                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate >= StartDate && x.TransactionDate <= EndDate).Distinct().ToList()
+                };
+
+            }
+          
 
 
 
@@ -1568,15 +1588,18 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
+           
             var mymodel = new ViewModelAll
-            {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).Distinct().ToList()
-            };
+                {
+                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
+                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                    tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                    view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
+                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today).Distinct().ToList()
+                };
+           
+           
 
             ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster
                                           .Where(x => x.UserEmpID == EmpID && x.PageID == 23)
@@ -1585,7 +1608,7 @@ namespace Plims.Controllers
 
             ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
             ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
-            mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.TransactionDate.Equals(DateTime.Today)).ToList();
+          //  mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.TransactionDate.Equals(DateTime.Today)).ToList();
             return View("DailyReport", mymodel);
 
         }
@@ -2870,6 +2893,12 @@ namespace Plims.Controllers
                                 (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDate.AddDays(-1)) && x.ClockOut == "" && x.WorkingStatus.Equals("Working") &&
                               x.PlantID.Equals(PlantID)).FirstOrDefault();
 
+                if (objEmp == null)
+                {
+                    return Json(new { success = false });
+
+                }
+
                 var objPLPS = db.View_PLPS
                            .Where(x => x.PlantID.Equals(PlantID) &&
                                        x.LineID.Equals(objEmp.LineID.ToString()) &&
@@ -2880,7 +2909,7 @@ namespace Plims.Controllers
 
                 if (objPLPS == null)
                 {
-                    return Json(new { success = true });
+                    return Json(new { success = false });
 
                 }
 
@@ -3904,55 +3933,55 @@ namespace Plims.Controllers
                             worksheet.Cells[row, 7].Value = item.Unit;
                             worksheet.Cells[row, 8].Value = item.EFFSTD;
 
-                            worksheet.Cells[row, 9].Value = item.WorkinghourSTD;
+                            worksheet.Cells[row, 9].Value = item.WorkinghourSTD.ToString("#,###.00"); 
                             sumWorkinghourSTD += item.WorkinghourSTD;
 
-                            worksheet.Cells[row, 10].Value = item.WorkinghourACT;
+                            worksheet.Cells[row, 10].Value = item.WorkinghourACT.ToString("#,###.00"); 
                             sumWorkinghourACT += item.WorkinghourACT;
 
-                            worksheet.Cells[row, 11].Value = item.FinishGood;
+                            worksheet.Cells[row, 11].Value = item.FinishGood.ToString("#,###.00"); 
                             sumFinishGood += item.FinishGood;
 
-                            worksheet.Cells[row, 12].Value = item.EFF1;
+                            worksheet.Cells[row, 12].Value = item.EFF1.ToString("#,###.00"); 
                             sumEFF1 += item.EFF1;
 
-                            worksheet.Cells[row, 13].Value = item.Servicehour;
+                            worksheet.Cells[row, 13].Value = item.Servicehour.ToString("#,###.00");
                             sumServicehour += item.Servicehour;
 
-                            worksheet.Cells[row, 14].Value = item.Supporthour;
+                            worksheet.Cells[row, 14].Value = item.Supporthour.ToString("#,###.00"); 
                             sumSupporthour += item.Supporthour;
 
-                            worksheet.Cells[row, 15].Value = item.EFF2;
+                            worksheet.Cells[row, 15].Value = item.EFF2.ToString("#,###.00"); 
                             sumEFF2 += item.EFF2;
 
-                            worksheet.Cells[row, 16].Value = item.EFF3;
+                            worksheet.Cells[row, 16].Value = item.EFF3.ToString("#,###.00"); 
                             sumEFF3 += item.EFF3;
 
-                            worksheet.Cells[row, 17].Value = item.EFFhr1;
+                            worksheet.Cells[row, 17].Value = item.EFFhr1.ToString("#,###.00"); 
                             sumEFFhr1 += item.EFFhr1;
 
-                            worksheet.Cells[row, 18].Value = item.EFFhr2;
+                            worksheet.Cells[row, 18].Value = item.EFFhr2.ToString("#,###.00"); 
                             sumEFFhr2 += item.EFFhr2;
 
-                            worksheet.Cells[row, 19].Value = item.EFFhr3;
+                            worksheet.Cells[row, 19].Value = item.EFFhr3.ToString("#,###.00"); 
                             sumEFFhr3 += item.EFFhr3;
 
-                            worksheet.Cells[row, 20].Value = item.KPIh3;
+                            worksheet.Cells[row, 20].Value = item.KPIh3.ToString("#,###.00"); 
                             sumKPIh3 += item.KPIh3;
 
-                            worksheet.Cells[row, 21].Value = item.MEDh3;
+                            worksheet.Cells[row, 21].Value = item.MEDh3.ToString("#,###.00"); 
                             sumMEDh3 += item.MEDh3;
 
-                            worksheet.Cells[row, 22].Value = item.ValueEFF3;
+                            worksheet.Cells[row, 22].Value = item.ValueEFF3.ToString("#,###.00"); 
                             sumValEffh3 += item.ValueEFF3;
 
-                            worksheet.Cells[row, 23].Value = item.KPIh1;
+                            worksheet.Cells[row, 23].Value = item.KPIh1.ToString("#,###.00");
                             sumKPIh1 += item.KPIh1;
 
-                            worksheet.Cells[row, 24].Value = item.MEDh1;
+                            worksheet.Cells[row, 24].Value = item.MEDh1.ToString("#,###.00"); 
                             sumMEDh1 += item.MEDh1;
 
-                            worksheet.Cells[row, 25].Value = item.ValueEFF1;
+                            worksheet.Cells[row, 25].Value = item.ValueEFF1.ToString("#,###.00"); 
                             sumValEffh1 += item.ValueEFF1;
                             row++;
                         }
@@ -4077,55 +4106,55 @@ namespace Plims.Controllers
                             worksheet.Cells[row, 7].Value = item.Unit;
                             worksheet.Cells[row, 8].Value = item.EFFSTD;
 
-                            worksheet.Cells[row, 9].Value = item.WorkinghourSTD;
+                            worksheet.Cells[row, 9].Value = item.WorkinghourSTD.ToString("#,###.00"); 
                             sumWorkinghourSTD += item.WorkinghourSTD;
 
-                            worksheet.Cells[row, 10].Value = item.WorkinghourACT;
+                            worksheet.Cells[row, 10].Value = item.WorkinghourACT.ToString("#,###.00"); 
                             sumWorkinghourACT += item.WorkinghourACT;
 
-                            worksheet.Cells[row, 11].Value = item.FinishGood;
+                            worksheet.Cells[row, 11].Value = item.FinishGood.ToString("#,###.00"); 
                             sumFinishGood += item.FinishGood;
 
-                            worksheet.Cells[row, 12].Value = item.EFF1;
+                            worksheet.Cells[row, 12].Value = item.EFF1.ToString("#,###.00"); ;
                             sumEFF1 += item.EFF1;
 
-                            worksheet.Cells[row, 13].Value = item.Servicehour;
+                            worksheet.Cells[row, 13].Value = item.Servicehour.ToString("#,###.00"); ;
                             sumServicehour += item.Servicehour;
 
-                            worksheet.Cells[row, 14].Value = item.Supporthour;
+                            worksheet.Cells[row, 14].Value = item.Supporthour.ToString("#,###.00"); ;
                             sumSupporthour += item.Supporthour;
 
-                            worksheet.Cells[row, 15].Value = item.EFF2;
+                            worksheet.Cells[row, 15].Value = item.EFF2.ToString("#,###.00");
                             sumEFF2 += item.EFF2;
 
-                            worksheet.Cells[row, 16].Value = item.EFF3;
+                            worksheet.Cells[row, 16].Value = item.EFF3.ToString("#,###.00");
                             sumEFF3 += item.EFF3;
 
-                            worksheet.Cells[row, 17].Value = item.EFFhr1;
+                            worksheet.Cells[row, 17].Value = item.EFFhr1.ToString("#,###.00"); 
                             sumEFFhr1 += item.EFFhr1;
 
-                            worksheet.Cells[row, 18].Value = item.EFFhr2;
+                            worksheet.Cells[row, 18].Value = item.EFFhr2.ToString("#,###.00");
                             sumEFFhr2 += item.EFFhr2;
 
-                            worksheet.Cells[row, 19].Value = item.EFFhr3;
+                            worksheet.Cells[row, 19].Value = item.EFFhr3.ToString("#,###.00");
                             sumEFFhr3 += item.EFFhr3;
 
-                            worksheet.Cells[row, 20].Value = item.KPIh3;
+                            worksheet.Cells[row, 20].Value = item.KPIh3.ToString("#,###.00");
                             sumKPIh3 += item.KPIh3;
 
-                            worksheet.Cells[row, 21].Value = item.MEDh3;
+                            worksheet.Cells[row, 21].Value = item.MEDh3.ToString("#,###.00"); 
                             sumMEDh3 += item.MEDh3;
 
-                            worksheet.Cells[row, 22].Value = item.ValueEFF3;
+                            worksheet.Cells[row, 22].Value = item.ValueEFF3.ToString("#,###.00");
                             sumValEffh3 += item.ValueEFF3;
 
-                            worksheet.Cells[row, 23].Value = item.KPIh1;
+                            worksheet.Cells[row, 23].Value = item.KPIh1.ToString("#,###.00");
                             sumKPIh1 += item.KPIh1;
 
-                            worksheet.Cells[row, 24].Value = item.MEDh1;
+                            worksheet.Cells[row, 24].Value = item.MEDh1.ToString("#,###.00");
                             sumMEDh1 += item.MEDh1;
 
-                            worksheet.Cells[row, 25].Value = item.ValueEFF1;
+                            worksheet.Cells[row, 25].Value = item.ValueEFF1.ToString("#,###.00");
                             sumValEffh1 += item.ValueEFF1;
                             row++;
                         }

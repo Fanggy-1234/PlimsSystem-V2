@@ -491,6 +491,7 @@
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Employee ID:</label>
                         <input type="text" class="form-control" style="background-color:gainsboro" name="EmployeeID" id="ModalEmployeeID" readonly>
+                        <input type="text" class="form-control" style="background-color:gainsboro" name="TransactionNo" id="ModalTransactionNo" hidden>
                     </div>
 
                     <!-- Start Time -->
@@ -660,7 +661,8 @@
                     var formattedDate = `${year}-${month}-${day}`;
 
 
-                    console.log(formattedDate)
+                    //console.log(formattedDate)
+                    $('#ModalTransactionNo').val(response.transactionNo);
                     $('#ModalEmployeeID').val(response.employeeID);
                     $('#ModalClockIn').val(response.clockIn);
                     $('#ModalClockOut').val(response.clockOut);
