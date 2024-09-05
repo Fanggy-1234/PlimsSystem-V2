@@ -2649,8 +2649,7 @@ namespace Plims.Controllers
             // For demonstration purposes, let's assume you have a method to get section and unit
             var objEmp = db.TbEmployeeTransaction
                         .Where(x => x.EmployeeID.Equals(employeeID) &&
-                                     (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
-                             x.Plant.Equals(PlantID))
+                                     x.TransactionDate.Date == currentDate && x.ClockOut == "" &&  x.Plant.Equals(PlantID))
                         .OrderByDescending(x => x.TransactionNo)
                         .FirstOrDefault();
 

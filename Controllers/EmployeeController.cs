@@ -1513,7 +1513,7 @@ namespace Plims.Controllers
 
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
-            var TransactionDateVar = obj.TransactionDate;
+            var TransactionDateVar = Convert.ToDateTime(TransactionDateFillter); // obj.TransactionDate;
 
             if (EmpID == null)
             {
@@ -1534,17 +1534,23 @@ namespace Plims.Controllers
             ViewBag.VBRoleServicesClockIn = Employee.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(18)).Select(x => x.RoleAction).FirstOrDefault();
 
             // Create Function
-            int datacnt = EmployeeIDchk.Count();
+            //int datacnt = EmployeeIDchk.Count();
             List<TableDataRow> tableRows = JsonConvert.DeserializeObject<List<TableDataRow>>(TableData);
-        
- 
+
+          
+
+
+            string[] EmployeeIDchksplite = EmployeeIDchk[0].Split(",");
+            int datacnt = EmployeeIDchksplite.Count();
+
+
             for (int i = 0; i < datacnt; ++i)
             {
-
+                string empid = EmployeeIDchksplite[i];
                 foreach (var itmservice in tableRows)
                 {
                     var Empdb = new TbServicesTransaction();
-                    string empid = EmployeeIDchk[i];
+                   // string empid = EmployeeIDchk[i];
 
                     var sectionsplit = itmservice.Section.Split(":").ToList();
                     var servicesplit = itmservice.Service.Split(":").ToList();
