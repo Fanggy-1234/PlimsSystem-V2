@@ -2,8 +2,9 @@
 @{
     ViewData["Title"] = "Employee Dashboard";
     Layout = null;
-    DateTime currentDateTime = DateTime.Now;
+   DateTime currentDateTime = DateTime.Now;
     string formattedDate = currentDateTime.ToString("dd-MM-yyyy HH:mm");
+    // string formattedDate =""; 
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -107,7 +108,7 @@
                         <div class="full graph_head">
                             <div class="heading1 margin_0">
                                 <h3>กราฟ Grade พนักงาน</h3>
-                                <label>Data of @formattedDate</label>
+                                <label>Data of @formattedDate </label>@*  *@
                             </div>
                         </div>
                         <div class="map_section padding_infor_info" >

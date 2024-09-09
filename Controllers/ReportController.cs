@@ -69,6 +69,8 @@ namespace Plims.Controllers
 
                 }
 
+                var sect = db.View_DailyReportSummary.Where(x=>x.PlantID.Equals(PlantID)).ToList();
+
                 var varYear = from a in db.View_DailyReportSummary
                               group a by new { a.TransactionDate.Year } into g
                               select new SelectListItem
@@ -240,7 +242,7 @@ namespace Plims.Controllers
                 var mymodel = new ViewModelReport
                 {
                     view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID == PlantID).ToList(),
+                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID == PlantID && x.TransactionDate >= model.StartDate && x.TransactionDate <= model.EndDate).ToList(),
                     StartDate = model.StartDate,
                     EndDate = model.EndDate,
                     FilterYear = model.FilterYear,

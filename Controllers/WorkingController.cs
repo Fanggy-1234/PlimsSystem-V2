@@ -1637,7 +1637,7 @@ namespace Plims.Controllers
                     tbSection = db.TbSection.ToList(),
                     tbShift = db.TbShift.ToList(),
                     view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                    view_DailyReportSummary = db.View_DailyReportSummary.Distinct().ToList()
+                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x=>x.TransactionDate >= StartDate && x.TransactionDate <= EndDate).Distinct().ToList()
 
                 };
 
