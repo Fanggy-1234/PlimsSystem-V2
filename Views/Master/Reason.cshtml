@@ -77,17 +77,30 @@
             dom: 'Bfrtip',
             ordering: false,
             searching: false,
-            // scrollX: true,
-            // scrollY: true,
-            // order: [[1, 'asc']],
             lengthMenu: [10, 25, 50, 75, 100],
             pageLength: 20, // Default page length
             paging: true, // Enable paging
         });
 
     });
+
+
+
 </script>
 
+<script>
+    $(document).ready(function () {
+        // Reload page when the CreateModal is closed
+        $('#CreateModal').on('hidden.bs.modal', function () {
+            location.reload();
+        });
+
+        // Reload page when the EditModal is closed
+        $('#EditModal').on('hidden.bs.modal', function () {
+            location.reload();
+        });
+    });
+</script>
 
 <div class="row" style="height:10px"></div>
 <h2 class="page-name"> Defect Management</h2>
@@ -468,7 +481,7 @@
 @*Modal Edit*@
 <div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form method="post" asp-action="ReasonUpdate" asp-controller="Master">
+        <form method="post" asp-action="ReasonUpdate" asp-controller="Master" id="editForm">
             <div class="modal-content">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Defect Edit</h1>
@@ -641,18 +654,18 @@
                     alert("This data can't id!" + id)
                 }
                 else {
-                    // console.log('AJAX request successful:', response);
+                     //console.log('AJAX request successful:', response);
                     $('#ModalReasonID').val(response.reasonID);
                     $('#ModalReasonName').val(response.reasonName);
 
                     //  $('#ModalPlantName').append('<option value="' + response.plantID + '">' + response.plantName + '</option>');
                     // $('#ModalPlantName').val(response.plantID).trigger('change');
-
+                    console.log('Product ID:', response.lineID);
                     //$('#ModalLineName').append('<option value="' + response.lineID + '">' + response.lineName + '</option>');
                     $('#ModalLineName').val(response.lineID).trigger('change');
                     $('#ModalProductName').val(response.productID).trigger('change');
                    // $('#ModalProductName').append('<option value="' + response.productID + '">' + response.productName + '</option>');
-                   // filterProductsByLine(response.productID);
+                    console.log('Product ID:', $('#ModalProductName').val());
                   // console.log('productID:', response.productID);
                 //   filtersSectionByProduct(response.productID, response.lineID, response.sectionID);
                     
@@ -840,5 +853,8 @@
 
 
 
+
+</script>
+<script>
 
 </script>

@@ -23,11 +23,15 @@ namespace Plims.Models
         public string SectionID { get; set; }
         public string SectionName { get; set; }
         [Key]
+        public string ServicesID { get; set; }
+     
       //  public string ProductID { get; set; }
        // public string ProductName { get; set; }
      //   public string Unit { get; set; }
         public decimal QTYPerQRCode { get; set; }
-       // public int FormularID { get; set; }
+        // public int FormularID { get; set; }
+
+        [Key]
         public string QRCode { get; set; }
         public string EmployeeName { get; set; }
 
@@ -51,7 +55,7 @@ namespace Plims.Models
         public decimal ShiftHour { get; set; }
 
         public decimal PiecePerHr { get; set; }
-        [Key]
+       
      //   public string IncentiveID { get; set; }
      //   public string IncentiveName { get; set; }
         public decimal Rate { get; set; }

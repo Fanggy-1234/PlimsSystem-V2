@@ -3265,7 +3265,7 @@ namespace Plims.Controllers
             }
             else
             {
-                var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.QRCode })
+                var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.QRCode})
                .Select(g => new
                {
                    TransactionDate = g.Key.Date,

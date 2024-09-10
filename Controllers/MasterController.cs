@@ -7864,7 +7864,7 @@ namespace Plims.Controllers
                 foreach (var item in grouplist)
                 {
                     employeelist = "";
-                    var selectemployee = db.View_EmployeeGroup.Where(x => x.GroupID.Equals(item) && x.PlantID.Equals(PlantID)).ToList();
+                    var selectemployee = db.View_EmployeeGroup.Where(x => x.GroupID.Equals(item) && x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList();
                     foreach (var y in selectemployee)
                     {
                         employeelist = y.EmployeeID + "," + employeelist;
@@ -7958,7 +7958,14 @@ namespace Plims.Controllers
                                     var DataDbcheck = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(id)  && x.PlantID.Equals(PlantID)).ToList();
                                     var linedb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(emp) && x.PlantID.Equals(PlantID)).Select(x => x.LineID).SingleOrDefault();
                                     var Sectiondb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(emp) && x.PlantID.Equals(PlantID)).Select(x => x.SectionID).SingleOrDefault();
+                                    //Check Duplicate 
 
+                                    var dupdata = db.TbEmployeeGroupQR.Where(x=>x.EmployeeID.Equals(emp) && x.PlantID.Equals(PlantID) && !x.GroupID.Equals(id) && x.Status.Equals(1)).ToList();
+
+                                    if( dupdata.Count == 0) 
+                                    {
+
+                                    
                                     //Update
                                     if (DataDbcheck.Count > 0)
                                     {
@@ -7966,7 +7973,7 @@ namespace Plims.Controllers
                                         //insert new or update
                                         if(DataDb == null)
                                         {
-
+                                                
                                             //insert
                                             var newData = new TbEmployeeGroupQR
                                             {
@@ -8019,6 +8026,8 @@ namespace Plims.Controllers
 
                                         };
                                         db.TbEmployeeGroupQR.Add(newData);
+                                    }
+
                                     }
                                 }
                             } // for
