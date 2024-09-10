@@ -7946,6 +7946,27 @@ namespace Plims.Controllers
                             {
                                 CntDbnext = CntDbnext + 1;
                             }
+                            ////1. check for update to zero prepare update
+                            //var DataDbPreparezero = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(id) && x.PlantID.Equals(PlantID)).Select(x=>x.EmployeeID).ToList();
+
+                            //if(DataDbPreparezero.Count != 0)
+                            //{
+                            //    foreach (var x in DataDbPreparezero)
+                            //    {
+                            //        //DataDb.EmployeeID = employeeList[j].Trim();// worksheet.Cells[row, 2].Value.ToString();// worksheet.Cells[row, 2].Text;
+                            //        //DataDb.PlantID = PlantID;
+                            //        //DataDb.LineID = linedb;
+                            //        //DataDb.SectionID = Sectiondb;
+                            //        var updatezero = db.TbEmployeeGroupQR.Where(x => x.EmployeeID.Equals(x.EmployeeID) && x.PlantID.Equals(PlantID) && x.ID.Equals(id)).SingleOrDefault();
+                            //        updatezero.Status = 0;
+                            //        updatezero.UpdateDate = DateTime.Now;
+                            //        updatezero.UpdateBy = EmpID; //User.Identity.Name;
+                            //        db.SaveChanges();
+                            //    }
+                            //}
+
+                          //  2. update or insert new
+
 
                             //Check Employee List                        
                             for (int j = 0; j < employeeList.Count(); j++)
@@ -7970,7 +7991,11 @@ namespace Plims.Controllers
                                     if (DataDbcheck.Count > 0)
                                     {
                                         var DataDb = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(id) && x.EmployeeID.Equals(emp) && x.PlantID.Equals(PlantID) && x.Status.Equals(1)).SingleOrDefault();
-                                        //insert new or update
+                                        //for loop disable all
+
+                                          
+                                            
+                                            //insert new or update
                                         if(DataDb == null)
                                         {
                                                 
@@ -7993,6 +8018,8 @@ namespace Plims.Controllers
                                         }
                                         else
                                         {
+
+
                                             //update
                                             DataDb.EmployeeID = employeeList[j].Trim();// worksheet.Cells[row, 2].Value.ToString();// worksheet.Cells[row, 2].Text;
                                             DataDb.PlantID = PlantID;
@@ -8044,6 +8071,163 @@ namespace Plims.Controllers
 
                  return Json(new { success = true, message = "Data imported and updated successfully!" });
         }
+
+
+
+
+        [HttpPost]
+        public IActionResult EmployeeManagementGroupUploadcrrent(IFormFile FileUpload)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            int CntDb = Convert.ToInt32(db.TbEmployeeGroupQR.OrderBy(x => x.GroupID).Max(x => x.GroupID).ToString());
+            int CntDbnext = CntDb;
+
+
+            if (FileUpload == null || FileUpload.Length <= 0)
+            {
+                ViewBag.AlertMessage = "Please select a valid Excel file.";
+                return View("EmployeeManagementGroup");
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                FileUpload.CopyTo(stream);
+                using (var package = new ExcelPackage(stream))
+                {
+                    var worksheet = package.Workbook.Worksheets[0];
+
+                    for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+                    {
+                        if (worksheet.Cells[row, 2].Value != null && worksheet.Cells[row, 2].Value != "")
+                        {
+
+                            if (Convert.ToInt32(worksheet.Cells[row, 3].Text) != 1 && Convert.ToInt32(worksheet.Cells[row, 3].Text) != 0)
+                            {
+                                int rowerror = row - 1;
+                                TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Mistake please check Master ";
+                                return RedirectToAction("EmployeeManagementGroup");
+
+                            }
+
+                            var id = "";
+                            var employeeList = new string[0];
+                            employeeList = worksheet.Cells[row, 2].Text.Split(",");
+
+                            if (worksheet.Cells[row, 1].Value != null)
+                            {
+                                id = worksheet.Cells[row, 1].Value.ToString().PadLeft(5, '0');
+                                if (id == null)
+                                {
+                                    TempData["AlertMessage"] = "Data imported and updated successfully!";
+                                    return RedirectToAction("EmployeeManagementGroup");
+
+                                }
+                            }
+                            else
+                            {
+                                CntDbnext = CntDbnext + 1;
+                            }
+
+                            //Check Employee List                        
+                            for (int j = 0; j < employeeList.Count(); j++)
+                            {
+                                if (employeeList[j] != "")
+                                {
+
+                                    string emp = employeeList[j].Trim();
+
+                                    var DataDbcheck = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(id) && x.PlantID.Equals(PlantID)).ToList();
+                                    var linedb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(emp) && x.PlantID.Equals(PlantID)).Select(x => x.LineID).SingleOrDefault();
+                                    var Sectiondb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(emp) && x.PlantID.Equals(PlantID)).Select(x => x.SectionID).SingleOrDefault();
+                                    //Check Duplicate 
+
+                                    var dupdata = db.TbEmployeeGroupQR.Where(x => x.EmployeeID.Equals(emp) && x.PlantID.Equals(PlantID) && !x.GroupID.Equals(id) && x.Status.Equals(1)).ToList();
+
+                                    if (dupdata.Count == 0)
+                                    {
+
+
+                                        //Update
+                                        if (DataDbcheck.Count > 0)
+                                        {
+                                            var DataDb = db.TbEmployeeGroupQR.Where(x => x.GroupID.Equals(id) && x.EmployeeID.Equals(emp) && x.PlantID.Equals(PlantID) && x.Status.Equals(1)).SingleOrDefault();
+                                            //insert new or update
+                                            if (DataDb == null)
+                                            {
+
+                                                //insert
+                                                var newData = new TbEmployeeGroupQR
+                                                {
+                                                    GroupID = id,
+                                                    EmployeeID = employeeList[j].Trim(), // worksheet.Cells[row, 2].Value.ToString(),
+                                                    PlantID = PlantID,//int.Parse(worksheet.Cells[row, 5].Text),
+                                                    LineID = linedb,
+                                                    SectionID = Sectiondb,
+                                                    Status = Convert.ToInt32(worksheet.Cells[row, 3].Value),
+                                                    CreateDate = DateTime.Now,
+                                                    CreateBy = EmpID,//User.Identity.Name;
+                                                    UpdateDate = DateTime.Now,
+                                                    UpdateBy = EmpID//User.Identity.Name;
+
+                                                };
+                                                db.TbEmployeeGroupQR.Add(newData);
+                                            }
+                                            else
+                                            {
+                                                //update
+                                                DataDb.EmployeeID = employeeList[j].Trim();// worksheet.Cells[row, 2].Value.ToString();// worksheet.Cells[row, 2].Text;
+                                                DataDb.PlantID = PlantID;
+                                                DataDb.LineID = linedb;
+                                                DataDb.SectionID = Sectiondb;
+                                                DataDb.Status = Convert.ToInt32(worksheet.Cells[row, 3].Value);
+                                                DataDb.UpdateDate = DateTime.Now;
+                                                DataDb.UpdateBy = EmpID; //User.Identity.Name;
+                                            }
+
+
+
+
+                                        }
+                                        else //Insert
+                                        {
+                                            int Status;
+                                            // Insert new record
+                                            var newData = new TbEmployeeGroupQR
+                                            {
+                                                GroupID = Convert.ToString(CntDbnext).PadLeft(5, '0'),
+                                                EmployeeID = employeeList[j].Trim(), // worksheet.Cells[row, 2].Value.ToString(),
+                                                PlantID = PlantID,//int.Parse(worksheet.Cells[row, 5].Text),
+                                                LineID = linedb,
+                                                SectionID = Sectiondb,
+                                                Status = Convert.ToInt32(worksheet.Cells[row, 3].Value),
+                                                CreateDate = DateTime.Now,
+                                                CreateBy = EmpID,//User.Identity.Name;
+                                                UpdateDate = DateTime.Now,
+                                                UpdateBy = EmpID//User.Identity.Name;
+
+                                            };
+                                            db.TbEmployeeGroupQR.Add(newData);
+                                        }
+
+                                    }
+                                }
+                            } // for
+
+                        }
+
+
+                    }
+
+                    db.SaveChanges();
+                }
+
+            }
+
+            return Json(new { success = true, message = "Data imported and updated successfully!" });
+        }
+
 
 
 
