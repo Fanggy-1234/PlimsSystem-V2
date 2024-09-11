@@ -987,12 +987,18 @@
                 url: "/Working/ProductQTYPieceWithReffn", // Update the URL to your controller action
                 data: { EmployeeID: EmployeeID, ProductID: ProductID, SectionID: SectionID, QTY: QTY },
                 success: function (data) {
-                    $('#productId').focus();
-                    // $('#SectionNameFG').css('background-color', '#FFC0CB');
-                    // $('#SectionNameFG').val(data.section);
-                    location.reload();
+                    if (data.success === false) {
+                        
+                        alert(data.message);
+                        location.reload();
+                    } else {
+
+                        $('#productId').focus();
+                        location.reload();
+                    }            
                 },
                 error: function (error) {
+                    alert(data.message);
                     console.log("Error filtering product: " + error);
                 }
             });

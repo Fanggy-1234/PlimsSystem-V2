@@ -2880,8 +2880,9 @@ namespace Plims.Controllers
 
                 if (empsectioncount.Count() > 1)
                 {
-                    TempData["AlertMessage"] = "Some data not clock out.Please check. : " + EmployeeID;
-                    return View("WorkingFunction", mymodel);
+                  //  TempData["AlertMessage"] = "Some data not clock out.Please check. : " + EmployeeID;
+                  //  return View("WorkingFunction", mymodel);
+                    return Json(new { success = false  ,Message = "Some data not clock out.Please check. : " + EmployeeID });
 
                 }
 
@@ -2894,7 +2895,7 @@ namespace Plims.Controllers
 
                 if (objEmp == null)
                 {
-                    return Json(new { success = false });
+                    return Json(new { success = false, Message = "Some data not clock out.Please check. : " + EmployeeID });
 
                 }
 
@@ -2908,7 +2909,7 @@ namespace Plims.Controllers
 
                 if (objPLPS == null)
                 {
-                    return Json(new { success = false });
+                    return Json(new { success = false,Message = "Plese check PLPS" });
 
                 }
 

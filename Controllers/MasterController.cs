@@ -6937,17 +6937,30 @@ namespace Plims.Controllers
                 using (var package = new ExcelPackage(stream))
                 {
                     var worksheet = package.Workbook.Worksheets[0];
+                    var processedIds = new HashSet<string>();
 
                     for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                     {
                         if (worksheet.Cells[row, 2].Value != null)
                         {
+                           
 
                             var id = "";
                             if (worksheet.Cells[row, 1].Value != null)
                             {
                                 id = worksheet.Cells[row, 1].Value.ToString();
                             }
+
+                            // Check if the employee ID is a duplicate in the file
+                            if (processedIds.Contains(id))
+                            {
+                                return Json(new { success = false, message = $"Duplicate Employee ID found in Row: {row}. Employee ID: {id}" });
+                            }
+
+                            // Add ID to the processed list
+                            processedIds.Add(id);
+
+
 
                             var DataDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(id)).SingleOrDefault();
                             //check line
@@ -7089,6 +7102,7 @@ namespace Plims.Controllers
             //  return RedirectToAction("EmployeeManagement");
 
         }
+
 
 
 
