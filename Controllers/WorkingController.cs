@@ -2822,7 +2822,7 @@ namespace Plims.Controllers
 
                 if (empsectioncount.Count() > 1)
                 {
-                    TempData["AlertMessage"] = "Some data not clock out.Please check. : " + employeeID;
+                    TempData["AlertMessage"] = "Please clock in : " + employeeID;
                     return View("WorkingFunction", mymodel);
 
                 }
@@ -2946,7 +2946,7 @@ namespace Plims.Controllers
 
                 if (objEmp == null)
                 {
-                    return Json(new { success = false, Message = "Some data not clock out.Please check. : " + EmployeeID });
+                    return Json(new { success = false, Message = "Please Clock in. : " + EmployeeID });
 
                 }
 
