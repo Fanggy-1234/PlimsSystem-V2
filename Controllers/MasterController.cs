@@ -6469,7 +6469,7 @@ namespace Plims.Controllers
                     db.TbEmployeeMaster.Add(new TbEmployeeMaster()
                     {
                         //ID = db.TbEmployeeMaster.Count() + 1,
-                        EmployeeID = obj.EmployeeID,
+                        EmployeeID = obj.EmployeeID.Trim(),
                         EmployeeName = obj.EmployeeName,
                         EmployeeLastName = obj.EmployeeLastName,
                         PlantID = PlantID,// db.TbPlants.Where(s => s.PlantName.Equals(obj.PlantName)).Select(s => s.PlantID).First(),
@@ -6992,7 +6992,7 @@ namespace Plims.Controllers
                             if (DataDb != null)
                             {
                                 //string[] name = worksheet.Cells[row, 2].Text.Split(" ");
-                                DataDb.EmployeeID = worksheet.Cells[row, 1].Text;
+                                DataDb.EmployeeID = worksheet.Cells[row, 1].Text.Trim();
                                 DataDb.EmployeeName = worksheet.Cells[row, 2].Text;
                                 DataDb.EmployeeLastName = worksheet.Cells[row, 3].Text;
                                 DataDb.PlantID = PlantID;
@@ -7031,7 +7031,7 @@ namespace Plims.Controllers
                                     // string[] name = worksheet.Cells[row, 2].Text.Split(" ");
                                     var newData = new TbEmployeeMaster
                                     {
-                                        EmployeeID = worksheet.Cells[row, 1].Text,
+                                        EmployeeID = worksheet.Cells[row, 1].Text.Trim(),
                                         EmployeeName = worksheet.Cells[row, 2].Text,
                                         EmployeeLastName = worksheet.Cells[row, 3].Text,
                                         PlantID = PlantID,

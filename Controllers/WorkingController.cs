@@ -1416,34 +1416,19 @@ namespace Plims.Controllers
             if (StartDate == DateTime.MinValue && EndDate == DateTime.MinValue)
             {
                  mymodel = new ViewModelAll
-                {
-                   // tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    //tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                    //tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                   // tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                    //view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today ).ToList()
+                 {
+                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today).ToList()
                 };
             }
             else
             {
                  mymodel = new ViewModelAll
-                {
-                  //  tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    //tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                    //tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                    //tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                    //view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate >= StartDate && x.TransactionDate <= EndDate).ToList()
+                 {
+                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).ToList()
                 };
 
             }
           
-
-
-
-
-
 
             if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionID) || !string.IsNullOrEmpty(Prefix) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
             {
@@ -1499,6 +1484,9 @@ namespace Plims.Controllers
                     ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
                 }
 
+             //   ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+             //   ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
+
                 mymodel = new ViewModelAll
                 {
                     tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
@@ -1509,10 +1497,7 @@ namespace Plims.Controllers
                     view_DailyReportSummary = mymodel.view_DailyReportSummary.Distinct().ToList()
                 };
 
-                ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster
-                                               .Where(x => x.UserEmpID == EmpID && x.PageID == 23)
-                                               .Select(x => x.RoleAction)
-                                               .FirstOrDefault();
+                ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
 
                 return View(mymodel);
             }
@@ -1584,10 +1569,7 @@ namespace Plims.Controllers
 
 
 
-                ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster
-                                                .Where(x => x.UserEmpID == EmpID && x.PageID == 23)
-                                                .Select(x => x.RoleAction)
-                                                .FirstOrDefault();
+                ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23 ).Select(x => x.RoleAction).FirstOrDefault();
                 return View(mymodel);
 
             }
@@ -2392,7 +2374,8 @@ namespace Plims.Controllers
                 catch
                 {
                     TempData["AlertMessage"] = "Please check Connection loss!";
-                    return Json(mymodel);
+                    var sectionvalfial  = "Please check Connection loss!";
+                    return Json(sectionvalfial);
                 }
             }
 
