@@ -1661,17 +1661,13 @@ namespace Plims.Controllers
                         //tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                         //tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                         //view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                        view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate >= StartDate && x.TransactionDate <= EndDate).ToList()
+                        view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) ).ToList()
                     };
 
                 }
 
 
 
-                ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster
-                                          .Where(x => x.UserEmpID == EmpID && x.PageID == 23)
-                                          .Select(x => x.RoleAction)
-                                          .FirstOrDefault();
 
 
 
@@ -1702,32 +1698,32 @@ namespace Plims.Controllers
                         ViewBag.SelectedPrefix = Prefix;
                     }
 
-                    //if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
-                    //{
-                    //    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
-                    //       .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
-                    //       .ToList();
+                    if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
+                    {
+                        mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
+                           .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
+                           .ToList();
 
-                    //    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                    //    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd"); ;
+                        ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+                        ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd"); ;
 
-                    //}
-                    //else if (StartDate != DateTime.MinValue)
-                    //{
-                    //    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
-                    //         .Where(x => x.TransactionDate >= StartDate)
-                    //         .ToList();
+                    }
+                    else if (StartDate != DateTime.MinValue)
+                    {
+                        mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
+                             .Where(x => x.TransactionDate >= StartDate)
+                             .ToList();
 
-                    //    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                    //}
-                    //else if (EndDate != DateTime.MinValue)
-                    //{
-                    //    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
-                    //     .Where(x => x.TransactionDate <= EndDate)
-                    //     .ToList();
+                        ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+                    }
+                    else if (EndDate != DateTime.MinValue)
+                    {
+                        mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
+                         .Where(x => x.TransactionDate <= EndDate)
+                         .ToList();
 
-                    //    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-                    //}
+                        ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
+                    }
 
 
 
@@ -1861,6 +1857,12 @@ namespace Plims.Controllers
 
                     };
 
+
+
+                    ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster
+                                              .Where(x => x.UserEmpID == EmpID && x.PageID == 23)
+                                              .Select(x => x.RoleAction)
+                                              .FirstOrDefault();
                     // mymodel.tbLine = db.TbLine.Where(p => p.LineName.Equals(obj.LineName) || p.LineID.Equals(obj.LineID)).OrderByDescending(x => x.Status);
                     return View("DailyReport", mymodel);
                 }
@@ -2004,6 +2006,14 @@ namespace Plims.Controllers
                         view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate >= StartDate && x.TransactionDate <= EndDate).Distinct().ToList()
 
                     };
+
+
+
+                    ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster
+                                              .Where(x => x.UserEmpID == EmpID && x.PageID == 23)
+                                              .Select(x => x.RoleAction)
+                                              .FirstOrDefault();
+
 
                     ViewBag.InactiveStatus = true;
                     return RedirectToAction("DailyReport", mymodel);
