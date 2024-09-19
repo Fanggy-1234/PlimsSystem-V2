@@ -73,8 +73,7 @@ namespace Plims.Controllers
                 var mymodel = new ViewModelReport
                 {
                     view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID == PlantID ).ToList(),
-                    view_ProductGroupDash = db.View_ProductGroupDash.Where(x => x.PlantID == PlantID).ToList(),
-                    view_GradeGroup = db.View_GradeGroup.Where(x => x.PlantID == PlantID).ToList()
+                  
                 };
 
 
@@ -558,7 +557,13 @@ namespace Plims.Controllers
                 }
 
 
-                var varYear = from a in db.View_EFFReport
+                var mymodel = new ViewModelReport
+                {
+
+                    view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).ToList(),
+                   
+                };
+                var varYear = from a in mymodel.view_EFFReport
                               group a by new { a.TransactionDate.Year } into g
                               select new SelectListItem
                               {
@@ -567,7 +572,7 @@ namespace Plims.Controllers
                               };
                 ViewBag.varYear = new SelectList(varYear, "Value", "Text");
 
-                var varMonth = from a in db.View_EFFReport
+                var varMonth = from a in mymodel.view_EFFReport
                                group a by new { a.TransactionDate.Month } into g
                                select new SelectListItem
                                {
@@ -589,7 +594,7 @@ namespace Plims.Controllers
 
                 ViewBag.varMonth = new SelectList(varMonth, "Value", "Text");
 
-                var varLine = from a in db.View_EFFReport
+                var varLine = from a in mymodel.view_EFFReport
                               where a.PlantID.Equals(PlantID)
                               group a by new { a.LineID, a.LineName } into g
                               select new SelectListItem
@@ -599,7 +604,7 @@ namespace Plims.Controllers
                               };
                 ViewBag.varLine = new SelectList(varLine, "Value", "Text");
 
-                var varProduct = from a in db.View_EFFReport
+                var varProduct = from a in mymodel.view_EFFReport
                                  where a.PlantID.Equals(PlantID)
                                  group a by new { a.ProductID, a.ProductName } into g
                                  select new SelectListItem
@@ -609,7 +614,7 @@ namespace Plims.Controllers
                                  };
                 ViewBag.varProduct = new SelectList(varProduct, "Value", "Text");
 
-                var varPoint = from a in db.View_EFFReport
+                var varPoint = from a in mymodel.view_EFFReport
                                where a.PlantID.Equals(PlantID)
                                group a by new { a.SectionID, a.SectionName } into g
                                select new SelectListItem
@@ -633,7 +638,7 @@ namespace Plims.Controllers
                 //                                      (model.EndDate == DateTime.MinValue || summary.TransactionDate <= model.EndDate) &&
                 //                                       (summary.PlantID == PlantID) select(summary.CountQRCode)).ToString();
 
-                var resultGrpProductOverview = (from summary in db.View_EFFReport
+                var resultGrpProductOverview = (from summary in mymodel.view_EFFReport
                                                 where (model.FilterYear == 0 || summary.TransactionDate.Year == model.FilterYear) &&
                                                       (model.FilterMonth == 0 || summary.TransactionDate.Month == model.FilterMonth) &&
                                                       (model.FilterLine == null || summary.LineID == model.FilterLine) &&
@@ -758,7 +763,7 @@ namespace Plims.Controllers
 
                 }
                 /////////////////// 2 Group Bar Chart Line Overview
-                var resultGrpLineOverview = (from summary in db.View_EFFReport
+                var resultGrpLineOverview = (from summary in mymodel.view_EFFReport
                                              where (model.FilterYear == 0 || summary.TransactionDate.Year == model.FilterYear) &&
                                                    (model.FilterMonth == 0 || summary.TransactionDate.Month == model.FilterMonth) &&
                                                    (model.FilterLine == null || summary.LineID == model.FilterLine) &&
@@ -836,10 +841,10 @@ namespace Plims.Controllers
                 // Pass chartDataJson to the ViewBag
                 ViewBag.ChartDataJsonYield = chartDataJsonYield;
 
-                var mymodel = new ViewModelReport
+                 mymodel = new ViewModelReport
                 {
-                    view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID == PlantID).ToList(),
+                    view_PermissionMaster = db.View_PermissionMaster.Where(x=>x.PlantID.Equals(PlantID)).ToList(),
+                     view_EFFReport = mymodel.view_EFFReport.ToList(),
                     StartDate = model.StartDate,
                     EndDate = model.EndDate,
                     FilterYear = model.FilterYear,
@@ -851,7 +856,7 @@ namespace Plims.Controllers
                 };
 
 
-                ViewBag.VBRoleEmployeeDashBaord = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(23)).Select(x => x.RoleAction).FirstOrDefault();
+                ViewBag.VBRoleEmployeeDashBaord = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(23)).Select(x => x.RoleAction).FirstOrDefault();
 
                 ////Set Refrsh Time
                 int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
