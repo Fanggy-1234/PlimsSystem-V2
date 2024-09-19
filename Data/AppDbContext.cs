@@ -106,8 +106,9 @@ namespace Plims.Data
         public DbSet<View_EmployeeGroupWorking> View_EmployeeGroupWorking { get; set; }
         public DbSet<TbRateTransaction> tbRateTransaction { get; set; }
 
+        public DbSet<View_GradeGroup>  View_GradeGroup { get; set; }
 
-
+        public DbSet<View_ProductGroupDash> View_ProductGroupDash { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -200,7 +201,11 @@ namespace Plims.Data
             modelBuilder.Entity<View_EmployeeGroupWorking>()
 .HasKey(v => new { v.TransactionNo, v.TransactionDate, v.PlantID,  v.EmployeeID,v.GroupID});
 
+            modelBuilder.Entity<View_GradeGroup>() // Dash
+.HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID,  v.ProductID, v.SectionID });
 
+            modelBuilder.Entity<View_ProductGroupDash>()
+.HasKey(v => new {  v.PlantID, v.LineID, v.ProductID, v.SectionID });
 
 
             //            modelBuilder.Entity<View_EFFReport>()

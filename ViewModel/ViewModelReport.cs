@@ -39,6 +39,10 @@ namespace Plims.ViewModel
         // Ref Start View_EFFReport
         public IEnumerable<View_EFFReport> View_EFFReport { get; set; }
 
+        public IEnumerable<View_GradeGroup> view_GradeGroup { get; set; }
 
+        public IEnumerable<View_ProductGroupDash> view_ProductGroupDash { get; set; }
+
+   
     }
 }

@@ -6066,7 +6066,7 @@ namespace Plims.Controllers
                 }
 
 
-                if (inactivestatus == true)
+                if (inactivestatus == true || inactivestatus == null)
                 {
                     mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.ToList();
                     ViewBag.InactiveStatus = true;

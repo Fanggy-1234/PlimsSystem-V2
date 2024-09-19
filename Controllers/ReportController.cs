@@ -69,7 +69,244 @@ namespace Plims.Controllers
 
                 }
 
-                var sect = db.View_DailyReportSummary.Where(x=>x.PlantID.Equals(PlantID)).ToList();
+
+                var mymodel = new ViewModelReport
+                {
+                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID == PlantID ).ToList(),
+                    view_ProductGroupDash = db.View_ProductGroupDash.Where(x => x.PlantID == PlantID).ToList(),
+                    view_GradeGroup = db.View_GradeGroup.Where(x => x.PlantID == PlantID).ToList()
+                };
+
+
+
+               // var sect = db.View_DailyReportSummary.Where(x=>x.PlantID.Equals(PlantID)).ToList();
+
+                var varYear = from a in mymodel.view_DailyReportSummary
+                              group a by new { a.TransactionDate.Year } into g
+                              select new SelectListItem
+                              {
+                                  Value = $"{g.Key.Year}",
+                                  Text = $"{g.Key.Year}"
+                              };
+                ViewBag.varYear = new SelectList(varYear, "Value", "Text");
+
+                var varMonth = from a in mymodel.view_DailyReportSummary
+                               group a by new { a.TransactionDate.Month } into g
+                               select new SelectListItem
+                               {
+                                   Text = ($"{g.Key.Month}" == "1") ? "January" :
+                                           ($"{g.Key.Month}" == "2") ? "February" :
+                                           ($"{g.Key.Month}" == "3") ? "March" :
+                                           ($"{g.Key.Month}" == "4") ? "April" :
+                                           ($"{g.Key.Month}" == "5") ? "May" :
+                                           ($"{g.Key.Month}" == "6") ? "June" :
+                                           ($"{g.Key.Month}" == "7") ? "July" :
+                                           ($"{g.Key.Month}" == "8") ? "August" :
+                                           ($"{g.Key.Month}" == "9") ? "September" :
+                                           ($"{g.Key.Month}" == "10") ? "October" :
+                                           ($"{g.Key.Month}" == "11") ? "November" :
+                                           ($"{g.Key.Month}" == "12") ? "December" :
+                                   $"{g.Key.Month}",
+                                   Value = $"{g.Key.Month}"
+                               };
+
+                ViewBag.varMonth = new SelectList(varMonth, "Value", "Text");
+
+                var varLine = from a in mymodel.view_DailyReportSummary
+                              where a.PlantID.Equals(PlantID)
+                              group a by new { a.LineID, a.LineName } into g
+                              select new SelectListItem
+                              {
+                                  Value = $"{g.Key.LineID}",
+                                  Text = $"{g.Key.LineName}"
+                              };
+                ViewBag.varLine = new SelectList(varLine, "Value", "Text");
+
+                var varProduct = from a in mymodel.view_DailyReportSummary
+                                 where a.PlantID.Equals(PlantID)
+                                 group a by new { a.ProductID, a.ProductName } into g
+                                 select new SelectListItem
+                                 {
+                                     Value = $"{g.Key.ProductID}",
+                                     Text = $"{g.Key.ProductName}"
+                                 };
+                ViewBag.varProduct = new SelectList(varProduct, "Value", "Text");
+
+                var varPoint = from a in mymodel.view_DailyReportSummary
+                               where a.PlantID.Equals(PlantID)
+                               group a by new { a.SectionID, a.SectionName } into g
+                               select new SelectListItem
+                               {
+                                   Value = $"{g.Key.SectionID}",
+                                   Text = $"{g.Key.SectionName}"
+                               };
+                ViewBag.varPoint = new SelectList(varPoint, "Value", "Text");
+
+
+                /////////////////// 1 Count Employee
+                var sumGrpEmp = from count in mymodel.view_DailyReportSummary
+                                where (model.FilterYear == 0 || count.TransactionDate.Year == model.FilterYear) &&
+                                      (model.FilterMonth == 0 || count.TransactionDate.Month == model.FilterMonth) &&
+                                      (model.FilterLine == null || count.LineID == model.FilterLine) &&
+                                      (model.FilterProduct == null || count.ProductID == model.FilterProduct) &&
+                                      (model.FilterPoint == null || count.SectionID == model.FilterPoint) &&
+                                      (model.StartDate == DateTime.MinValue || count.TransactionDate >= model.StartDate) && (model.EndDate == DateTime.MinValue || count.TransactionDate <= model.EndDate)
+                                group count by count.QRCode into grouped
+                                select new
+                                {
+                                    QRCode = grouped.Key,
+                                    Cnt = grouped.Count()
+                                };
+
+
+                 var sumEmployeeDict = sumGrpEmp.ToDictionary(item => item.QRCode, item => item.Cnt);
+              //  var sumEmployeeDict = sumGrpEmp.Count();
+                ViewBag.SumEmployee =   sumEmployeeDict.Count();
+
+
+                /////////////////// 2 Group Product 
+                var resultGrpProduct = (from summary in mymodel.view_DailyReportSummary
+                                        where (model.FilterYear == 0 || summary.TransactionDate.Year == model.FilterYear) &&
+                                              (model.FilterMonth == 0 || summary.TransactionDate.Month == model.FilterMonth) &&
+                                              (model.FilterLine == null || summary.LineID == model.FilterLine) &&
+                                              (model.FilterProduct == null || summary.ProductID == model.FilterProduct) &&
+                                              (model.FilterPoint == null || summary.SectionID == model.FilterPoint) &&
+                                              (model.StartDate == DateTime.MinValue || summary.TransactionDate >= model.StartDate) && (model.EndDate == DateTime.MinValue || summary.TransactionDate <= model.EndDate) &&
+                                               (summary.PlantID == PlantID)
+                                        group summary by new { summary.ProductID, summary.ProductName, summary.SectionName, summary.STD } into grouped
+                                        select new ResultGrpProductModel
+                                        {
+                                            ProductID = grouped.Key.ProductID,
+                                            ProductName = grouped.Key.ProductName,
+                                            SectionName = grouped.Key.SectionName,
+                                            STD = Convert.ToDouble(grouped.Key.STD),
+                                            Actual = Convert.ToDouble(grouped.Sum(x => x.PcsPerHr)),
+                                            Diff = Convert.ToDouble((grouped.Sum(x => x.PcsPerHr) * 100) / grouped.Key.STD)
+                                        }).ToList();
+
+                /////////////////// 3 Group Grad 
+
+                var sumGrpGrade = (from count in mymodel.view_DailyReportSummary
+                                   where (model.FilterYear == 0 || count.TransactionDate.Year == model.FilterYear) &&
+                                         (model.FilterMonth == 0 || count.TransactionDate.Month == model.FilterMonth) &&
+                                         (model.FilterLine == null || count.LineID == model.FilterLine) &&
+                                         (model.FilterProduct == null || count.ProductID == model.FilterProduct) &&
+                                         (model.FilterPoint == null || count.SectionID == model.FilterPoint) &&
+                                         (model.StartDate == DateTime.MinValue || count.TransactionDate >= model.StartDate) && (model.EndDate == DateTime.MinValue || count.TransactionDate <= model.EndDate) &&
+                                          (count.PlantID == PlantID)
+                                   group count by count.Grade into grouped
+                                   select new
+                                   {
+                                       Grade = grouped.Key,
+                                       CountSum = grouped.Count()
+                                   }).ToList();
+
+
+
+
+                 int sumOfCounts = sumGrpGrade.Sum(item => item.CountSum);
+               // int sumOfCounts = sumGrpGrade.Count;
+
+
+                var resultGrpGrade = (from count in mymodel.view_DailyReportSummary
+                                      where (model.FilterYear == 0 || count.TransactionDate.Year == model.FilterYear) &&
+                                            (model.FilterMonth == 0 || count.TransactionDate.Month == model.FilterMonth) &&
+                                            (model.FilterLine == null || count.LineID == model.FilterLine) &&
+                                            (model.FilterProduct == null || count.ProductID == model.FilterProduct) &&
+                                            (model.FilterPoint == null || count.SectionID == model.FilterPoint) &&
+                                            (model.StartDate == DateTime.MinValue || count.TransactionDate >= model.StartDate) && (model.EndDate == DateTime.MinValue || count.TransactionDate <= model.EndDate) 
+                                      group count by count.Grade into grouped
+                                      select new ResultGrpGradeModel
+                                      {
+                                          Grade = grouped.Key,
+                                          //PcsPerHr = 0,                      
+                                          Cnt = grouped.Count(),
+                                          PcsPerHr = Math.Round(grouped.Sum(g => g.PcsPerHr), 2),  
+                                          //PcsPerHr = grouped.Count() != 0 ? (grouped.Sum(g => g.FGQty) / sumEmployeeDict.Count() ) : 0,
+                                          Percent = Math.Round((grouped.Count() / (double)sumOfCounts) * 100.00, 2)
+                                      }).ToList();
+
+
+                /////////////////// 4 Show Chart Pie
+                //Create separate lists for Grade, Cnt, and Percent
+                List<string> grades = resultGrpGrade.Select(x => x.Grade).ToList();
+                List<int> counts = resultGrpGrade.Select(x => x.Cnt).ToList();
+                List<double> percents = resultGrpGrade.Select(x => x.Percent).ToList();
+
+                //Set data pie
+                List<object[]> chartData = new List<object[]>();
+                for (int i = 0; i < grades.Count; i++)
+                {
+                    chartData.Add(new object[] { grades[i], percents[i], grades[i] });
+                }
+
+                string chartDataJson = JsonConvert.SerializeObject(chartData);
+
+                // Pass chartDataJson to the ViewBag
+                ViewBag.ChartDataJson = chartDataJson;
+
+                // Convert chartData to a string
+                string chartDataString = string.Join(",", chartData.Select(data => $"[{string.Join(",", data.Select(x => "\"" + x + "\""))}]"));
+                ViewBag.GrdJoin = chartDataString;
+
+
+                 mymodel = new ViewModelReport
+                {
+                    view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                   view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.TransactionDate >= model.StartDate && x.TransactionDate <= model.EndDate).ToList(),
+                    StartDate = model.StartDate,
+                    EndDate = model.EndDate,
+                    FilterYear = model.FilterYear,
+                    FilterMonth = model.FilterMonth,
+                    FilterLine = string.IsNullOrEmpty(model.FilterLine) ? null : model.FilterLine,
+                    FilterProduct = string.IsNullOrEmpty(model.FilterProduct) ? null : model.FilterProduct,
+                    FilterPoint = string.IsNullOrEmpty(model.FilterPoint) ? null : model.FilterPoint,
+                    ResultGrpProduct = resultGrpProduct,
+                    ResultGrpGrade = resultGrpGrade
+                };
+
+                ViewBag.VBRoleEmployeeDashBaord = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(23)).Select(x => x.RoleAction).FirstOrDefault();
+
+                ////Set Refrsh Time
+                int Valuesetup = db.TbSetup.Where(x => x.PlantID == PlantID).Select(x => x.Valuesetup).FirstOrDefault();
+                ViewBag.SetTime = Valuesetup * 60000; //Change minute to millisecond
+
+                return View(mymodel);
+
+            }
+
+        }
+
+
+
+        [HttpGet]
+        public ActionResult EmployeeDashBaordCurr(ViewModelReport model)
+        {
+
+
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+
+                ViewBag.DefaultStartDate = DateTime.Now.ToString("dd-MM-yyyy");
+                ViewBag.DefaultEndDate = DateTime.Now.ToString("dd-MM-yyyy");
+
+                if (model.filter == 0)
+                {
+                    //model.StartDate = DateTime.Now;
+                    //model.EndDate = DateTime.Now;
+                    model.StartDate = DateTime.Today;
+                    model.EndDate = DateTime.Today;
+
+                }
+
+                var sect = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).ToList();
 
                 var varYear = from a in db.View_DailyReportSummary
                               group a by new { a.TransactionDate.Year } into g
@@ -150,9 +387,9 @@ namespace Plims.Controllers
                                 };
 
 
-                var sumEmployeeDict = sumGrpEmp.ToDictionary(item => item.QRCode, item => item.Cnt);
-
-                ViewBag.SumEmployee = sumEmployeeDict.Count();
+                // var sumEmployeeDict = sumGrpEmp.ToDictionary(item => item.QRCode, item => item.Cnt);
+                var sumEmployeeDict = sumGrpEmp.Count();
+                ViewBag.SumEmployee = sumEmployeeDict; // sumEmployeeDict.Count();
 
 
                 /////////////////// 2 Group Product 
@@ -171,8 +408,8 @@ namespace Plims.Controllers
                                             ProductName = grouped.Key.ProductName,
                                             SectionName = grouped.Key.SectionName,
                                             STD = Convert.ToDouble(grouped.Key.STD),
-                                            Actual = Convert.ToDouble(grouped.Sum(x => x.PcsPerHr)  ),
-                                            Diff = Convert.ToDouble((grouped.Sum(x => x.PcsPerHr)  * 100) / grouped.Key.STD)
+                                            Actual = Convert.ToDouble(grouped.Sum(x => x.PcsPerHr)),
+                                            Diff = Convert.ToDouble((grouped.Sum(x => x.PcsPerHr) * 100) / grouped.Key.STD)
                                         }).ToList();
 
 
@@ -210,7 +447,7 @@ namespace Plims.Controllers
                                           Grade = grouped.Key,
                                           //PcsPerHr = 0,                      
                                           Cnt = grouped.Count(),
-                                          PcsPerHr = Math.Round(grouped.Sum(g => g.PcsPerHr), 2),  
+                                          PcsPerHr = Math.Round(grouped.Sum(g => g.PcsPerHr), 2),
                                           //PcsPerHr = grouped.Count() != 0 ? (grouped.Sum(g => g.FGQty) / sumEmployeeDict.Count() ) : 0,
                                           Percent = Math.Round((grouped.Count() / (double)sumOfCounts) * 100.00, 2)
                                       }).ToList();
@@ -272,6 +509,8 @@ namespace Plims.Controllers
             }
 
         }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
