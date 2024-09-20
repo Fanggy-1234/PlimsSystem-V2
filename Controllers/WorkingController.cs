@@ -1312,7 +1312,19 @@ namespace Plims.Controllers
                             var ProductIDDb = mymodel.tbProduct.Where(x => x.ProductID.Equals(ProductVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.ProductID, x.ProductName }).SingleOrDefault();
                             var SectionIDDb = mymodel.tbSection.Where(x => x.SectionID.Equals(SectionVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.SectionID, x.SectionName }).SingleOrDefault();
                             var EmployeeIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => x.EmployeeID).SingleOrDefault();
-                            var PLPSIDDb = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb.LineID) && x.ProductID.Equals(ProductIDDb.ProductID) && x.SectionID.Equals(SectionIDDb.SectionID) && x.Status.Equals(1)).Select(x => x.FormularID).SingleOrDefault();
+                            var PLPSIDDbcheck = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb.LineID) && x.ProductID.Equals(ProductIDDb.ProductID) && x.SectionID.Equals(SectionIDDb.SectionID) && x.Status.Equals(1)).Select(x => x.FormularID).ToList();
+                            var PLPSIDDb = 0;
+                            if (PLPSIDDbcheck.Count > 0)
+                            {
+                                 PLPSIDDb = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb.LineID) && x.ProductID.Equals(ProductIDDb.ProductID) && x.SectionID.Equals(SectionIDDb.SectionID) && x.Status.Equals(1)).Select(x => x.FormularID).SingleOrDefault();
+
+                            }
+                            else
+                            {
+                                int rowerror = row - 1;
+                                TempData["AlertMessage"] = "PLPS : " + rowerror + "   Mistake please check.";
+                                return RedirectToAction("ImportManualData");
+                            }
                             //Check PLPS , Incentive , ProductSTD
                             var incentivecheck = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb.LineID) && x.ProductID.Equals(ProductIDDb.ProductID) && x.SectionID.Equals(SectionIDDb.SectionID) && x.Status.Equals(1)).ToList();
                             var plplcheck = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineIDDb.LineID) && x.ProductID.Equals(ProductIDDb.ProductID) && x.SectionID.Equals(SectionIDDb.SectionID) && x.Status.Equals(1)).ToList();
