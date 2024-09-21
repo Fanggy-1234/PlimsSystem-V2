@@ -4273,10 +4273,10 @@ namespace Plims.Controllers
                     //   var Empdb = new TbEmployeeTransaction();
                     string empid = EmployeeIDchk[i];
                     int IDtran = Convert.ToInt32(empid);
-                    string EmpType = db.View_EmployeeAdjustBreak.Where(p => p.TransactionNo.Equals(IDtran)).Select(x => x.Type).SingleOrDefault();
+                    string EmpType = Employee.view_EmployeeAdjustBreak.Where(p => p.TransactionNo.Equals(IDtran) && p.TransactionDate.Equals(obj.TransactionDate)).Select(x => x.Type).SingleOrDefault();
                     if (EmpType == "E")
                     {
-                        var EmpDbtran = db.TbEmployeeTransaction.Where(p => p.TransactionNo.Equals(IDtran) && p.ClockIn != null && p.ClockOut != null).SingleOrDefault();
+                        var EmpDbtran = db.TbEmployeeTransaction.Where(p => p.Plant.Equals(PlantID) && p.TransactionDate.Equals(obj.TransactionDate) && p.TransactionNo.Equals(IDtran) && p.ClockIn != null && p.ClockOut != null).SingleOrDefault();
                         if (EmpDbtran != null)
                         {
                             //Update Transaction
@@ -4288,7 +4288,9 @@ namespace Plims.Controllers
                     }
                     else
                     {
-                        var ServDbtran = db.TbServicesTransaction.Where(p => p.TransactionNo.Equals(IDtran) && p.ClockIn != null && p.ClockOut != null).SingleOrDefault();
+                       // var ServDbtrantest = db.TbServicesTransaction.Where(p => p.Plant.Equals(PlantID) && p.TransactionNo.Equals(IDtran) && p.TransactionDate.Equals(obj.TransactionDate) && p.ClockIn != null && p.ClockOut != null).ToList();
+
+                        var ServDbtran = db.TbServicesTransaction.Where(p => p.Plant.Equals(PlantID) && p.TransactionNo.Equals(IDtran) && p.TransactionDate.Equals(obj.TransactionDate) && p.ClockIn != null && p.ClockOut != null).SingleOrDefault();
                         if (ServDbtran != null)
                         {
                             //Update Transaction
@@ -4369,7 +4371,7 @@ namespace Plims.Controllers
 
             //var thisday = DateTime.Now.Date;
            
-            var EmpDbfillter = db.View_EmployeeAdjustBreak.Where(p => p.TransactionNo.Equals(id)).SingleOrDefault();
+            var EmpDbfillter = mymodel.view_EmployeeAdjustBreak.Where(p => p.TransactionNo.Equals(id)).SingleOrDefault();
 
             DateTime datestart = EmpDbfillter.TransactionDate.Value.Date;
             DateTime dateend = EmpDbfillter.TransactionDate.Value.AddDays(1);
