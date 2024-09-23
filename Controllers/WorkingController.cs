@@ -2094,8 +2094,9 @@ namespace Plims.Controllers
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID) &&  x.Status.Equals(1)).ToList(),
                 tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                tbPLPS = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.ProductID.Equals(productId)).ToList()
-                
+                tbPLPS = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.ProductID.Equals(productId)).ToList(),
+                view_ClockTime = db.View_ClockTime.Where(x => x.PlantID.Equals(PlantID)).ToList()
+
             };
 
             // check QRcode in system
@@ -2120,7 +2121,7 @@ namespace Plims.Controllers
                     {
 
                         //Check EmployeeClockin  change adjust clockout                   
-                        var objEmpcount = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) && x.Type != "Service" && x.WorkingStatus != "Leave" && x.WorkingStatus == "Working"  && x.ClockIn != "" && x.ClockOut == ""  && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)).ToList();
+                        var objEmpcount = mymodel.view_ClockTime.Where(x => x.EmployeeID.Equals(employeeId)  && x.Type != "Service" && x.WorkingStatus != "Leave" && x.WorkingStatus == "Working"  && x.ClockIn != "" && x.ClockOut == "" ).ToList();
                         if (objEmpcount.Count > 1)
                         {
                             var sectionvalalert = new
@@ -2133,7 +2134,7 @@ namespace Plims.Controllers
                         else
                         {
 
-                            var objEmp = db.View_ClockTime.Where(x => x.EmployeeID.Equals(employeeId) && x.PlantID.Equals(PlantID) && x.Type != "Service"  && x.WorkingStatus == "Working"  && x.ClockOut == "" && (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore)).FirstOrDefault();
+                            var objEmp = mymodel.view_ClockTime.Where(x => x.EmployeeID.Equals(employeeId)  && x.Type != "Service"  && x.WorkingStatus == "Working"  && x.ClockOut == "" ).FirstOrDefault();
                             if (objEmp != null)
                             {
                                 var objPLPS = db.View_PLPS
@@ -2230,7 +2231,7 @@ namespace Plims.Controllers
                             }
                             else
                             {
-                                var empmaster = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)).ToList();
+                                var empmaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.EmployeeID.Equals(employeeId)).ToList();
                                 if(empmaster.Count == 0)
                                 {
                                     var sectionvalalertno = new

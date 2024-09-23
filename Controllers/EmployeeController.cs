@@ -440,7 +440,7 @@ namespace Plims.Controllers
 
                     foreach (var item in EmpTransSumtime)
                     {
-                        if (item.Duration > 540)
+                        if (item.Duration > 1140)
                         {
                             TempData["AlertMessage"] = "Please Check total time of Employee.";
                             return RedirectToAction("EmployeeClockIn");
@@ -591,7 +591,7 @@ namespace Plims.Controllers
 
                     foreach (var item in EmpTransSumtime)
                     {
-                        if (item.Duration > 540)
+                        if (item.Duration > 1140)
                         {
                             
                            
@@ -1072,7 +1072,7 @@ namespace Plims.Controllers
                         var outtime = obj.ClockOut;
                         var intime = EmpClockNo.ClockIn;
                         double diffoutin = (DateTime.Parse(outtime) - DateTime.Parse(intime)).TotalMinutes;
-                        double absDuration = 540 - Math.Abs(item.Duration);
+                        double absDuration = 1140 - Math.Abs(item.Duration);
                         if (diffoutin > absDuration)
                         {
                             TempData["AlertMessage"] = "Please Check total time of Employee.";
