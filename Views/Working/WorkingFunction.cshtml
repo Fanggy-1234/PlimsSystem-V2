@@ -576,26 +576,26 @@
                           //  console.log(section.message);
                             document.getElementById("demo").innerHTML = "Message Alert : " + section.message;
                             if (section.status) {
-                                $('#SectionName').css('background-color', '#abff6c');
+                                $('#SectionName').css('background-color', '#abff6c'); //เขียว
                                 $('#demo').css('color', '#198754');
                             } 
                             else {
                                 if (section.message === "Please check Clock-in.") {
-                                    $('#SectionName').css('background-color', '#FFD700');
+                                    $('#SectionName').css('background-color', '#FFD700'); // เหลือง
                                     $('#demo').css('color', '#DAA520');
                                   
                                 }
                                 else if (section.message === "Please check PLPS.")
                                 {
-                                    $('#SectionName').css('background-color', '#00BFFF');
+                                    $('#SectionName').css('background-color', '#00BFFF'); // ฟ้า
                                     $('#demo').css('color', '#1E90FF');
                                 }
                                 else if (section.message.startsWith("check time")) {
-                                    $('#SectionName').css('background-color', '#FFC0CB');
+                                    $('#SectionName').css('background-color', '#FFC0CB'); // ชมพู
                                     $('#demo').css('color', '#DB7093');
                                 }
                                 else {
-                                    $('#SectionName').css('background-color', '#ff4646');
+                                    $('#SectionName').css('background-color', '#ff4646'); //แดง
                                     $('#demo').css('color', '#ff4646');
                                   
                                 }
