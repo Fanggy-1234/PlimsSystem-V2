@@ -297,7 +297,8 @@
                         @Html.DisplayFor(modelItem => item.CountQty)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.QtyPerQR)
+                        @string.Format("{0:0.000000}", item.QtyPerQR)
+                     @*    @Html.DisplayFor(modelItem => item.QtyPerQR) *@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.FG)

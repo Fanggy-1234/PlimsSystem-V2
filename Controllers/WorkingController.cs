@@ -2121,7 +2121,7 @@ namespace Plims.Controllers
                     {
 
                         //Check EmployeeClockin  change adjust clockout                   
-                        var objEmpcount = mymodel.view_ClockTime.Where(x => x.EmployeeID.Equals(employeeId)  && x.Type != "Service" && x.WorkingStatus != "Leave" && x.WorkingStatus == "Working"  && x.ClockIn != "" && x.ClockOut == "" ).ToList();
+                        var objEmpcount = mymodel.view_ClockTime.Where(x => x.EmployeeID.Equals(employeeId)  && x.Type != "Service" && x.WorkingStatus != "Leave" && x.WorkingStatus == "Working" && x.TransactionDate != DateTime.MinValue && (x.ClockIn != "" || x.ClockIn != null ) && x.ClockOut == "" ).ToList();
                         if (objEmpcount.Count > 1)
                         {
                             var sectionvalalert = new
@@ -2134,7 +2134,7 @@ namespace Plims.Controllers
                         else
                         {
 
-                            var objEmp = mymodel.view_ClockTime.Where(x => x.EmployeeID.Equals(employeeId)  && x.Type != "Service"  && x.WorkingStatus == "Working"  && x.ClockOut == "" ).FirstOrDefault();
+                            var objEmp = mymodel.view_ClockTime.Where(x => x.EmployeeID.Equals(employeeId)  && x.Type != "Service"  && x.WorkingStatus == "Working" && x.TransactionDate != DateTime.MinValue && x.ClockIn != ""  && x.ClockOut == "" ).FirstOrDefault();
                             if (objEmp != null)
                             {
                                 var objPLPS = db.View_PLPS
@@ -2932,7 +2932,7 @@ namespace Plims.Controllers
 
                 var empsectioncount = db.View_ClockTime
                  .Where(x => x.EmployeeID.Equals(EmployeeID) &&
-                              (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDate.AddDays(-1))  && x.ClockOut == ""&& x.WorkingStatus.Equals("Working") &&
+                              (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDate.AddDays(-1)) && x.ClockIn != ""  && x.ClockOut == ""&& x.WorkingStatus.Equals("Working") &&
                             x.PlantID.Equals(PlantID)).ToList();
 
                 if (empsectioncount.Count() > 1)

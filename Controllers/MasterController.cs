@@ -6016,7 +6016,7 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.ToList(),
                 tbShift = db.TbShift.ToList(),
                 tbEmployeeMaster = db.TbEmployeeMaster.ToList(),
-                view_EmployeeMaster = db.View_EmployeeMaster.OrderBy(x => x.SectionID).ThenBy(x => x.StartTime).ToList(),
+                view_EmployeeMaster = db.View_EmployeeMaster.OrderByDescending(x => x.Status).ThenBy(x => x.SectionID).ThenBy(x => x.StartTime).ToList(),
                 view_PLPS = db.View_PLPS.ToList()
 
             };

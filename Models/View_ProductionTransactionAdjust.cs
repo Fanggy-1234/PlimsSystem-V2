@@ -30,7 +30,7 @@ namespace Plims.Models
         public string SectionName { get; set; }
 
         public decimal WorkHr { get; set; }
-        [Column(TypeName = "decimal(28,8)")]
+        //[Column(TypeName = "decimal(28,8)")]
         public decimal QtyPerQR { get; set; }
 
         public decimal CountQty { get; set; }
