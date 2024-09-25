@@ -2121,7 +2121,7 @@ namespace Plims.Controllers
                     {
 
                         //Check EmployeeClockin  change adjust clockout                   
-                        var objEmpcount = mymodel.view_ClockTime.Where(x => x.EmployeeID.Equals(employeeId)  && x.Type != "Service" && x.WorkingStatus != "Leave" && x.WorkingStatus == "Working" && x.TransactionDate != DateTime.MinValue && (x.ClockIn != "" || x.ClockIn != null ) && x.ClockOut == "" ).ToList();
+                        var objEmpcount = db.View_ClockTime.Where(x => x.PlantID.Equals(PlantID) &&  x.EmployeeID.Equals(employeeId)  && x.Type != "Service" && x.WorkingStatus != "Leave" && x.WorkingStatus == "Working" && x.TransactionDate != DateTime.MinValue && (x.ClockIn != "" || x.ClockIn != null ) && x.ClockOut == "" ).ToList();
                         if (objEmpcount.Count > 1)
                         {
                             var sectionvalalert = new
@@ -2134,7 +2134,7 @@ namespace Plims.Controllers
                         else
                         {
 
-                            var objEmp = mymodel.view_ClockTime.Where(x => x.EmployeeID.Equals(employeeId)  && x.Type != "Service"  && x.WorkingStatus == "Working" && x.TransactionDate != DateTime.MinValue && x.ClockIn != ""  && x.ClockOut == "" ).FirstOrDefault();
+                            var objEmp = db.View_ClockTime.Where(x => x.PlantID.Equals(PlantID) &&  x.EmployeeID.Equals(employeeId)  && x.Type != "Service"  && x.WorkingStatus == "Working" && x.TransactionDate != DateTime.MinValue && x.ClockIn != ""  && x.ClockOut == "" ).FirstOrDefault();
                             if (objEmp != null)
                             {
                                 var objPLPS = db.View_PLPS
