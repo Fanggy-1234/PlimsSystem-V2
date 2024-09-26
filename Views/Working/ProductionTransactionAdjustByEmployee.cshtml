@@ -226,6 +226,10 @@
                 <th>
                     Section
                 </th>
+
+                <th>
+                    Product
+                </th>
                 <th>
                     EmployeeID
                 </th>
@@ -279,6 +283,11 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
                     </td>
+
+                     <td>
+                        @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+
                     <td>
                         @Html.DisplayFor(modelItem => item.QRCode)
                     </td>
@@ -352,6 +361,11 @@
                         <input class="form-control" type="text" name="FGSection" id="FGSection" style="background-color:beige" readonly>
                     </div>
 
+                    
+                    <div class="mb-3">
+                        <input class="form-control" type="text" name="FGProduct" id="FGProduct" style="background-color:beige" hidden>
+                    </div>
+
                     <div class="mb-3">
                         <label class="col-form-label">Shift :</label>
                         <input class="form-control" type="text" name="FGShift" id="FGShift" style="background-color:beige" readonly>
@@ -401,6 +415,12 @@
                         <label class="col-form-label">Section :</label>
                         <input class="form-control" type="text" name="DefectSection" id="DefectSection" style="background-color:beige" readonly>
                     </div>
+
+                          <div class="mb-3">
+                        <input class="form-control" type="text" name="DefectProduct" id="DefectProduct" style="background-color:beige" hidden>
+                    </div>
+
+
                     <div class="mb-3">
                         <label class="col-form-label">Shift :</label>
                         <input class="form-control" type="text" name="DefectShift" id="DefectShift" style="background-color:beige" readonly>
@@ -440,6 +460,7 @@
          // Clear modal form fields
     document.getElementById('FGPlanDate').value = '';
     document.getElementById('FGLine').value = '';
+        document.getElementById('FGProduct').value = '';
     document.getElementById('FGSection').value = '';
     document.getElementById('FGShift').value = '';
 
@@ -472,7 +493,8 @@
                 var transactionDate = selectedRow.cells[1].innerText;
                 var lineName = selectedRow.cells[3].innerText;
                 var sectionName = selectedRow.cells[4].innerText;
-                var prefix = selectedRow.cells[6].innerText;
+                var productName = selectedRow.cells[6].innerText;
+                var prefix = selectedRow.cells[7].innerText;
                 var EmployeeID = selectedRow.cells[5].innerText;
 
               //  console.log('1');
@@ -480,6 +502,7 @@
                 document.getElementById('FGPlanDate').value = Date(transactionDate).toString("dd/MM/yyyy");
                 document.getElementById('FGEmployeeID').value = EmployeeID;
                 document.getElementById('FGLine').value = lineName;
+                document.getElementById('FGProduct').value = productName;
                 document.getElementById('FGSection').value = sectionName;
                 document.getElementById('FGShift').value = prefix;
 
@@ -504,7 +527,8 @@
             var transactionDate = selectedRow.cells[1].innerText;
             var lineName = selectedRow.cells[3].innerText;
             var sectionName = selectedRow.cells[4].innerText;
-            var prefix = selectedRow.cells[6].innerText;
+            var ProductName = selectedRow.cells[6].innerText;
+            var prefix = selectedRow.cells[7].innerText;
             var EmployeeID = selectedRow.cells[5].innerText;
 
            // console.log('2');
@@ -513,6 +537,7 @@
             document.getElementById('FGEmployeeID').value = EmployeeID;
             document.getElementById('FGLine').value = lineName;
             document.getElementById('FGSection').value = sectionName;
+            document.getElementById('FGProduct').value = productName;
             document.getElementById('FGShift').value = prefix;
 
             $('#FGQTY').val('').focus();
@@ -642,6 +667,7 @@
         document.getElementById('DefectPlanDate').value = '';
     document.getElementById('DefectLine').value = '';
     document.getElementById('DefectSection').value = '';
+        document.getElementById('DefectProduct').value = '';
     document.getElementById('DefectShift').value = '';
 
     }
@@ -674,13 +700,15 @@
                 var transactionDate = selectedRow.cells[1].innerText;
                 var lineName = selectedRow.cells[3].innerText;
                 var sectionName = selectedRow.cells[4].innerText;
-                var prefix = selectedRow.cells[6].innerText;
+                var productName = selectedRow.cells[6].innerText;
+                var prefix = selectedRow.cells[7].innerText;
                 var EmployeeID = selectedRow.cells[5].innerText;
 
                 
                 document.getElementById('DefectPlanDate').value = formatDate(transactionDate);
                 document.getElementById('DefectLine').value = lineName;
                 document.getElementById('DefectSection').value = sectionName;
+                document.getElementById('DefectProduct').value = productName;
                 document.getElementById('DefectShift').value = prefix;
                 document.getElementById('DefectEmployeeID').value = EmployeeID;
 
@@ -707,7 +735,8 @@
             var transactionDate = selectedRow.cells[1].innerText;
             var lineName = selectedRow.cells[3].innerText;
             var sectionName = selectedRow.cells[4].innerText;
-            var prefix = selectedRow.cells[6].innerText;
+            var productName = selectedRow.cells[6].innerText;
+            var prefix = selectedRow.cells[7].innerText;
             var EmployeeID = selectedRow.cells[5].innerText;
 
 
@@ -715,6 +744,7 @@
             document.getElementById('DefectPlanDate').value = formatDate(transactionDate);
             document.getElementById('DefectLine').value = lineName;
             document.getElementById('DefectSection').value = sectionName;
+            document.getElementById('DefectProduct').value = productName;
             document.getElementById('DefectShift').value = prefix;
             document.getElementById('DefectEmployeeID').value = EmployeeID;
 
