@@ -72,7 +72,7 @@ namespace Plims.Controllers
 
                 var mymodel = new ViewModelReport
                 {
-                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID == PlantID ).ToList(),
+                    view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID == PlantID && x.Grade != "X" ).ToList(),
                   
                 };
 
@@ -694,7 +694,7 @@ namespace Plims.Controllers
                                                     SectionName = grouped.Key.SectionName,
                                                     EffTarget = grouped.Max(x => x.EFFSTD),
                                                     EffAct = grouped.Max(x => x.WorkinghourACT),
-                                                    DiffEff = grouped.Sum(x => x.WorkinghourACT) - grouped.Max(x => x.EFFSTD),
+                                                    DiffEff = (grouped.Sum(x => x.WorkinghourACT) - grouped.Max(x => x.EFFSTD)) / grouped.Max(x => x.EFFSTD) * 100,
                                                     YieldTarget = grouped.Max(x => x.PercentYield),
                                                     YieldActual = grouped.Sum(x => x.YieldDefect),
                                                     DiffYield = grouped.Sum(x => x.YieldDefect) - grouped.Max(x => x.PercentYield) //YieldActual - YieldTarget

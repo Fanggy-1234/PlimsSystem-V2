@@ -1045,7 +1045,12 @@ namespace Plims.Controllers
                     var Empdb = new TbEmployeeTransaction();
                     string empid = EmployeeIDchk[i];
                     var EmpClockView = db.TbEmployeeMaster.Where(x => x.ID.Equals(Convert.ToInt32(empid))).Select(x => x.EmployeeID).SingleOrDefault();
-                                   
+                    //var EmpProducttiondata = db.TbProductionTransaction.Where(x => x.TransactionDate.Equals(TransactionDateVar) && x.QRCode == EmpClockView && x.PlantID.Equals(PlantID)).ToList();
+                    //if(EmpProducttiondata.Count() == 0)
+                    //{
+                    //    TempData["AlertMessage"] = "This Employee no data scan." + EmpClockView;
+                    //    return RedirectToAction("EmployeeClockOut", "Employee");
+                    //}
                     //Check time for use 
                     var EmpTransSumtime = db.TbEmployeeTransaction
                                       .Where(x => x.EmployeeID.Equals(EmpClockView) && x.TransactionDate.Equals(TransactionDateVar) &&
@@ -3416,26 +3421,30 @@ namespace Plims.Controllers
                 //string empidfillter = EmployeeIDchk[i];
                 string[] empidfillter = EmployeeIDchk[i].Split(":");
                 string empid = "";
-             
+                DateTime empdate ;
 
                 if (empidfillter[1] == "0")
                 {
                     // Insert new
-                    var emp = Employee.view_EmployeeAdjustLine.Where(x => x.EmployeeID.Equals(empidfillter[0]) && x.TransactionNo.Equals(0)).Select(x => x.EmployeeID).SingleOrDefault();
-                    empid = emp;
+                    var emp = Employee.view_EmployeeAdjustLine.Where(x => x.EmployeeID.Equals(empidfillter[0]) && x.TransactionNo.Equals(0)).Select(x => new { x.EmployeeID, x.TransactionDate }).SingleOrDefault();
+                    empid = emp.EmployeeID;
+                    empdate = emp.TransactionDate;
                 }
                 else
                 {
                     //update
-                    var emp = Employee.view_EmployeeAdjustLine.Where(x => x.TransactionNo.Equals(Convert.ToInt32(empidfillter[1]))).Select(x => x.EmployeeID).SingleOrDefault();
-                    empid = emp;
+                    var emp = Employee.view_EmployeeAdjustLine.Where(x => x.TransactionNo.Equals(Convert.ToInt32(empidfillter[1]))).Select(x => new { x.EmployeeID, x.TransactionDate }).SingleOrDefault();
+                    empid = emp.EmployeeID;
+                    empdate = emp.TransactionDate;
 
                 }
 
                 //Check Toline Tosection
                 var checklinesection = Employee.tbEmployeeMaster.Where(x => x.EmployeeID.Equals(empid) && x.LineID.Equals(ToLine) && x.SectionID.Equals(ToSection)).ToList();
                 var checkclockinhold = db.View_ClockTime.Where(x => x.ClockIn != "" && x.ClockOut == "" && x.EmployeeID.Equals(empid)&& x.WorkingStatus.Equals("Working")).ToList();
-                if(checklinesection.Count() > 0) //Check ว่า Section เดิมที่ผูกไว้ใน master หรือไม่
+              
+
+                if (checklinesection.Count() > 0) //Check ว่า Section เดิมที่ผูกไว้ใน master หรือไม่
                 {
                     TempData["AlertMessage"] = "Please clock in Employee Page!";
                     return RedirectToAction("EmployeeAdjustLine");
@@ -3474,8 +3483,17 @@ namespace Plims.Controllers
 
                     var Empadjustlistrecord = Employee.view_EmployeeAdjustLine.Where(x => x.EmployeeID.Equals(empid) && x.ClockIn != "" && x.ClockOut == "" && x.WorkingStatus == "Working" && x.Remark == "Adjust").SingleOrDefault();
 
-                    //Check incentive
-                    var incentiverateGrade = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.SectionID.Equals(Empadjustlistrecord.SectionID) && x.LineID.Equals(Empadjustlistrecord.LineID))
+
+                        //var EmpProducttiondata = db.TbProductionTransaction.Where(x => x.TransactionDate.Equals(empdate) && x.QRCode == empid && x.PlantID.Equals(PlantID)).ToList();
+
+                        //if (EmpProducttiondata.Count() == 0) //check พนักงานไม่มีการผลิต
+                        //{
+                        //    TempData["AlertMessage"] = "This Employee no data scan. " + empid;
+                        //    return RedirectToAction("EmployeeAdjustLine", "Employee");
+                        //}
+
+                        //Check incentive
+                        var incentiverateGrade = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.SectionID.Equals(Empadjustlistrecord.SectionID) && x.LineID.Equals(Empadjustlistrecord.LineID))
                         .Select(x => new
                         {
                             x.Grade,
@@ -3583,6 +3601,14 @@ namespace Plims.Controllers
                         if (EndTime != null)
                         {
 
+                            //var EmpProducttiondata = db.TbProductionTransaction.Where(x => x.TransactionDate.Equals(empdate) && x.QRCode == empid && x.PlantID.Equals(PlantID)).ToList();
+
+                            //if (EmpProducttiondata.Count() == 0) //check พนักงานไม่มีการผลิต
+                            //{
+                            //    TempData["AlertMessage"] = "This Employee no data scan. " + empid;
+                            //    return RedirectToAction("EmployeeAdjustLine", "Employee");
+                            //}
+
                             //Check incentive
                             var incentiverateGrade = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.SectionID.Equals(ToSection) && x.LineID.Equals(ToLine))
                                 .Select(x => new
@@ -3640,6 +3666,13 @@ namespace Plims.Controllers
                         if (StartTime != null && EndTime != null)
                         {
 
+                            //var EmpProducttiondata = db.TbProductionTransaction.Where(x => x.TransactionDate.Equals(empdate) && x.QRCode == empid && x.PlantID.Equals(PlantID)).ToList();
+
+                            //if (EmpProducttiondata.Count() == 0) //check พนักงานไม่มีการผลิต
+                            //{
+                            //    TempData["AlertMessage"] = "This Employee no data scan. " + empid;
+                            //    return RedirectToAction("EmployeeAdjustLine", "Employee");
+                            //}
 
                             //Check incentive
                             var incentiverateGrade = db.TbIncentiveMaster.Where(x => x.PlantID.Equals(PlantID) && x.SectionID.Equals(ToSection) && x.LineID.Equals(ToLine))
@@ -3717,6 +3750,8 @@ namespace Plims.Controllers
                             return RedirectToAction("EmployeeAdjustLine");
                         }
 
+
+                       
 
                         //Case with clock out
                         db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()

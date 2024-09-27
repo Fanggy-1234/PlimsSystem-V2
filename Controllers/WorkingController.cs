@@ -808,13 +808,13 @@ namespace Plims.Controllers
 
                     //Check PLPS
 
-                    var PLPSdata = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(selectview.LineID) && x.ProductID.Equals(ProductTo)).ToList();
+                    var PLPSdata = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(selectview.LineID) && x.SectionID.Equals(selectview.SectionID)  && x.ProductID.Equals(ProductTo)).ToList();
                     if (PLPSdata.Count == 0)
                     {
                         TempData["AlertMessage"] = "Please check PLPS.";
                         return RedirectToAction("RollBackDataProduction");
                     }
-                    var PLPSdataproduct = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(selectview.LineID) && x.ProductID.Equals(ProductTo)).Select(z => new { z.ProductID, z.ProductName,z.QTYPerQRCode,z.FormularID }).FirstOrDefault();
+                    var PLPSdataproduct = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(selectview.LineID) && x.SectionID.Equals(selectview.SectionID)  && x.ProductID.Equals(ProductTo)).Select(z => new { z.ProductID, z.ProductName,z.QTYPerQRCode,z.FormularID }).FirstOrDefault();
                    
                     foreach (var product in TransactiodbUpdate)
                     {
@@ -3763,10 +3763,25 @@ namespace Plims.Controllers
                 view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).Distinct().ToList()
             };
 
-            ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster
-                                            .Where(x => x.UserEmpID == EmpID && x.PageID == 25)
-                                            .Select(x => x.RoleAction)
-                                            .FirstOrDefault();
+
+            //if (StartDate == DateTime.MinValue && EndDate == DateTime.MinValue)
+            //{
+            //    mymodel = new ViewModelAll
+            //    {
+            //        view_EFFReport = db.View_EFFReport.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today).ToList()
+            //    };
+            //}
+            //else
+            //{
+            //    mymodel = new ViewModelAll
+            //    {
+
+            //        view_EFFReport = db.View_EFFReport.Where(x => x.PlantID.Equals(PlantID)).ToList()
+            //    };
+
+            //}
+
+
 
 
             if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionName) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
@@ -3796,13 +3811,44 @@ namespace Plims.Controllers
                     ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
 
                 }
+
+                // mymodel = new ViewModelAll
+                //{
+                //    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
+                //    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                //    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                //    view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                //    //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
+                //   // view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).Distinct().ToList()
+                //};
+
+
+                ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster
+                                                .Where(x => x.UserEmpID == EmpID && x.PageID == 25)
+                                                .Select(x => x.RoleAction)
+                                                .FirstOrDefault();
                 return View(mymodel);
 
             }
             else
             {
 
+                //mymodel = new ViewModelAll
+                //{
+                //    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
+                //    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                //    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                //    view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                //    //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
+                //    // view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).Distinct().ToList()
+                //};
 
+
+                ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster
+                                                .Where(x => x.UserEmpID == EmpID && x.PageID == 25)
+                                                .Select(x => x.RoleAction)
+                                                .FirstOrDefault();
+             
                 ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
                 ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
                 mymodel.view_EFFReport = db.View_EFFReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
@@ -5222,6 +5268,7 @@ namespace Plims.Controllers
                     PlantID = PlantID,
                     LineID = DefectLine,
                     SectionID = DefectSection,
+                   
                     Prefix = DefectShift,
                     Type = "Defect",
                     QTY = DefectQTY,
@@ -5292,6 +5339,7 @@ namespace Plims.Controllers
                         PlantID = PlantID,
                         LineID = DefectLineID[0].Trim(),
                         SectionID = DefectSectionID[0].Trim(),
+                       
                         Prefix = DefectShift,
                         Type = "Defect",
                         QTY = DefectQTY,
@@ -5674,7 +5722,7 @@ namespace Plims.Controllers
                                  .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
                                              x.PlantID.Equals(PlantID) &&
                                              x.LineID.Equals(FGLineID[0].Trim()) &&
-                                             x.SectionID.Equals(FGSectionID[0].Trim()) &&
+                                             x.SectionID.Equals(FGSectionID[0].Trim()) &&                  
                                              x.Prefix.Equals(FGShift) &&
                                              x.QRCode.Equals(item) &&
                                              x.DataType.Equals("FG"))
@@ -5980,6 +6028,7 @@ namespace Plims.Controllers
                             PlantID = PlantID,
                             LineID = FGLineID[0].Trim(),
                             SectionID = FGSectionID[0].Trim(),
+                            
                             Prefix = FGShift,
                             Type = "Employee",
                             Remark = QREmp.QRCode,
@@ -6006,7 +6055,6 @@ namespace Plims.Controllers
                   
                     // Calculate FG/Count for QTYPerQR
                     decimal QRPerAdjustinsert = Math.Round(((decimal)FGQTY - inputqty) / sumQRCodeEmp, 8);
-
                     if (sumQRCodeEmp != 0)
                     {
 
@@ -6025,6 +6073,7 @@ namespace Plims.Controllers
                                                  x.PlantID.Equals(PlantID) &&
                                                  x.LineID.Equals(FGLineID[0].Trim()) &&
                                                  x.SectionID.Equals(FGSectionID[0].Trim()) &&
+                                                 x.ProductID.Equals(proid) &&
                                                  x.Prefix.Equals(FGShift) &&
                                                  x.QRCode.Equals(item) &&
                                                  x.DataType.Equals("Count"))
