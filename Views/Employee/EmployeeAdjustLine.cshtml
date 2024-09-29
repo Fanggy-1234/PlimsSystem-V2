@@ -667,9 +667,26 @@
                     <td style="color:darkblue">
                         @Html.DisplayFor(modelItem => item.ClockIn)  
                     </td>
+
+                    @* @if (item.qrcode != "")
+                    {
+                        <td style="color:darkblue">
+                            @Html.DisplayFor(modelItem => item.ClockOut)
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="color:red">
+                            @Html.DisplayFor(modelItem => item.ClockOut)
+                        </td>
+                    } *@
+
                     <td style="color:darkblue">
                         @Html.DisplayFor(modelItem => item.ClockOut)
                     </td>
+
+
+
                     <td class="page-table-data">
                         @if (string.IsNullOrEmpty(item.ClockOut))
                         {

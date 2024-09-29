@@ -43,5 +43,7 @@ namespace Plims.Models
         [Key]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime TransactionDate { get; set; }
+
+        //public string qrcode { get; set; }
     }
 }

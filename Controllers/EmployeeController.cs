@@ -82,8 +82,7 @@ namespace Plims.Controllers
             }
 
 
-            ViewBag.VBRoleEmpClockIn = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
-            //if(EmployeeIDchk.Count() == 0) //(action == "Search" || action == "EmployeeClockIn")
+          //if(EmployeeIDchk.Count() == 0) //(action == "Search" || action == "EmployeeClockIn")
             //{
 
             if (!string.IsNullOrEmpty(obj.EmployeeID) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(TransactionDateFillter))
@@ -129,6 +128,7 @@ namespace Plims.Controllers
                     mymodel.view_EmployeeClocktime = mymodel.view_EmployeeClocktime.Where(p => p.TransactionDate.Equals(DateTime.MinValue)).ToList();
                    // mymodel.view_EmployeeClocktime = mymodel.view_EmployeeClocktime.ToList();
                 }
+                ViewBag.VBRoleEmpClockIn = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
 
                 // mymodel.view_EmployeeClocktime = mymodel.view_EmployeeClocktime.Where(p => p.TransactionDate.Equals(DateTime.MinValue) || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
                 return View(mymodel);
@@ -136,6 +136,8 @@ namespace Plims.Controllers
             }
             else
             {
+                ViewBag.VBRoleEmpClockIn = db.View_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(16)).Select(x => x.RoleAction).FirstOrDefault();
+
                 //ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
                 mymodel.view_EmployeeClocktime = mymodel.view_EmployeeClocktime.Where(p => p.TransactionDate.Equals(DateTime.Today) || p.TransactionDate.Equals(DateTime.MinValue)).ToList();
 

@@ -39,11 +39,13 @@ namespace Plims.Models
 
         public string Remark { get; set; }
         public string BreakFlag { get; set; }
-       
-      //  public Nullable<int> QRCodePerUnit { get; set; }
-     
-       
 
- 
+       // public string qrcode { get; set; }
+
+        //  public Nullable<int> QRCodePerUnit { get; set; }
+
+
+
+
     }
 }
