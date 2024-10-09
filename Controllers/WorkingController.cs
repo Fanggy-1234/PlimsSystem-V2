@@ -2354,34 +2354,40 @@ namespace Plims.Controllers
                                                 UpdateBy = EmpID
                                             });
 
-                                            db.SaveChanges();
-                                           
+
+                                            sectionvalalert = new
+                                            {
+                                                message = items.Section.ToString() + " : " + objPLPS.SectionName.ToString() + "  =>  " + LastTransactionCount,
+                                                status = true
+                                            };
 
                                         }
-                                         sectionvalalert = new
+                                        else
                                         {
-                                             message = items.Section.ToString() + " : " + objPLPS.SectionName.ToString() + "  =>  " + LastTransactionCount,
-                                            status = true
-                                        };
-
-                                       
-
+                                            sectionvalalert = new
+                                            {
+                                                message = "check time :" + roundedDifftime + " sec.",
+                                                status = false
+                                            };
+                                            return Json(sectionvalalert);
+                                        }
 
                                     }
                                     else
                                     {
                                          sectionvalalert = new
                                         {
-                                            message = "check time :" + roundedDifftime + " sec.",
+                                            message = "check PLPS ",
                                             status = false
                                         };
+                                        return Json(sectionvalalert);
                                     }
                                 }
                             }
-
+                            db.SaveChanges();
                             return Json(sectionvalalert);
                         }
-
+                        db.SaveChanges();
                         return Json(sectionval);
 
                         //End case group
