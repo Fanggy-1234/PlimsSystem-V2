@@ -30,6 +30,9 @@ namespace Plims.Models
         public string Note { get; set; }
         public string PackageRef { get; set; }
         public string EmployeeRef { get; set; }
+        public string GroupRef { get; set; }
+        public int CountQty { get; set; }
+
         public string CreateBy { get; set; }
         public DateTime CreateDate { get; set; }
         public string UpdateBy { get; set; }

@@ -80,11 +80,12 @@ namespace Plims.Controllers
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+              //  tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+              //  tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
+              //  tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                 view_Employee = db.View_Employee.ToList(),
-                tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList()
+                tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                //view_ProductionTransaction = db.View_ProductionTransaction.Where(x => x.PlantID.Equals(PlantID)).ToList()
             };
 
             // check QRcode in system
@@ -2088,11 +2089,12 @@ namespace Plims.Controllers
             }
             var mymodel = new ViewModelAll
             {
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID) &&  x.Status.Equals(1)).ToList(),
-                tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                tbPLPS = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.ProductID.Equals(productId)).ToList(),
-                view_ClockTime = db.View_ClockTime.Where(x => x.PlantID.Equals(PlantID)).ToList()
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+               // tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID) &&  x.Status.Equals(1)).ToList(),
+               // tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+              //  tbPLPS = db.TbPLPS.Where(x => x.PlantID.Equals(PlantID) && x.ProductID.Equals(productId)).ToList(),
+                view_ClockTime = db.View_ClockTime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+               // tbProductionTransaction = db.TbProductionTransaction.Where(x => x.PlantID.Equals(PlantID)).ToList()
 
             };
 
@@ -2155,19 +2157,27 @@ namespace Plims.Controllers
                                 else
                                 {
 
-                                        var LastTransactionTime = db.TbProductionTransaction
-                                       .Where(x => x.QRCode.Equals(employeeId) && x.CreateDate.Date == currentDate)
-                                       .OrderByDescending(x => x.CreateDate)
-                                       .Select(x => x.CreateDate.TimeOfDay)
-                                       .FirstOrDefault();
+                                    var LastTransactionTime = db.TbProductionTransaction
+                                   .Where(x => x.PlantID.Equals(PlantID) && x.QRCode.Equals(employeeId) && x.CreateDate.Date == currentDate)
+                                   .OrderByDescending(x => x.CreateDate)
+                                   .Select(x => x.CreateDate.TimeOfDay)
+                                   .FirstOrDefault();
 
-                                        //Check last count                                      
-                                        int LastTransactionCount = db.TbProductionTransaction
-                                           .Where(x => x.QRCode.Equals(employeeId) && x.SectionID.Equals(objEmp.SectionID) && x.TransactionDate.Date == objEmp.TransactionDate && x.DataType.Equals("Count")).Count();
-                                        LastTransactionCount += 1;
-                                        
-                                        // Convert TimeSpan to total seconds
-                                        double lastTransactionSeconds = LastTransactionTime.TotalSeconds;
+                                    // //Check last count                                      
+                                    // int LastTransactionCount = mymodel.view_ProductionTransaction
+                                    //    .Where(x => x.QRCode.Equals(employeeId) && x.SectionID.Equals(objEmp.SectionID) && x.TransactionDate.Date == objEmp.TransactionDate && x.DataType.Equals("Count")).Count();
+                                    // LastTransactionCount += 1;
+
+                                    //Check last count                                      
+                                    int LastTransactionCount = db.TbProductionTransaction
+                                       .Where(x => x.PlantID.Equals(PlantID) && x.QRCode.Equals(employeeId) && x.SectionID.Equals(objEmp.SectionID) && x.TransactionDate.Date == objEmp.TransactionDate && x.DataType.Equals("Count")).Count();
+                                    LastTransactionCount += 1;
+
+
+
+
+                                    // Convert TimeSpan to total seconds
+                                    double lastTransactionSeconds = LastTransactionTime.TotalSeconds;
                                         double delayTimeSeconds = Convert.ToDouble(objPLPS.Delaytime);
                                         double difftime = ((lastTransactionSeconds + delayTimeSeconds) - currentTime.TotalSeconds);
                                         double roundedDifftime = Math.Round(difftime, 2);
@@ -2270,7 +2280,7 @@ namespace Plims.Controllers
                                         x.PlantID.Equals(PlantID))
                             .ToList();
 
-                            int LastTransactionCount = db.TbProductionTransaction.Where(x => x.QRCode.Equals(objEmpcount.First().EmployeeID) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.TransactionDate.Date == objEmpcount.First().TransactionDate && x.DataType.Equals("Count")).Count();
+                            int LastTransactionCount = db.TbProductionTransaction.Where(x => x.PlantID.Equals(PlantID) && x.QRCode.Equals(objEmpcount.First().EmployeeID) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.TransactionDate.Date == objEmpcount.First().TransactionDate && x.DataType.Equals("Count")).Count();
                             LastTransactionCount += 1;
 
 
@@ -2311,7 +2321,7 @@ namespace Plims.Controllers
                                 if (objPLPS != null)
                                 {
                                     var LastTransactionTime = db.TbProductionTransaction
-                                   .Where(x => x.QRCode.Equals(items.EmployeeID) && x.CreateDate.Date == currentDate)
+                                   .Where(x => x.PlantID.Equals(PlantID) && x.QRCode.Equals(items.EmployeeID) && x.CreateDate.Date == currentDate)
                                    .OrderByDescending(x => x.CreateDate)
                                    .Select(x => x.CreateDate.TimeOfDay)
                                    .FirstOrDefault();
