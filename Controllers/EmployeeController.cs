@@ -308,32 +308,34 @@ namespace Plims.Controllers
                         var startt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.StartTime).SingleOrDefault();
                         var Endt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.EndTime).SingleOrDefault();
                         var Prefixt = db.TbShift.Where(x => x.ShiftID.Equals(empdetails.ShiftID) && x.PlantID.Equals(PlantID)).Select(x => x.Prefix).SingleOrDefault();
+                    int counttran = db.TbEmployeeTransaction.Where(x => x.EmployeeID == empid.Trim() && x.Plant.Equals(PlantID) && x.ClockOut == "").ToList().Count;
+                    if(counttran == 0)
+                    {
+                    db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
+                    {
+                        TransactionDate = Convert.ToDateTime(TransactionDateVar),
+                        EmployeeID = empid,
+                        Plant = PlantID,
+                        Shift = empdetails.ShiftID,
+                        StartTime = startt,
+                        EndTime = Endt,
+                        Prefix = Prefixt,
+                        Line = empdetails.LineID,//obj.LineName,
+                        Section = empdetails.SectionID,
+                        ClockIn = ClockIn,
+                        ClockOut = "",
+                        WorkingStatus = "Working",
+                        BreakFlag = "",
+                        Remark = "",
+                        CreateDate = DateTime.Now,
+                        CreateBy = EmpID,//User.Identity.Name,
+                        UpdateDate = DateTime.Now,
+                        UpdateBy = EmpID,//User.Identity.Name,
+                    });
 
-                        db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
-                        {
-                            TransactionDate = Convert.ToDateTime(TransactionDateVar),
-                            EmployeeID = empid,
-                            Plant = PlantID,
-                            Shift = empdetails.ShiftID,
-                            StartTime = startt,
-                            EndTime = Endt,
-                            Prefix = Prefixt,
-                            Line = empdetails.LineID,//obj.LineName,
-                            Section = empdetails.SectionID,
-                            ClockIn = ClockIn,
-                            ClockOut = "",
-                            WorkingStatus = "Working",
-                            BreakFlag = "",
-                            Remark = "",
-                            CreateDate = DateTime.Now,
-                            CreateBy = EmpID,//User.Identity.Name,
-                            UpdateDate = DateTime.Now,
-                            UpdateBy = EmpID,//User.Identity.Name,
-                        });
-
-
-
-                        db.SaveChanges();
+                    db.SaveChanges();
+                }
+               
 
                   
                 }

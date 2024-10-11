@@ -494,6 +494,7 @@
         $('#EmployeeID').on('input', function () {
             clearTimeout(typingTimer); // Clear the previous timer
             typingTimer = setTimeout(processInput, doneTypingInterval); // Start a new timer
+           
         });
 
 
@@ -504,13 +505,15 @@
         // });
 
         // Listen for 'keypress' to handle "Enter" or "Tab"
-        $('#EmployeeID').on('keyup', function (event) {
-            var key = event.which || event.keyCode;
-            if (key === 13 || key === 9 || key === 7) { // 13 for "Enter", 9 for "Tab"
-                event.preventDefault();
-                processInput(); // Trigger AJAX request
-            }
-        });
+        // $('#EmployeeID').on('keyup', function (event) {
+        //     var key = event.which || event.keyCode;
+        //     if (key === 13 || key === 9 || key === 7) { // 13 for "Enter", 9 for "Tab"
+        //         event.preventDefault();
+                
+        //         processInput(); // Trigger AJAX request
+               
+        //     }
+        // });
 
         //select able to search when modal shown
         $('#DefectModal').on('shown.bs.modal', function () {
@@ -555,7 +558,7 @@
             $('#SectionName').css('background-color', 'gainsboro');
             document.getElementById("demo").innerHTML = "";
             // var packageRef = $('#PackageRef').val();
-            // console.log(employeeId);
+             console.log("TEST**3");
             if (employeeId !== '') { // Only process if there's valid input
                 // AJAX request to the controller
                 $.ajax({
