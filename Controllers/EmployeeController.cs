@@ -864,7 +864,7 @@ namespace Plims.Controllers
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID) && x.Remark != "Adjust").OrderBy(x => x.ShiftID).ThenBy(x => x.EmployeeID).ToList(),
+                view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID) && x.Remark != "Adjust").OrderByDescending(x => x.WorkingStatus).ThenBy(x => x.ShiftID).ThenBy(x => x.EmployeeID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 //tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.Plant.Equals(PlantID)).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
@@ -3475,11 +3475,11 @@ namespace Plims.Controllers
                     }
                     if(StartTime != Empadjustlist.First().ClockIn && EndTime == null && StartTime != null)
                     {
-
-                        Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == empid && x.Plant.Equals(PlantID) && x.ClockOut == "" && x.Remark == "Adjust" && x.TransactionNo.Equals(Convert.ToInt32(empidfillter[1]))).SingleOrDefault();
-                        Empdb.ClockIn = StartTime;
-                        db.SaveChanges();
-
+                      
+                            Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == empid && x.Plant.Equals(PlantID) && x.ClockOut == "" && x.Remark == "Adjust" && x.TransactionNo.Equals(Convert.ToInt32(empidfillter[1]))).SingleOrDefault();
+                            Empdb.ClockIn = StartTime;
+                            db.SaveChanges();
+                        
 
                     }
                     if((StartTime != Empadjustlist.First().ClockIn && EndTime != null ) ||( StartTime == Empadjustlist.First().ClockIn  && EndTime != null))
@@ -3594,13 +3594,14 @@ namespace Plims.Controllers
                         //Update Transaction
                         if (StartTime != null)
                         {
-                          
+
                             //Insert clockin
                             Empdb = db.TbEmployeeTransaction.Where(x => x.EmployeeID == EmployeeIDchk[i] && x.TransactionDate == thisday && x.Plant.Equals(PlantID)).SingleOrDefault();
 
                             Empdb.ClockIn = StartTime;
                             Empdb.Line = ToLine;
                             Empdb.Section = ToSection;
+
                         }
                         if (EndTime != null)
                         {
@@ -3750,42 +3751,42 @@ namespace Plims.Controllers
                         var empshift = db.View_EmployeeMaster.Where(x => x.EmployeeID == empid.Trim() && x.PlantID.Equals(PlantID)).SingleOrDefault();
                         if (StartTime == "" || StartTime == null)
                         {
-                            TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid ;
+                            TempData["AlertMessage"] = "Please Employee Clock out Employee ID :" + empid;
                             return RedirectToAction("EmployeeAdjustLine");
                         }
 
-
-                       
-
-                        //Case with clock out
-                        db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
+                        int counttran = db.TbEmployeeTransaction.Where(x => x.EmployeeID == empid.Trim() && x.Plant.Equals(PlantID) && x.ClockOut == "").ToList().Count;
+                        if (counttran == 0)
                         {
-                          
-                            TransactionDate = thisday, // Convert.ToDateTime(obj.TransactionDate),
-                            EmployeeID = empid,
-                            Shift = empdetails.ShiftID,
-                            Plant = PlantID,
-                            Line = ToLine,//obj.LineName,
-                            Section = ToSection,
-                            WorkingStatus = "Working",
-                            Prefix = empshift.Prefix,
-                            Remark = "Adjust",
-                            BreakFlag = "",
-                            StartTime = empshift.StartTime,
-                            EndTime = empshift.EndTime,
-                            ClockIn = StartTime,
-                            ClockOut = "",
-                            CreateDate = DateTime.Now,
-                            CreateBy = EmpID,//User.Identity.Name,
-                            UpdateDate = DateTime.Now,
-                            UpdateBy = EmpID//User.Identity.Name,
-                        }); ;
 
-                     
+                            //Case with clock out
+                            db.TbEmployeeTransaction.Add(new TbEmployeeTransaction()
+                            {
 
-                    }
-                    db.SaveChanges();
+                                TransactionDate = thisday, // Convert.ToDateTime(obj.TransactionDate),
+                                EmployeeID = empid,
+                                Shift = empdetails.ShiftID,
+                                Plant = PlantID,
+                                Line = ToLine,//obj.LineName,
+                                Section = ToSection,
+                                WorkingStatus = "Working",
+                                Prefix = empshift.Prefix,
+                                Remark = "Adjust",
+                                BreakFlag = "",
+                                StartTime = empshift.StartTime,
+                                EndTime = empshift.EndTime,
+                                ClockIn = StartTime,
+                                ClockOut = "",
+                                CreateDate = DateTime.Now,
+                                CreateBy = EmpID,//User.Identity.Name,
+                                UpdateDate = DateTime.Now,
+                                UpdateBy = EmpID//User.Identity.Name,
+                            });
 
+                        }
+                        }
+                        db.SaveChanges();
+                    
 
                 }
 
