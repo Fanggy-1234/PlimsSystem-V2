@@ -1292,12 +1292,12 @@ namespace Plims.Controllers
                             if (worksheet.Cells[row, 2].Value != null)
                         {
                             TransactionDateVar = Convert.ToDateTime(worksheet.Cells[row, 1].Text);
-                            string LineVar = worksheet.Cells[row, 3].Text;
-                            string SectionVar = worksheet.Cells[row, 4].Text;
-                            string ProductVar = worksheet.Cells[row, 5].Text;
-                            string Prefixvar = worksheet.Cells[row, 6].Text;
-                            string EmployeeVar = worksheet.Cells[row, 7].Text;
-                            string EmployeeRefVar = worksheet.Cells[row, 10].Text;
+                            string LineVar = worksheet.Cells[row, 3].Text.Trim();
+                            string SectionVar = worksheet.Cells[row, 4].Text.Trim();
+                            string ProductVar = worksheet.Cells[row, 5].Text.Trim();
+                            string Prefixvar = worksheet.Cells[row, 6].Text.Trim();
+                            string EmployeeVar = worksheet.Cells[row, 7].Text.Trim();
+                            string EmployeeRefVar = worksheet.Cells[row, 10].Text.Trim();
 
                             //Check Employee Clockin
                             //var ClockinDb = db.View_ClockTime.Where(x => x.TransactionDate == TransactionDateVar && x.EmployeeID.Equals(EmployeeVar) && x.ClockIn != null ).ToList();
@@ -1659,7 +1659,7 @@ namespace Plims.Controllers
                         //tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                         // tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                         //view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                        view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today).ToList()
+                        view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today).Distinct().ToList()
                     };
                 }
                 else
@@ -1671,7 +1671,7 @@ namespace Plims.Controllers
                         //tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                         //tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                         //view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                        view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) ).ToList()
+                        view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) ).Distinct().ToList()
                     };
 
                 }
@@ -1739,7 +1739,7 @@ namespace Plims.Controllers
 
 
 
-                    var collection = mymodel.view_DailyReportSummary.ToList();
+                    var collection = mymodel.view_DailyReportSummary.Distinct().ToList();
                     ExcelPackage Ep = new ExcelPackage();
                     ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Dailyreport");
                     Sheet.Cells["A1"].Value = "Plant";
