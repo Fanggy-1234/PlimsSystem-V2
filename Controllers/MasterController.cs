@@ -1800,8 +1800,18 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
             //Check Duplicate
-            var cntsection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).Select(x => x.SectionID).Max();
-            string cntsectionString = cntsection.ToString();
+            //var cntsection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).Select(x => x.SectionID).Max();
+
+            //Bank edit 
+            string a = "000001";
+            var cntsection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList();
+            if (cntsection != null && cntsection.Count >0)
+            {
+                a = cntsection.Where(x => x.PlantID.Equals(PlantID)).Select(x => x.SectionID).Max();
+            }
+                
+
+            string cntsectionString = a.ToString();
             string sectiononly = cntsectionString.Substring(cntsectionString.Length - 5);
             // int nextcntsection = Convert.ToInt32(sectiononly) + 1;
             int nextcntsection = Convert.ToInt32(CntDbnext) + 1;
@@ -1814,7 +1824,7 @@ namespace Plims.Controllers
                 db.TbSection.Add(new TbSection()
                 {
 
-                    SectionID = PlantID.ToString() + nextcntsection.ToString().PadLeft(5, '0'),
+                    SectionID = PlantID.ToString() + (PlantID.ToString().Length == 1  ? nextcntsection.ToString().PadLeft(5, '0'): nextcntsection.ToString().PadLeft(4, '0')),
                     SectionName = obj.SectionName,
                     Delaytime = obj.Delaytime,
                     PlantID = PlantID,
