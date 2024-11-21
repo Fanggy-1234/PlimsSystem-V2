@@ -27,6 +27,7 @@ namespace Plims.Models
         public string ClockIn { get; set; }
         public string ClockOut { get; set; }
         public string BreakFlag { get; set; }
+        public Nullable<int> BreakTime { get; set; }
         public string Type { get; set; }
         public string WorkingStatus { get; set; }
         //  public Nullable<int> QRCodePerUnit { get; set; }

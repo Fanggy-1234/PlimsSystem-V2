@@ -149,7 +149,7 @@
     });
 
     function checkTime() {
-        if (!$('#ClockIn').val() || !$('#TransactionDate').val() ) {
+        if (!$('#ClockIn').val() || !$('#TransactionDate').val()) {
             alert('Please fill Time/Date Clockin')
             return false
         }
@@ -177,7 +177,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/Employee/EmployeeClockInCheck", 
+                url: "/Employee/EmployeeClockInCheck",
                 data: {
                     EmployeeIDchk: EmployeeIDchk,
                     ClockIn: ClockIn,
@@ -188,7 +188,7 @@
                         alert(data.message);
                     } else {
 
-                         window.location.href = "/Employee/EmployeeClockInSave?ClockIn=" + ClockIn + "&TransactionDate=" + TransactionDate + "&EmployeeIDchk=" + EmployeeIDchk.join(',');
+                        window.location.href = "/Employee/EmployeeClockInSave?ClockIn=" + ClockIn + "&TransactionDate=" + TransactionDate + "&EmployeeIDchk=" + EmployeeIDchk.join(',');
                     }
                 },
                 error: function (error) {
@@ -197,7 +197,7 @@
             });
         }
         // ********************************** Add check employee clockin *****************////
-      
+
 
     }
 
@@ -300,13 +300,10 @@
 <form method="get" asp-controller="Employee">
     <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;">
 
-        <div class="col left d-flex flex-column gap-3" style="border: solid 1px #d5d5d5; margin-left:2em;">
+        <div class="col left d-flex flex-column" style="border: solid 1px #d5d5d5; margin-left:2em;">
+            <div class="row" style="height:10px"></div>
 
-
-            <div class="row" style="height:10px">
-            </div>
-
-            <div class="row" style="padding-left:2em ; padding-right:2em">
+            <div class="row" style="padding-left:2em; padding-right:2em; padding-bottom:0.5em">
                 <div class="col-3 label d-flex align-items-center">
                     <label for="recipient-name" class="col-form-label">  Line Name:</label>
                 </div>
@@ -323,28 +320,21 @@
                                 </option>
                             }
                         </select>
-
-
                     </div>
-
                 </div>
-
-
             </div>
 
-            <div class="row" style="padding-left:2em ; padding-right:2em">
+            <div class="row" style="padding-left:2em; padding-right:2em; padding-bottom:0.5em">
                 <div class="col-3 label d-flex align-items-center">
                     <label for="recipient-name" class="col-form-label"> Employee ID:</label>
                 </div>
                 <div class="col d-flex align-items-center">
                     <!-- Employee ID -->
                     <div style="width:100%">
-
                         <select class="selectfillter form-control" list="EmployeeID" name="EmployeeID" id="EmployeeID" style="width:100%">
                             <option value="" default selected></option>
                             @foreach (var item in Model.tbEmployeeMaster)
                             {
-
                                 <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">
                                     @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
                                 </option>
@@ -352,16 +342,14 @@
                         </select>
                     </div>
                 </div>
-
-
             </div>
 
-            <div class="row" style="padding-left:2em ; padding-right:2em">
+            <div class="row" style="padding-left:2em; padding-right:2em;">
                 <div class="col-3 label d-flex align-items-center">
                     <label for="recipient-name" class="col-form-label">  Section Name:</label>
                 </div>
                 <div class="col d-flex align-items-center">
-                    <!-- Line Name -->
+                    <!-- Section Name -->
                     <div style="width: 100%">
                         <select class="selectfillter form-control" list="SectionName" name="SectionName" id="SectionName" style="width:100%">
                             <option value="" default selected></option>
@@ -381,46 +369,48 @@
 
 
             </div>
-            <div class="row" style=" padding-left:2em ;padding-right:2em">
+            <div class="row" style=" padding-left:2em; padding-right:2em">
                 <div class="col-3 label d-flex align-items-center">
-                    <label for="recipient-name" class="col-form-label">  TransactionDate:</label>
+                    <label for="recipient-name" class="col-form-label">TransactionDate:</label>
                 </div>
                 <div class="col d-flex align-items-center">
-                    <!-- Line Name -->
+                    <!-- TransactionDate -->
                     <div style="width:100%">
                         <input type="date" class="form-control" name="TransactionDateFillter" id="TransactionDateFillter" style="width:100%" value="@ViewBag.SelectedTransactionDate" />
                     </div>
-
                 </div>
-
-
+            </div>
+            <div class="row" style=" padding-left:2em ;padding-right:2em">
+                <div class="col-3 label d-flex align-items-center">
+                    <label for="recipient-name" class="col-form-label">Start Time:</label>
+                </div>
+                <div class="col d-flex align-items-center">
+                    <!-- Start Time -->
+                    <div style="width:100%">
+                        <input type="time" class="form-control" name="StartTime" id="StartTime" style="width:100%" value="@ViewBag.SelectedStartTime">
+                    </div>
+                </div>
             </div>
 
-            <div class="row" style="height:20px;"></div>
-
+            <div class="row" style="height:10px;"></div>
         </div>
 
 
         @*Services Clock - In  Process*@
-        <div class="col right" style="border: solid 1px #d5d5d5; ">
+        <div class="col right" style="border: solid 1px #d5d5d5; margin-left: 2em">
 
-            <div class="row" style="height:10px;">
-            </div>
+            <div class="row" style="height:10px;"></div>
 
             <div class="row mt-2" style="padding-left:2em ; padding-right:2em">
                 <div class="col-3 label d-flex align-items-center">
                     <label for="recipient-name" class="col-form-label">Clock In Time:</label>
                 </div>
-
                 <div class="col d-flex align-items-center">
                     <!-- Clock-In -->
                     <div style="width:100%">
                         <input type="time" class="form-control" name="ClockIn" id="ClockIn" step="60" style="width:100%">
                     </div>
-
                 </div>
-
-
             </div>
 
             <div class="row" style="padding-left:2em ; padding-right:2em">
@@ -430,18 +420,13 @@
                 <div class="col d-flex align-items-center">
                     <!-- Transaction Date -->
                     <div style="width:100%">
-
                         @*  <input type="date" class="form-control" name="TransactionDate" id="TransactionDate" value="@DateTime.Now.Date" disabled> *@
                         <input type="date" class="form-control" name="TransactionDate" id="TransactionDate" style="width:100%" value="@DateTime.Now.ToString("yyyy-MM-dd")">@* value="@DateTime.Now.ToString("yyyy-MM-dd")" *@
-
                     </div>
                 </div>
-
-
             </div>
 
-            <div class="row" style="height:20px;"></div>
-
+            <div class="row" style="height:10px;"></div>
         </div>
 
     </div>
@@ -572,7 +557,7 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.EndTime)
                     </td>
-                    @if(item.Remark == "Adjust")
+                    @if (item.Remark == "Adjust")
                     {
                         <td style="color:green">
                             @Html.DisplayFor(modelItem => item.ClockIn)
@@ -584,7 +569,7 @@
                             @Html.DisplayFor(modelItem => item.ClockIn)
                         </td>
                     }
-                   
+
                     <td>
                         @Html.DisplayFor(modelItem => item.WorkingStatus)
                     </td>

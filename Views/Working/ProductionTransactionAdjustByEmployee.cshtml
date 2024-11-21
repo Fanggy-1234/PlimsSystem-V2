@@ -194,14 +194,12 @@
         </div>
 
         <div class="col" style="width:15% ">
-            <button type="button" class="create-button" data-bs-toggle="modal" data-bs-target="#FGModal" onclick="setFGModalData()"  style="justify-content: flex-end">
-                FG Adjust
-            </button>
+            @* <button type="button" class="create-button" data-bs-toggle="modal" data-bs-target="#FGModal" onclick="setFGModalData()"  style="justify-content: flex-end">FG Adjust</button> *@
+            <button type="button" class="create-button" onclick="setFGModalData()" style="justify-content: flex-end">FG Adjust</button>
         </div>
         <div class="col" style="width:15% ">
-            <button type="button" class="create-button" data-bs-toggle="modal" data-bs-target="#DefectModal" onclick="setDefectModalData()" style="justify-content: flex-end">
-                Defect Adjust
-            </button>
+            @* <button type="button" class="create-button" data-bs-toggle="modal" data-bs-target="#DefectModal" onclick="setDefectModalData()" style="justify-content: flex-end">Defect Adjust</button> *@
+            <button type="button" class="create-button" onclick="setDefectModalData()" style="justify-content: flex-end">Defect Adjust</button>
         </div>
     </div>
 
@@ -467,87 +465,95 @@
 
     }
 
-    function setFGModalData() {
-        var selectedCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]:checked');
-        var allCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]');
-        var checkAllCheckbox = document.querySelector('#tableForm input[name="checkall"]');
+     function setFGModalData() {
+         var selectedCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]:checked');
+         var allCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]');
+         var checkAllCheckbox = document.querySelector('#tableForm input[name="checkall"]');
+
+         if (selectedCheckboxes.length == 0) {
+             alert('Please select at least one item');
+             return;
+         }
 
          function formatDate(dateStr) {
-        var dateParts = dateStr.split('/');
-        var formattedDate = dateParts[1] + '/' + dateParts[0] + '/' + dateParts[2];
-        return formattedDate;
-    }
+             var dateParts = dateStr.split('/');
+             var formattedDate = dateParts[1] + '/' + dateParts[0] + '/' + dateParts[2];
+             return formattedDate;
+         }
+
+         if (selectedCheckboxes.length > 1 && selectedCheckboxes.length < allCheckboxes.length) {
+             if (confirm('You have selected more than one item but not all. Do you want to proceed?')) {
+                 // Set modal data and highlight first row if confirmed
+                 // var table = document.getElementById('table_id');
+                 // var firstRow = table.getElementsByTagName('tbody')[0].rows[0];
+
+                 removeRowHighlight();
+                 //  firstRow.classList.add('selected-row');
+                 var selectedCheckbox = document.querySelector('#tableForm input[name="TransactionID"]:checked');
+
+                 var selectedRow = selectedCheckbox.closest('tr');
+
+                 var transactionDate = selectedRow.cells[1].innerText;
+                 var lineName = selectedRow.cells[3].innerText;
+                 var sectionName = selectedRow.cells[4].innerText;
+                 var productName = selectedRow.cells[6].innerText;
+                 var prefix = selectedRow.cells[7].innerText;
+                 var EmployeeID = selectedRow.cells[5].innerText;
+
+                 //  console.log('1');
+                 console.log(EmployeeID);
+                 document.getElementById('FGPlanDate').value = Date(transactionDate).toString("dd/MM/yyyy");
+                 document.getElementById('FGEmployeeID').value = EmployeeID;
+                 document.getElementById('FGLine').value = lineName;
+                 document.getElementById('FGProduct').value = productName;
+                 document.getElementById('FGSection').value = sectionName;
+                 document.getElementById('FGShift').value = prefix;
+
+                 $('#FGQTY').val('').focus();
+
+                 $("#FGModal").modal('show');
+             } else {
+                 // Prevent modal from showing if not confirmed
+                 return;
+             }
+         } else {
+             // Set modal data and highlight first row if condition not met
+             // var table = document.getElementById('table_id');
+             //var firstRow = table.getElementsByTagName('tbody')[0].rows[0];
+
+             removeRowHighlight();
+             // firstRow.classList.add('selected-row');
+
+             var selectedCheckbox = document.querySelector('#tableForm input[name="TransactionID"]:checked');
 
 
-        if (selectedCheckboxes.length > 1 && selectedCheckboxes.length < allCheckboxes.length) {
-            if (confirm('You have selected more than one item but not all. Do you want to proceed?')) {
-                // Set modal data and highlight first row if confirmed
-               // var table = document.getElementById('table_id');
-               // var firstRow = table.getElementsByTagName('tbody')[0].rows[0];
+             var selectedRow = selectedCheckbox.closest('tr');
 
-                removeRowHighlight();
-              //  firstRow.classList.add('selected-row');
-                var selectedCheckbox = document.querySelector('#tableForm input[name="TransactionID"]:checked');
+             var transactionDate = selectedRow.cells[1].innerText;
+             var lineName = selectedRow.cells[3].innerText;
+             var sectionName = selectedRow.cells[4].innerText;
+             var ProductName = selectedRow.cells[6].innerText;
+             var prefix = selectedRow.cells[7].innerText;
+             var EmployeeID = selectedRow.cells[5].innerText;
 
-                var selectedRow = selectedCheckbox.closest('tr');
+             // console.log('2');
+             // console.log(transactionDate);
+             document.getElementById('FGPlanDate').value = formatDate(transactionDate);
+             document.getElementById('FGEmployeeID').value = EmployeeID;
+             document.getElementById('FGLine').value = lineName;
+             document.getElementById('FGSection').value = sectionName;
+             document.getElementById('FGProduct').value = productName;
+             document.getElementById('FGShift').value = prefix;
 
-                var transactionDate = selectedRow.cells[1].innerText;
-                var lineName = selectedRow.cells[3].innerText;
-                var sectionName = selectedRow.cells[4].innerText;
-                var productName = selectedRow.cells[6].innerText;
-                var prefix = selectedRow.cells[7].innerText;
-                var EmployeeID = selectedRow.cells[5].innerText;
+             $('#FGQTY').val('').focus();
 
-              //  console.log('1');
-                console.log(EmployeeID);
-                document.getElementById('FGPlanDate').value = Date(transactionDate).toString("dd/MM/yyyy");
-                document.getElementById('FGEmployeeID').value = EmployeeID;
-                document.getElementById('FGLine').value = lineName;
-                document.getElementById('FGProduct').value = productName;
-                document.getElementById('FGSection').value = sectionName;
-                document.getElementById('FGShift').value = prefix;
-
-                $('#FGQTY').val('').focus();
-            } else {
-                // Prevent modal from showing if not confirmed
-                return;
-            }
-        } else {
-            // Set modal data and highlight first row if condition not met
-           // var table = document.getElementById('table_id');
-            //var firstRow = table.getElementsByTagName('tbody')[0].rows[0];
-
-            removeRowHighlight();
-           // firstRow.classList.add('selected-row');
-
-            var selectedCheckbox = document.querySelector('#tableForm input[name="TransactionID"]:checked');
-
-
-            var selectedRow = selectedCheckbox.closest('tr');
-
-            var transactionDate = selectedRow.cells[1].innerText;
-            var lineName = selectedRow.cells[3].innerText;
-            var sectionName = selectedRow.cells[4].innerText;
-            var ProductName = selectedRow.cells[6].innerText;
-            var prefix = selectedRow.cells[7].innerText;
-            var EmployeeID = selectedRow.cells[5].innerText;
-
-           // console.log('2');
-           // console.log(transactionDate);
-            document.getElementById('FGPlanDate').value = formatDate(transactionDate);
-            document.getElementById('FGEmployeeID').value = EmployeeID;
-            document.getElementById('FGLine').value = lineName;
-            document.getElementById('FGSection').value = sectionName;
-            document.getElementById('FGProduct').value = productName;
-            document.getElementById('FGShift').value = prefix;
-
-            $('#FGQTY').val('').focus();
-        }
-    }
+             $("#FGModal").modal('show');
+         }
+     }
 
 
     // Event listener to set FG modal data when the button is clicked
-    document.querySelector('[data-bs-target="#FGModal"]').addEventListener('click', setFGModalData);
+    // document.querySelector('[data-bs-target="#FGModal"]').addEventListener('click', setFGModalData);
 
 
     function submitModalForm() {
@@ -678,13 +684,16 @@
         var allCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]');
         var checkAllCheckbox = document.querySelector('#tableForm input[name="checkall"]');
 
+        if (selectedCheckboxes.length == 0) {
+            alert('Please select at least one item');
+            return;
+        }
 
         function formatDate(dateStr) {
             var dateParts = dateStr.split('/');
             var formattedDate = dateParts[1] + '/' + dateParts[0] + '/' + dateParts[2];
             return formattedDate;
         }
-
 
         if (selectedCheckboxes.length > 1 && selectedCheckboxes.length < allCheckboxes.length) {
             if (confirm('You have selected more than one item but not all. Do you want to proceed?')) {
@@ -705,7 +714,6 @@
                 var prefix = selectedRow.cells[7].innerText;
                 var EmployeeID = selectedRow.cells[5].innerText;
 
-                
                 document.getElementById('DefectPlanDate').value = formatDate(transactionDate);
                 document.getElementById('DefectLine').value = lineName;
                 document.getElementById('DefectSection').value = sectionName;
@@ -713,9 +721,9 @@
                 document.getElementById('DefectShift').value = prefix;
                 document.getElementById('DefectEmployeeID').value = EmployeeID;
 
-
                 $('#DefectQTY').val('').focus();
 
+                $("#DefectModal").modal('show');
             } else {
                 // Prevent modal from showing if not confirmed
                 return;
@@ -730,7 +738,6 @@
 
             var selectedCheckbox = document.querySelector('#tableForm input[name="TransactionID"]:checked');
 
-
             var selectedRow = selectedCheckbox.closest('tr');
 
             var transactionDate = selectedRow.cells[1].innerText;
@@ -740,8 +747,6 @@
             var prefix = selectedRow.cells[7].innerText;
             var EmployeeID = selectedRow.cells[5].innerText;
 
-
-           // console.log(sectionName.Text);
             document.getElementById('DefectPlanDate').value = formatDate(transactionDate);
             document.getElementById('DefectLine').value = lineName;
             document.getElementById('DefectSection').value = sectionName;
@@ -749,16 +754,15 @@
             document.getElementById('DefectShift').value = prefix;
             document.getElementById('DefectEmployeeID').value = EmployeeID;
 
-
             $('#DefectQTY').val('').focus();
 
-
+            $("#DefectModal").modal('show');
         }
     }
 
 
     // Event listener to set FG modal data when the button is clicked
-    document.querySelector('[data-bs-target="#DefectModal"]').addEventListener('click', setDefectModalData);
+    // document.querySelector('[data-bs-target="#DefectModal"]').addEventListener('click', setDefectModalData);
 
 
     function submitModalFormDefect() {

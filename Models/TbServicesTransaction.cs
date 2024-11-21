@@ -25,6 +25,7 @@ namespace Plims.Models
 
         public Decimal Rate { get; set; }
         public string BreakFlag { get; set; }
+        public Nullable<int> BreakTime { get; set; }
 
         public string Remark { get; set; }
         public string StatusClocktime { get; set; }

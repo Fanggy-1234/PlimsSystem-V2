@@ -39,7 +39,7 @@
 
     .form-control {
         width: 100%;
-        height:70%;
+        height: 70%;
         padding: 6px 10px;
         margin: 8px 0;
         display: inline-block;
@@ -47,50 +47,45 @@
         border-radius: 1px;
         box-sizing: border-box;
     }
-    #tabledata2
-    {
+
+    #tabledata2 {
         border: 0.1px solid #D7D8D7; /* Set border style */
         border-collapse: collapse;
         width: 100%;
-
     }
 
-    #tabledata2 th {
-        background-color: #E8E8E8; /* Set your desired header background color */
-        font-weight: bold;
-        text-align: center;
-        font-family: Arial, sans-serif;
-          font-size: 14px;
-    padding: 20px 0px;
-
-        
-    }
-
-    #tabledata2 td {
-        text-align: left;
+        #tabledata2 th {
+            background-color: #E8E8E8; /* Set your desired header background color */
+            font-weight: bold;
+            text-align: center;
+            font-family: Arial, sans-serif;
             font-size: 14px;
-       
-    }
+            padding: 20px 0px;
+        }
+
+        #tabledata2 td {
+            text-align: left;
+            font-size: 14px;
+        }
 
 
-    #tabledata2 tr {
-        text-align: left;
-        padding: initial;
-    }
+        #tabledata2 tr {
+            text-align: left;
+            padding: initial;
+        }
 
-    #tabledata2 th,
-    #tabledata2 td {
-        border: 0.1px solid #D7D8D7; /* Set border style */
-        border-collapse: collapse;
-  
-    }
+        #tabledata2 th,
+        #tabledata2 td {
+            border: 0.1px solid #D7D8D7; /* Set border style */
+            border-collapse: collapse;
+        }
 
 </style>
 
 
 <script>
 
-    
+
     $(document).ready(function () {
         $("#tabledata2 #checkall").click(function () {
             if ($("#tabledata2 #checkall").is(':checked')) {
@@ -227,7 +222,7 @@
                     alert("This Employee can't id!" + id)
                 }
                 else {
-                   // console.log('AJAX request successful:', response);
+                    // console.log('AJAX request successful:', response);
                     $('#ModalTransactionNo').val(response.transactionNo);
                     $('#ModalEmployeeID').val(response.employeeID);
                     $('#ModalLineID').val(response.lineID).trigger('change');
@@ -306,137 +301,117 @@
 
 
 <div class="row" style="height:10px"></div>
-<form  method="get" asp-controller="Employee" >
+<form method="get" asp-controller="Employee">
     <div class="row" style="background-color: #fcfcfc; border-radius: 2px; padding: 10px;">
-       @*  //// Fillter ///// *@
+        @*  //// Fillter ///// *@
         <div class="col left" style="border: solid 1px #d5d5d5; margin-left:2em;">
 
+            <div class="row" style="height:10px"></div>
 
-            <div class="row" style="height:10px">
-            </div>
-
-            <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:0.1em">
-                <div class="col-3 label" style="padding-bottom:0.5em">
-                    <label for="recipient-name" class="col-form-label">  Line Name:</label>
+            <div class="row" style="padding-left:2em; padding-right:2em;padding-bottom:0.5em">
+                <div class="col-3 label" style="padding-bottom:0.1em">
+                    <label for="recipient-name" class="col-form-label">Line Name:</label>
                 </div>
-                <div class="col" style="padding-bottom:0.5em">
+                <div class="col">
                     <!-- Line Name -->
-                   
-                        <select class="selectfillter form-control" list="LineName" name="LineName" id="LineName" style="width:100%">
-                            <option value="" default selected></option>
-                            @foreach (var item in Model.tbLine)
-                            {
-
-                                <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
-                                    @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
-                                </option>
-                            }
-                        </select>
-
-
-                       
+                    <select class="selectfillter form-control" list="LineName" name="LineName" id="LineName" style="width:100%">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbLine)
+                        {
+                            <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
+                            </option>
+                        }
+                    </select>
                 </div>
-
-
             </div>
 
-            <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:0.1em">
+            <div class="row" style="padding-left:2em; padding-right:2em;padding-bottom:0.5em">
                 <div class="col-3 label" style="padding-bottom:0.1em">
-                    <label for="recipient-name" class="col-form-label"> Employee ID:</label>
+                    <label for="recipient-name" class="col-form-label">Employee ID:</label>
                 </div>
-                <div class="col" style="padding-bottom:0.1em">
+                <div class="col">
                     <!-- Employee ID -->
-                   
-                        <select class="selectfillter form-control" list="EmployeeID" name="EmployeeID" id="EmployeeID" style="width:100%">
-                            <option value="" default selected></option>
-                            @foreach (var item in Model.tbEmployeeMaster)
-                            {
-
+                    <select class="selectfillter form-control" list="EmployeeID" name="EmployeeID" id="EmployeeID" style="width:100%">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbEmployeeMaster)
+                        {
                             <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">
-                                    @Html.DisplayFor(modelItem => item.EmployeeID) : @Html.DisplayFor(modelItem => item.EmployeeName)
-                                </option>
-                            }
-                        </select>
-                   </div>
-               
-
-
+                                @Html.DisplayFor(modelItem => item.EmployeeID) : @Html.DisplayFor(modelItem => item.EmployeeName)
+                            </option>
+                        }
+                    </select>
+                </div>
             </div>
 
-
-
-
-              <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:0.1em">
+            <div class="row" style="padding-left:2em; padding-right:2em;padding-bottom:0.5em">
                 <div class="col-3 label" style="padding-bottom:0.1em">
-                    <label for="recipient-name" class="col-form-label"> Section ID:</label>
+                    <label for="recipient-name" class="col-form-label">Section ID:</label>
                 </div>
-                <div class="col" style="padding-bottom:0.1em">
+                <div class="col">
                     <!-- Section ID -->
-                
                     <select class="selectfillter form-control" list="SectionIDFillter" name="SectionIDFillter" id="SectionIDFillter" style="width:100%">
-                            <option value="" default selected></option>
+                        <option value="" default selected></option>
                         @foreach (var item in Model.tbSection)
-                            {
-
+                        {
                             <option value="@item.SectionID" selected="@(item.SectionID == ViewBag.SelectedSectionID? "selected" : null)">
                                 @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
-                                </option>
-                            }
-                        </select>
-                     
+                            </option>
+                        }
+                    </select>
                 </div>
             </div>
 
-
-            
-              <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:0.1em">
+            <div class="row" style="padding-left:2em; padding-right:2em;padding-bottom:0.1em">
                 <div class="col-3 label" style="padding-bottom:0.1em">
-                    <label for="recipient-name" class="col-form-label"> To Section ID:</label>
+                    <label for="recipient-name" class="col-form-label">To Section ID:</label>
                 </div>
-                <div class="col" style="padding-bottom:0.1em">
-                    <!-- Section ID -->
-                
+                <div class="col">
+                    <!-- To Section ID -->
                     <select class="selectfillter form-control" list="ToSectionIDFillter" name="ToSectionIDFillter" id="ToSectionIDFillter" style="width:100%">
-                            <option value="" default selected></option>
+                        <option value="" default selected></option>
                         @foreach (var item in Model.tbSection)
-                            {
-
+                        {
                             <option value="@item.SectionID" selected="@(item.SectionID == ViewBag.SelectedToSectionID? "selected" : null)">
                                 @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
-                                </option>
-                            }
-                        </select>
-                     
+                            </option>
+                        }
+                    </select>
                 </div>
             </div>
 
-
-
-            <div class="row" style="padding-left:2em ; padding-right:2em;padding-bottom:1em">
+            <div class="row" style="padding-left:2em; padding-right:2em;padding-bottom:0.1em">
                 <div class="col-3 label" style="padding-bottom:0.1em">
                     <label for="recipient-name" class="col-form-label">Production Date:</label>
                 </div>
-                <div class="col" style="padding-bottom:0.1em">
+                <div class="col">
                     <!-- Transaction Date -->
                     <input type="date" class="form-control" name="TransactionDateFillter" id="TransactionDateFillter" style="width:100%" value="@ViewBag.SelectedTransactionDateFillter">
                 </div>
+            </div>
 
-
+            <div class="row" style="padding-left:2em; padding-right:2em;padding-bottom:1em">
+                <div class="col-3 label" style="padding-bottom:0.1em">
+                    <label for="recipient-name" class="col-form-label">Start Time:</label>
+                </div>
+                <div class="col">
+                    <!-- Start Time -->
+                    <input type="time" class="form-control" name="StartTimeFillter" id="StartTimeFillter" style="width:100%" value="@ViewBag.SelectedStartTimeFillter">
+                </div>
             </div>
 
         </div>
 
 
-        <div class="col right" style="border: solid 1px #d5d5d5; margin-left: 2em ">
+        <div class="col right" style="border: solid 1px #d5d5d5; margin-left: 2em">
 
-            <div class="row" style="height:10px">
-            </div>
+            <div class="row" style="height:10px"></div>
 
-            <div class="row" style="padding-left:2em ; padding-right:2em ; padding-bottom:0.5em">
-                <div class="col-3 label" style="padding-bottom:0.5em">
-                    <label for="recipient-name" class="col-form-label"> To Line :</label>
+            <div class="row" style="padding-left:2em; padding-right:2em; padding-bottom:0.5em">
+                <div class="col-3 label" style="padding-bottom:0.1em">
+                    <label for="recipient-name" class="col-form-label">To Line:</label>
                 </div>
-                <div class="col" style="padding-bottom:0.5em">
+                <div class="col">
                     <!-- Employee ID -->
                     <select class="selectfillter form-control" style="width:100%" name="ToLine" id="LineID" onchange="filterSectionsByLine()">
                         <option value="" default selected></option>
@@ -446,19 +421,15 @@
                             <option value="@dataFrist.LineID">
                                 @Html.DisplayFor(modelItem => dataFrist.LineID) : @Html.DisplayFor(modelItem => dataFrist.LineName)
                             </option>
-
                         }
                     </select>
-
                 </div>
-
-
             </div>
-            <div class="row" style="padding-left:2em ; padding-right:2em ; padding-bottom:0.1em">
+            <div class="row" style="padding-left:2em; padding-right:2em; padding-bottom:0.1em">
                 <div class="col-3 label" style="padding-bottom:0.1em">
-                    <label for="recipient-name" class="col-form-label"> To Section :</label>
+                    <label for="recipient-name" class="col-form-label">To Section:</label>
                 </div>
-                <div class="col" style="padding-bottom:0.1em">
+                <div class="col">
                     <!-- Employee ID -->
                     <select class="selectfillter form-control" name="ToSection" id="SectionID" style="width:100%">
                         <option value="" default selected></option>
@@ -476,43 +447,34 @@
 
             </div>
 
-
-            <div class="row" style="padding-left:2em ; padding-right:2em ; padding-bottom:0.1em">
+            <div class="row" style="padding-left:2em; padding-right:2em; padding-bottom:0.1em">
                 <div class="col-3 label" style="padding-bottom:0.1em">
                     <label for="recipient-name" class="col-form-label">Production Date:</label>
                 </div>
-                <div class="col" style="padding-bottom:0.1em">
+                <div class="col">
                     <!-- Transaction Date -->
                     <input type="date" class="form-control" name="TransactionDate" id="TransactionDate" style="width:100%" value="@DateTime.Now.ToString("yyyy-MM-dd")">
                 </div>
-
-
             </div>
 
-
-            <div class="row" style="padding-left:2em ; padding-right:2em ; padding-bottom:0.1em">
+            <div class="row" style="padding-left:2em; padding-right:2em; padding-bottom:0.1em">
                 <div class="col-3 label" style="padding-bottom:0.1em">
-                    <label class="col-form-label">Start Time :</label>
+                    <label class="col-form-label">Start Time:</label>
                 </div>
-                <div class="col" style="padding-bottom:0.1em">
+                <div class="col">
                     <!-- Clock-In -->
-                        <input type="time" class="form-control" name="StartTime" id="StartTime" style="width:100%">
+                    <input type="time" class="form-control" name="StartTime" id="StartTime" style="width:100%">
                 </div>
-
-
             </div>
 
-
-            <div class="row" style="padding-left:2em ; padding-right:2em ; padding-bottom:0.1em">
+            <div class="row" style="padding-left:2em; padding-right:2em; padding-bottom:0.5em">
                 <div class="col-3 label" style="padding-bottom:0.1em">
-                    <label for="recipient-name" class="col-form-label">End Time :</label>
+                    <label for="recipient-name" class="col-form-label">End Time:</label>
                 </div>
-                <div class="col" style="padding-bottom:0.1em">
+                <div class="col">
                     <!-- Clock-In -->
-                        <input type="time" class="form-control" name="EndTime" id="EndTime" style="width:100%">
+                    <input type="time" class="form-control" name="EndTime" id="EndTime" style="width:100%">
                 </div>
-
-
             </div>
 
         </div>
@@ -550,7 +512,7 @@
                     {
                         <button type="button" class="clear-button">Adjusts</button>
                     }
-                    
+
                 </div>
             </div>
         </div>
@@ -561,15 +523,15 @@
     <div class="row" style="height:30px">
     </div>
 
-    @*Diaplay data*@ 
+    @*Diaplay data*@
     <table id="tabledata2" class="table table-hover" style="width:100%">
         <thead>
             <tr>
-                <th ><input type="checkbox" id="checkall" /></th>
-                <th >
+                <th><input type="checkbox" id="checkall" /></th>
+                <th>
                     Employee ID
                 </th>
-                <th >
+                <th>
                     Employee Name
                 </th>
                 <th>
@@ -590,7 +552,7 @@
                 <th>
                     Date
                 </th>
-                <th >
+                <th>
                     Start Time
                 </th>
                 <th>
@@ -604,7 +566,7 @@
                     Clock-Out
                 </th>
                 <th>
-                   Action
+                    Action
                 </th>
 
             </tr>
@@ -614,36 +576,36 @@
             {
                 <tr>
                     @* @Html.HiddenFor(modelItem => item.ID) *@
-                    <td >
-                      @*  <input type="checkbox" id="@item.EmployeeID" value="@item.EmployeeID" class="checkthis" Name="EmployeeIDchk" />
-                        <label id="@item.TransactionNo" value="@item.TransactionNo" Name="TransactionNochk" hidden/> *@
+                    <td>
+                        @*  <input type="checkbox" id="@item.EmployeeID" value="@item.EmployeeID" class="checkthis" Name="EmployeeIDchk" />
+                    <label id="@item.TransactionNo" value="@item.TransactionNo" Name="TransactionNochk" hidden/> *@
                         @*   <input type="hidden" name="TransactionNo" value="@item.TransactionNo" class="transaction-no" /> *@
 
 
-                        <input type="checkbox" id="@item.EmployeeID" value="@item.EmployeeID:@item.TransactionNo" class="checkthis employee-check"Name="EmployeeIDchk" />
-                      @*   <input type="checkbox" id="@item.TransactionNo" value="@item.TransactionNo" class="checkthis transaction-check" Name="TransactionNochk" hidden />
- *@
+                        <input type="checkbox" id="@item.EmployeeID" value="@item.EmployeeID:@item.TransactionNo" class="checkthis employee-check" Name="EmployeeIDchk" />
+                        @*   <input type="checkbox" id="@item.TransactionNo" value="@item.TransactionNo" class="checkthis transaction-check" Name="TransactionNochk" hidden />
+                    *@
 
                     </td>
-                    <td >
+                    <td>
                         @Html.DisplayFor(modelItem => item.EmployeeID)
                     </td>
-                    <td >
+                    <td>
                         @Html.DisplayFor(modelItem => item.EmployeeName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.FromLine) 
+                        @Html.DisplayFor(modelItem => item.FromLine)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.LineName) 
+                        @Html.DisplayFor(modelItem => item.LineName)
                     </td>
-                    <td >
+                    <td>
                         @Html.DisplayFor(modelItem => item.FromSectionName)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.SectionName)
                     </td>
-                    <td >
+                    <td>
                         @Html.DisplayFor(modelItem => item.ShiftName)
                     </td>
 
@@ -661,25 +623,25 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.StartTime)
                     </td>
-                    <td >
+                    <td>
                         @Html.DisplayFor(modelItem => item.EndTime)
                     </td>
                     <td style="color:darkblue">
-                        @Html.DisplayFor(modelItem => item.ClockIn)  
+                        @Html.DisplayFor(modelItem => item.ClockIn)
                     </td>
 
                     @* @if (item.qrcode != "")
-                    {
-                        <td style="color:darkblue">
-                            @Html.DisplayFor(modelItem => item.ClockOut)
-                        </td>
-                    }
-                    else
-                    {
-                        <td style="color:red">
-                            @Html.DisplayFor(modelItem => item.ClockOut)
-                        </td>
-                    } *@
+                {
+                <td style="color:darkblue">
+                @Html.DisplayFor(modelItem => item.ClockOut)
+                </td>
+                }
+                else
+                {
+                <td style="color:red">
+                @Html.DisplayFor(modelItem => item.ClockOut)
+                </td>
+                } *@
 
                     <td style="color:darkblue">
                         @Html.DisplayFor(modelItem => item.ClockOut)
@@ -705,11 +667,11 @@
                                 <a href="#" id="btnEdit">Edits</a>
 
                             }
-                            
+
                         }
-                       
+
                     </td>
-                   
+
 
                 </tr>
             }
@@ -742,7 +704,7 @@
                             <option value="" default selected></option>
                             @foreach (var dataGroup in Model.view_PLPS.Where(x => x.Status.Equals(1)).GroupBy(x => x.LineID))
                             {
-                                var dataFrist = dataGroup.First(); 
+                                var dataFrist = dataGroup.First();
                                 <option value="@dataFrist.LineID">
                                     @Html.DisplayFor(modelItem => dataFrist.LineID) : @Html.DisplayFor(modelItem => dataFrist.LineName)
                                 </option>
@@ -752,7 +714,7 @@
                     </div>
 
 
-                       <div class="mb-3">
+                    <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Section :</label>
                         <select class="selectfillter form-control" name="SectionID" id="ModalSectionID" style="width:100%">
                             <option value="" default selected></option>
