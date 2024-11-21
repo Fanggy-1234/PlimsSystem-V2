@@ -1425,179 +1425,51 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            
-            var mymodel = new ViewModelAll
-            {
-                view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) ).ToList()
-            };
 
-            if (StartDate == DateTime.MinValue && EndDate == DateTime.MinValue)
-            {
-
-                mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.TransactionDate == DateTime.Today).ToList();
-                
-            }
-           
-          
+            var view_DailyReportSummary = new List<View_DailyReportSummary>();
 
             if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionID) || !string.IsNullOrEmpty(Prefix) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
             {
+                view_DailyReportSummary = await db.View_DailyReportSummary.Where(x =>
+                    x.PlantID.Equals(PlantID)
+                    && !string.IsNullOrEmpty(EmployeeID) ? x.QRCode == EmployeeID : true
+                    && !string.IsNullOrEmpty(LineID) ? x.LineID == LineID : true
+                    && !string.IsNullOrEmpty(SectionID) ? x.SectionID == SectionID : true
+                    && !string.IsNullOrEmpty(Prefix) ? x.Prefix == Prefix : true
+                    && StartDate != DateTime.MinValue ? x.TransactionDate >= StartDate : true
+                    && EndDate != DateTime.MinValue ? x.TransactionDate <= EndDate : true
+                ).Distinct().ToListAsync();
 
-
-                if (!string.IsNullOrEmpty(EmployeeID))
-                {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.QRCode == EmployeeID).ToList();
-                    ViewBag.SelectedEmpID = EmployeeID;
-                }
-
-                if (!string.IsNullOrEmpty(LineID))
-                {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.LineID == LineID).ToList();
-                    ViewBag.SelectedLineID = LineID;
-                }
-
-                if (!string.IsNullOrEmpty(SectionID))
-                {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.SectionID == SectionID).ToList();
-                    ViewBag.SelectedSectionID = SectionID;
-                }
-                if (!string.IsNullOrEmpty(Prefix))
-                {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.Prefix == Prefix).ToList();
-                    ViewBag.SelectedPrefix = Prefix;
-                }
-
-                if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
-                {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
-                       .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
-                       .ToList();
-
-                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd"); ;
-
-                }
-                else if (StartDate != DateTime.MinValue)
-                {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
-                         .Where(x => x.TransactionDate >= StartDate)
-                         .ToList();
-
-                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                }
-                else if (EndDate != DateTime.MinValue)
-                {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
-                     .Where(x => x.TransactionDate <= EndDate)
-                     .ToList();
-
-                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-                }
-
-             //   ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-             //   ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-
-                mymodel = new ViewModelAll
-                {
-                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                    tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                    view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    view_DailyReportSummary = mymodel.view_DailyReportSummary.Distinct().ToList()
-                };
-
-                ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
-
-                return View(mymodel);
+                if (!string.IsNullOrEmpty(EmployeeID)) ViewBag.SelectedEmpID = EmployeeID;
+                if (!string.IsNullOrEmpty(LineID)) ViewBag.SelectedLineID = LineID;
+                if (!string.IsNullOrEmpty(SectionID)) ViewBag.SelectedSectionID = SectionID;
+                if (!string.IsNullOrEmpty(Prefix)) ViewBag.SelectedPrefix = Prefix;
+                if (StartDate != DateTime.MinValue) ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+                if (EndDate != DateTime.MinValue) ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
             }
             else
             {
-
-                //var varLine = from a in db.View_DailyReportSummary
-                //              where a.PlantID.Equals(PlantID)
-                //              group a by new { a.LineID, a.LineName } into g
-                //              select new SelectListItem
-                //              {
-                //                  Value = $"{g.Key.LineID}",
-                //                  Text = $"{g.Key.LineName}"
-                //              };
-                //ViewBag.varLine = new SelectList(varLine, "Value", "Text");
-
-
-                //var varPoint = from a in db.View_DailyReportSummary
-                //               where a.PlantID.Equals(PlantID)
-                //               group a by new { a.SectionID, a.SectionName } into g
-                //               select new SelectListItem
-                //               {
-                //                   Value = $"{g.Key.SectionID}",
-                //                   Text = $"{g.Key.SectionName}"
-                //               };
-                //ViewBag.varPoint = new SelectList(varPoint, "Value", "Text");
-
-
-                //var varEmp = from a in db.View_DailyReportSummary
-                //               where a.PlantID.Equals(PlantID)
-                //               group a by new { a.QRCode, a.EmployeeName  } into g
-                //               select new SelectListItem
-                //               {
-                //                   Value = $"{g.Key.QRCode}",
-                //                   Text = $"{g.Key.EmployeeName}"
-                //               };
-                //ViewBag.varEmp = new SelectList(varEmp, "Value", "Text");
-
-                //var sumGrpEmp = db.View_DailyReportSummary
-                //         .Where(mydata => mydata.TransactionDate == DateTime.Today && mydata.PlantID == PlantID)
-                //         .ToList();
-
-
-                //var mydata= new ViewModelReport
-                //{
-                //    view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                //    view_DailyReportSummary = sumGrpEmp,
-                //    FilterLine = LineID,
-                //    FilterEmp = EmployeeID,
-                //    FilterPoint = SectionID,
-
-                //};
-
-                ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
-                ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
-                //  mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.TransactionDate == DateTime.Today);
-
-                mymodel = new ViewModelAll
-                {
-                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                    tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                    view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    view_DailyReportSummary = mymodel.view_DailyReportSummary.Distinct().ToList()
-                };
-              
-
-
-
-
-                ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23 ).Select(x => x.RoleAction).FirstOrDefault();
-                return View(mymodel);
-
+                string today = DateTime.Today.ToString("yyyy-MM-dd");
+                ViewBag.SelectedStartDate = today;
+                ViewBag.SelectedEndDate = today;
             }
 
+            var mymodel = new ViewModelAll
+            {
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
+                view_DailyReportSummary = view_DailyReportSummary
+            };
+            ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
 
-
-
+            return View(mymodel);
         }
-
-
-
-
 
         //DateTime startDateString;
         //DateTime endDateString;
-
-
-
 
         public ActionResult DailyReportClear()
         {
