@@ -2257,9 +2257,16 @@ namespace Plims.Controllers
                                     }
                                     else
                                     {
-                                         sectionvalalert = new
+                                        // sectionvalalert = new
+                                        //{
+                                        //    message = "check PLPS ",
+                                        //    status = false
+                                        //};
+                                        //return Json(sectionvalalert);
+
+                                        sectionvalalert = new
                                         {
-                                            message = "check PLPS ",
+                                            message = "Please check Line and Section of EMP ID : " + item.EmployeeID,
                                             status = false
                                         };
                                         return Json(sectionvalalert);
