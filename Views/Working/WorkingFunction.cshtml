@@ -135,6 +135,7 @@
         display: block;
         height: 70px;
         font-size: 20px;
+        padding-top: 18px;
     }
 
     .select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option {
@@ -197,19 +198,15 @@
             <div class="row" style="height:80px">
                 <div class="col-2" style=" align-content: center;"><label class="FillterLabel">Product ID:</label></div>
                 <div class="col-9">
-                    <select  class="form-select" style="border-color:black; border-radius:0; font-size:22px; width:100%; height:100%"  name="productId" id="ProductID">
+                    <select class="selectfillter form-select" style="border-color:black; border-radius:0; font-size:22px; width:100%; height:100%" name="productId" id="ProductID">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                         {
-
                             <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
                             </option>
                         }
                     </select>
-
-
-
                 </div>
                 <div class="col-2"></div>
             </div>
