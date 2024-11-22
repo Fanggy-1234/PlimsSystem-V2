@@ -26,7 +26,6 @@
  *@
 
 <style type="text/css">
-
     .form-control {
         width: 100%;
         height: 70%;
@@ -49,7 +48,6 @@
         text-align: left;
     }
 
-
     #table_id tr {
         text-align: left;
     }
@@ -65,14 +63,49 @@
         max-width: 100%; /* Adjust the maximum width as needed */
     }
 
+    .loader-state {
+	    position: fixed;
+	    top: 0;
+	    left: 0;
+	    width: 100%;
+	    height: 100%;
+	    background-color: rgba(0, 0, 0, 0.3);
+	    z-index: 9999;
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+    }
+    .loader {
+      width: 50px;
+      height: 100px;
+      display: grid;
+      color: #000;
+      background:
+        linear-gradient(currentColor 0 0) top/100% 2px,
+        radial-gradient(farthest-side at  top, #0000 calc(100% - 2px),currentColor calc(100% - 1px) ,#0000) top,
+        linear-gradient(currentColor 0 0) bottom/100% 2px,
+        radial-gradient(farthest-side at  bottom, #0000 calc(100% - 2px),currentColor calc(100% - 1px) ,#0000) bottom;
+      background-size: 100% 1px,100% 50%; 
+      background-repeat: no-repeat;
+      animation: l18 4s infinite linear;
+    }
+    .loader::before,
+    .loader::after {
+      content: "";
+      grid-area: 1/1;
+      background: inherit;
+      border: inherit;
+      animation: inherit;
+    }
+    .loader::after {
+      animation-duration: 2s;
+    }
+    @@keyframes l18 {
+      100% {transform: rotate(1turn)}
+    }
 </style>
 
-
-
-
 <script>
-
-
     $(document).ready(function () {
         var table = $('#table_id').DataTable({
             dom: 'Bfrtip',
@@ -90,9 +123,7 @@
             pageLength: 10, // Default page length
             paging: true, // Enable paging
         });
-
     });
-
 
     // $(document).ready(function () {
     //     $('#btnExport').click(function () {
@@ -120,10 +151,14 @@
     //     });
     // });
 
-
-
+    function showLoader() {
+        $('#loader').show();
+    }
 </script>
 
+<div class="loader-state" id="loader" style="display: none">
+    <div class="loader"></div>
+</div>
 
 <div class="row" style="height:10px"></div>
 <h2 class="page-name">Daily Report</h2>
@@ -238,7 +273,7 @@
         <div class="col-8" style="width:55% ">
         </div>
         <div class="col" style="width:15% ">
-            <button class="search-button" type="submit" value="search" name="submit" asp-action="DailyReport">
+            <button class="search-button" type="submit" value="search" name="submit" onclick="showLoader()" asp-action="DailyReport">
                 Search
             </button>
         </div>
@@ -323,7 +358,7 @@
             </tr>
         </thead>
         <tbody style="width:100%">
-            @foreach (var item in Model.view_DailyReportSummary.Distinct())
+            @foreach (var item in Model.view_DailyReportSummary)
             {
                 <tr>
                     @* @Html.HiddenFor(modelItem => item.TransactionDate) *@

@@ -1425,61 +1425,45 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            
-            var mymodel = new ViewModelAll
-            {
-                view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) ).ToList()
-            };
 
-            if (StartDate == DateTime.MinValue && EndDate == DateTime.MinValue)
-            {
-
-                mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.TransactionDate == DateTime.Today).ToList();
-                
-            }
-           
-          
+            var view_DailyReportSummary = new List<View_DailyReportSummary>();
 
             if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionID) || !string.IsNullOrEmpty(Prefix) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
             {
-
+                view_DailyReportSummary = await db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).ToListAsync();
 
                 if (!string.IsNullOrEmpty(EmployeeID))
                 {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.QRCode == EmployeeID).ToList();
+                    view_DailyReportSummary = view_DailyReportSummary.Where(x => x.QRCode == EmployeeID).ToList();
                     ViewBag.SelectedEmpID = EmployeeID;
                 }
-
                 if (!string.IsNullOrEmpty(LineID))
                 {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.LineID == LineID).ToList();
+                    view_DailyReportSummary = view_DailyReportSummary.Where(x => x.LineID == LineID).ToList();
                     ViewBag.SelectedLineID = LineID;
                 }
-
                 if (!string.IsNullOrEmpty(SectionID))
                 {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.SectionID == SectionID).ToList();
+                    view_DailyReportSummary = view_DailyReportSummary.Where(x => x.SectionID == SectionID).ToList();
                     ViewBag.SelectedSectionID = SectionID;
                 }
                 if (!string.IsNullOrEmpty(Prefix))
                 {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.Prefix == Prefix).ToList();
+                    view_DailyReportSummary = view_DailyReportSummary.Where(x => x.Prefix == Prefix).ToList();
                     ViewBag.SelectedPrefix = Prefix;
                 }
-
                 if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
                 {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
+                    view_DailyReportSummary = view_DailyReportSummary
                        .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
                        .ToList();
 
                     ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd"); ;
-
+                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
                 }
                 else if (StartDate != DateTime.MinValue)
                 {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
+                    view_DailyReportSummary = view_DailyReportSummary
                          .Where(x => x.TransactionDate >= StartDate)
                          .ToList();
 
@@ -1487,117 +1471,36 @@ namespace Plims.Controllers
                 }
                 else if (EndDate != DateTime.MinValue)
                 {
-                    mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
+                    view_DailyReportSummary = view_DailyReportSummary
                      .Where(x => x.TransactionDate <= EndDate)
                      .ToList();
 
                     ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
                 }
-
-             //   ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-             //   ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-
-                mymodel = new ViewModelAll
-                {
-                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                    tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                    view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    view_DailyReportSummary = mymodel.view_DailyReportSummary.Distinct().ToList()
-                };
-
-                ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
-
-                return View(mymodel);
             }
             else
             {
-
-                //var varLine = from a in db.View_DailyReportSummary
-                //              where a.PlantID.Equals(PlantID)
-                //              group a by new { a.LineID, a.LineName } into g
-                //              select new SelectListItem
-                //              {
-                //                  Value = $"{g.Key.LineID}",
-                //                  Text = $"{g.Key.LineName}"
-                //              };
-                //ViewBag.varLine = new SelectList(varLine, "Value", "Text");
-
-
-                //var varPoint = from a in db.View_DailyReportSummary
-                //               where a.PlantID.Equals(PlantID)
-                //               group a by new { a.SectionID, a.SectionName } into g
-                //               select new SelectListItem
-                //               {
-                //                   Value = $"{g.Key.SectionID}",
-                //                   Text = $"{g.Key.SectionName}"
-                //               };
-                //ViewBag.varPoint = new SelectList(varPoint, "Value", "Text");
-
-
-                //var varEmp = from a in db.View_DailyReportSummary
-                //               where a.PlantID.Equals(PlantID)
-                //               group a by new { a.QRCode, a.EmployeeName  } into g
-                //               select new SelectListItem
-                //               {
-                //                   Value = $"{g.Key.QRCode}",
-                //                   Text = $"{g.Key.EmployeeName}"
-                //               };
-                //ViewBag.varEmp = new SelectList(varEmp, "Value", "Text");
-
-                //var sumGrpEmp = db.View_DailyReportSummary
-                //         .Where(mydata => mydata.TransactionDate == DateTime.Today && mydata.PlantID == PlantID)
-                //         .ToList();
-
-
-                //var mydata= new ViewModelReport
-                //{
-                //    view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                //    view_DailyReportSummary = sumGrpEmp,
-                //    FilterLine = LineID,
-                //    FilterEmp = EmployeeID,
-                //    FilterPoint = SectionID,
-
-                //};
-
-                ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
-                ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
-                //  mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.TransactionDate == DateTime.Today);
-
-                mymodel = new ViewModelAll
-                {
-                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                    tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                    view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    view_DailyReportSummary = mymodel.view_DailyReportSummary.Distinct().ToList()
-                };
-              
-
-
-
-
-                ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23 ).Select(x => x.RoleAction).FirstOrDefault();
-                return View(mymodel);
-
+                string today = DateTime.Today.ToString("yyyy-MM-dd");
+                ViewBag.SelectedStartDate = today;
+                ViewBag.SelectedEndDate = today;
             }
 
+            var mymodel = new ViewModelAll
+            {
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
+                view_DailyReportSummary = view_DailyReportSummary.Distinct()
+            };
+            ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
 
-
-
+            return View(mymodel);
         }
-
-
-
-
 
         //DateTime startDateString;
         //DateTime endDateString;
-
-
-
 
         public ActionResult DailyReportClear()
         {
@@ -2385,9 +2288,16 @@ namespace Plims.Controllers
                                     }
                                     else
                                     {
-                                         sectionvalalert = new
+                                        // sectionvalalert = new
+                                        //{
+                                        //    message = "check PLPS ",
+                                        //    status = false
+                                        //};
+                                        //return Json(sectionvalalert);
+
+                                        sectionvalalert = new
                                         {
-                                            message = "check PLPS ",
+                                            message = "Please check Line and Section of EMP ID : " + item.EmployeeID,
                                             status = false
                                         };
                                         return Json(sectionvalalert);
