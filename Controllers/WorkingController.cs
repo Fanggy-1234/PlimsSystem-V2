@@ -1493,11 +1493,12 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                view_DailyReportSummary = view_DailyReportSummary
+                view_DailyReportSummary = view_DailyReportSummary.Distinct()
             };
+
             ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
 
-            HttpContext.Session.SetString("view_DailyReportSummary", JsonConvert.SerializeObject(mymodel.view_DailyReportSummary));
+            HttpContext.Session.SetString("DailyReport", JsonConvert.SerializeObject(mymodel));
 
             return View(mymodel);
         }
@@ -1515,25 +1516,25 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var mymodel = new ViewModelAll
+            var mymodel = new ViewModelAll();
+            var sessionDailyReport = HttpContext.Session.GetString("DailyReport");
+            if (sessionDailyReport != null) mymodel = JsonConvert.DeserializeObject<ViewModelAll>(sessionDailyReport);
+            else
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                view_DailyReportSummary = new List<View_DailyReportSummary>()
-            };
+                mymodel = new ViewModelAll
+                {
+                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
+                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                    tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                    view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList()
+                };
+            }
 
-            ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster
-                                          .Where(x => x.UserEmpID == EmpID && x.PageID == 23)
-                                          .Select(x => x.RoleAction)
-                                          .FirstOrDefault();
+            mymodel.view_DailyReportSummary = new List<View_DailyReportSummary>();
+            ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
             ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
             ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
-
-            var sessionViewDailyReportSummary = HttpContext.Session.GetString("view_DailyReportSummary");
-            if (sessionViewDailyReportSummary != null) HttpContext.Session.Remove("view_DailyReportSummary");
 
             return View("DailyReport", mymodel);
         }
@@ -1551,130 +1552,120 @@ namespace Plims.Controllers
 
             try
             {
-                var view_DailyReportSummary = new List<View_DailyReportSummary>();
-                var sessionViewDailyReportSummary = HttpContext.Session.GetString("view_DailyReportSummary");
-                if (sessionViewDailyReportSummary != null) view_DailyReportSummary = JsonConvert.DeserializeObject<List<View_DailyReportSummary>>(sessionViewDailyReportSummary);
+                var mymodel = new ViewModelAll();
+                var sessionDailyReport = HttpContext.Session.GetString("DailyReport");
+                if (sessionDailyReport != null) mymodel = JsonConvert.DeserializeObject<ViewModelAll>(sessionDailyReport);
 
-                if (view_DailyReportSummary != null && view_DailyReportSummary.Count > 0)
+                if (mymodel != null)
                 {
-                    ExcelPackage Ep = new ExcelPackage();
-                    ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Dailyreport");
-                    Sheet.Cells["A1"].Value = "Plant";
-                    Sheet.Cells["B1"].Value = "Line";
-                    Sheet.Cells["C1"].Value = "Date";
-                    Sheet.Cells["D1"].Value = "Shift";
-                    Sheet.Cells["E1"].Value = "Product";
-                    Sheet.Cells["F1"].Value = "Employee ID";
-                    Sheet.Cells["G1"].Value = "Employee Name";
-                    Sheet.Cells["H1"].Value = "Section";
-                    Sheet.Cells["I1"].Value = "Total Count";
-                    Sheet.Cells["J1"].Value = "Total Peice Real Time Employee";
-                    Sheet.Cells["K1"].Value = "Total Defect Real Time Employee";
-                    Sheet.Cells["L1"].Value = "Total Defect Adjust";
-                    Sheet.Cells["M1"].Value = "Actual FG ";
-                    Sheet.Cells["N1"].Value = "TotalPiece Adjust";
-                    Sheet.Cells["O1"].Value = "Work Hours";
-                    Sheet.Cells["P1"].Value = " % Yield";
-                    Sheet.Cells["Q1"].Value = " Piece Per Hr.";
-                    Sheet.Cells["R1"].Value = " EFF.-M/STD";
-                    Sheet.Cells["S1"].Value = "Grade Eff. Real Time";
-                    Sheet.Cells["T1"].Value = "wage Real Time Per Employee";
-
-                    for (char col = 'A'; col <= 'T'; col++)
+                    if (mymodel.view_DailyReportSummary != null && mymodel.view_DailyReportSummary.Count() > 0)
                     {
-                        Sheet.Cells[$"{col}1"].Style.Font.Bold = true;
+                        ExcelPackage Ep = new ExcelPackage();
+                        ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Dailyreport");
+                        Sheet.Cells["A1"].Value = "Plant";
+                        Sheet.Cells["B1"].Value = "Line";
+                        Sheet.Cells["C1"].Value = "Date";
+                        Sheet.Cells["D1"].Value = "Shift";
+                        Sheet.Cells["E1"].Value = "Product";
+                        Sheet.Cells["F1"].Value = "Employee ID";
+                        Sheet.Cells["G1"].Value = "Employee Name";
+                        Sheet.Cells["H1"].Value = "Section";
+                        Sheet.Cells["I1"].Value = "Total Count";
+                        Sheet.Cells["J1"].Value = "Total Peice Real Time Employee";
+                        Sheet.Cells["K1"].Value = "Total Defect Real Time Employee";
+                        Sheet.Cells["L1"].Value = "Total Defect Adjust";
+                        Sheet.Cells["M1"].Value = "Actual FG ";
+                        Sheet.Cells["N1"].Value = "TotalPiece Adjust";
+                        Sheet.Cells["O1"].Value = "Work Hours";
+                        Sheet.Cells["P1"].Value = " % Yield";
+                        Sheet.Cells["Q1"].Value = " Piece Per Hr.";
+                        Sheet.Cells["R1"].Value = " EFF.-M/STD";
+                        Sheet.Cells["S1"].Value = "Grade Eff. Real Time";
+                        Sheet.Cells["T1"].Value = "wage Real Time Per Employee";
+
+                        for (char col = 'A'; col <= 'T'; col++)
+                        {
+                            Sheet.Cells[$"{col}1"].Style.Font.Bold = true;
+                        }
+
+                        int row = 2;
+                        decimal sumTotalCount = 0;
+                        decimal sumTotalPeice = 0;
+                        decimal sumTotalDefect = 0;
+                        decimal sumTotalDefectAll = 0;
+                        decimal sumTotalActualFG = 0;
+                        decimal sumTotalHr = 0;
+                        decimal sumTotalWage = 0;
+                        decimal sumTotalFGAdjust = 0;
+
+                        foreach (var item in mymodel.view_DailyReportSummary)
+                        {
+                            Sheet.Cells[string.Format("A{0}", row)].Value = item.PlantID;
+                            Sheet.Cells[string.Format("B{0}", row)].Value = item.LineID + " : " + item.LineName;
+                            Sheet.Cells[string.Format("C{0}", row)].Value = "" + item.TransactionDate;
+                            Sheet.Cells[string.Format("D{0}", row)].Value = item.ShiftName;
+                            Sheet.Cells[string.Format("E{0}", row)].Value = item.ProductID + " : " + item.ProductName;
+                            Sheet.Cells[string.Format("F{0}", row)].Value = item.QRCode;
+                            Sheet.Cells[string.Format("G{0}", row)].Value = item.EmployeeName;
+                            Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionID + " : " + item.SectionName;
+                            Sheet.Cells[string.Format("I{0}", row)].Value = item.CountQty;
+                            sumTotalCount = sumTotalCount + item.CountQty;
+
+                            Sheet.Cells[string.Format("J{0}", row)].Value = item.FGQty.ToString("#,###.00");
+                            sumTotalPeice = sumTotalPeice + item.FGQty;
+
+                            Sheet.Cells[string.Format("K{0}", row)].Value = item.DefectQty;
+                            sumTotalDefect = sumTotalDefect + item.DefectQty;
+
+                            Sheet.Cells[string.Format("L{0}", row)].Value = item.TotalDefect;  //Total defect adjust
+                            sumTotalDefectAll = sumTotalDefectAll + item.TotalDefect;
+
+                            Sheet.Cells[string.Format("M{0}", row)].Value = item.ActualFG.ToString("#,###.00");   //Actual FG
+                            sumTotalActualFG = sumTotalActualFG + item.ActualFG;
+
+                            Sheet.Cells[string.Format("N{0}", row)].Value = item.FGAdjust.ToString("#,###.00");   //Total Piece
+                            sumTotalFGAdjust = sumTotalFGAdjust + item.FGAdjust;
+
+                            Sheet.Cells[string.Format("O{0}", row)].Value = item.DiffHours;
+                            sumTotalHr = sumTotalHr + item.DiffHours;
+
+                            Sheet.Cells[string.Format("P{0}", row)].Value = item.YieldDefect;
+                            Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr.ToString("#,###.00");
+                            Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD.ToString("#,###.00");
+                            Sheet.Cells[string.Format("S{0}", row)].Value = item.Grade;
+                            Sheet.Cells[string.Format("T{0}", row)].Value = item.wage;
+                            sumTotalWage = sumTotalWage + item.wage;
+
+                            row++;
+                        }
+
+                        Sheet.Cells[string.Format("H{0}", row)].Value = "Total";
+                        Sheet.Cells[string.Format("I{0}", row)].Value = sumTotalCount.ToString("#,###.00");
+                        Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice.ToString("#,###.00");
+                        Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect.ToString("#,###.00");
+                        Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll.ToString("#,###.00");
+                        Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG.ToString("#,###.00");
+                        Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust.ToString("#,###.00");
+
+                        Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr.ToString("#,###.00"); ;//DiffHours
+                        Sheet.Cells[string.Format("P{0}", row)].Value = (sumTotalPeice - sumTotalDefect) / sumTotalPeice * 100; //YieldDefect
+                        Sheet.Cells[string.Format("Q{0}", row)].Value = (sumTotalPeice / sumTotalHr).ToString("#,###.00"); // PiecePerHr
+                        Sheet.Cells[string.Format("T{0}", row)].Value = sumTotalWage;//WAGE
+
+                        for (char col = 'H'; col <= 'T'; col++)
+                        {
+                            Sheet.Cells[$"{col}{row}"].Style.Font.Bold = true;
+                        }
+
+                        Sheet.Cells["A:AZ"].AutoFitColumns();
+                        Response.Clear();
+                        Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        Response.Headers.Add("content-disposition", "attachment; filename=DailyReport.xlsx");
+                        Response.Body.WriteAsync(Ep.GetAsByteArray());
                     }
 
-                    int row = 2;
-                    decimal sumTotalCount = 0;
-                    decimal sumTotalPeice = 0;
-                    decimal sumTotalDefect = 0;
-                    decimal sumTotalDefectAll = 0;
-                    decimal sumTotalActualFG = 0;
-                    decimal sumTotalHr = 0;
-                    decimal sumTotalWage = 0;
-                    decimal sumTotalFGAdjust = 0;
-
-                    foreach (var item in view_DailyReportSummary)
-                    {
-                        Sheet.Cells[string.Format("A{0}", row)].Value = item.PlantID;
-                        Sheet.Cells[string.Format("B{0}", row)].Value = item.LineID + " : " + item.LineName;
-                        Sheet.Cells[string.Format("C{0}", row)].Value = "" + item.TransactionDate;
-                        Sheet.Cells[string.Format("D{0}", row)].Value = item.ShiftName;
-                        Sheet.Cells[string.Format("E{0}", row)].Value = item.ProductID + " : " + item.ProductName;
-                        Sheet.Cells[string.Format("F{0}", row)].Value = item.QRCode;
-                        Sheet.Cells[string.Format("G{0}", row)].Value = item.EmployeeName;
-                        Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionID + " : " + item.SectionName;
-                        Sheet.Cells[string.Format("I{0}", row)].Value = item.CountQty;
-                        sumTotalCount = sumTotalCount + item.CountQty;
-
-                        Sheet.Cells[string.Format("J{0}", row)].Value = item.FGQty.ToString("#,###.00");
-                        sumTotalPeice = sumTotalPeice + item.FGQty;
-
-                        Sheet.Cells[string.Format("K{0}", row)].Value = item.DefectQty;
-                        sumTotalDefect = sumTotalDefect + item.DefectQty;
-
-                        Sheet.Cells[string.Format("L{0}", row)].Value = item.TotalDefect;  //Total defect adjust
-                        sumTotalDefectAll = sumTotalDefectAll + item.TotalDefect;
-
-                        Sheet.Cells[string.Format("M{0}", row)].Value = item.ActualFG.ToString("#,###.00");   //Actual FG
-                        sumTotalActualFG = sumTotalActualFG + item.ActualFG;
-
-                        Sheet.Cells[string.Format("N{0}", row)].Value = item.FGAdjust.ToString("#,###.00");   //Total Piece
-                        sumTotalFGAdjust = sumTotalFGAdjust + item.FGAdjust;
-
-                        Sheet.Cells[string.Format("O{0}", row)].Value = item.DiffHours;
-                        sumTotalHr = sumTotalHr + item.DiffHours;
-
-                        Sheet.Cells[string.Format("P{0}", row)].Value = item.YieldDefect;
-                        Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr.ToString("#,###.00");
-                        Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD.ToString("#,###.00");
-                        Sheet.Cells[string.Format("S{0}", row)].Value = item.Grade;
-                        Sheet.Cells[string.Format("T{0}", row)].Value = item.wage;
-                        sumTotalWage = sumTotalWage + item.wage;
-
-                        row++;
-                    }
-
-                    Sheet.Cells[string.Format("H{0}", row)].Value = "Total";
-                    Sheet.Cells[string.Format("I{0}", row)].Value = sumTotalCount.ToString("#,###.00");
-                    Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice.ToString("#,###.00");
-                    Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect.ToString("#,###.00");
-                    Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll.ToString("#,###.00");
-                    Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG.ToString("#,###.00");
-                    Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust.ToString("#,###.00");
-
-                    Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr.ToString("#,###.00"); ;//DiffHours
-                    Sheet.Cells[string.Format("P{0}", row)].Value = (sumTotalPeice - sumTotalDefect) / sumTotalPeice * 100; //YieldDefect
-                    Sheet.Cells[string.Format("Q{0}", row)].Value = (sumTotalPeice / sumTotalHr).ToString("#,###.00"); // PiecePerHr
-                    Sheet.Cells[string.Format("T{0}", row)].Value = sumTotalWage;//WAGE
-
-                    for (char col = 'H'; col <= 'T'; col++)
-                    {
-                        Sheet.Cells[$"{col}{row}"].Style.Font.Bold = true;
-                    }
-
-                    Sheet.Cells["A:AZ"].AutoFitColumns();
-                    Response.Clear();
-                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                    Response.Headers.Add("content-disposition", "attachment; filename=DailyReport.xlsx");
-                    Response.Body.WriteAsync(Ep.GetAsByteArray());
+                    ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
                 }
-
-                var mymodel = new ViewModelAll
-                {
-                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                    tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                    tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                    tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                    view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                    view_DailyReportSummary = view_DailyReportSummary
-                };
-
-                ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster
-                                          .Where(x => x.UserEmpID == EmpID && x.PageID == 23)
-                                          .Select(x => x.RoleAction)
-                                          .FirstOrDefault();
 
                 if (!string.IsNullOrEmpty(EmployeeID)) ViewBag.SelectedEmpID = EmployeeID;
                 if (!string.IsNullOrEmpty(LineID)) ViewBag.SelectedLineID = LineID;
