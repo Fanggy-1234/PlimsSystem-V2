@@ -7504,6 +7504,12 @@ namespace Plims.Controllers
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
+            if (string.IsNullOrWhiteSpace(EmpID))
+            {
+                TempData["AlertMessage"] = "Session Time out please login!";
+                ViewBag.Error = "Session Time out please login!";
+                return Json("login");
+            }
             // Create a DataTable
             DataTable dataTable = new DataTable("SubEmployeeGroup");
             // Add headers to the DataTable
@@ -7665,6 +7671,14 @@ namespace Plims.Controllers
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            if (string.IsNullOrWhiteSpace(EmpID))
+            {
+                TempData["AlertMessage"] = "Session Time out please login!";
+                ViewBag.Error = "Session Time out please login!";
+                return Json("login");
+            }
+
             var mymodel = new ViewModelAll
             {
                 tbService = db.TbService.ToList(),

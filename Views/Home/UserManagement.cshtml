@@ -7,8 +7,6 @@
 
 }
 
-
-
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
 <link href="~/css/datatable2.2.0.css" rel="stylesheet" />
@@ -60,10 +58,9 @@
 </style>
 
 <script>
-
     $(document).ready(function () {
         $('#CreateModal').on('shown.bs.modal', function () {
-            $('#RoleNamecreate').select2({
+            $('#RoleNameCreate').select2({
                 dropdownParent: $('#CreateModal')
             });
         });
@@ -83,15 +80,10 @@
             pageLength: 20, // Default page length
             paging: true, // Enable paging
         });
-
     });
 
 </script>
 <script type="text/javascript" charset="utf8">
-
-
-
-
     //Edit to modal
     function EditFn(id) {
         $.ajax({
@@ -101,35 +93,29 @@
             dataType: 'json',
             success: function (response) {
                 if (response == null || response == undefined) {
-
                     alert("This data can't read1!")
                 }
                 else if (response.length == 0) {
-
                     alert("This data can't id!" + id)
                 }
                 else {
-                    console.log('AJAX request successful:', response);
+                    // console.log('AJAX request successful:', response);
                     $('#ModalUserEmpID').val(response.userEmpID);
                     $('#ModalUserName').val(response.userName);
                     $('#ModalLastName').val(response.userLastName);
-                    $('#ModalRoleName').val(response.roleName).trigger('change');
+                    // $('#ModalRoleName').val(response.roleName).trigger('change');
+                    $('#ModalRoleName').val(response.roleID).trigger('change');
                     $('#ModalUserEmail').val(response.userEmail);
                     $('#ModalPassword').val(response.userPassword);
                     $('#ModalStatus').prop('checked', response.status == 1)
                     $('#EditModal').modal('show');
-
-
                 }
             },
             error: function (response) {
                 alert(response.responseText);
             }
-
         });
     }
-
-
 
     //Function Inactive
     function InactiveFn(id) {
@@ -151,8 +137,6 @@
         });
     }
 
-
-
     //Function Inactive
     function ActiveFn(id) {
         $.ajax({
@@ -172,6 +156,20 @@
         });
     }
 
+    function CheckUserCreate() {
+        if (!$("#UserNameCreate").val() || !$("#LastNameCreate").val() || !$("#RoleNameCreate").val() || !$("#UserEmailCreate").val() || !$("#UserPasswordCreate").val()) {
+            alert("Please fill out all fields.");
+            return false;
+        }
+        return true
+    }
+    function CheckUserUpdate() {
+        if (!$("#ModalUserName").val() || !$("#ModalLastName").val() || !$("#ModalRoleName").val() || !$("#ModalUserEmail").val() || !$("#ModalUserPassword").val()) {
+            alert("Please fill out all fields.");
+            return false;
+        }
+        return true
+    }
 </script>
 @* <script>
     $(document).ready(function () {
@@ -471,21 +469,17 @@
                     </div>
                     <div class="mb-3">
                         <label for="RoleName" class="col-form-label">Role:</label>
-                        <select class="selectfillter form-control" style="width:100%" name="RoleID" id="RoleNamecreate">
+                        <select class="selectfillter form-control" style="width:100%" name="RoleID" id="RoleNameCreate">
                             <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var item in Model.tbRole.Where(x => x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
                             {
                                 var dataitem = item.First(); // Take the first item in the group
-                                <option value="@dataitem.RoleName" selected="@(dataitem.RoleName == ViewBag.SelectedRoleName ? "selected" : null)">
+                                <option value="@dataitem.RoleID">
                                     @Html.DisplayFor(modelItem => dataitem.RoleName)
                                 </option>
-
                             }
                         </select>
-
-
                     </div>
-
                     <div class="mb-3">
                         <label for="UserEmail" class="col-form-label">Email:</label>
                         <input type="text" class="form-control" name="UserEmail" id="UserEmailCreate">
@@ -499,22 +493,17 @@
                         <label class="form-check-label" for="flexSwitchCheckChecked">Status</label> *@
                         <input class="form-check-input" rel="active" type="checkbox" id="StatusCreate" name="Status" value="1" checked>
                         <label class="form-check-label" for="flexSwitchCheckChecked">Status</label>
-
                     </div>
-
                 </div>
-
                 <div class="modal-footer">
-
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="Submit" class="btn btn-primary" id="save">Submit</button>
+                    <button type="Submit" class="btn btn-primary" id="save" onclick="return CheckUserCreate()">Submit</button>
                 </div>
 
             </div>
         </form>
     </div>
 </div>
-
 
 @*Modal Edit*@
 <div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -549,22 +538,16 @@
                         }
                         </select> *@
 
-
                         <select class="selectfillter form-control" style="width:100%" name="UserPermission" id="ModalRoleName">
                             <option value="" default selected disabled>Select Value ...</option>
                             @foreach (var item in Model.tbRole.Where(x => x.RoleStatus.Equals(1)).GroupBy(x => x.RoleName))
                             {
                                 var dataitem = item.First(); // Take the first item in the group
-                                <option value="@dataitem.RoleID" selected=@(dataitem.RoleName == ViewBag.SelectedRoleName ? "selected" : null)>
+                                <option value="@dataitem.RoleID">
                                     @Html.DisplayFor(modelItem => dataitem.RoleName)
                                 </option>
-
                             }
-
-
                         </select>
-
-
                     </div>
 
                     <div class="mb-3">
@@ -583,14 +566,11 @@
                     </div>
 
                 </div>
-
                 <div class="modal-footer">
-
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     @* <button type="button" class="btn btn-primary" id="save">Reset Password</button> *@
-                    <button type="Submit" class="btn btn-primary" id="save">Submit</button>
+                    <button type="Submit" class="btn btn-primary" id="save" onclick="return CheckUserUpdate()">Submit</button>
                 </div>
-
             </div>
         </form>
     </div>

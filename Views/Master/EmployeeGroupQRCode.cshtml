@@ -421,7 +421,7 @@
                                 @{
             // int value = @Model.view_EmployeeGroupList.Count() + 1;
             // string formattedValue = value.ToString("00000");
-                                    <input type="text" class="form-control" style="background-color:gainsboro" name="GroupID" id="GroupIDCreate" readonly>
+                                                <input type="text" class="form-control" style="background-color:gainsboro" name="GroupID" id="GroupIDCreate" readonly>
                                 }
 
                             </div>
@@ -892,8 +892,13 @@
                 contentType: 'application/json',
                 data: jsonData,
                 success: function (response) {
-                    // Handle success response
-                    location.reload();
+                    if (response == 'login') {
+                        location.href = '@Url.Action("Logout", "Home")'; // Redirect to the specified URL
+                    }else{
+                        // Handle success response
+                        location.reload();
+                    }
+               
                 },
                 error: function (xhr, status, error) {
                     // Handle error response
@@ -1083,13 +1088,18 @@
                 contentType: 'application/json',
                 data: jsonData,
                 success: function (response) {
-                    // alert("Successful");
-                   
+                    if (response == 'login') {
+                        location.href = '@Url.Action("Logout", "Home")'; // Redirect to the specified URL
+                    } else {
+                                            // alert("Successful");
+                    //alert(response);
                     //  console.log('test test test');
                     $('#EditModal .modal-content').html(response); // Replace EditModal with the correct ID of your modal
                     // Optionally, you can close the modal after updating its content
                     $('#EditModal').modal('hide');
                     location.reload();
+                    }
+
 
                 },
                 error: function (xhr, status, error) {

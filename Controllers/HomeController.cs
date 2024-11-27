@@ -299,9 +299,8 @@ namespace Plims.Controllers
 
         }
 
-
         [HttpPost]
-        public ActionResult UserUpdate(TbUser obj )
+        public ActionResult UserUpdate(TbUser obj)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -341,16 +340,14 @@ namespace Plims.Controllers
             {
                 Userdb.UserEmail = obj.UserEmail;
             }
-                if (obj.Status == 0)
-                {
-                    Userdb.Status = 0;
-                }
-                else
-                {
-                    Userdb.Status = 1;
-                }
-
-
+            if (obj.Status == 0)
+            {
+                Userdb.Status = 0;
+            }
+            else
+            {
+                Userdb.Status = 1;
+            }
 
             Userdb.Lineconcern = "00001";
             Userdb.UpdateBy = EmpID;
@@ -358,8 +355,6 @@ namespace Plims.Controllers
             db.SaveChanges();
             return RedirectToAction("UserManagement");
         }
-
-
 
         [HttpPost]
         public ActionResult PasswordEdit(TbUser obj)
@@ -440,7 +435,6 @@ namespace Plims.Controllers
                     UpdateBy = EmpID,//User.Identity.Name
                 });
                 db.SaveChanges();
-
             }
             else
             {
