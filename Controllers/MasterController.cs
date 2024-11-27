@@ -7121,6 +7121,13 @@ namespace Plims.Controllers
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            // Check if user is logged in
+            if (string.IsNullOrEmpty(EmpID))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),

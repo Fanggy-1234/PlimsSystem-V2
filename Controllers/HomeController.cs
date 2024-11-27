@@ -177,15 +177,19 @@ namespace Plims.Controllers
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
 
+            // Check if user is logged in
+            if (string.IsNullOrEmpty(EmpID))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             var Mymodel = new ViewModelAll
             {
                 tbRole = db.TbRole.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 tbUser = db.TbUser.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 view_User = db.View_User.Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                tbPlants = db.TbPlant.Where(p => p.PlantID.Equals(PlantID)).ToList(),
-
-
+                tbPlants = db.TbPlant.Where(p => p.PlantID.Equals(PlantID)).ToList()
             };
 
             ViewBag.VBRoleUserManagement = Mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(2)).Select(x => x.RoleAction).FirstOrDefault();
