@@ -1431,53 +1431,22 @@ namespace Plims.Controllers
 
             if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionID) || !string.IsNullOrEmpty(Prefix) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
             {
-                view_DailyReportSummary = await db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).Distinct().ToListAsync();
+                view_DailyReportSummary = await db.View_DailyReportSummary.Where(
+                    x => x.PlantID.Equals(PlantID) 
+                    && (StartDate == DateTime.MinValue || x.TransactionDate >= StartDate)
+                    && (EndDate == DateTime.MinValue || x.TransactionDate <= EndDate)
+                    && (string.IsNullOrEmpty(EmployeeID) || x.QRCode.Equals(EmployeeID))
+                    && (string.IsNullOrEmpty(LineID) || x.LineID.Equals(LineID))
+                    && (string.IsNullOrEmpty(SectionID) || x.SectionID.Equals(SectionID))
+                    && (string.IsNullOrEmpty(Prefix) || x.Prefix.Equals(Prefix))
+                    ).Distinct().ToListAsync();
 
-                if (!string.IsNullOrEmpty(EmployeeID))
-                {
-                    view_DailyReportSummary = view_DailyReportSummary.Where(x => x.QRCode == EmployeeID).ToList();
-                    ViewBag.SelectedEmpID = EmployeeID;
-                }
-                if (!string.IsNullOrEmpty(LineID))
-                {
-                    view_DailyReportSummary = view_DailyReportSummary.Where(x => x.LineID == LineID).ToList();
-                    ViewBag.SelectedLineID = LineID;
-                }
-                if (!string.IsNullOrEmpty(SectionID))
-                {
-                    view_DailyReportSummary = view_DailyReportSummary.Where(x => x.SectionID == SectionID).ToList();
-                    ViewBag.SelectedSectionID = SectionID;
-                }
-                if (!string.IsNullOrEmpty(Prefix))
-                {
-                    view_DailyReportSummary = view_DailyReportSummary.Where(x => x.Prefix == Prefix).ToList();
-                    ViewBag.SelectedPrefix = Prefix;
-                }
-                if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
-                {
-                    view_DailyReportSummary = view_DailyReportSummary
-                       .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
-                       .ToList();
-
-                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-                }
-                else if (StartDate != DateTime.MinValue)
-                {
-                    view_DailyReportSummary = view_DailyReportSummary
-                         .Where(x => x.TransactionDate >= StartDate)
-                         .ToList();
-
-                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                }
-                else if (EndDate != DateTime.MinValue)
-                {
-                    view_DailyReportSummary = view_DailyReportSummary
-                     .Where(x => x.TransactionDate <= EndDate)
-                     .ToList();
-
-                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-                }
+                if (!string.IsNullOrEmpty(EmployeeID)) ViewBag.SelectedEmpID = EmployeeID;
+                if (!string.IsNullOrEmpty(LineID)) ViewBag.SelectedLineID = LineID;
+                if (!string.IsNullOrEmpty(SectionID)) ViewBag.SelectedSectionID = SectionID;
+                if (!string.IsNullOrEmpty(Prefix)) ViewBag.SelectedPrefix = Prefix;
+                if (StartDate != DateTime.MinValue) ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+                if (EndDate != DateTime.MinValue) ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
             }
             else
             {
@@ -1493,7 +1462,7 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                view_DailyReportSummary = view_DailyReportSummary.Distinct()
+                view_DailyReportSummary = view_DailyReportSummary
             };
 
             ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
