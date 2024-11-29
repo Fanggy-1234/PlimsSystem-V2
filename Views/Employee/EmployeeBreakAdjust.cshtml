@@ -56,20 +56,24 @@
 <script>
 
     function RevertFn(id) {
-        console.log(id);
+        showLoader();
+
         $.ajax({
             url: '/Employee/EmployeeBreakAdjustRevert/' + id,
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function (response) {
+                hideLoader();
+
                 alert("Revert Finish");
                 location.reload();
             },
             error: function (response) {
+                hideLoader();
+
                 alert("Revert something went wrong.");
             }
-
         });
     }
 
@@ -190,15 +194,15 @@
     <div class="row" style="height:40px">
         <div class="col-6"></div>
         <div class="col-2">
-                    <button class="clear-button" type="submit" asp-action="EmployeeBreakAdjustClear">
-                        Clear
-                    </button>
+            <button class="clear-button" type="submit" onclick="showLoader()" asp-action="EmployeeBreakAdjustClear">
+                Clear
+            </button>
         </div>
 
        <div class="col-2">
-                    <button class="search-button" type="submit" asp-action="EmployeeBreakAdjust">
-                        Search
-                    </button>
+            <button class="search-button" type="submit" onclick="showLoader()" asp-action="EmployeeBreakAdjust">
+                Search
+            </button>
         </div>   
         <div class="col-2">
             @if (ViewBag.VBRoleEmployeeBreakAdjust == "Full")
@@ -407,9 +411,10 @@
         }
 
         if (confirm('Are you sure?')) {
-            return true
+            showLoader();
+            return true;
         }
-        return false
+        return false;
     }
 
 
