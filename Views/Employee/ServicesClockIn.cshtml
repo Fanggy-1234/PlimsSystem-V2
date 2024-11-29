@@ -143,8 +143,8 @@
 
     function checkTime() {
         if (!$('#ClockIn').val() || !$('#TransactionDate').val()) {
-            alert('Please fill Time/Date Clockin')
-            return false
+            alert('Please fill Time/Date Clockin');
+            return false;
         }
         if (!$('#LineID').val()) {
             alert('Please select Line');
@@ -156,8 +156,8 @@
             return false;
         }
         if ($("#tablecreate_id tbody tr").length <= 0) {
-            alert('Please add Section/Service')
-            return false
+            alert('Please add Section/Service');
+            return false;
         }
         // if (confirm('Are you sure?')) {
         //     return true
@@ -170,13 +170,16 @@
             var LineID = $('#LineID').val();
             var SectionSelect = $('#SectionSelect').val();
 
-            console.log('1');
+            // console.log('1');
             $("input[name='EmployeeIDchk']:checked").each(function () {
                 EmployeeIDchk.push(this.value);
             });
 
             var tableData = getTableData();
-            console.log('2');
+            // console.log('2');
+
+            showLoader();
+
             $.ajax({
                 type: "POST",
                 url: "/Employee/ServicesClockInCheck",
@@ -189,14 +192,20 @@
                     TransactionDate: TransactionDate
                 },
                 success: function (data) {
+                    hideLoader();
+
                     if (data.success === false) {
                         alert(data.message);
                     } else {
-                         
-                        window.location.href = "/Employee/ServicesClockInSave?EmployeeIDchk=" + EmployeeIDchk.join(',') + "&tableData=" + tableData + "&LineID=" + LineID + "&SectionSelect=" + SectionSelect + "&ClockIn=" + ClockIn + " &TransactionDateFillter=" + TransactionDate ;
+                        // == ย้าย ServicesClockInSave เข้าไปใน ServicesClockInCheck
+                        // window.location.href = "/Employee/ServicesClockInSave?EmployeeIDchk=" + EmployeeIDchk.join(',') + "&tableData=" + tableData + "&LineID=" + LineID + "&SectionSelect=" + SectionSelect + "&ClockIn=" + ClockIn + " &TransactionDateFillter=" + TransactionDate;
+
+                        location.reload();
                     }
                 },
                 error: function (error) {
+                    hideLoader();
+
                     console.log("Error processing request: " + error);
                 }
             });
@@ -289,7 +298,6 @@
     //Edit to modal
 
     function EditFn(ID, transactionNo) {
-
         var sectionID = $('#btnEdit[data-id="' + ID + '"]').data('section-id');
         var serviceID = $('#btnEdit[data-id="' + ID + '"]').data('service-id');
 
@@ -299,6 +307,9 @@
         // console.log("Service ID: " + serviceID);
 
         // var TranDate = $("#TransactionDateFillter").val();
+
+        showLoader();
+
         $.ajax({
             url: '/Employee/SericesClockInEdit/' + ID,
             type: 'GET',
@@ -306,19 +317,16 @@
             data: { ID: ID, ServicesID: serviceID, SectionID: sectionID, TransactionNo: transactionNo },
             dataType: 'json',
             success: function (response) {
+                hideLoader();
+
                 if (response == null || response == undefined) {
-
                     alert("This data can't read!")
-                }
-                else if (response.length == 0) {
-
+                } else if (response.length == 0) {
                     alert("This data can't id!" + id)
-                }
-                else {
+                } else {
                     // console.log('AJAX request successful:', response);
                     // var transactionDate = new Date(response.transactionDate);
                     // var formattedDate = transactionDate.toLocaleDateString();  // Adjust the format as needed
-
 
                     var transactionDate = new Date(response.transactionDate);
                     var year = transactionDate.getFullYear();
@@ -326,21 +334,17 @@
                     var day = ('0' + transactionDate.getDate()).slice(-2);
                     var formattedDate = `${year}-${month}-${day}`;
 
-
-
-
-
-                    console.log('AJAX request successful:', transactionDate)
+                    // console.log('AJAX request successful:', transactionDate);
                     $('#ModaltransactionNo').val(response.transactionNo);
                     $('#ModalEmployeeID').val(response.employeeID);
                     $('#ModalClockIn').val(response.clockIn);
                     $('#ModalTransactionDate').val(formattedDate);
                     $('#EditModal').modal('show');
-
-
                 }
             },
             error: function (response) {
+                hideLoader();
+
                 alert(response.responseText);
             }
 
@@ -984,13 +988,13 @@
             <div class="row" style="height:40px ;">
                 <div class="col-6"></div>
                 <div class="col-3">
-                    <button class="clear-button" type="submit" asp-action="ServicesClockInClear">
+                    <button class="clear-button" type="submit" onclick="showLoader()" asp-action="ServicesClockInClear">
                         Clear
                     </button>
                 </div>
 
                 <div class="col-3">
-                    <button class="search-button" type="submit" asp-action="ServicesClockIn">
+                    <button class="search-button" type="submit" onclick="showLoader()" asp-action="ServicesClockIn">
                         Search
                     </button>
                 </div>
@@ -1183,7 +1187,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="Submit" class="btn btn-primary" id="save">Submit</button>
+                    <button type="Submit" class="btn btn-primary" id="save" onclick="showLoader()">Submit</button>
                 </div>
 
             </div>
