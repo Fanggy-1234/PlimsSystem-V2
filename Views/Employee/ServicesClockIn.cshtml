@@ -192,9 +192,9 @@
                     TransactionDate: TransactionDate
                 },
                 success: function (data) {
-                    hideLoader();
-
                     if (data.success === false) {
+                        hideLoader();
+
                         alert(data.message);
                     } else {
                         // == ย้าย ServicesClockInSave เข้าไปใน ServicesClockInCheck
