@@ -1465,6 +1465,8 @@ namespace Plims.Controllers
                 view_DailyReportSummary = view_DailyReportSummary.Distinct()
             };
 
+            db.Dispose();
+
             ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
 
             HttpContext.Session.SetString("DailyReport", JsonConvert.SerializeObject(mymodel));
