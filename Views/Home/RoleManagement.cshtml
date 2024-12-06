@@ -281,12 +281,17 @@
                 type: 'POST',
                 data: { RoleNames: RoleNames}, // Add data if needed
                 success: function (data) {
-                    // Handle the response from the server
+                    if(data.success){
+                        // Handle the response from the server
                     alert("Role created please fill permission page ");
                     // Hide the create button
                     $("#btncreaterole").hide();
                     $("#btncanclerole").hide();
                     //console.log(data);
+                    }else{
+                        alert(data.message);
+                    }
+   
                 },
                 error: function (error) {
                     console.error(error);

@@ -524,16 +524,19 @@ namespace Plims.Controllers
             }
             else
             {
-                // Create Function
-
                 int datacnt = EmployeeIDchk.Count();
                 for (int i = 0; i < datacnt; i++)
                 {
                     string empid = EmployeeIDchk[i];
-                    //// DateTime clockoutvar;
-                    // DateTime clockinvar;
 
                     var empdbcheck = db.TbServicesTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "").ToList();
+
+                    //Alert Clockout Service
+                    if (empdbcheck.Count != 0)
+                    {
+                        return Json(new { success = false, message = "Please Services Clock out Employee ID: " + empid + " Date: " + empdbcheck.First().TransactionDate });
+                    }
+
                     var empcheckduplicate = db.View_EmployeeClocktime.Where(x => x.EmployeeID.Equals(empid) && x.ClockIn == ClockIn && x.ClockIn != x.ClockOut && x.TransactionDate.Equals(TransactionDate)).ToList();
 
                     // Fetch data as much as possible using SQL
@@ -546,19 +549,19 @@ namespace Plims.Controllers
                     var empcheckduplicate2 = data.Where(x => DateTime.Parse(x.ClockIn) <= DateTime.Parse(ClockIn)
                                     && DateTime.Parse(ClockIn) <= DateTime.Parse(x.ClockOut)).ToList();
 
-                    //Alert Clockout Service
-                    if (empdbcheck.Count() != 0)
-                    {
-                        return Json(new { success = false, message = "Please Services Clock out Employee ID :" + empid + " Date :" + empdbcheck.First().TransactionDate });
-                    }
-
                     //Alert Duplicate transaction and Alert Clockin has Range clockin berfore
                     if (empcheckduplicate.Count != 0 && empcheckduplicate2.Count != 0)
                     {
-                        return Json(new { success = false, message = "Please Clock in Duplicate , Employee :" + empid + " Date :" + empcheckduplicate.First().TransactionDate });
+                        return Json(new { success = false, message = "Please Clock in Duplicate, Employee: " + empid + " Date: " + empcheckduplicate.First().TransactionDate });
                     }
 
                     var EmpTrans = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "" && x.Plant.Equals(PlantID) && x.WorkingStatus == "Working").ToList();
+
+                    if (EmpTrans.Count != 0)
+                    {
+                        return Json(new { success = false, message = "Please Employee Clock out Employee ID: " + empid + " Date: " + EmpTrans.First().TransactionDate });
+                    }
+
                     var EmpTransSumtime = db.TbEmployeeTransaction
                                         .Where(x => x.EmployeeID.Equals(empid) && x.TransactionDate.Equals(TransactionDateVar) &&
                                         !string.IsNullOrEmpty(x.ClockOut) && x.Plant.Equals(PlantID))
@@ -576,13 +579,6 @@ namespace Plims.Controllers
                         {
                             return Json(new { success = false, message = "Please Check total time of Employee." });
                         }
-                    }
-
-                    if (EmpTrans.Count() != 0)
-                    {
-                        var EmpTransval = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(empid) && x.ClockOut == "" && x.Plant.Equals(PlantID) && x.WorkingStatus == "Working").Select(x => x.TransactionDate).FirstOrDefault();
-
-                        return Json(new { success = false, message = "Please Employee Clock out Employee ID :" + empid + " Date :" + EmpTransval });
                     }
                 }
 
@@ -629,6 +625,10 @@ namespace Plims.Controllers
                 catch (Exception ex)
                 {
                     return Json(new { success = false, message = ex.Message });
+                }
+                finally
+                {
+                    db.Dispose();
                 }
                 #endregion
             }
@@ -2152,6 +2152,10 @@ namespace Plims.Controllers
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
+            }
+            finally
+            {
+                db.Dispose();
             }
             #endregion
 

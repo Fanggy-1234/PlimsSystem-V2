@@ -629,7 +629,7 @@ namespace Plims.Controllers
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             //Check Duplicate
-            var Roledb = db.View_PagePermission.Where(x => x.RoleName.Equals(RoleNames));
+            var Roledb = db.View_PagePermission.Where(x => x.RoleName.Equals(RoleNames) && x.PlantID == PlantID).ToList();
             //var roledb = db.TbRole.Where(x => x.RoleName == obj.RoleName.Trim()).SingleOrDefault();
             int roleParm = db.TbRole.Count() + 1;
             if (Roledb.Count() == 0)
@@ -667,14 +667,15 @@ namespace Plims.Controllers
 
 
 
-
+                return Json(new { success = true, message = "Operation successful" });
             }
             else
             {
-                TempData["AlertMessage"] = "Role is Duplicate!";
-               // ViewBag.Error = "Role is Duplicate!";
+              //  TempData["AlertMessage"] = "Role is Duplicate!";
+                //ViewBag.Error = "Role is Duplicate!";
+                return Json(new { success = false, message = "Role is Duplicate!" });
             }
-            return Json(new { success = true, message = "Operation successful" });
+            //return Json(new { success = true, message = "Operation successful" });
 }
 
 
