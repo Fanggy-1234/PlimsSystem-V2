@@ -2062,15 +2062,14 @@ namespace Plims.Controllers
 
         }
 
-        public ActionResult WorkingFunctionCreate(string employeeId, string productId, String EmployeeRef)
+        public ActionResult WorkingFunctionCreate(string employeeId, string productId)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-            if (EmpID == null)
-            {
-                return RedirectToAction("Login", "Home");
-            }
+            var alert = new { message = "Login", status = false };
+
+            if (EmpID == null) return Json(alert);
 
             //var mymodel = new ViewModelAll
             //{
@@ -2083,15 +2082,12 @@ namespace Plims.Controllers
             //};
 
             // check QRcode in system
-            var employeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.EmployeeID.Equals(employeeId));
-            var employeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID) && x.GroupID.Equals(employeeId));
-            if (employeeMaster == null || employeeGroupQR == null)
+            var tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.EmployeeID.Equals(employeeId));
+            var tbEmployeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID) && x.GroupID.Equals(employeeId));
+            if (tbEmployeeMaster == null || tbEmployeeGroupQR == null)
             {
-                return Json(new
-                {
-                    message = "QR Code is not available in the system!",
-                    status = false
-                });
+                alert = new { message = "QR Code is not available in the system!", status = false };
+                return Json(alert);
             }
 
             if (db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID) && x.UserEmpID.Equals(EmpID) && x.PageID.Equals(22)).Select(x => x.RoleAction).SingleOrDefault() == "Full")
@@ -2107,15 +2103,8 @@ namespace Plims.Controllers
                     if (employeeId.Length > 5) // (db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)).Count() != 0) // case Employee
                     {
                         //Check EmployeeClockin  change adjust clockout                   
-                        var objEmpcount = db.View_ClockTime.Where(x => x.PlantID.Equals(PlantID) && x.EmployeeID.Equals(employeeId) && x.Type != "Service" && x.WorkingStatus == "Working" && x.TransactionDate != DateTime.MinValue && (x.ClockIn != "" || x.ClockIn != null) && x.ClockOut == "").ToList();
-                        if (objEmpcount.Where(x => x.WorkingStatus != "Leave").ToList().Count > 1)
-                        {
-                            return Json(new
-                            {
-                                message = "Please check clock-out.",
-                                status = false
-                            });
-                        }
+                        var objEmpcount = db.View_ClockTime.Where(x => x.PlantID.Equals(PlantID) && x.EmployeeID.Equals(employeeId) && x.Type != "Service" && x.WorkingStatus == "Working" && x.TransactionDate != DateTime.MinValue && !string.IsNullOrWhiteSpace(x.ClockIn) && x.ClockOut == string.Empty).ToList();
+                        if (objEmpcount.Count > 1) alert = new { message = "Please check clock-out.", status = false };
                         else
                         {
                             var objEmp = objEmpcount.FirstOrDefault();
@@ -2129,14 +2118,7 @@ namespace Plims.Controllers
                                 .FirstOrDefault();
 
                                 // check formular for insert or return to enter Employee
-                                if (objPLPS == null)
-                                {
-                                    return Json(new
-                                    {
-                                        message = "Please check PLPS.",
-                                        status = false
-                                    });
-                                }
+                                if (objPLPS == null) alert = new { message = "Please check PLPS.", status = false };
                                 else
                                 {
                                     var LastTransactionTime = db.TbProductionTransaction
@@ -2192,42 +2174,22 @@ namespace Plims.Controllers
                                             UpdateDate = DateTime.Now,
                                             UpdateBy = EmpID
                                         });
+
                                         db.SaveChanges();
 
-                                        return Json(new
+                                        alert = new
                                         {
                                             message = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString() + "  =>  " + LastTransactionCount,
                                             status = true
-                                        });
+                                        };
                                     }
-                                    else
-                                    {
-                                        return Json(new
-                                        {
-                                            message = "check time : " + roundedDifftime + " Sec.",
-                                            status = false
-                                        });
-                                    }
+                                    else alert = new { message = "check time : " + roundedDifftime + " Sec.", status = false };
                                 }
                             }
                             else
                             {
-                                if (employeeMaster.ToList().Count == 0)
-                                {
-                                    return Json(new
-                                    {
-                                        message = "Employee Mistake!",
-                                        status = false
-                                    });
-                                }
-                                else
-                                {
-                                    return Json(new
-                                    {
-                                        message = "Please check Clock-in.",
-                                        status = false
-                                    });
-                                }
+                                if (tbEmployeeMaster.ToList().Count == 0) alert = new { message = "Employee Mistake!", status = false };
+                                else alert = new { message = "Please check Clock-in.", status = false };
                             }
                         }
                         //End case employee
@@ -2235,15 +2197,13 @@ namespace Plims.Controllers
                     else  // case group
                     {
                         //select group
-                        var objgroup = employeeGroupQR.Where(x => x.Status.Equals(1)).ToList();
+                        var objgroup = tbEmployeeGroupQR.Where(x => x.Status.Equals(1)).ToList();
                         foreach (var item in objgroup)
                         {
                             //Select EmployeeTransaction
                             var objEmpcount = db.View_ClockTime
-                            .Where(x => x.EmployeeID.Equals(item.EmployeeID) && x.Type != "Service" && x.WorkingStatus != "Leave" &&
-                                         (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) &&
-                                         x.ClockOut == "" &&
-                                        x.PlantID.Equals(PlantID))
+                            .Where(x => x.PlantID.Equals(PlantID) && x.EmployeeID.Equals(item.EmployeeID) && x.Type != "Service" && x.WorkingStatus != "Leave" &&
+                                         (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) && x.ClockOut == string.Empty)
                             .ToList();
 
                             int LastTransactionCount = db.TbProductionTransaction
@@ -2251,23 +2211,14 @@ namespace Plims.Controllers
                                 .Count() + 1;
 
                             double roundedDifftime = 0.0;
-                            var sectionvalalert = new
-                            {
-                                message = "",
-                                status = false
-                            };
 
                             if (objEmpcount.Count == 0)
                             {
-                                sectionvalalert = new
-                                {
-                                    message = "Please check Clock-in.",
-                                    status = false
-                                };
-                                return Json(sectionvalalert);
+                                alert = new { message = "Please check Clock-in.", status = false };
+                                return Json(alert);
                             }
 
-                            var objEmp = db.View_EmployeeGroupWorking.Where(x => x.GroupID.Equals(item.GroupID) && x.PlantID.Equals(PlantID)).ToList();
+                            var objEmp = db.View_EmployeeGroupWorking.Where(x => x.PlantID.Equals(PlantID) && x.GroupID.Equals(item.GroupID)).ToList();
                             foreach (var items in objEmp)
                             {
                                 if (objEmp != null)
@@ -2324,7 +2275,7 @@ namespace Plims.Controllers
                                                 UpdateBy = EmpID
                                             });
 
-                                            sectionvalalert = new
+                                            alert = new
                                             {
                                                 message = items.Section.ToString() + " : " + objPLPS.SectionName.ToString() + "  =>  " + LastTransactionCount,
                                                 status = true
@@ -2332,12 +2283,8 @@ namespace Plims.Controllers
                                         }
                                         else
                                         {
-                                            sectionvalalert = new
-                                            {
-                                                message = "check time :" + roundedDifftime + " sec.",
-                                                status = false
-                                            };
-                                            return Json(sectionvalalert);
+                                            alert = new { message = "check time :" + roundedDifftime + " sec.", status = false };
+                                            return Json(alert);
                                         }
                                     }
                                     else
@@ -2349,28 +2296,22 @@ namespace Plims.Controllers
                                         //};
                                         //return Json(sectionvalalert);
 
-                                        sectionvalalert = new
-                                        {
-                                            message = "Please check Line and Section of EMP ID : " + item.EmployeeID,
-                                            status = false
-                                        };
-                                        return Json(sectionvalalert);
+                                        alert = new { message = "Please check Line and Section of EMP ID : " + item.EmployeeID, status = false };
+                                        return Json(alert);
                                     }
                                 }
                             }
+
                             db.SaveChanges();
-                            return Json(sectionvalalert);
+
+                            return Json(alert);
                         }
                         //End case group
                     }
                 }
                 catch
                 {
-                    return Json(new
-                    {
-                        message = "Please check Connection loss!",
-                        status = false
-                    });
+                    alert = new { message = "Please check Connection loss!", status = false };
                 }
                 finally
                 {
@@ -2378,11 +2319,7 @@ namespace Plims.Controllers
                 }
             }
 
-            return Json(new
-            {
-                message = "Please check Connection loss!",
-                status = false
-            });
+            return Json(alert);
         }
 
         public ActionResult InsertIntoTbProductionTransaction(string employeeId, string productId, int PackageRef, String EmployeeRef)
