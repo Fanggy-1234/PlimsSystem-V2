@@ -4622,11 +4622,11 @@ namespace Plims.Controllers
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-
             if (EmpID == null)
             {
-                return Json("Login", "Home");
+                return RedirectToAction("Login", "Home");
             }
+
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
@@ -4637,13 +4637,11 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.ToList(),
                 view_PLPS = db.View_PLPS.ToList(),
                 view_ProductSTD = db.View_ProductSTD.OrderByDescending(x => x.Status).ToList()
-
             };
 
             // Check Admin
             if (PlantID != 0)
             {
-
                 //  mymodel.view_Reason = mymodel.view_Reason.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbPlants = mymodel.tbPlants.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbLine = mymodel.tbLine.Where(x => x.PlantID.Equals(PlantID)).ToList();
@@ -4653,32 +4651,25 @@ namespace Plims.Controllers
                 mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.PlantID.Equals(PlantID)).ToList();
             }
 
-
             ViewBag.VBRoleProducSTD = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(13)).Select(x => x.RoleAction).FirstOrDefault();
 
             if (!string.IsNullOrEmpty(obj.PlantName) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.ProductName) || !string.IsNullOrEmpty(obj.SectionName) || inactivestatus != null)
             {
-
-
                 if (!string.IsNullOrEmpty(obj.PlantName))
                 {
                     mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.PlantName == obj.PlantName).ToList();
                     ViewBag.SelectedPlantName = obj.PlantName;
-
-
                 }
                 if (!string.IsNullOrEmpty(obj.LineName))
                 {
                     mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.LineName == obj.LineName).ToList();
                     ViewBag.SelectedLineName = obj.LineName;
                 }
-
                 if (!string.IsNullOrEmpty(obj.ProductName))
                 {
                     mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.ProductName == obj.ProductName).ToList();
                     ViewBag.SelectedProductName = obj.ProductName;
                 }
-
                 if (!string.IsNullOrEmpty(obj.SectionName))
                 {
                     mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.SectionName == obj.SectionName).ToList();
@@ -4695,18 +4686,11 @@ namespace Plims.Controllers
                     ViewBag.InactiveStatus = false;
                 }
                 //  mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.PlantName == obj.PlantName || x.LineName == obj.LineName || x.ProductName == obj.ProductName || x.SectionName == obj.SectionName).ToList();
-
-
-                return View(mymodel);
             }
-            else
-            {
-                ViewBag.InactiveStatus = true;
-                return View(mymodel);
+            else ViewBag.InactiveStatus = true;
 
-            }
+            return View(mymodel);
         }
-
 
         // 3. Function  Create transaction
         [HttpPost]
@@ -4715,32 +4699,27 @@ namespace Plims.Controllers
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-
             if (EmpID == null)
             {
-                return Json("Login", "Home");
+                return RedirectToAction("Login", "Home");
             }
-            //Check Duplicate
 
+            //Check Duplicate
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 tbProductSTD = db.TbProductSTD.ToList(),
                 view_PLPS = db.View_PLPS.ToList(),
                 view_ProductSTD = db.View_ProductSTD.OrderByDescending(x => x.Status).ToList()
-
             };
 
             // Check Admin
             if (PlantID != 0)
             {
-
                 mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbProductSTD = mymodel.tbProductSTD.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.view_PLPS = mymodel.view_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList();
             }
-
-
 
             var PLPSdb = mymodel.view_ProductSTD.Where(p => p.ProductSTDID.Equals(obj.ProductSTDID));
             string MaxValProdSTD = db.TbProductSTD.Select(x => x.ProductSTDID).Max();
@@ -4772,17 +4751,17 @@ namespace Plims.Controllers
                     UpdateDate = DateTime.Now,
                     UpdateBy = EmpID//userdb.UserEmpID
                 });
-                db.SaveChanges();
 
+                db.SaveChanges();
             }
             else
             {
                 TempData["AlertMessage"] = "Standard Duplicate!";
                 ViewBag.Error = "Standard Duplicate!";
             }
+
             return RedirectToAction("ProductSTD");
         }
-
 
         // 4. Function Plant Clear Fillter
         public ActionResult ProductSTDClear()
@@ -4790,11 +4769,11 @@ namespace Plims.Controllers
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-
             if (EmpID == null)
             {
-                return Json("Login", "Home");
+                return RedirectToAction("Login", "Home");
             }
+
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
@@ -4805,25 +4784,22 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.ToList(),
                 view_PLPS = db.View_PLPS.ToList(),
                 view_ProductSTD = db.View_ProductSTD.OrderByDescending(x => x.Status).ToList()
-
             };
 
             // Check Admin
             if (PlantID != 0)
             {
-
                 mymodel.tbPlants = mymodel.tbPlants.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbLine = mymodel.tbLine.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbProduct = mymodel.tbProduct.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbSection = mymodel.tbSection.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.view_PLPS = mymodel.view_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.PlantID.Equals(PlantID)).ToList();
-
-
             }
-            ViewBag.InactiveStatus = true;
-            return RedirectToAction("ProductSTD");
 
+            ViewBag.InactiveStatus = true;
+
+            return RedirectToAction("ProductSTD");
         }
 
         // 5.  Function Plant Edit Transaction : ฟังก์ชั่นนี้ใช่ร่วมกับ Update function
@@ -5010,11 +4986,11 @@ namespace Plims.Controllers
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-
             if (EmpID == null)
             {
-                return Json("Login", "Home");
+                return RedirectToAction("Login", "Home");
             }
+
             var mymodel = new ViewModelAll
             {
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
@@ -5024,13 +5000,11 @@ namespace Plims.Controllers
                 tbProduct = db.TbProduct.ToList(),
                 tbSection = db.TbSection.ToList(),
                 view_ProductSTD = db.View_ProductSTD.OrderByDescending(x => x.Status).ToList()
-
             };
 
             // Check Admin
             if (PlantID != 0)
             {
-
                 // mymodel.view_Reason = mymodel.view_Reason.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbPlants = mymodel.tbPlants.Where(x => x.PlantID.Equals(PlantID)).ToList();
                 mymodel.tbLine = mymodel.tbLine.Where(x => x.PlantID.Equals(PlantID)).ToList();
@@ -5044,27 +5018,21 @@ namespace Plims.Controllers
 
             if (!string.IsNullOrEmpty(obj.PlantName) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.ProductName) || !string.IsNullOrEmpty(obj.SectionName) || inactivestatus != null)
             {
-
-
                 if (!string.IsNullOrEmpty(obj.PlantName))
                 {
                     mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.PlantName == obj.PlantName).ToList();
                     ViewBag.SelectedPlantName = obj.PlantName;
-
-
                 }
                 if (!string.IsNullOrEmpty(obj.LineName))
                 {
                     mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.LineName == obj.LineName).ToList();
                     ViewBag.SelectedLineName = obj.LineName;
                 }
-
                 if (!string.IsNullOrEmpty(obj.ProductName))
                 {
                     mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.ProductName == obj.ProductName).ToList();
                     ViewBag.SelectedProductName = obj.ProductName;
                 }
-
                 if (!string.IsNullOrEmpty(obj.SectionName))
                 {
                     mymodel.view_ProductSTD = mymodel.view_ProductSTD.Where(x => x.SectionName == obj.SectionName).ToList();
@@ -5159,14 +5127,11 @@ namespace Plims.Controllers
                 Response.Headers.Add("content-disposition", "attachment; filename=ProductSTD-Master.xlsx"); // Fix typo ':' should be ';'
                 Response.Body.WriteAsync(Ep.GetAsByteArray());
 
-
                 ViewBag.InactiveStatus = true;
-                return RedirectToAction("ProductSTD", mymodel);
 
+                return RedirectToAction("ProductSTD", mymodel);
             }
         }
-
-
 
         [HttpPost]
         public IActionResult ProductSTDUpload(IFormFile FileUpload)
