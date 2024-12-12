@@ -1,0 +1,1088 @@
+﻿@model Plims.ViewModel.ViewModelAll
+@{
+    ViewBag.Title = "Working Function ";
+}
+
+<style type="text/css">
+
+    /* The container */
+    .container {
+        display: block;
+        position: relative;
+        padding-left: 15px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+        /* Hide the browser's default radio button */
+        .container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+    /* Create a custom radio button */
+    .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 15px;
+        width: 15px;
+        background-color: #eee;
+        border-radius: 50%;
+    }
+
+    /* On mouse-over, add a grey background color */
+    .container:hover input ~ .checkmark {
+        background-color: #ccc;
+    }
+
+    /* When the radio button is checked, add a blue background */
+    .container input:checked ~ .checkmark {
+        background-color: #2196F3;
+    }
+
+    /* Create the indicator (the dot/circle - hidden when not checked) */
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    /* Show the indicator (dot/circle) when checked */
+    .container input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    /* Style the indicator (dot/circle) */
+    .container .checkmark:after {
+        top: 4px;
+        left: 4px;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: white;
+    }
+
+
+
+    .form-control {
+        width: 100%;
+        height: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inIncentive-block;
+        border: 0.1px solid #808080;
+        border-radius: 2px;
+        box-sizing: border-box;
+        font-size: 20px;
+    }
+
+    .InputDefect-button {
+        background-color: #F08080;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        color: black;
+        width: 100%;
+        height: 100%;
+        font-size: 18px;
+    }
+
+    .InputProduct-button {
+        background-color: #4682B4;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        color: black;
+        width: 100%;
+        height: 100%;
+        font-size: 18px;
+    }
+
+    .RemoveProduct-button {
+        background-color: olive;
+        border-radius: 2px;
+        border: none;
+        cursor: pointer;
+        color: black;
+        width: 100%;
+        height: 100%;
+        font-size: 18px;
+    }
+
+    .WorkingFunction-button {
+        background-color: #F4A460;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        color: black;
+        width: 100%;
+        height: 100%;
+        font-size: 18px;
+        text-decoration: none;
+    }
+
+
+    .select2-container .select2-selection--single {
+        box-sizing: border-box;
+        cursor: pointer;
+        display: block;
+        height: 70px;
+        font-size: 20px;
+    }
+
+    .select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option {
+        font-size: 20px;
+    }
+
+    .FillterLabel {
+        font-size: 20px;
+        align-content: center;
+    }
+
+</style>
+
+@if (TempData.ContainsKey("AlertMessage"))
+{
+    <script>
+        alert('@TempData["AlertMessage"]');
+    </script>
+}
+
+
+
+
+<div class="row" style="height:10px"></div>
+<h2 class="page-name">Working Function </h2>
+<div class="row" style="height:30px"> </div>
+
+<div class="row" style="height:300px">
+    <div class="col-1">
+    </div>
+    <div class="col">
+        <div class="row" style="height:50px">
+            <div class="col-2"><label class="FillterLabel"></label></div>
+            <div class="col-3">
+                <button class="WorkingFunction-button">
+                    <a href="@Url.Action("DailyReport", "Working")" style=" text-decoration: none; font-size: 18px;">Daily Report</a>
+                </button>
+            </div>
+
+            <div class="col-3">
+                <button id="inputDefectButton" class="InputDefect-button" data-bs-toggle="modal" data-bs-target="#DefectModal">
+                    Input Defect
+                </button>
+
+            </div>
+            <div class="col-3">
+              @*   <button id ="inputProductButton" class="InputProduct-button" data-bs-toggle="modal" data-bs-target="#FGModal">   </button> *@
+              @*   <button  class="InputProduct-button"  id="inputProductButton" data-bs-toggle="modal" data-bs-target="#FGModal"> *@
+                <button id="inputProductButton" class="InputProduct-button"  data-bs-toggle="modal" data-bs-target="#FGModal">
+                    Input Product Qty
+                </button>
+            </div>
+         
+
+        </div>
+
+        <form method="get" controller="Working">
+            <div class="row" style="height:20px"></div>
+            @* Get Product from plant and line *@
+            <div class="row" style="height:80px">
+                <div class="col-2" style=" align-content: center;"><label class="FillterLabel">Product ID:</label></div>
+                <div class="col-9">
+                    <select  class="form-select" style="border-color:black; border-radius:0; font-size:22px; width:100%; height:100%"  name="productId" id="ProductID">
+                        <option value="" default selected></option>
+                        @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
+                        {
+
+                            <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
+                                @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
+                            </option>
+                        }
+                    </select>
+
+
+
+                </div>
+                <div class="col-2"></div>
+            </div>
+            <div class="row" style="height:20px"></div>
+            @*  Get Section from EmployeeClock-In *@
+            <div class="row" style="height:80px">
+                <div class="col-2" style=" align-content: center;"><label class="FillterLabel">Section ID:</label></div>
+                <div class="col-9">
+                    <input class="form-control" name="SectionName" id="SectionName" style="background-color:gainsboro;width:100%" readonly>
+                </div>
+                <div class="col-2">
+                </div>
+            </div>
+
+            <div class="row" style="height:20px"></div>
+            <div class="row" style="height:80px">
+                <div class="col-2" style=" align-content: center;"><label class="FillterLabel"> QR Code :</label> </div>
+                <div class="col-9">
+                    <input class="form-control" name="EmployeeID" id="EmployeeID" style="width:100%" placeholder="Scan QR Code">
+                </div>
+                <div class="col-2">
+                </div>
+            </div>
+
+         
+            <div class="row" style="height:20px"></div>
+            <div class="row" style="height:80px">
+                <div class="col-2" style=" align-content: center;"></div>
+                <div class="col-8">
+                    <p id="demo" style="color:red ; height:50px"></p>
+                </div>
+
+                <div class="col-2">
+                </div>
+            </div>
+
+
+
+        </form>
+    </div>
+    <div class="col-1">
+    </div>
+</div>
+
+
+
+
+
+@* ************************ Modal ************************************* *@
+@*FG Create*@
+<div class="modal fade" id="FGModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-controller="Working">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Product QTY Piece</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Employee ID:</label>
+                        <input class="form-control" name="EmployeeID" id="EmployeeIDFG" placeholder="Scan QR Code" oninput="filterProductByEmployeeClockin()">
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="FillterLabel">Product ID:</label>
+                        <select class="selectfillter form-control" style="width:100%"  name="productId" id="ProductIDFG" onchange="filterSectionsByProductEditFG()">
+                            <option value="" default selected>Select Value ...</option>
+                            @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
+                            {
+
+                                <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
+                                    @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
+                                </option>
+                            }
+                        </select>
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="FillterLabel">Section ID:</label>
+                        <input class="form-control" name="SectionName" id="SectionNameFG" style="background-color:gainsboro" readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="FillterLabel">QTY :</label>
+                        <input class="form-control" name="QTY" id="QTYFG">
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="FillterLabel">Unit :</label>
+                        <select class="selectfillter form-control" style="width:100%" list="Unit" name="Unit" id="UnitFG">
+                            <option value="PCS">PCS </option>
+                            <option value="Kgs">Kgs</option>
+                            <option value="g">g</option>
+                        </select>
+
+
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="CallfunctionInputproductQty()">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@*Defect Create*@
+<div class="modal fade" id="DefectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-controller="Working" asp-action="ProductQtyDefectWithRef">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Input Defect</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Employee ID:</label>
+                        <input class="form-control" name="EmployeeID" id="EmployeeIDDefect" placeholder="Scan QR Code" oninput="filterSectionsByProductEdit()" />
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="FillterLabel">Product ID:</label>
+                        <select class="selectfillter form-control" style="width:100%" list="ProductID" name="productId" id="ProductIDDefect" onchange="filterSectionsByProductEditDefect()">
+                            <option value="" default selected>Select Value ...</option>
+                            @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
+                            {
+
+                                <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
+                                    @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
+                                </option>
+                            }
+                        </select>
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="FillterLabel">Section ID:</label>
+
+                        <input class="form-control" name="SectionName" id="SectionNameDefect" style="background-color:gainsboro" readonly>
+
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="FillterLabel">Reason:</label>
+                        <select class="selectfillter form-control" style="width:100%" name="Reason" id="ReasonDefect" required>
+                            <option value="" default selected>Select Value ...</option>
+                            @foreach (var item in Model.tbReason)
+                            {
+
+                                <option value="@item.ReasonID" selected="@(item.ReasonID == ViewBag.SelectedReasonID ? "selected" : null)">
+                                    @Html.DisplayFor(modelItem => item.ReasonID) : @Html.DisplayFor(modelItem => item.ReasonName)
+                                </option>
+                            }
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="mb-3">
+                        <label class="FillterLabel">Defect QTY :</label>
+                        <input class="form-control" name="QTY" id="QTYDefect">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="FillterLabel">Unit :</label>
+                        <select class="selectfillter form-control" style="width:100%" list="Unit" name="Unit" id="UnitDefect">
+                            <option value="PCS">PCS </option>
+                            <option value="Kgs">Kgs</option>
+                            <option value="g">g</option>
+                        </select>
+
+
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="CallfunctionInputDefectQty()">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@*minus Create*@
+<div class="modal fade" id="SpecialModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-controller="Working" asp-action="ProductQtySpeialMinus">
+                <div class="modal-header" style="background-color:blue">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">เรียงสุก Final Process</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Employee ID:</label>
+                        <input class="form-control" name="EmployeeID" id="EmployeeIDMinus" placeholder="Scan QR Code" onchange="filterProductByEmployeeSpecial()">
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="FillterLabel">Product ID:</label>
+                        <select class="selectfillter form-control" style="width:100%" list="ProductID" name="productId" id="ProductIDMinus">
+                            <option value="" default selected>Select Value ...</option>
+                            @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
+                            {
+
+                                <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
+                                    @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
+                                </option>
+                            }
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="mb-3">
+                        <label class="FillterLabel">Minus QTY :</label>
+                        <input class="form-control" name="QTY" id="QTYMinus">
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="CallfunctionProductQtySpeialMinus">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+    document.getElementById('inputProductButton').addEventListener('click', function () {
+        var selectedProductID = document.getElementById('ProductID').value;
+        var modalProductIDDropdown = document.getElementById('ProductIDFG');  //
+        // Set the modal ProductID dropdown value to the selected value
+        modalProductIDDropdown.value = selectedProductID;
+    });
+
+
+    
+    document.getElementById('inputDefectButton').addEventListener('click', function () {
+        var selectedProductID = document.getElementById('ProductID').value;
+        var modalProductIDDropdown = document.getElementById('ProductIDDefect');  //
+     
+        // Set the modal ProductID dropdown value to the selected value
+        modalProductIDDropdown.value = selectedProductID;
+    });
+
+
+
+    $(document).ready(function () {
+        var initialVal = $('#ProductID').val();
+        $('#ProductID').data('original-value', initialVal);
+
+        var typingTimer;                // Timer identifier
+        var doneTypingInterval = 500;   // Time in ms (500ms = 0.5 seconds)
+
+        // Listen for input changes to handle typing or pasting
+        $('#EmployeeID').on('input', function () {
+            clearTimeout(typingTimer); // Clear the previous timer
+            typingTimer = setTimeout(processInput, doneTypingInterval); // Start a new timer
+           
+        });
+
+
+
+        // // Listen for input changes to handle typing or pasting
+        // $('#EmployeeID').on('input', function () {
+        //     processInput(); // Trigger AJAX request
+        // });
+
+        // Listen for 'keypress' to handle "Enter" or "Tab"
+        // $('#EmployeeID').on('keyup', function (event) {
+        //     var key = event.which || event.keyCode;
+        //     if (key === 13 || key === 9 || key === 7) { // 13 for "Enter", 9 for "Tab"
+        //         event.preventDefault();
+                
+        //         processInput(); // Trigger AJAX request
+               
+        //     }
+        // });
+
+        //select able to search when modal shown
+        $('#DefectModal').on('shown.bs.modal', function () {
+            $('#ProductIDDefect, #ReasonDefect, #UnitDefect').select2({
+                dropdownParent: $('#DefectModal')
+            });
+        });
+        $('#FGModal').on('shown.bs.modal', function () {
+            $('#ProductIDFG, #UnitFG').select2({
+                dropdownParent: $('#FGModal')
+            });
+        });
+        $('#SpecialModal').on('shown.bs.modal', function () {
+            $('#ProductIDMinus').select2({
+                dropdownParent: $('#SpecialModal')
+            });
+        });
+
+        $('#ProductID').change(function () {
+            var currentVal = $(this).val();
+            var originalVal = $(this).data('original-value');
+            if (originalVal != '') {
+                if (currentVal !== originalVal) {
+                    var confirmChange = confirm('Confirm to change ProductID?');
+                    if (confirmChange) {
+                        $(this).data('original-value', currentVal);
+                    } else {
+                        $(this).val(originalVal);
+                    }
+                }
+            } else {
+                $(this).data('original-value', currentVal);
+            }
+            $('#EmployeeID').val('').focus();
+        });
+
+
+        function processInput() {
+            var employeeId = $('#EmployeeID').val().trim();
+            var productId = $('#ProductID').val();
+            $('#SectionName').val("");
+            $('#SectionName').css('background-color', 'gainsboro');
+            document.getElementById("demo").innerHTML = "";
+            // var packageRef = $('#PackageRef').val();
+             console.log("TEST**3");
+            if (employeeId !== '') { // Only process if there's valid input
+                // AJAX request to the controller
+                $.ajax({
+                    url: '/Working/WorkingFunctionCreateAsync', // Update with your endpoint
+                    type: 'GET',
+                    data: {
+                        employeeId: employeeId,
+                        productId: productId
+                    },
+                    success: function (section) {
+                        if (section.message === "Login") {
+                            location.reload();
+                        } else {
+                            if (section.message === "EmployeeRefSectionEnabled") {
+                                $('#EmployeeRefsection').prop('disabled', false).val('').focus();
+                            } else {
+                                $('#EmployeeRefsection').prop('disabled', true);
+                                $('#SectionName').val(section.message);
+                                $('#EmployeeID').val('').focus(); // Clear and refocus
+
+                                document.getElementById("demo").innerHTML = "Message Alert : " + section.message;
+                                if (section.status) {
+                                    $('#SectionName').css('background-color', '#abff6c'); //เขียว
+                                    $('#demo').css('color', '#198754');
+                                } else {
+                                    if (section.message === "Please check Clock-in.") {
+                                        $('#SectionName').css('background-color', '#FFD700'); // เหลือง
+                                        $('#demo').css('color', '#DAA520');
+                                    } else if (section.message === "Please check PLPS.") {
+                                        $('#SectionName').css('background-color', '#00BFFF'); // ฟ้า
+                                        $('#demo').css('color', '#1E90FF');
+                                    } else if (section.message.startsWith("check time")) {
+                                        $('#SectionName').css('background-color', '#FFC0CB'); // ชมพู
+                                        $('#demo').css('color', '#DB7093');
+                                    } else {
+                                        $('#SectionName').css('background-color', '#ff4646'); //แดง
+                                        $('#demo').css('color', '#ff4646');
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    error: function (err) {
+                        $('#EmployeeID').val('').focus(); // Clear and refocus
+                        console.error('Error occurred while fetching section:', err);
+                    }
+                });
+            }
+        }
+    });
+</script>
+
+
+<script type="text/javascript">
+
+
+    $('#EmployeeRefsection').on('input', function () {
+        var employeeId = $('#EmployeeID').val(); // Fetch EmployeeID value
+        var productId = $('#ProductID').val();
+        var EmployeeRef = $(this).val();
+        insertIntoTbProductionTransaction(employeeId, productId, EmployeeRef);
+    });
+
+    function insertIntoTbProductionTransaction(employeeId, productId, EmployeeRef) {
+        $.ajax({
+            url: '/Working/InsertIntoTbProductionTransaction',
+            type: 'POST',
+            data: { employeeId: employeeId, productId: productId, EmployeeRef: EmployeeRef },
+            success: function (response) {
+                $('#SectionName').val(response);
+                $('#EmployeeID').val("");
+                //   $('#ProductID').val("");
+                $('#EmployeeRefsection').val("");
+                $('#EmployeeID').focus();
+                $('#EmployeeRefsection').prop('disabled', true);
+            },
+            error: function () {
+                console.error('Error occurred while inserting data into TbProductionTransaction.');
+            }
+        });
+    }
+
+    /// Fillter Create
+    function filterReasonByProduct() {
+
+        // Clear previous options
+        $("#ReasonDefect").empty();
+
+        // Add a default option
+        $("#ReasonDefect").append("<option value='' default selected>Please Select ..</option>");
+        // Get the selected Line ID
+
+        var selectedProductID = $("#ProductIDDefect").val().toString();
+        // Check if a line is selected
+        //     alert(selectedProductID);
+
+        if (selectedProductID !== "") {
+            // Use AJAX to filter products based on the selected Line ID
+            $.ajax({
+                type: "GET",
+                url: "/Working/FilterReasonByProduct", // Update the URL to your controller action
+                data: { selectedProductID: selectedProductID },
+                success: function (data) {
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        alert(data.message);
+
+                    } else {
+                        data.forEach(function (defect) {
+                            //$("#ReasonDefect").append("<option value='" + defect.productID + "'>" + defect.productID + " : " + defect.productName + "</option>");
+                            $("#ReasonDefect").append("<option value='" + defect.reasonID + "'>" + defect.reasonID + " : " + defect.reasonName + "</option>");
+
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("Error filtering products: " + error);
+                }
+            });
+        }
+    }
+
+
+
+
+    //////////////////// 30042024 FANG ///////////////////////////////////////
+
+
+
+
+
+
+
+
+    function filterDefectByProductSpecial() {
+        // Clear previous options
+        $("#ReasonDefect").empty();
+        // Add a default option
+        $("#ReasonDefect").append("<option value='' default selected>Please Select ..</option>");
+
+        // Get the selected Product ID
+
+        var productID = $("#ProductIDDfect").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+
+        // Check if a product is selected
+        if (productID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Working/FilterDefectByProductMinus", // Update the URL to your controller action
+                data: { productID: productID },
+                success: function (data) {
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        alert(data.message);
+
+                    } else {
+                        data.forEach(function (defect) {
+                            $("#ReasonDefect").append("<option value='" + defect.reasonID + "'>" + defect.reasonID + " : " + defect.reasonName + "</option>");
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
+
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+</script>
+<script>
+
+    function filterProductByEmployeeClockin() {
+        // Clear previous options
+//        $("#ProductIDFG").empty();
+        // Add a default option
+      //  console.log('1');
+        $("#ProductIDFG").append("<option value='' default selected>Please Select ..</option>");
+        // Get the selected Product ID
+      //  console.log('2');
+        var selectedEmpID = $("#EmployeeIDFG").val().toString();
+        //console.log(selectedEmpID);
+      //  console.log('1');
+        // Check if a product is selected
+        if (selectedEmpID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
+                data: { selectedEmpID: selectedEmpID },
+                success: function (data) {
+                   // console.log(data);
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        // alert(data.message);
+                        //// $('#FGForm')[0].reset();
+                        $('#EmployeeIDFG').val('').focus();
+                    //    console.log('test');
+                      //  alert('Please clock-in QR code');
+                     //   $('#SectionNameFG').val(data.message);
+                        //$('#ProductIDFG').val('').focus();
+                    } else {
+                        $('#ProductIDFG').val('').focus();
+                       // console.log('4');
+                        // Add filtered products to the dropdown if the response indicates success
+                        data.forEach(function (product) {
+                            $("#ProductIDFG").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
+
+
+
+    function filterSectionsByProductEditFG() {
+        
+        var selectedEmpID = $("#EmployeeIDFG").val().toString();
+        var selectedProductIDFG = $("#ProductIDFG").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+        console.log(selectedEmpID);
+        console.log(selectedProductIDFG);
+        // Check if a product is selected
+        if (selectedProductIDFG !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "POST",
+                url: "/Working/GetSectionAndUnitWithRef", // Update the URL to your controller action
+                data: { employeeID: selectedEmpID, productID: selectedProductIDFG },
+                success: function (data) {
+
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        $('#SectionNameFG').css('background-color', '#FFC0CB');
+                        $('#SectionNameFG').val(data.section);
+                      
+                    } else {
+                        $('#SectionNameFG').val(data.section);
+                        //                 $('#UnitFG').val(response.unit);
+                    }
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
+
+
+    function filterSectionsByProductEditDefect() {
+
+        var selectedEmpID = $("#EmployeeIDDefect").val().toString();
+        var selectedProductIDDefect = $("#ProductIDDefect").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+
+        // Check if a product is selected
+        if (selectedProductIDDefect !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "POST",
+                url: "/Working/GetSectionAndUnitDefectWithRef", // Update the URL to your controller action
+                data: { employeeID: selectedEmpID, productID: selectedProductIDDefect },
+                success: function (data) {
+
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        $('#SectionNameDefect').css('background-color', '#FFC0CB');
+                        $('#SectionNameDefect').val(data.section);
+                       
+                        //$('#UnitDefect').val(response.unit);
+
+                    } else {
+                        $('#SectionNameDefect').val(data.section);
+                        $('#UnitDefect').val(data.unit);
+                    }
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
+
+    function filterSectionsByProductEdit() {
+        // Clear previous options
+        $("#ProductIDDefect").empty();
+        // Add a default option
+        $("#ProductIDDefect").append("<option value='' default selected> Please Select ..</option>");
+
+        // Get the selected Product ID
+
+        var selectedEmpID = $("#EmployeeIDDefect").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+
+        // Check if a product is selected
+        if (selectedEmpID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Working/FilterProductByEmployee", // Update the URL to your controller action
+                data: { selectedEmpID: selectedEmpID },
+                success: function (data) {
+
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        $('#EmployeeIDDefect').val('').focus();
+                        alert('Please clock-in QR code');
+                    } else {
+                        $('#ProductIDDefect').val('').focus();
+                        data.forEach(function (product) {
+                            $("#ProductIDDefect").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
+
+    function filterProductByEmployeeSpecial() {
+        // Clear previous options
+        $("#ProductIDMinus").empty();
+        // Add a default option
+        $("#ProductIDMinus").append("<option value='' default selected>Please Select ..</option>");
+
+        // Get the selected Product ID
+
+        var selectedEmpID = $("#EmployeeIDMinus").val().toString();
+        // var selectedLineID = $("#ModalLineName").val().toString();
+
+        // Check if a product is selected
+        if (selectedEmpID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Working/FilterProductByEmployeeMinus", // Update the URL to your controller action
+                data: { selectedEmpID: selectedEmpID },
+                success: function (data) {
+                    if (data.success === false) {
+                        // Show an alert message if the response indicates failure
+                        alert(data.message);
+
+                    } else {
+
+                        $('#ProductIDMinus').val('').focus();
+                        data.forEach(function (product) {
+                            $("#ProductIDMinus").append("<option value='" + product.productID + "'>" + product.productID + " : " + product.productName + "</option>");
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
+
+    // * Modal scanner 
+
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+
+        };
+    }
+
+    function filterProductByEmployeeClockin() {
+        // Your filtering logic here
+        console.log("Filtering product by employee clock-in");
+      
+    }
+
+    function filterSectionsByProductEdit() {
+        // Your filtering logic here
+        console.log("Filtering product by employee clock-in");
+    }
+
+    const debouncedFilterProductByEmployeeClockin = debounce(filterProductByEmployeeClockin, 1000);
+    const debouncedFilterProductByEmployeeClockinDefect = debounce(filterSectionsByProductEdit, 1000);
+
+
+    document.getElementById('EmployeeIDFG').addEventListener('input', debouncedFilterProductByEmployeeClockin);
+    document.getElementById('EmployeeIDDefect').addEventListener('input', debouncedFilterProductByEmployeeClockinDefect);
+
+
+    function CallfunctionInputproductQty() {
+        // Clear previous options
+        var EmployeeID = $("#EmployeeIDFG").val().toString();
+        var ProductID = $("#ProductIDFG").val().toString();
+        var SectionID = $("#SectionNameFG").val().toString();
+        var QTY = $("#QTYFG").val().toString();
+
+        if (EmployeeID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Working/ProductQTYPieceWithReffn", // Update the URL to your controller action
+                data: { EmployeeID: EmployeeID, ProductID: ProductID, SectionID: SectionID, QTY: QTY },
+                success: function (data) {
+                    if (data.success === false) {
+                        
+                        alert(data.message);
+                        location.reload();
+                    } else {
+
+                        $('#productId').focus();
+                        location.reload();
+                    }            
+                },
+                error: function (error) {
+                    alert(data.message);
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+
+    // *End Modal scanner
+
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+    // function CallfunctionInputproductQty() {
+    //     // Clear previous options
+    //     var EmployeeID = $("#EmployeeIDFG").val().toString();
+    //     var ProductID = $("#ProductIDFG").val().toString();
+    //     var SectionID = $("#SectionNameFG").val().toString();
+    //     var QTY = $("#QTYFG").val().toString();
+
+    //     if (EmployeeID !== "") {
+    //         // Use AJAX to filter sections based on the selected Product ID
+    //         $.ajax({
+    //             type: "GET",
+    //             url: "/Working/ProductQTYPieceWithReffn", // Update the URL to your controller action
+    //             data: { EmployeeID: EmployeeID, ProductID: ProductID, SectionID: SectionID, QTY: QTY },
+    //             success: function (data) {
+
+    //                 $('#EmployeeID').focus();
+    //                 location.reload();
+
+    //             },
+    //             error: function (error) {
+    //                 console.log("Error filtering product: " + error);
+    //             }
+    //         });
+    //     }
+    // }
+
+    ///////////////////////////////////////////////////////////////////////////////////////
+    function CallfunctionInputDefectQty() {
+        // Clear previous options
+        var EmployeeID = $("#EmployeeIDDefect").val().toString();
+        var ProductID = $("#ProductIDDefect").val().toString();
+        var SectionID = $("#SectionNameDefect").val().toString();
+        var Reason = $("#ReasonDefect").val().toString();
+        var QTY = $("#QTYDefect").val().toString();
+
+        if (EmployeeID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Working/ProductQtyDefectWithRefFn", // Update the URL to your controller action
+                data: { EmployeeID: EmployeeID, ProductID: ProductID, SectionID: SectionID, QTY: QTY, Reason: Reason },
+                success: function (data) {
+
+                    $('#EmployeeID').focus();
+                    location.reload();
+
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+
+    function CallfunctionProductQtySpeialMinus() {
+        // Clear previous options
+        var EmployeeID = $("#EmployeeIDMinus").val().toString();
+        var ProductID = $("#ProductIDMinus").val().toString();
+        var QTY = $("#QTYMinus").val().toString();
+
+        if (EmployeeID !== "") {
+            // Use AJAX to filter sections based on the selected Product ID
+            $.ajax({
+                type: "GET",
+                url: "/Working/ProductQtySpeialMinusFn", // Update the URL to your controller action
+                data: { EmployeeID: EmployeeID, ProductID: ProductID, SectionID: SectionID, QTY: QTY },
+                success: function (data) {
+
+                    location.reload();
+                    $('#EmployeeID').focus();
+
+
+                },
+                error: function (error) {
+                    console.log("Error filtering product: " + error);
+                }
+            });
+        }
+    }
+</script>
