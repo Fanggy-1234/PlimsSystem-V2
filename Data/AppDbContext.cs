@@ -181,7 +181,7 @@ namespace Plims.Data
         .HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID, v.QRCode,v.ProductID, v.SectionID });
 
             modelBuilder.Entity<View_FinancialReport>()
-.HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID, v.QRCode, v.SectionID ,v.ServicesID });
+.HasKey(v => new { v.TransactionDate, v.PlantID, v.LineID, v.QRCode, v.SectionID, v.ServicesID, v.ClockIn });
 
 
             modelBuilder.Entity<View_ClockTime>()

@@ -3437,7 +3437,7 @@ namespace Plims.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FinancialReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
+        public IActionResult FinancialReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -3448,7 +3448,6 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-
             // Generate date range
             List<DateTime> dateRange = Enumerable.Range(0, 1 + EndDate.Subtract(StartDate).Days)
                                   .Select(offset => StartDate.AddDays(offset))
@@ -3457,15 +3456,12 @@ namespace Plims.Controllers
             // Pass date range along with other data to the view
             ViewBag.DateRange = dateRange;
 
-
             var mymodel = new ViewModelAll
             {
                 tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList()
-
+                view_PermissionMaster = db.View_PermissionMaster.ToList()
             };
 
             ViewBag.VBRoleFinancial = mymodel.view_PermissionMaster
@@ -3473,36 +3469,29 @@ namespace Plims.Controllers
                                             .Select(x => x.RoleAction)
                                             .FirstOrDefault();
 
-
             if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
             {
-
+                mymodel.view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList();
 
                 if (!string.IsNullOrEmpty(EmployeeID))
                 {
                     mymodel.view_FinancialReport = mymodel.view_FinancialReport.Where(x => x.QRCode == EmployeeID).ToList();
                     ViewBag.SelectedEmpID = EmployeeID;
                 }
-
                 if (!string.IsNullOrEmpty(LineID))
                 {
                     mymodel.view_FinancialReport = mymodel.view_FinancialReport.Where(x => x.LineID == LineID).ToList();
                     ViewBag.SelectedLineID = LineID;
                 }
-
-
                 if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
                 {
                     mymodel.view_FinancialReport = mymodel.view_FinancialReport
                        .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
                        .ToList();
 
-
                     ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
                     ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-
                 }
-
 
                 var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.LineID, x.QRCode, x.SectionID })
                    .Select(g => new GroupedFinancialData // Use the correct model type here
@@ -3515,51 +3504,33 @@ namespace Plims.Controllers
                    })
                    .ToList<GroupedFinancialData>(); // Specify the type explicitly
 
-
-                mymodel = new ViewModelAll
-                {
-                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                    view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                    view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
-                    groupedData = groupedData
+                mymodel.groupedData = groupedData = groupedData
                     .OrderBy(x => x.QRCode) // First order by QRCode
                     .ThenBy(x => x.SectionName) // First order by QRCode
                     .ThenBy(x => x.TransactionDate) // Then order by TransactionDate
-                    .ToList()
+                    .ToList();
 
-                };
-
-
-                //  return View(groupedData);
                 return View(mymodel);
-
             }
             else
             {
-                var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.QRCode })
-               .Select(g => new
-               {
-                   TransactionDate = g.Key.Date,
-                   QRCode = g.Key.QRCode,
-                   TotalIncentive = g.Sum(x => x.Incentive)
-               })
-               .ToList();
+               // var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.QRCode })
+               //.Select(g => new
+               //{
+               //    TransactionDate = g.Key.Date,
+               //    QRCode = g.Key.QRCode,
+               //    TotalIncentive = g.Sum(x => x.Incentive)
+               //})
+               //.ToList();
 
-                mymodel.view_FinancialReport = db.View_FinancialReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
+               // mymodel.view_FinancialReport = db.View_FinancialReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
+                
                 ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
                 ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
+
                 return View(mymodel);
             }
-
         }
-
-
-
-
-
-
 
         public ActionResult FinanceReportExport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
         {
