@@ -2545,8 +2545,6 @@ namespace Plims.Controllers
 
                             double roundedDifftime = 0.0;
 
-
-
                             var objEmp = db.View_EmployeeGroupWorking.Where(x => x.PlantID.Equals(PlantID) && x.GroupID.Equals(item.GroupID)).ToList();
                             foreach (var items in objEmp)
                             {
@@ -3437,7 +3435,7 @@ namespace Plims.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FinancialReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
+        public IActionResult FinancialReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -3448,24 +3446,17 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-
             // Generate date range
-            List<DateTime> dateRange = Enumerable.Range(0, 1 + EndDate.Subtract(StartDate).Days)
-                                  .Select(offset => StartDate.AddDays(offset))
-                                  .ToList();
+            List<DateTime> dateRange = Enumerable.Range(0, 1 + EndDate.Subtract(StartDate).Days).Select(offset => StartDate.AddDays(offset)).ToList();
 
             // Pass date range along with other data to the view
             ViewBag.DateRange = dateRange;
 
-
             var mymodel = new ViewModelAll
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList()
-
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList()
             };
 
             ViewBag.VBRoleFinancial = mymodel.view_PermissionMaster
@@ -3473,192 +3464,111 @@ namespace Plims.Controllers
                                             .Select(x => x.RoleAction)
                                             .FirstOrDefault();
 
-
             if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
             {
+                mymodel.view_FinancialReport = db.View_FinancialReport.Where(
+                        x => x.PlantID.Equals(PlantID)
+                        && (StartDate == DateTime.MinValue || x.TransactionDate >= StartDate)
+                        && (EndDate == DateTime.MinValue || x.TransactionDate <= EndDate)
+                        && (string.IsNullOrEmpty(EmployeeID) || x.QRCode.Equals(EmployeeID))
+                        && (string.IsNullOrEmpty(LineID) || x.LineID.Equals(LineID))
+                        ).ToList();
 
+                if (!string.IsNullOrEmpty(EmployeeID)) ViewBag.SelectedEmpID = EmployeeID;
+                if (!string.IsNullOrEmpty(LineID)) ViewBag.SelectedLineID = LineID;
+                if (StartDate != DateTime.MinValue) ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+                if (EndDate != DateTime.MinValue) ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
 
-                if (!string.IsNullOrEmpty(EmployeeID))
-                {
-                    mymodel.view_FinancialReport = mymodel.view_FinancialReport.Where(x => x.QRCode == EmployeeID).ToList();
-                    ViewBag.SelectedEmpID = EmployeeID;
-                }
-
-                if (!string.IsNullOrEmpty(LineID))
-                {
-                    mymodel.view_FinancialReport = mymodel.view_FinancialReport.Where(x => x.LineID == LineID).ToList();
-                    ViewBag.SelectedLineID = LineID;
-                }
-
-
-                if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
-                {
-                    mymodel.view_FinancialReport = mymodel.view_FinancialReport
-                       .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
-                       .ToList();
-
-
-                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-
-                }
-
-
-                var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.LineID, x.QRCode, x.SectionID })
-                   .Select(g => new GroupedFinancialData // Use the correct model type here
-                   {
-                       TransactionDate = g.Key.Date,
-                       QRCode = g.Key.QRCode,
-                       EmployeeName = g.Max(x => x.EmployeeName),
-                       TotalIncentive = g.Sum(x => x.Incentive),
-                       SectionName = g.Max(x => x.SectionName)
-                   })
-                   .ToList<GroupedFinancialData>(); // Specify the type explicitly
-
-
-                mymodel = new ViewModelAll
-                {
-                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                    view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                    view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
-                    groupedData = groupedData
+                mymodel.groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.LineID, x.QRCode, x.SectionID })
+                    .Select(g => new GroupedFinancialData // Use the correct model type here
+                    {
+                        TransactionDate = g.Key.Date,
+                        QRCode = g.Key.QRCode,
+                        EmployeeName = g.Max(x => x.EmployeeName),
+                        TotalIncentive = g.Sum(x => x.Incentive),
+                        SectionName = g.Max(x => x.SectionName)
+                    })
                     .OrderBy(x => x.QRCode) // First order by QRCode
                     .ThenBy(x => x.SectionName) // First order by QRCode
                     .ThenBy(x => x.TransactionDate) // Then order by TransactionDate
-                    .ToList()
-
-                };
-
-
-                //  return View(groupedData);
-                return View(mymodel);
-
+                    .ToList();
             }
             else
             {
-                var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.QRCode })
-               .Select(g => new
-               {
-                   TransactionDate = g.Key.Date,
-                   QRCode = g.Key.QRCode,
-                   TotalIncentive = g.Sum(x => x.Incentive)
-               })
-               .ToList();
+                // var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.QRCode })
+                //.Select(g => new
+                //{
+                //    TransactionDate = g.Key.Date,
+                //    QRCode = g.Key.QRCode,
+                //    TotalIncentive = g.Sum(x => x.Incentive)
+                //})
+                //.ToList();
 
-                mymodel.view_FinancialReport = db.View_FinancialReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
+                // mymodel.view_FinancialReport = db.View_FinancialReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
+
                 ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
                 ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
-                return View(mymodel);
             }
 
+            return View(mymodel);
         }
-
-
-
-
-
-
 
         public ActionResult FinanceReportExport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-
-            if (EmpID == null)
+            if (string.IsNullOrEmpty(EmpID))
             {
                 return RedirectToAction("Login", "Home");
             }
 
-
             try
             {
-
                 var mymodel = new ViewModelAll
                 {
-                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                     view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                    view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList()
-
+                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                    tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                    tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList()
                 };
 
                 // Generate date range
-                List<DateTime> dateRange = Enumerable.Range(0, 1 + EndDate.Subtract(StartDate).Days)
-                                      .Select(offset => StartDate.AddDays(offset))
-                                      .ToList();
-
-
-
-
+                List<DateTime> dateRange = Enumerable.Range(0, 1 + EndDate.Subtract(StartDate).Days).Select(offset => StartDate.AddDays(offset)).ToList();
 
                 ViewBag.VBRoleFinancial = mymodel.view_PermissionMaster
                                             .Where(x => x.UserEmpID == EmpID && x.PageID == 24)
                                             .Select(x => x.RoleAction)
                                             .FirstOrDefault();
 
-
-
-
                 if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
                 {
+                    mymodel.view_FinancialReport = db.View_FinancialReport.Where(
+                        x => x.PlantID.Equals(PlantID)
+                        && (StartDate == DateTime.MinValue || x.TransactionDate >= StartDate)
+                        && (EndDate == DateTime.MinValue || x.TransactionDate <= EndDate)
+                        && (string.IsNullOrEmpty(EmployeeID) || x.QRCode.Equals(EmployeeID))
+                        && (string.IsNullOrEmpty(LineID) || x.LineID.Equals(LineID))
+                        ).ToList();
 
-                    if (!string.IsNullOrEmpty(EmployeeID))
-                    {
-                        mymodel.view_FinancialReport = mymodel.view_FinancialReport.Where(x => x.QRCode == EmployeeID).ToList();
-                        ViewBag.SelectedEmpID = EmployeeID;
-                    }
+                    if (!string.IsNullOrEmpty(EmployeeID)) ViewBag.SelectedEmpID = EmployeeID;
+                    if (!string.IsNullOrEmpty(LineID)) ViewBag.SelectedLineID = LineID;
+                    if (StartDate != DateTime.MinValue) ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+                    if (EndDate != DateTime.MinValue) ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
 
-                    if (!string.IsNullOrEmpty(LineID))
-                    {
-                        mymodel.view_FinancialReport = mymodel.view_FinancialReport.Where(x => x.LineID == LineID).ToList();
-                        ViewBag.SelectedLineID = LineID;
-                    }
-
-
-                    if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
-                    {
-                        mymodel.view_FinancialReport = mymodel.view_FinancialReport
-                           .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
-                           .ToList();
-
-
-                        ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                        ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-
-                    }
-
-                    var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.QRCode, x.SectionID })
-                 .Select(g => new GroupedFinancialData // Use the correct model type here
-                 {
-                     TransactionDate = g.Key.Date,
-                     QRCode = g.Key.QRCode,
-                     EmployeeName = g.Max(x => x.EmployeeName),
-                     TotalIncentive = g.Sum(x => x.Incentive),
-                     SectionName = g.Max(x => x.SectionName)
-                 })
-                 .ToList<GroupedFinancialData>(); // Specify the type explicitly
-
-
-                    mymodel = new ViewModelAll
-                    {
-                        tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                        tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                        tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                        view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                        view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
-                        groupedData = groupedData
-                       .OrderBy(x => x.QRCode) // First order by QRCode
-                       .ThenBy(x => x.SectionName) // First order by QRCode
-                       .ThenBy(x => x.TransactionDate) // Then order by TransactionDate
-                       .ToList()
-
-                    };
-
-
+                    mymodel.groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.QRCode, x.SectionID })
+                        .Select(g => new GroupedFinancialData // Use the correct model type here
+                        {
+                            TransactionDate = g.Key.Date,
+                            QRCode = g.Key.QRCode,
+                            EmployeeName = g.Max(x => x.EmployeeName),
+                            TotalIncentive = g.Sum(x => x.Incentive),
+                            SectionName = g.Max(x => x.SectionName)
+                        })
+                        .OrderBy(x => x.QRCode) // First order by QRCode
+                        .ThenBy(x => x.SectionName) // First order by QRCode
+                        .ThenBy(x => x.TransactionDate) // Then order by TransactionDate
+                        .ToList();
 
                     using (var package = new ExcelPackage())
                     {
@@ -3674,7 +3584,6 @@ namespace Plims.Controllers
                         worksheet.Cells[2, 1].Style.Font.Bold = true;
                         worksheet.Cells[2, 2].Style.Font.Bold = true;
 
-
                         int dateStartColumn = 3;
                         decimal[] sumByDate = new decimal[dateRange.Count];
                         decimal sumtotalall = 0;
@@ -3689,7 +3598,6 @@ namespace Plims.Controllers
                         worksheet.Cells[1, dateStartColumn].Value = "สิทธิเงินพิเศษ";
                         worksheet.Cells[1, dateStartColumn].Style.Font.Bold = true;
 
-
                         worksheet.Cells[2, dateStartColumn + dateRange.Count].Value = "จำนวนเงิน";
                         worksheet.Cells[2, dateStartColumn + dateRange.Count + 1].Value = "จุดงาน";
                         worksheet.Cells[1, dateStartColumn + dateRange.Count].Merge = true;
@@ -3698,7 +3606,7 @@ namespace Plims.Controllers
                         worksheet.Cells[2, dateStartColumn + dateRange.Count + 1].Style.Font.Bold = true;
 
                         // Set data
-                        if (groupedData != null && groupedData.Any())
+                        if (mymodel.groupedData != null && mymodel.groupedData.Any())
                         {
                             var groupedByEmployeeAndSection = mymodel.groupedData.GroupBy(x => new { x.QRCode, x.SectionName });
                             int row = 3;
@@ -3727,7 +3635,6 @@ namespace Plims.Controllers
                                 worksheet.Cells[row, dateStartColumn + dateRange.Count].Value = totalIncentive.ToString("0.00");
                                 worksheet.Cells[row, dateStartColumn + dateRange.Count + 1].Value = group.Key.SectionName;
 
-
                                 row++;
                             }
                             worksheet.Cells[row, 2].Value = "Total";
@@ -3742,15 +3649,11 @@ namespace Plims.Controllers
                             worksheet.Cells[row, dateStartColumn + dateRange.Count].Value = sumtotalall;
                             // worksheet.Cells[row, dateStartColumn + dateRange.Count].Formula = $"SUM({worksheet.Cells[3, dateStartColumn + dateRange.Count].Address}:{worksheet.Cells[row - 1, dateStartColumn + dateRange.Count].Address})";
                             worksheet.Cells[row, dateStartColumn + dateRange.Count].Style.Font.Bold = true;
-
-
                         }
                         else
                         {
                             worksheet.Cells[2, 1].Value = "No data available.";
                         }
-
-
 
                         // Auto fit columns
                         worksheet.Cells.AutoFitColumns();
@@ -3762,40 +3665,25 @@ namespace Plims.Controllers
                         return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "FinanceReport.xlsx");
                     }
 
-
                     // mymodel.tbLine = db.TbLine.Where(p => p.LineName.Equals(obj.LineName) || p.LineID.Equals(obj.LineID)).OrderByDescending(x => x.Status);
                     // return View("DailyReport", mymodel);
                 }
                 else
                 {
-
-                    var groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.QRCode, x.SectionID })
-                 .Select(g => new GroupedFinancialData // Use the correct model type here
-                 {
-                     TransactionDate = g.Key.Date,
-                     QRCode = g.Key.QRCode,
-                     EmployeeName = g.Max(x => x.EmployeeName),
-                     TotalIncentive = g.Sum(x => x.Incentive),
-                     SectionName = g.Max(x => x.SectionName)
-                 })
-                 .ToList<GroupedFinancialData>(); // Specify the type explicitly
-
-
-                    mymodel = new ViewModelAll
-                    {
-                        tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                        tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                        tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                        view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                        view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
-                        groupedData = groupedData
-                       .OrderBy(x => x.QRCode) // First order by QRCode
-                       .ThenBy(x => x.SectionName) // First order by QRCode
-                       .ThenBy(x => x.TransactionDate) // Then order by TransactionDate
-                       .ToList()
-
-                    };
-
+                    mymodel.view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID.Equals(PlantID)).ToList();
+                    mymodel.groupedData = mymodel.view_FinancialReport.GroupBy(x => new { x.TransactionDate.Date, x.QRCode, x.SectionID })
+                        .Select(g => new GroupedFinancialData // Use the correct model type here
+                        {
+                            TransactionDate = g.Key.Date,
+                            QRCode = g.Key.QRCode,
+                            EmployeeName = g.Max(x => x.EmployeeName),
+                            TotalIncentive = g.Sum(x => x.Incentive),
+                            SectionName = g.Max(x => x.SectionName)
+                        })
+                        .OrderBy(x => x.QRCode) // First order by QRCode
+                        .ThenBy(x => x.SectionName) // First order by QRCode
+                        .ThenBy(x => x.TransactionDate) // Then order by TransactionDate
+                        .ToList();
 
                     using (var package = new ExcelPackage())
                     {
@@ -3811,7 +3699,6 @@ namespace Plims.Controllers
                         worksheet.Cells[2, 1].Style.Font.Bold = true;
                         worksheet.Cells[2, 2].Style.Font.Bold = true;
 
-
                         int dateStartColumn = 3;
                         decimal[] sumByDate = new decimal[dateRange.Count];
 
@@ -3826,7 +3713,6 @@ namespace Plims.Controllers
                         worksheet.Cells[1, dateStartColumn].Value = "สิทธิเงินพิเศษ";
                         worksheet.Cells[1, dateStartColumn].Style.Font.Bold = true;
 
-
                         worksheet.Cells[2, dateStartColumn + dateRange.Count].Value = "จำนวนเงิน";
                         worksheet.Cells[2, dateStartColumn + dateRange.Count + 1].Value = "จุดงาน";
                         worksheet.Cells[1, dateStartColumn + dateRange.Count].Merge = true;
@@ -3835,7 +3721,7 @@ namespace Plims.Controllers
                         worksheet.Cells[2, dateStartColumn + dateRange.Count + 1].Style.Font.Bold = true;
 
                         // Set data
-                        if (groupedData != null && groupedData.Any())
+                        if (mymodel.groupedData != null && mymodel.groupedData.Any())
                         {
                             var groupedByEmployeeAndSection = mymodel.groupedData.GroupBy(x => new { x.QRCode, x.SectionName });
                             int row = 3;
@@ -3863,7 +3749,6 @@ namespace Plims.Controllers
                                 worksheet.Cells[row, dateStartColumn + dateRange.Count].Value = totalIncentive.ToString("0.00");
                                 worksheet.Cells[row, dateStartColumn + dateRange.Count + 1].Value = group.Key.SectionName;
 
-
                                 row++;
                             }
                             worksheet.Cells[row, 2].Value = "Total";
@@ -3876,14 +3761,11 @@ namespace Plims.Controllers
                             }
                             worksheet.Cells[row, dateStartColumn + dateRange.Count].Formula = $"SUM({worksheet.Cells[3, dateStartColumn + dateRange.Count].Address}:{worksheet.Cells[row - 1, dateStartColumn + dateRange.Count].Address})";
                             worksheet.Cells[row, dateStartColumn + dateRange.Count].Style.Font.Bold = true;
-
-
                         }
                         else
                         {
                             worksheet.Cells[2, 1].Value = "No data available.";
                         }
-
 
                         // Auto fit columns
                         worksheet.Cells.AutoFitColumns();
@@ -3893,57 +3775,26 @@ namespace Plims.Controllers
                         var content = stream.ToArray();
 
                         return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "FinanceReport.xlsx");
-
                     }
-
-
-
                 }
             }
             catch
             {
                 TempData["AlertMessage"] = "System Some has Problem in Line, Plese contact IT!";
                 return RedirectToAction("Login", "Home");
-
             }
-
-
         }
-
 
         public ActionResult FinancialReportClear(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
         {
-            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-
-            if (EmpID == null)
+            if (string.IsNullOrEmpty(EmpID))
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelAll
-            {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList()
-            };
 
-
-            // Generate date range
-            List<DateTime> dateRange = Enumerable.Range(0, 1 + EndDate.Subtract(StartDate).Days)
-                                  .Select(offset => StartDate.AddDays(offset))
-                                  .ToList();
-
-            // Pass date range along with other data to the view
-            ViewBag.DateRange = dateRange;
-
-
-            mymodel.view_FinancialReport = db.View_FinancialReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
-            return View("FinancialReport", mymodel);
-
-
+            return RedirectToAction("FinancialReport");
         }
 
 
