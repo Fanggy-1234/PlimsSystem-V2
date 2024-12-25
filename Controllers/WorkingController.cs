@@ -888,356 +888,173 @@ namespace Plims.Controllers
 
         }
 
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public ActionResult ImportManualData(TbProductionTransaction obj)
+        public ActionResult ImportManualData()
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-            if (EmpID == null)
+            if (string.IsNullOrEmpty(EmpID))
             {
                 return RedirectToAction("Login", "Home");
             }
+
             var mymodel = new ViewModelAll
             {
-
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                view_PLPS = db.View_PLPS.Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                tbProductionTransaction = db.TbProductionTransaction.Where(p => p.PlantID.Equals(PlantID)).ToList()
-
-
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList()
             };
 
             ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
-
 
             return View(mymodel);
         }
 
-
-
-
         [HttpPost]
-        public ActionResult ImportManualExport(View_ProductionPlan obj)
+        public ActionResult ImportManualExport()
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-
-            if (EmpID == null)
+            if (string.IsNullOrEmpty(EmpID))
             {
                 return RedirectToAction("Login", "Home");
             }
-            var mymodel = new ViewModelAll
-            {
 
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                view_PLPS = db.View_PLPS.Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                tbProductionTransaction = db.TbProductionTransaction.Where(p => p.PlantID.Equals(PlantID)).ToList()
+            var extrans = db.TbProductionTransaction.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.TransactionNo).FirstOrDefault();
 
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("ImportManualData");
+            Sheet.Cells["A1"].Value = "TransactionDate";
+            Sheet.Cells["B1"].Value = "PlantID";
+            Sheet.Cells["C1"].Value = "LineID";
 
-            };
+            Sheet.Cells["D1"].Value = "SectionID";
+            Sheet.Cells["E1"].Value = "ProductID";
 
-            ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
-            if (!string.IsNullOrEmpty(obj.SectionName) || !string.IsNullOrEmpty(obj.LineName) || !string.IsNullOrEmpty(obj.ProductName))
-            {//obj.PlanDate.HasValue != false ||
+            Sheet.Cells["F1"].Value = "Prefix";
+            Sheet.Cells["G1"].Value = "QRCode";
+            Sheet.Cells["H1"].Value = "Qty";
 
-                if (!string.IsNullOrEmpty(obj.SectionName))
-                {
-                    mymodel.view_ProductionPlan = mymodel.view_ProductionPlan.Where(x => x.SectionName.Equals(obj.SectionName)).ToList();
-                    ViewBag.SelectedSectionName = obj.SectionName;
-                }
+            Sheet.Cells["I1"].Value = "QtyPerQR";
+            Sheet.Cells["J1"].Value = "EmployeeRef";
+            Sheet.Cells["K1"].Value = "DataType";
 
-                if (!string.IsNullOrEmpty(obj.LineName))
-                {
-                    mymodel.view_ProductionPlan = mymodel.view_ProductionPlan.Where(x => x.LineName.Equals(obj.LineName)).ToList();
-                    ViewBag.SelectedLineName = obj.LineName;
-                }
-                if (!string.IsNullOrEmpty(obj.ProductName))
-                {
-                    mymodel.view_ProductionPlan = mymodel.view_ProductionPlan.Where(x => x.ProductName.Equals(obj.ProductName)).ToList();
-                    ViewBag.SelectedProductName = obj.ProductName;
-                }
+            Sheet.Cells["L1"].Value = "Reason";
+            Sheet.Cells["M1"].Value = "GroupRef";
+            Sheet.Cells["N1"].Value = "Note";
 
+            int row = 2;
 
-                var extrans = db.TbProductionTransaction.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.TransactionNo).FirstOrDefault();
-                var collection = mymodel.tbProductionTransaction.ToList();
-                ExcelPackage Ep = new ExcelPackage();
-                ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("ImportManualData");
-                Sheet.Cells["A1"].Value = "TransactionDate";
-                Sheet.Cells["B1"].Value = "PlantID";
-                Sheet.Cells["C1"].Value = "LineID";
+            Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+            Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+            Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
 
-                Sheet.Cells["D1"].Value = "SectionID";
-                Sheet.Cells["E1"].Value = "ProductID";
-                Sheet.Cells["F1"].Value = "Prefix";
+            Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+            Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+            Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
+            Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
+            Sheet.Cells[string.Format("H{0}", row)].Value = "1";
 
-                Sheet.Cells["G1"].Value = "QRCode";
-                Sheet.Cells["H1"].Value = "Qty";
-                Sheet.Cells["I1"].Value = "QtyPerQR";
+            Sheet.Cells[string.Format("I{0}", row)].Value = "50";
+            Sheet.Cells[string.Format("J{0}", row)].Value = "";
+            Sheet.Cells[string.Format("K{0}", row)].Value = "Count";
 
-                Sheet.Cells["J1"].Value = "EmployeeRef";
-                Sheet.Cells["K1"].Value = "DataType";
+            Sheet.Cells[string.Format("L{0}", row)].Value = "";
+            Sheet.Cells[string.Format("M{0}", row)].Value = "";
+            Sheet.Cells[string.Format("N{0}", row)].Value = "";
 
-                Sheet.Cells["L1"].Value = "Reason";
-                Sheet.Cells["M1"].Value = "GroupRef";
-                Sheet.Cells["N1"].Value = "Note";
+            row++;
 
-                int row = 2;
+            Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+            Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+            Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
 
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
+            Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+            Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
 
-                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
-                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
-                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
-                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
-                Sheet.Cells[string.Format("H{0}", row)].Value = "1";
+            Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
+            Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
+            Sheet.Cells[string.Format("H{0}", row)].Value = "1000";
 
-                Sheet.Cells[string.Format("I{0}", row)].Value = "50";
-                Sheet.Cells[string.Format("J{0}", row)].Value = "";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "Count";
+            Sheet.Cells[string.Format("I{0}", row)].Value = "1";
+            Sheet.Cells[string.Format("J{0}", row)].Value = "";
+            Sheet.Cells[string.Format("K{0}", row)].Value = "FG";
 
-                Sheet.Cells[string.Format("L{0}", row)].Value = "";
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+            Sheet.Cells[string.Format("L{0}", row)].Value = "";
+            Sheet.Cells[string.Format("M{0}", row)].Value = "";
+            Sheet.Cells[string.Format("N{0}", row)].Value = "";
 
-                row++;
+            row++;
 
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
+            Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+            Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+            Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
 
-                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
-                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+            Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+            Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+            Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
 
-                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
-                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
-                Sheet.Cells[string.Format("H{0}", row)].Value = "1000";
+            Sheet.Cells[string.Format("G{0}", row)].Value = "xxxxxxx";
+            Sheet.Cells[string.Format("H{0}", row)].Value = "50";
+            Sheet.Cells[string.Format("I{0}", row)].Value = "1";
 
-                Sheet.Cells[string.Format("I{0}", row)].Value = "1";
-                Sheet.Cells[string.Format("J{0}", row)].Value = "";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "FG";
+            Sheet.Cells[string.Format("J{0}", row)].Value = "";
+            Sheet.Cells[string.Format("K{0}", row)].Value = "Defect";
+            Sheet.Cells[string.Format("L{0}", row)].Value = "00001";
 
-                Sheet.Cells[string.Format("L{0}", row)].Value = "";
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+            Sheet.Cells[string.Format("M{0}", row)].Value = "";
+            Sheet.Cells[string.Format("N{0}", row)].Value = "";
 
+            row++;
 
-                row++;
-
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
-
-                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
-                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
-                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
-
-                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
-                Sheet.Cells[string.Format("H{0}", row)].Value = "50";
-                Sheet.Cells[string.Format("I{0}", row)].Value = "1";
-
-                Sheet.Cells[string.Format("J{0}", row)].Value = "";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "Defect";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "";
-
-                Sheet.Cells[string.Format("M{0}", row)].Value = "00001";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "";
-
-                row++;
-
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
+            Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+            Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+            Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
 
-                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
-                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
-                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
+            Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+            Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+            Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
 
-                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
-                Sheet.Cells[string.Format("H{0}", row)].Value = "1";
-                Sheet.Cells[string.Format("I{0}", row)].Value = "50";
+            Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
+            Sheet.Cells[string.Format("H{0}", row)].Value = "50";
+            Sheet.Cells[string.Format("I{0}", row)].Value = "1";
 
-                Sheet.Cells[string.Format("J{0}", row)].Value = "";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "Count";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "";
+            Sheet.Cells[string.Format("J{0}", row)].Value = "";
+            Sheet.Cells[string.Format("K{0}", row)].Value = "Defect";
+            Sheet.Cells[string.Format("L{0}", row)].Value = "00001";
 
-                Sheet.Cells[string.Format("M{0}", row)].Value = "00001";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "";
+            Sheet.Cells[string.Format("M{0}", row)].Value = "";
+            Sheet.Cells[string.Format("N{0}", row)].Value = "";
 
-                //   row++;
-                //  }
-                Sheet.Cells["A:AZ"].AutoFitColumns();
-                Response.Clear();
-                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                Response.Headers.Add("content-disposition", "attachment; filename=ImportManualData.xlsx"); // Fix typo ':' should be ';'
-                Response.Body.WriteAsync(Ep.GetAsByteArray());
+            row++;
 
+            Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
+            Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
+            Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
 
-                ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
+            Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
+            Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
+            Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
 
-                return RedirectToAction("ImportManualData", mymodel);
+            Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
+            Sheet.Cells[string.Format("H{0}", row)].Value = "1";
+            Sheet.Cells[string.Format("I{0}", row)].Value = "50";
 
-            }
-            else
-            {
-                var extrans = db.TbProductionTransaction.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.TransactionNo).FirstOrDefault();
-                var collection = mymodel.tbProductionTransaction.ToList();
-                ExcelPackage Ep = new ExcelPackage();
-                ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("ImportManualData");
-                Sheet.Cells["A1"].Value = "TransactionDate";
-                Sheet.Cells["B1"].Value = "PlantID";
-                Sheet.Cells["C1"].Value = "LineID";
+            Sheet.Cells[string.Format("J{0}", row)].Value = "";
+            Sheet.Cells[string.Format("K{0}", row)].Value = "Count";
+            Sheet.Cells[string.Format("L{0}", row)].Value = "";
 
-                Sheet.Cells["D1"].Value = "SectionID";
-                Sheet.Cells["E1"].Value = "ProductID";
+            Sheet.Cells[string.Format("M{0}", row)].Value = "GroupID";
+            Sheet.Cells[string.Format("N{0}", row)].Value = "";
 
-                Sheet.Cells["F1"].Value = "Prefix";
-                Sheet.Cells["G1"].Value = "QRCode";
-                Sheet.Cells["H1"].Value = "Qty";
+            Sheet.Cells["A:AZ"].AutoFitColumns();
 
-                Sheet.Cells["I1"].Value = "QtyPerQR";
-                Sheet.Cells["J1"].Value = "EmployeeRef";
-                Sheet.Cells["K1"].Value = "DataType";
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.Headers.Add("content-disposition", "attachment; filename=ImportManualData.xlsx");
+            Response.Body.WriteAsync(Ep.GetAsByteArray());
 
-                Sheet.Cells["L1"].Value = "Reason";
-                Sheet.Cells["M1"].Value = "GroupRef";
-                Sheet.Cells["N1"].Value = "Note";
-                int row = 2;
-                //foreach (var item in collection)
-                //{
-
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
-
-                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
-                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
-                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
-                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
-                Sheet.Cells[string.Format("H{0}", row)].Value = "1";
-
-                Sheet.Cells[string.Format("I{0}", row)].Value = "50";
-                Sheet.Cells[string.Format("J{0}", row)].Value = "";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "Count";
-
-                Sheet.Cells[string.Format("L{0}", row)].Value = "";
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "";
-
-                row++;
-
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
-
-                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
-                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
-
-                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
-                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
-                Sheet.Cells[string.Format("H{0}", row)].Value = "1000";
-
-                Sheet.Cells[string.Format("I{0}", row)].Value = "1";
-                Sheet.Cells[string.Format("J{0}", row)].Value = "";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "FG";
-
-                Sheet.Cells[string.Format("L{0}", row)].Value = "";
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "";
-
-
-                row++;
-
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
-
-                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
-                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
-                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
-
-                Sheet.Cells[string.Format("G{0}", row)].Value = "xxxxxxx";
-                Sheet.Cells[string.Format("H{0}", row)].Value = "50";
-                Sheet.Cells[string.Format("I{0}", row)].Value = "1";
-
-                Sheet.Cells[string.Format("J{0}", row)].Value = "";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "Defect";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "00001";
-
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "";
-
-
-
-                row++;
-
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
-
-                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
-                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
-                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
-
-                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
-                Sheet.Cells[string.Format("H{0}", row)].Value = "50";
-                Sheet.Cells[string.Format("I{0}", row)].Value = "1";
-
-                Sheet.Cells[string.Format("J{0}", row)].Value = "";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "Defect";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "00001";
-
-                Sheet.Cells[string.Format("M{0}", row)].Value = "";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "";
-
-                row++;
-
-                Sheet.Cells[string.Format("A{0}", row)].Value = "yyyy-MM-dd";
-                Sheet.Cells[string.Format("B{0}", row)].Value = PlantID;
-                Sheet.Cells[string.Format("C{0}", row)].Value = extrans.LineID;
-
-                Sheet.Cells[string.Format("D{0}", row)].Value = extrans.SectionID;
-                Sheet.Cells[string.Format("E{0}", row)].Value = extrans.ProductID;
-                Sheet.Cells[string.Format("F{0}", row)].Value = extrans.Prefix;
-
-                Sheet.Cells[string.Format("G{0}", row)].Value = extrans.QRCode;
-                Sheet.Cells[string.Format("H{0}", row)].Value = "1";
-                Sheet.Cells[string.Format("I{0}", row)].Value = "50";
-
-                Sheet.Cells[string.Format("J{0}", row)].Value = "";
-                Sheet.Cells[string.Format("K{0}", row)].Value = "Count";
-                Sheet.Cells[string.Format("L{0}", row)].Value = "";
-
-                Sheet.Cells[string.Format("M{0}", row)].Value = "GroupID";
-                Sheet.Cells[string.Format("N{0}", row)].Value = "";
-
-
-                //    row++;
-                //}
-                Sheet.Cells["A:AZ"].AutoFitColumns();
-                Response.Clear();
-                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                Response.Headers.Add("content-disposition", "attachment; filename=ImportManualData.xlsx"); // Fix typo ':' should be ';'
-                Response.Body.WriteAsync(Ep.GetAsByteArray());
-
-                ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
-
-                //ViewBag.InactiveStatus = true;
-                return RedirectToAction("ImportManualData", mymodel);
-            }
-
+            return RedirectToAction("ImportManualData");
         }
-
-
 
         [HttpPost]
         public IActionResult ImportManualUpload(IFormFile FileUpload)
@@ -1245,18 +1062,17 @@ namespace Plims.Controllers
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-            if (EmpID == null)
+            if (string.IsNullOrEmpty(EmpID))
             {
                 return RedirectToAction("Login", "Home");
             }
 
             var mymodel = new ViewModelAll
             {
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                tbProductionTransaction = db.TbProductionTransaction.Where(p => p.PlantID.Equals(PlantID)).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbProduct = db.TbProduct.Where(p => p.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(p => p.PlantID.Equals(PlantID)).ToList(),
-                tbLine = db.TbLine.Where(p => p.PlantID.Equals(PlantID)).ToList(),
+                tbLine = db.TbLine.Where(p => p.PlantID.Equals(PlantID)).ToList()
             };
 
             if (FileUpload == null || FileUpload.Length <= 0)
@@ -1346,10 +1162,6 @@ namespace Plims.Controllers
                             {
                                 EmployeeRefIDDb = db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(EmployeeRefVar)).Select(x => x.EmployeeID).SingleOrDefault();
                             }
-                            else
-                            {
-                                EmployeeRefIDDb = "";
-                            }
 
                             if (LineIDDb == null || ProductIDDb == null || SectionIDDb == null || EmployeeIDDb == null || EmployeeRefIDDb == null || incentivecheck.Count == 0 || plplcheck.Count == 0 || productstdcheck.Count == 0)
                             {
@@ -1365,7 +1177,6 @@ namespace Plims.Controllers
                                 // Insert new record
                                 var newData = new TbProductionTransaction
                                 {
-
                                     TransactionDate = Convert.ToDateTime(worksheet.Cells[row, 1].Text),
                                     PlantID = PlantID,
                                     LineID = LineIDDb.LineID,
@@ -1388,9 +1199,7 @@ namespace Plims.Controllers
                                     CreateDate = DateTime.Now,
                                     CreateBy = EmpID,
                                     UpdateDate = DateTime.Now,
-                                    UpdateBy = EmpID,
-
-
+                                    UpdateBy = EmpID
                                 };
 
                                 db.TbProductionTransaction.Add(newData);
@@ -1407,8 +1216,6 @@ namespace Plims.Controllers
             // ViewBag.Success = "Data imported and updated successfully!";
             return RedirectToAction("ImportManualData");
         }
-
-
 
         //DateTime startDate, DateTime endDate,
         [HttpGet]
