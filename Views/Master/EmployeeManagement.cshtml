@@ -283,7 +283,7 @@
         </div>
 
         <div class="col" style="width:15% ">
-            <button id="Search" type="submit" asp-action="EmployeeManagement" name="submit" value="begin" class="search-button">
+            <button id="Search" type="submit" asp-action="EmployeeManagement" name="submit" value="begin" class="search-button" onclick="showLoader()">
                 Search
             </button>
         </div>
@@ -600,7 +600,7 @@
                     <div class="modal-footer">
                         <input type="button" value="Generate QR Code" onclick="generateQRCode()" class="btn btn-primary text-center" />
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" name="submit" value="Enter">Submit</button>
+                        <button type="submit" class="btn btn-primary" name="submit" value="Enter" onclick="showLoader()">Submit</button>
                     </div>
                 </div>
             </form>
@@ -757,7 +757,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="Submit" class="btn btn-primary">Submit</button>
+                        <button type="Submit" class="btn btn-primary" onclick="showLoader()">Submit</button>
                     </div>
                 </div>
             </form>
@@ -801,7 +801,7 @@
 
     function generateQRCode() {
         var employeeID = $('#EmployeeIDCreate').val(); // Get the employee ID from the input field
-        console.log(employeeID)
+        // console.log(employeeID)
         $.ajax({
             url: '@Url.Action("CreateQRCode", "Master")', // Specify the controller action URL
             type: 'POST',
@@ -818,14 +818,6 @@
             }
         });
     }
-
-
-
-
-
-
-
-
 </script>
 
 
