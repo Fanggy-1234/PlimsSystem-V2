@@ -2917,53 +2917,25 @@ namespace Plims.Controllers
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
-            var currentDateTime = DateTime.Now;
-            var currentDate = currentDateTime.Date;
 
-            if (EmpID == null)
+            if (string.IsNullOrEmpty(EmpID))
             {
-                return RedirectToAction("Login", "Home");
+                return Json(new { success = false, Message = "Session Timeout." });
             }
-
-
-
-            var mymodel = new ViewModelAll
-            {
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                view_Employee = db.View_Employee.ToList(),
-                tbProductionTransaction = db.TbProductionTransaction.ToList(),
-                tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList()
-            };
-
-            //if (obj.Qty == 0)
-            //{
-            //    return Json(new { success = true });
-            //}
-
-
-
 
             try
             {
+                var currentDate = DateTime.Now.Date;
 
                 var empsectioncount = db.View_ClockTime
                  .Where(x => x.EmployeeID.Equals(EmployeeID) &&
                               (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDate.AddDays(-1)) && x.ClockIn != "" && x.ClockOut == "" && x.WorkingStatus.Equals("Working") &&
                             x.PlantID.Equals(PlantID)).ToList();
 
-                if (empsectioncount.Count() > 1)
+                if (empsectioncount.Count > 1)
                 {
-                    //  TempData["AlertMessage"] = "Some data not clock out.Please check. : " + EmployeeID;
-                    //  return View("WorkingFunction", mymodel);
                     return Json(new { success = false, Message = "Please Clock in. : " + EmployeeID });
-
                 }
-
-
 
                 var objEmp = db.View_ClockTime
                    .Where(x => x.EmployeeID.Equals(EmployeeID) &&
@@ -2973,7 +2945,6 @@ namespace Plims.Controllers
                 if (objEmp == null)
                 {
                     return Json(new { success = false, Message = "Please Clock in. : " + EmployeeID });
-
                 }
 
                 var objPLPS = db.View_PLPS
@@ -2983,11 +2954,9 @@ namespace Plims.Controllers
                                        x.SectionID.Equals(objEmp.SectionID.ToString()))
                            .FirstOrDefault();
 
-
                 if (objPLPS == null)
                 {
                     return Json(new { success = false, Message = "Plese check PLPS" });
-
                 }
 
                 db.TbProductionTransaction.Add(new TbProductionTransaction()
@@ -3010,21 +2979,21 @@ namespace Plims.Controllers
                     Reason = "",
                     Note = "",
                     GroupRef = "",
-                    EmployeeRef = objEmp.ClockIn, //"",
+                    EmployeeRef = objEmp.ClockIn,
                     PackageRef = 0,
                     CreateDate = DateTime.Now,
                     CreateBy = EmpID,
                     UpdateDate = DateTime.Now,
                     UpdateBy = EmpID
                 });
+
                 db.SaveChanges();
 
-                return View("WorkingFunction", mymodel);
+                return Json(new { success = true, Message = "Success" });
             }
             catch (Exception)
             {
-                TempData["AlertMessage"] = "Connection loss! please contact IT";
-                return RedirectToAction("Login", "Home");
+                return Json(new { success = false, Message = "Connection loss! please contact IT" });
             }
             finally
             {
@@ -3131,48 +3100,27 @@ namespace Plims.Controllers
             }
         }
 
-
         public ActionResult ProductQtyDefectWithReffn(string EmployeeID, string ProductID, string SectionID, int QTY, string Reason)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
-            var currentDateTime = DateTime.Now;
-            var currentDate = currentDateTime.Date;
 
-
-            if (EmpID == null)
+            if (string.IsNullOrEmpty(EmpID))
             {
-                return RedirectToAction("Login", "Home");
+                return Json(new { success = false, Message = "Session Timeout." });
             }
 
-
-            var mymodel = new ViewModelAll
-            {
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                tbProductionTransaction = db.TbProductionTransaction.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList()
-            };
-
-            if (EmpID == null)
-            {
-                return RedirectToAction("Login", "Home");
-            }
             try
             {
-
+                var currentDate = DateTime.Now.Date;
 
                 var empsectioncount = db.View_ClockTime
                .Where(x => x.EmployeeID.Equals(EmployeeID) &&
                             (x.TransactionDate.Date == currentDate || (x.TransactionDate.Date == currentDate.AddDays(-1) && x.ClockOut == "")) &&
                           x.PlantID.Equals(PlantID) && x.WorkingStatus.Equals("Working")).ToList();
 
-                if (empsectioncount.Count() > 1)
+                if (empsectioncount.Count > 1)
                 {
-
                     return Json(new { success = false, message = "Some data not clock out.Please check. : " + EmployeeID });
                 }
 
@@ -3189,14 +3137,10 @@ namespace Plims.Controllers
                                        x.SectionID.Equals(objEmp.SectionID.ToString()))
                            .FirstOrDefault();
 
-
-
                 var transactionscan = db.TbProductionTransaction.Where(x => x.QRCode.Equals(EmployeeID) && x.TransactionDate.Equals(objEmp.TransactionDate.Date)).ToList();
-                if (transactionscan.Count() == 0)
+                if (transactionscan.Count == 0)
                 {
-                    // TempData["AlertMessage"] = "Please Check data before input defect";
                     return Json(new { success = false, message = "Please Check data before input defect." });
-                    //return View("WorkingFunction", mymodel);
                 }
 
                 db.TbProductionTransaction.Add(new TbProductionTransaction()
@@ -3219,21 +3163,21 @@ namespace Plims.Controllers
                     Reason = Reason,
                     Note = "",
                     GroupRef = "",
-                    EmployeeRef = objEmp.ClockIn,  //"",
+                    EmployeeRef = objEmp.ClockIn,
                     PackageRef = 0,
                     CreateDate = DateTime.Now,
                     CreateBy = EmpID,
                     UpdateDate = DateTime.Now,
                     UpdateBy = EmpID
                 });
+
                 db.SaveChanges();
 
-                return View("WorkingFunction", mymodel);
+                return Json(new { success = true, Message = "Success" });
             }
             catch (Exception)
             {
-                TempData["AlertMessage"] = "Connection loss! please contact IT";
-                return RedirectToAction("Login", "Home");
+                return Json(new { success = false, Message = "Connection loss! please contact IT" });
             }
             finally
             {
