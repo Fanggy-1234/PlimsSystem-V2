@@ -75,9 +75,9 @@
 
 @if (TempData.ContainsKey("AlertMessage"))
 {
-    <script>
-        alert('@TempData["AlertMessage"]');
-    </script>
+        <script>
+            alert('@TempData["AlertMessage"]');
+        </script>
 }
 
 
@@ -263,9 +263,9 @@
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbLine)
                         {
-                            <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
+                                <option value="@item.LineName" selected="@(item.LineName == ViewBag.SelectedLineName ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
-                            </option>
+                                </option>
                         }
                     </select>
                 </div>
@@ -283,9 +283,9 @@
                         @foreach (var item in Model.tbEmployeeMaster)
                         {
 
-                            <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">
+                                <option value="@item.EmployeeID" selected="@(item.EmployeeID == ViewBag.SelectedEmpID ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => item.EmployeeID) :  @Html.DisplayFor(modelItem => item.EmployeeName)
-                            </option>
+                                </option>
                         }
                     </select>
                 </div>
@@ -304,9 +304,9 @@
                             <option value="" selected>Choose Section Name</option>
                             @foreach (var item in Model.tbSection)
                             {
-                                <option value="@item.SectionID" selected=@(item.SectionID == ViewBag.SelectedSectionName ? "selected" : null)>
+                                    <option value="@item.SectionID" selected=@(item.SectionID == ViewBag.SelectedSectionName ? "selected" : null)>
                                     @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
-                                </option>
+                                    </option>
                             }
                         </select>
 
@@ -341,6 +341,16 @@
                     <!-- End Time -->
                     <div style="width:100%">
                         <input type="time" class="form-control" name="EndTime" id="EndTime" style="width:100%" value="@ViewBag.SelectedEndTime">
+                    </div>
+                </div>
+            </div>
+            <div class="row" style=" padding-right:2em">
+                <div class="col-3"></div>
+                <div class="col d-flex align-items-center">
+                    <!-- Have not clock-out -->
+                    <div class="form-check form-switch" style="width:100%">
+                        <input class="form-check-input" type="checkbox" id="HaveNotClockOut" name="HaveNotClockOut" @((ViewBag.SelectedHaveNotClockOut ?? false) ? "checked" : "")>
+                        <label class="form-check-label" for="HaveNotClockOut">Have not clock-out</label>
                     </div>
                 </div>
             </div>
@@ -456,11 +466,11 @@
                 <div class="col-3">
                     @if (ViewBag.VBRoleEmpClockOut == "Full")
                     {
-                        <button type="submit" class="clear-button" name="action" value="Save" asp-action="EmployeeClockOutsave" onclick="return checkData()">Create</button>
+                            <button type="submit" class="clear-button" name="action" value="Save" asp-action="EmployeeClockOutsave" onclick="return checkData()">Create</button>
                     }
                     else
                     {
-                        <button type="button" class="clear-button">Create</button>
+                            <button type="button" class="clear-button">Create</button>
                     }
 
                 </div>
@@ -516,48 +526,48 @@
         <tbody>
             @foreach (var item in Model.view_EmployeeClocktime)
             {
-                <tr>
+                    <tr>
                     @*   @Html.HiddenFor(modelItem => item.ID) *@
-                    <td>
-                        <input type="checkbox" id="@item.ID" value="@item.ID" class="checkthis" Name="EmployeeIDChk" />
-                    </td>
-                    <td>
+                        <td>
+                            <input type="checkbox" id="@item.ID" value="@item.ID" class="checkthis" Name="EmployeeIDChk" />
+                        </td>
+                        <td>
                         @Html.DisplayFor(modelItem => item.EmployeeID, new { @class = "EmployeeID", Name = "EmployeeID" })
-                    </td>
-                    <td>
+                        </td>
+                        <td>
                         @Html.DisplayFor(modelItem => item.EmployeeName)
-                    </td>
-                    <td>
+                        </td>
+                        <td>
                         @Html.DisplayFor(modelItem => item.LineID) :  @Html.DisplayFor(modelItem => item.LineName)
-                    </td>
-                    <td>
+                        </td>
+                        <td>
                         @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
-                    </td>
-                    <td style="color:darkblue">
+                        </td>
+                        <td style="color:darkblue">
                         @if (item.TransactionDate == DateTime.MinValue)
                         {
-                            <!-- Display a placeholder or leave empty -->
+                                    <!-- Display a placeholder or leave empty -->
                         }
                         else
                         {
                             @Html.DisplayFor(modelItem => item.TransactionDate)
                         }
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.StartTime)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EndTime)
-                    </td>
-                 
-                        <td style="color:darkblue;text-align:center">
-                            @Html.DisplayFor(modelItem => item.ClockIn)
                         </td>
-                    <td style="color:darkblue">
-                        @Html.DisplayFor(modelItem => item.ClockOut)
-                    </td>
+                        <td>
+                        @Html.DisplayFor(modelItem => item.StartTime)
+                        </td>
+                        <td>
+                        @Html.DisplayFor(modelItem => item.EndTime)
+                        </td>
 
-                  @*   @if (item.qrcode != "")
+                            <td style="color:darkblue;text-align:center">
+                        @Html.DisplayFor(modelItem => item.ClockIn)
+                            </td>
+                        <td style="color:darkblue">
+                        @Html.DisplayFor(modelItem => item.ClockOut)
+                        </td>
+
+                    @*   @if (item.qrcode != "")
                     {
                         <td style="color:darkblue">
                             @Html.DisplayFor(modelItem => item.ClockOut)
@@ -569,15 +579,15 @@
                             @Html.DisplayFor(modelItem => item.ClockOut)
                         </td>
                     } *@
-                   
-                    <td>
-                        @Html.DisplayFor(modelItem => item.WorkingStatus)
-                    </td>
 
-                    <td>
+                        <td>
+                        @Html.DisplayFor(modelItem => item.WorkingStatus)
+                        </td>
+
+                        <td>
                         @if (string.IsNullOrEmpty(item.ClockOut))
                         {
-                            <a href="#" id="btnEdit" data-id="@item.ID" data-section-id="@item.ID" data-service-id="@item.ID">Edit</a>
+                                    <a href="#" id="btnEdit" data-id="@item.ID" data-section-id="@item.ID" data-service-id="@item.ID">Edit</a>
 
 
                         }
@@ -586,18 +596,18 @@
 
                             @if (ViewBag.VBRoleEmpClockOut == "Full")
                             {
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.EmployeeID" data-section-id="@item.EmployeeID" data-service-id="@item.EmployeeID" onclick="EditFn('@item.ID','@item.TransactionNo')">Edit</a>
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#EditModal" id="btnEdit" data-id="@item.EmployeeID" data-section-id="@item.EmployeeID" data-service-id="@item.EmployeeID" onclick="EditFn('@item.ID','@item.TransactionNo')">Edit</a>
 
                             }
                             else
                             {
-                                <a href="#" id="btnEdit" data-id="@item.EmployeeID">Edit</a>
+                                            <a href="#" id="btnEdit" data-id="@item.EmployeeID">Edit</a>
 
 
                             }
                         }
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
             }
         </tbody>
     </table>
