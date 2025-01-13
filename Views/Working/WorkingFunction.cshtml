@@ -260,17 +260,14 @@
 <div class="modal fade" id="FGModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" asp-controller="Working">
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Product QTY Piece</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Employee ID:</label>
                         <input class="form-control" name="EmployeeID" id="EmployeeIDFG" placeholder="Scan QR Code" oninput="filterProductByEmployeeClockin()">
-
                     </div>
 
                     <div class="mb-3">
@@ -279,13 +276,11 @@
                             <option value="" default selected>Select Value ...</option>
                             @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
-
                                 <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
                                     @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
                                 </option>
                             }
                         </select>
-
                     </div>
 
                     <div class="mb-3">
@@ -298,7 +293,6 @@
                         <input class="form-control" name="QTY" id="QTYFG">
                     </div>
 
-
                     <div class="mb-3">
                         <label class="FillterLabel">Unit :</label>
                         <select class="selectfillter form-control" style="width:100%" list="Unit" name="Unit" id="UnitFG">
@@ -306,17 +300,12 @@
                             <option value="Kgs">Kgs</option>
                             <option value="g">g</option>
                         </select>
-
-
                     </div>
-
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" onclick="CallfunctionInputproductQty()">Submit</button>
                 </div>
-            </form>
         </div>
     </div>
 </div>
@@ -327,17 +316,15 @@
 <div class="modal fade" id="DefectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" asp-controller="Working" asp-action="ProductQtyDefectWithRef">
+            @* <form method="post" asp-controller="Working" asp-action="ProductQtyDefectWithRef"> *@
                 <div class="modal-header" style="background-color:blue">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Input Defect</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Employee ID:</label>
                         <input class="form-control" name="EmployeeID" id="EmployeeIDDefect" placeholder="Scan QR Code" oninput="filterSectionsByProductEdit()" />
-
                     </div>
 
                     <div class="mb-3">
@@ -346,22 +333,17 @@
                             <option value="" default selected>Select Value ...</option>
                             @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
                             {
-
                                 <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
                                     @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
                                 </option>
                             }
                         </select>
-
                     </div>
 
                     <div class="mb-3">
                         <label class="FillterLabel">Section ID:</label>
-
                         <input class="form-control" name="SectionName" id="SectionNameDefect" style="background-color:gainsboro" readonly>
-
                     </div>
-
 
                     <div class="mb-3">
                         <label class="FillterLabel">Reason:</label>
@@ -369,16 +351,12 @@
                             <option value="" default selected>Select Value ...</option>
                             @foreach (var item in Model.tbReason)
                             {
-
                                 <option value="@item.ReasonID" selected="@(item.ReasonID == ViewBag.SelectedReasonID ? "selected" : null)">
                                     @Html.DisplayFor(modelItem => item.ReasonID) : @Html.DisplayFor(modelItem => item.ReasonName)
                                 </option>
                             }
                         </select>
-
                     </div>
-
-
 
                     <div class="mb-3">
                         <label class="FillterLabel">Defect QTY :</label>
@@ -392,17 +370,13 @@
                             <option value="Kgs">Kgs</option>
                             <option value="g">g</option>
                         </select>
-
-
                     </div>
-
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" onclick="CallfunctionInputDefectQty()">Submit</button>
                 </div>
-            </form>
+            @* </form> *@
         </div>
     </div>
 </div>
@@ -971,25 +945,26 @@
         var QTY = $("#QTYFG").val().toString();
 
         if (EmployeeID !== "") {
+            showLoader();
+
             // Use AJAX to filter sections based on the selected Product ID
             $.ajax({
                 type: "GET",
                 url: "/Working/ProductQTYPieceWithReffn", // Update the URL to your controller action
                 data: { EmployeeID: EmployeeID, ProductID: ProductID, SectionID: SectionID, QTY: QTY },
                 success: function (data) {
-                    if (data.success === false) {
-                        
-                        alert(data.message);
-                        location.reload();
-                    } else {
+                    hideLoader();
 
-                        $('#productId').focus();
-                        location.reload();
-                    }            
+                    if (data.success === false) alert(data.message);
+                    else $('#productId').focus();
+
+                    location.reload();
                 },
                 error: function (error) {
-                    alert(data.message);
-                    console.log("Error filtering product: " + error);
+                    hideLoader();
+
+                    alert("Error: Input Product Qty");
+                    console.log("Error Input Product Qty: " + error);
                 }
             });
         }
@@ -1036,19 +1011,26 @@
         var QTY = $("#QTYDefect").val().toString();
 
         if (EmployeeID !== "") {
+            showLoader();
+
             // Use AJAX to filter sections based on the selected Product ID
             $.ajax({
                 type: "GET",
                 url: "/Working/ProductQtyDefectWithRefFn", // Update the URL to your controller action
                 data: { EmployeeID: EmployeeID, ProductID: ProductID, SectionID: SectionID, QTY: QTY, Reason: Reason },
                 success: function (data) {
+                    hideLoader();
 
-                    $('#EmployeeID').focus();
+                    if (data.success === false) alert(data.message);
+                    else $('#EmployeeID').focus();
+
                     location.reload();
-
                 },
                 error: function (error) {
-                    console.log("Error filtering product: " + error);
+                    hideLoader();
+
+                    alert("Error: Input Defect");
+                    console.log("Error Input Defect: " + error);
                 }
             });
         }
