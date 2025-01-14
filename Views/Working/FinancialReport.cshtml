@@ -69,6 +69,13 @@
         width: 100%;
     }
 
+    table {
+        /* display: block; */
+        overflow-x: auto;
+        white-space: nowrap;
+        width: 100% !important;
+    }
+
 </style>
 
 
@@ -192,7 +199,7 @@
     <div class="row" style="height:20px"></div>
 
     @*//////////////////////////////////////Diaplay data tabel ////////////////////////////////////////*@
-    <table id="table_id" class="table table-hover">
+    <table id="table_id" class="table table-hover" style="@(Model.groupedData != null && Model.groupedData.Any() ? "display: block;" : "")">
         <thead style="background-color:lightgrey;width:100%">
             <tr style="width:100%">
                 <th rowspan="2" style="width:150px">Employee ID</th>
