@@ -172,7 +172,7 @@
                                     <td>@item.ProductName</td>
                                     <td>@item.SectionName</td>
                                     <td style="text-align: right;">@item.EffTarget.ToString("#,##0.00")</td>
-                                    <td style="text-align: right;">@item.EffAct.ToString("#,##0.00")</td>
+                                    <td style="text-align: right;">@item.EFFhr1.ToString("#,##0.00")</td>
                                     @if (@item.DiffEff >= 100)
                                     {
                                         <td style="background-color:limegreen;text-align: right;">@item.DiffEff.ToString("#,##0.00")</td>
@@ -194,20 +194,17 @@
                                     }
                 </tr>
 
-                totalActual += item.EffAct;
+                totalActual += item.EFFhr1;
                 totalDiff += item.DiffEff;
                 totalYieldStd += item.YieldTarget;
                 totalYieldActual += item.YieldActual;
                 totalYieldDiff += item.DiffYield;
                 totalScan += item.SumFG;
                 totaldefect += item.TotalDefect;
-
-
             }
             @if (totalScan != 0)
             {
                 totalactYield = (totalScan - totaldefect) / totalScan * 100;
-             
             }
                             @{
                             // Calculate averages
@@ -377,7 +374,7 @@
 
             // set the titles of the axes
             var xAxis = chart.xAxis();
-            xAxis.title("Line");
+            xAxis.title("@ViewBag.xAxisTitle");
             xAxis.title().fontSize(26);  // set font size for the x-axis title
             xAxis.title().fontColor("#333333");  // set font color for the x-axis title
 
