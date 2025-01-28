@@ -151,17 +151,15 @@
                                                     <td style="text-align: left;">@item.SectionName</td>
                                                     <td style="text-align: right;">@item.STD.ToString("#,##0.00")</td>
                                                     <td style="text-align: right;">@item.Actual.ToString("#,##0.00")</td>
-                                                  
 
-                                                    @if (@item.Diff >= 100)
+                                                    @if (item.Actual >= item.STD)
                                                     {
                                                         <td style="background-color:limegreen;text-align: right;">@item.Diff.ToString("#,##0.00")</td>
                                                     }
-                                                    else if (@item.Diff < 100)
+                                                    else
                                                     {
                                                         <td style="background-color:indianred;text-align: right;">@item.Diff.ToString("#,##0.00")</td>
                                                     }
-
                                                 </tr>
 
                                                 totalStd = totalStd + item.STD;
@@ -206,14 +204,13 @@
                                                     int totalEmp = 0;
                                                     double totalPercent = 0.0;
                                                     decimal totalPerPce = 0M;
-                                                    decimal totalavg = 0M;
-                                                    decimal totalavgsum = 0M;
+                                                    decimal totalFGQty = 0M;
+                                                    decimal totalDiffHours = 0M;
                                                 }
                                                 @foreach (var item in Model.ResultGrpGrade)
                                                 {
                                                     @*  <td style="text-align: right;">@item.PcsPerHr.ToString("#,##0.00")</td>  *@
                                                     <tr>
-                                                      
                                                         <td style="font-weight:bold;text-align: center;">@item.Grade</td>
                                                         <td style="text-align: right;">@item.PcsPerHr.ToString("#,##0.00")</td>
                                                         <td style="text-align: center;">@item.Cnt</td>
@@ -221,15 +218,14 @@
                                                     </tr>
                                                     totalEmp += item.Cnt;
                                                     totalPercent += item.Percent;
-                                                    totalPerPce += @item.PcsPerHr;
-
-                                                    totalavgsum = totalPerPce / totalEmp;
-                                                    //  totalPercent = totalEmp / totalPercent;
+                                                    totalPerPce += item.PcsPerHr;
+                                                    totalFGQty += item.FGQty;
+                                                    totalDiffHours += item.DiffHours;
                                                 }
                                                 <tr>
                                                     <td style="font-weight:bold;text-align: center;">Total</td>
                                                     @* <td style="font-weight:bold;text-align: right;">@totalStd.ToString("#,##0.00")</td> *@
-                                                    <td style="font-weight:bold;text-align: right;">@totalavgsum.ToString("#,##0.00")</td>
+                                                    <td style="font-weight:bold;text-align: right;">@((totalDiffHours > 0 ? totalFGQty / totalDiffHours : 0).ToString("#,##0.00"))</td>
                                                     <td style="font-weight:bold;text-align: center;">@totalEmp.ToString("#,##0")</td> 
                                                     <td style="font-weight:bold;text-align: center;">@totalPercent.ToString("#,##0")</td>
                                                 </tr>

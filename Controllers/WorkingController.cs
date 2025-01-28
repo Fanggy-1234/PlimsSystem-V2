@@ -3552,7 +3552,7 @@ namespace Plims.Controllers
 
         //DateTime startDate, DateTime endDate,
         [HttpGet]
-        public async Task<IActionResult> EFFReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, String SectionName)
+        public async Task<IActionResult> EFFReport(DateTime StartDate, DateTime EndDate, string LineID, string SectionName)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -3562,7 +3562,6 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-
 
             // Generate date range
             List<DateTime> dateRange = Enumerable.Range(0, 1 + EndDate.Subtract(StartDate).Days)
@@ -3572,571 +3571,263 @@ namespace Plims.Controllers
             // Pass date range along with other data to the view
             ViewBag.DateRange = dateRange;
 
+            if (!(!string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionName) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue))
+            {
+                StartDate = DateTime.Today;
+                EndDate = DateTime.Today;
+            }
+
+            var view_EFFReport = new List<View_EFFReport>();
+
+            try
+            {
+                view_EFFReport = await db.View_EFFReport.Where(
+                    x => x.PlantID.Equals(PlantID)
+                    && (StartDate == DateTime.MinValue || x.TransactionDate >= StartDate)
+                    && (EndDate == DateTime.MinValue || x.TransactionDate <= EndDate)
+                    && (string.IsNullOrEmpty(LineID) || x.LineID.Equals(LineID))
+                    && (string.IsNullOrEmpty(SectionName) || x.SectionID.Equals(SectionName))
+                    ).Distinct().ToListAsync();
+            }
+            catch
+            {
+                view_EFFReport = new List<View_EFFReport>();
+                TempData["AlertMessage"] = "Working function is currently in use. Please try again later.";
+            }
+
+            if (!string.IsNullOrEmpty(LineID)) ViewBag.SelectedLineID = LineID;
+            if (!string.IsNullOrEmpty(SectionName)) ViewBag.SelectedSectionName = SectionName;
+            if (StartDate != DateTime.MinValue) ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+            if (EndDate != DateTime.MinValue) ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
 
             var mymodel = new ViewModelAll
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
-                view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).Distinct().ToList()
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID) && x.UserEmpID.Equals(EmpID) && x.PageID.Equals(25)).ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+                view_EFFReport = view_EFFReport
             };
 
+            ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster.Select(x => x.RoleAction).FirstOrDefault();
 
-            //if (StartDate == DateTime.MinValue && EndDate == DateTime.MinValue)
-            //{
-            //    mymodel = new ViewModelAll
-            //    {
-            //        view_EFFReport = db.View_EFFReport.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today).ToList()
-            //    };
-            //}
-            //else
-            //{
-            //    mymodel = new ViewModelAll
-            //    {
+            HttpContext.Session.SetString("EFFReport", JsonConvert.SerializeObject(mymodel));
 
-            //        view_EFFReport = db.View_EFFReport.Where(x => x.PlantID.Equals(PlantID)).ToList()
-            //    };
-
-            //}
-
-
-
-
-            if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionName) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
-            {
-
-
-                if (!string.IsNullOrEmpty(LineID))
-                {
-                    mymodel.view_EFFReport = mymodel.view_EFFReport.Where(x => x.LineID == LineID).ToList();
-                    ViewBag.SelectedLineID = LineID;
-                }
-
-                if (!string.IsNullOrEmpty(SectionName))
-                {
-                    mymodel.view_EFFReport = mymodel.view_EFFReport.Where(x => x.SectionID == SectionName).ToList();
-                    ViewBag.SelectedSectionName = SectionName;
-                }
-
-                if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
-                {
-                    mymodel.view_EFFReport = mymodel.view_EFFReport
-                       .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
-                       .ToList();
-
-
-                    ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                    ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-
-                }
-
-                // mymodel = new ViewModelAll
-                //{
-                //    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                //    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                //    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                //    view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                //    //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
-                //   // view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).Distinct().ToList()
-                //};
-
-
-                ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster
-                                                .Where(x => x.UserEmpID == EmpID && x.PageID == 25)
-                                                .Select(x => x.RoleAction)
-                                                .FirstOrDefault();
-                return View(mymodel);
-
-            }
-            else
-            {
-
-                //mymodel = new ViewModelAll
-                //{
-                //    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                //    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                //    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                //    view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                //    //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
-                //    // view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).Distinct().ToList()
-                //};
-
-
-                ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster
-                                                .Where(x => x.UserEmpID == EmpID && x.PageID == 25)
-                                                .Select(x => x.RoleAction)
-                                                .FirstOrDefault();
-
-                ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
-                ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
-                mymodel.view_EFFReport = db.View_EFFReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
-                return View(mymodel);
-            }
-
+            return View(mymodel);
         }
 
-        public ActionResult EFFReportClear(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
+        public ActionResult EFFReportClear()
         {
-            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-            // Check if user is logged in
             if (string.IsNullOrEmpty(EmpID))
             {
                 return RedirectToAction("Login", "Home");
             }
 
-
-
-            var mymodel = new ViewModelAll
-            {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                // view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
-                view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).ToList()
-            };
-
-            ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster
-                                            .Where(x => x.UserEmpID == EmpID && x.PageID == 25)
-                                            .Select(x => x.RoleAction)
-                                            .FirstOrDefault();
-
-
-            ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
-            ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
-
-            mymodel.view_EFFReport = db.View_EFFReport.Where(x => x.TransactionDate.Equals(DateTime.Today) && x.PlantID.Equals(PlantID)).ToList();
-            return View("EFFReport", mymodel);
-
-
+            return RedirectToAction("EFFReport");
         }
 
-        public ActionResult EFFReportExport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, String SectionName)
+        public ActionResult EFFReportExport(DateTime StartDate, DateTime EndDate, string LineID, string SectionName)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
-
 
             if (EmpID == null)
             {
                 return RedirectToAction("Login", "Home");
             }
 
-
             try
             {
+                var mymodel = new ViewModelAll();
+                var sessionEFFReport = HttpContext.Session.GetString("EFFReport");
+                if (sessionEFFReport != null) mymodel = JsonConvert.DeserializeObject<ViewModelAll>(sessionEFFReport);
 
-                var mymodel = new ViewModelAll
+                if (mymodel != null)
                 {
-                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                    view_PermissionMaster = db.View_PermissionMaster.ToList(),
-                    //  view_FinancialReport = db.View_FinancialReport.Where(x => x.PlantID == PlantID).ToList(),
-                    view_EFFReport = db.View_EFFReport.Where(x => x.PlantID == PlantID).ToList()
-
-                };
-
-
-
-                ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster
-                                            .Where(x => x.UserEmpID == EmpID && x.PageID == 25)
-                                            .Select(x => x.RoleAction)
-                                            .FirstOrDefault();
-
-
-                if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionName) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
-                {
-
-                    if (!string.IsNullOrEmpty(LineID))
+                    if (mymodel.view_EFFReport != null && mymodel.view_EFFReport.Count() > 0)
                     {
-                        mymodel.view_EFFReport = mymodel.view_EFFReport.Where(x => x.LineID == LineID).ToList();
-                        ViewBag.SelectedLineID = LineID;
-                    }
-
-                    if (!string.IsNullOrEmpty(SectionName))
-                    {
-                        mymodel.view_EFFReport = mymodel.view_EFFReport.Where(x => x.SectionID == SectionName).ToList();
-                        ViewBag.SelectedSectionName = SectionName;
-                    }
-
-                    if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
-                    {
-                        mymodel.view_EFFReport = mymodel.view_EFFReport
-                           .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
-                           .ToList();
-
-
-                        ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                        ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-
-                    }
-
-
-                    var collection = mymodel.view_EFFReport.ToList();
-                    using (var package = new ExcelPackage())
-                    {
-                        var worksheet = package.Workbook.Worksheets.Add("EFF Report");
-
-
-                        worksheet.Cells[1, 1].Value = "TransactionDate";
-                        worksheet.Cells[1, 2].Value = "Shift";
-
-                        worksheet.Cells[1, 3].Value = "Line";
-                        worksheet.Cells[1, 4].Value = "Section";
-                        worksheet.Cells[1, 5].Value = "ProductID";
-
-                        worksheet.Cells[1, 6].Value = "ProductName";
-                        worksheet.Cells[1, 7].Value = "Unit";
-                        worksheet.Cells[1, 8].Value = "EFF-STD";
-
-                        worksheet.Cells[1, 9].Value = "ชม. งาน STD";
-                        worksheet.Cells[1, 10].Value = "ชม. งาน  ACT";
-                        worksheet.Cells[1, 11].Value = "ชิ้นรับเข้า";
-
-                        worksheet.Cells[1, 12].Value = "ชั่วโมงจริง";  // EFF1
-                        worksheet.Cells[1, 13].Value = "บริการแยกได้";
-                        worksheet.Cells[1, 14].Value = "บริการแยกไม่ได้";
-
-                        worksheet.Cells[1, 15].Value = "ชม.จริง+บริการแยกได้"; //EFF2
-                        worksheet.Cells[1, 16].Value = "ชม.จริง+บริการแยกได้+บริการแยกไม่ได้"; //EFF3
-                        worksheet.Cells[1, 17].Value = "EFF ชม.1";
-
-                        worksheet.Cells[1, 18].Value = "EFF ชม.2";
-                        worksheet.Cells[1, 19].Value = "EFF ชม.3";
-                        worksheet.Cells[1, 20].Value = "KPI อัตราส่วน";
-
-                        worksheet.Cells[1, 21].Value = "ค่ากลาง ชม.3";
-                        worksheet.Cells[1, 22].Value = "ค่าที่ได้";
-                        worksheet.Cells[1, 23].Value = "KPI อัตราส่วน";
-
-                        worksheet.Cells[1, 24].Value = "ค่ากลาง ชม.1";
-                        worksheet.Cells[1, 25].Value = "ค่าที่ได้";
-
-
-                        for (int i = 1; i < 25; i++)
+                        using (var package = new ExcelPackage())
                         {
-                            worksheet.Cells[1, i].Style.Font.Bold = true;
+                            var worksheet = package.Workbook.Worksheets.Add("EFF Report");
+
+                            worksheet.Cells[1, 1].Value = "TransactionDate";
+                            worksheet.Cells[1, 2].Value = "Shift";
+
+                            worksheet.Cells[1, 3].Value = "Line";
+                            worksheet.Cells[1, 4].Value = "Section";
+                            worksheet.Cells[1, 5].Value = "ProductID";
+
+                            worksheet.Cells[1, 6].Value = "ProductName";
+                            worksheet.Cells[1, 7].Value = "Unit";
+                            worksheet.Cells[1, 8].Value = "EFF-STD";
+
+                            worksheet.Cells[1, 9].Value = "ชม. งาน STD";
+                            worksheet.Cells[1, 10].Value = "ชม. งาน  ACT";
+                            worksheet.Cells[1, 11].Value = "ชิ้นรับเข้า";
+
+                            worksheet.Cells[1, 12].Value = "ชั่วโมงจริง";  // EFF1
+                            worksheet.Cells[1, 13].Value = "บริการแยกได้";
+                            worksheet.Cells[1, 14].Value = "บริการแยกไม่ได้";
+
+                            worksheet.Cells[1, 15].Value = "ชม.จริง+บริการแยกได้"; //EFF2
+                            worksheet.Cells[1, 16].Value = "ชม.จริง+บริการแยกได้+บริการแยกไม่ได้"; //EFF3
+                            worksheet.Cells[1, 17].Value = "EFF ชม.1";
+
+                            worksheet.Cells[1, 18].Value = "EFF ชม.2";
+                            worksheet.Cells[1, 19].Value = "EFF ชม.3";
+                            worksheet.Cells[1, 20].Value = "KPI อัตราส่วน";
+
+                            worksheet.Cells[1, 21].Value = "ค่ากลาง ชม.3";
+                            worksheet.Cells[1, 22].Value = "ค่าที่ได้";
+                            worksheet.Cells[1, 23].Value = "KPI อัตราส่วน";
+
+                            worksheet.Cells[1, 24].Value = "ค่ากลาง ชม.1";
+                            worksheet.Cells[1, 25].Value = "ค่าที่ได้";
+
+                            for (int i = 1; i < 25; i++)
+                            {
+                                worksheet.Cells[1, i].Style.Font.Bold = true;
+                            }
+
+                            int row = 2;
+                            decimal sumWorkinghourSTD = 0;
+                            decimal sumWorkinghourACT = 0;
+                            decimal sumFinishGood = 0;
+                            decimal sumEFF1 = 0;
+                            decimal sumServicehour = 0;
+                            decimal sumSupporthour = 0;
+                            decimal sumEFF2 = 0;
+                            decimal sumEFF3 = 0;
+                            decimal sumEFFhr1 = 0;
+                            decimal sumEFFhr2 = 0;
+                            decimal sumEFFhr3 = 0;
+                            decimal sumKPIh3 = 0;
+                            decimal sumMEDh3 = 0;
+                            decimal sumValEffh3 = 0;
+                            decimal sumKPIh1 = 0;
+                            decimal sumMEDh1 = 0;
+                            decimal sumValEffh1 = 0;
+                            foreach (var item in mymodel.view_EFFReport)
+                            {
+                                worksheet.Cells[row, 1].Value = item.TransactionDate;
+                                worksheet.Cells[row, 2].Value = item.Prefix;
+                                worksheet.Cells[row, 3].Value = item.LineID + " : " + item.LineName;
+                                worksheet.Cells[row, 4].Value = item.SectionID + " : " + item.SectionName;
+                                worksheet.Cells[row, 5].Value = item.ProductID;
+
+                                worksheet.Cells[row, 6].Value = item.ProductName;
+                                worksheet.Cells[row, 7].Value = item.Unit;
+                                worksheet.Cells[row, 8].Value = item.EFFSTD;
+
+                                worksheet.Cells[row, 9].Value = item.WorkinghourSTD.ToString("#,###.00");
+                                sumWorkinghourSTD += item.WorkinghourSTD;
+
+                                worksheet.Cells[row, 10].Value = item.WorkinghourACT.ToString("#,###.00");
+                                sumWorkinghourACT += item.WorkinghourACT;
+
+                                worksheet.Cells[row, 11].Value = item.FinishGood.ToString("#,###.00");
+                                sumFinishGood += item.FinishGood;
+
+                                worksheet.Cells[row, 12].Value = item.EFF1.ToString("#,###.00");
+                                sumEFF1 += item.EFF1;
+
+                                worksheet.Cells[row, 13].Value = item.Servicehour.ToString("#,###.00");
+                                sumServicehour += item.Servicehour;
+
+                                worksheet.Cells[row, 14].Value = item.Supporthour.ToString("#,###.00");
+                                sumSupporthour += item.Supporthour;
+
+                                worksheet.Cells[row, 15].Value = item.EFF2.ToString("#,###.00");
+                                sumEFF2 += item.EFF2;
+
+                                worksheet.Cells[row, 16].Value = item.EFF3.ToString("#,###.00");
+                                sumEFF3 += item.EFF3;
+
+                                worksheet.Cells[row, 17].Value = item.EFFhr1.ToString("#,###.00");
+                                sumEFFhr1 += item.EFFhr1;
+
+                                worksheet.Cells[row, 18].Value = item.EFFhr2.ToString("#,###.00");
+                                sumEFFhr2 += item.EFFhr2;
+
+                                worksheet.Cells[row, 19].Value = item.EFFhr3.ToString("#,###.00");
+                                sumEFFhr3 += item.EFFhr3;
+
+                                worksheet.Cells[row, 20].Value = item.KPIh3.ToString("#,###.00");
+                                sumKPIh3 += item.KPIh3;
+
+                                worksheet.Cells[row, 21].Value = item.MEDh3.ToString("#,###.00");
+                                sumMEDh3 += item.MEDh3;
+
+                                worksheet.Cells[row, 22].Value = item.ValueEFF3.ToString("#,###.00");
+                                sumValEffh3 += item.ValueEFF3;
+
+                                worksheet.Cells[row, 23].Value = item.KPIh1.ToString("#,###.00");
+                                sumKPIh1 += item.KPIh1;
+
+                                worksheet.Cells[row, 24].Value = item.MEDh1.ToString("#,###.00");
+                                sumMEDh1 += item.MEDh1;
+
+                                worksheet.Cells[row, 25].Value = item.ValueEFF1.ToString("#,###.00");
+                                sumValEffh1 += item.ValueEFF1;
+                                row++;
+                            }
+
+                            worksheet.Cells[row, 8].Value = "Total";
+                            worksheet.Cells[row, 9].Value = sumWorkinghourSTD;
+                            worksheet.Cells[row, 10].Value = sumWorkinghourACT;
+                            worksheet.Cells[row, 11].Value = sumFinishGood;
+                            worksheet.Cells[row, 12].Value = sumEFF1;
+                            worksheet.Cells[row, 13].Value = sumServicehour;
+                            worksheet.Cells[row, 14].Value = sumSupporthour;
+                            worksheet.Cells[row, 15].Value = sumEFF2;
+                            worksheet.Cells[row, 16].Value = sumEFF3;
+                            worksheet.Cells[row, 17].Value = sumEFFhr1;
+                            worksheet.Cells[row, 18].Value = sumEFFhr2;
+                            worksheet.Cells[row, 19].Value = sumEFFhr3;
+                            worksheet.Cells[row, 20].Value = sumKPIh3;
+                            worksheet.Cells[row, 21].Value = sumMEDh3;
+                            worksheet.Cells[row, 22].Value = sumValEffh3;
+                            worksheet.Cells[row, 23].Value = sumKPIh1;
+                            worksheet.Cells[row, 24].Value = sumMEDh1;
+                            worksheet.Cells[row, 25].Value = sumValEffh1;
+
+                            for (int i = 8; i < 25; i++)
+                            {
+                                worksheet.Cells[row, i].Style.Font.Bold = true;
+                                worksheet.Cells[row, i].Style.Numberformat.Format = "0.00";
+                            }
+
+                            // Auto fit columns
+                            worksheet.Cells.AutoFitColumns();
+
+                            var stream = new MemoryStream();
+                            package.SaveAs(stream);
+                            var content = stream.ToArray();
+
+                            Response.Clear();
+                            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                            Response.Headers.Add("content-disposition", "attachment; filename=EFFReport.xlsx");
+                            Response.Body.WriteAsync(content);
                         }
-
-                        int row = 2;
-                        decimal sumWorkinghourSTD = 0;
-                        decimal sumWorkinghourACT = 0;
-                        decimal sumFinishGood = 0;
-                        decimal sumEFF1 = 0;
-                        decimal sumServicehour = 0;
-                        decimal sumSupporthour = 0;
-                        decimal sumEFF2 = 0;
-                        decimal sumEFF3 = 0;
-                        decimal sumEFFhr1 = 0;
-                        decimal sumEFFhr2 = 0;
-                        decimal sumEFFhr3 = 0;
-                        decimal sumKPIh3 = 0;
-                        decimal sumMEDh3 = 0;
-                        decimal sumValEffh3 = 0;
-                        decimal sumKPIh1 = 0;
-                        decimal sumMEDh1 = 0;
-                        decimal sumValEffh1 = 0;
-                        foreach (var item in collection)
-                        {
-                            worksheet.Cells[row, 1].Value = item.TransactionDate;
-                            worksheet.Cells[row, 2].Value = item.Prefix;
-                            worksheet.Cells[row, 3].Value = item.LineID + " : " + item.LineName;
-                            worksheet.Cells[row, 4].Value = item.SectionID + " : " + item.SectionName;
-                            worksheet.Cells[row, 5].Value = item.ProductID;
-
-                            worksheet.Cells[row, 6].Value = item.ProductName;
-                            worksheet.Cells[row, 7].Value = item.Unit;
-                            worksheet.Cells[row, 8].Value = item.EFFSTD;
-
-                            worksheet.Cells[row, 9].Value = item.WorkinghourSTD.ToString("#,###.00");
-                            sumWorkinghourSTD += item.WorkinghourSTD;
-
-                            worksheet.Cells[row, 10].Value = item.WorkinghourACT.ToString("#,###.00");
-                            sumWorkinghourACT += item.WorkinghourACT;
-
-                            worksheet.Cells[row, 11].Value = item.FinishGood.ToString("#,###.00");
-                            sumFinishGood += item.FinishGood;
-
-                            worksheet.Cells[row, 12].Value = item.EFF1.ToString("#,###.00");
-                            sumEFF1 += item.EFF1;
-
-                            worksheet.Cells[row, 13].Value = item.Servicehour.ToString("#,###.00");
-                            sumServicehour += item.Servicehour;
-
-                            worksheet.Cells[row, 14].Value = item.Supporthour.ToString("#,###.00");
-                            sumSupporthour += item.Supporthour;
-
-                            worksheet.Cells[row, 15].Value = item.EFF2.ToString("#,###.00");
-                            sumEFF2 += item.EFF2;
-
-                            worksheet.Cells[row, 16].Value = item.EFF3.ToString("#,###.00");
-                            sumEFF3 += item.EFF3;
-
-                            worksheet.Cells[row, 17].Value = item.EFFhr1.ToString("#,###.00");
-                            sumEFFhr1 += item.EFFhr1;
-
-                            worksheet.Cells[row, 18].Value = item.EFFhr2.ToString("#,###.00");
-                            sumEFFhr2 += item.EFFhr2;
-
-                            worksheet.Cells[row, 19].Value = item.EFFhr3.ToString("#,###.00");
-                            sumEFFhr3 += item.EFFhr3;
-
-                            worksheet.Cells[row, 20].Value = item.KPIh3.ToString("#,###.00");
-                            sumKPIh3 += item.KPIh3;
-
-                            worksheet.Cells[row, 21].Value = item.MEDh3.ToString("#,###.00");
-                            sumMEDh3 += item.MEDh3;
-
-                            worksheet.Cells[row, 22].Value = item.ValueEFF3.ToString("#,###.00");
-                            sumValEffh3 += item.ValueEFF3;
-
-                            worksheet.Cells[row, 23].Value = item.KPIh1.ToString("#,###.00");
-                            sumKPIh1 += item.KPIh1;
-
-                            worksheet.Cells[row, 24].Value = item.MEDh1.ToString("#,###.00");
-                            sumMEDh1 += item.MEDh1;
-
-                            worksheet.Cells[row, 25].Value = item.ValueEFF1.ToString("#,###.00");
-                            sumValEffh1 += item.ValueEFF1;
-                            row++;
-                        }
-
-                        worksheet.Cells[row, 8].Value = "Total";
-                        worksheet.Cells[row, 9].Value = sumWorkinghourSTD;
-                        worksheet.Cells[row, 10].Value = sumWorkinghourACT;
-                        worksheet.Cells[row, 11].Value = sumFinishGood;
-                        worksheet.Cells[row, 12].Value = sumEFF1;
-                        worksheet.Cells[row, 13].Value = sumServicehour;
-                        worksheet.Cells[row, 14].Value = sumSupporthour;
-                        worksheet.Cells[row, 15].Value = sumEFF2;
-                        worksheet.Cells[row, 16].Value = sumEFF3;
-                        worksheet.Cells[row, 17].Value = sumEFFhr1;
-                        worksheet.Cells[row, 18].Value = sumEFFhr2;
-                        worksheet.Cells[row, 19].Value = sumEFFhr3;
-                        worksheet.Cells[row, 20].Value = sumKPIh3;
-                        worksheet.Cells[row, 21].Value = sumMEDh3;
-                        worksheet.Cells[row, 22].Value = sumValEffh3;
-                        worksheet.Cells[row, 23].Value = sumKPIh1;
-                        worksheet.Cells[row, 24].Value = sumMEDh1;
-                        worksheet.Cells[row, 25].Value = sumValEffh1;
-
-                        for (int i = 8; i < 25; i++)
-                        {
-                            worksheet.Cells[row, i].Style.Font.Bold = true;
-                            worksheet.Cells[row, i].Style.Numberformat.Format = "0.00";
-                        }
-
-
-
-
-                        // Auto fit columns
-                        worksheet.Cells.AutoFitColumns();
-
-                        var stream = new MemoryStream();
-                        package.SaveAs(stream);
-                        var content = stream.ToArray();
-
-                        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "EFFReport.xlsx");
-
                     }
+
+                    ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 25).Select(x => x.RoleAction).FirstOrDefault();
                 }
 
-                else
-                {
+                if (!string.IsNullOrEmpty(LineID)) ViewBag.SelectedLineID = LineID;
+                if (!string.IsNullOrEmpty(SectionName)) ViewBag.SelectedSectionName = SectionName;
+                if (StartDate != DateTime.MinValue) ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+                if (EndDate != DateTime.MinValue) ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
 
-                    var collection = mymodel.view_EFFReport.ToList();
-                    using (var package = new ExcelPackage())
-                    {
-                        var worksheet = package.Workbook.Worksheets.Add("EFF Report");
-
-                        worksheet.Cells[1, 1].Value = "TransactionDate";
-                        worksheet.Cells[1, 2].Value = "Shift";
-
-                        worksheet.Cells[1, 3].Value = "Line";
-                        worksheet.Cells[1, 4].Value = "Section";
-                        worksheet.Cells[1, 5].Value = "ProductID";
-
-                        worksheet.Cells[1, 6].Value = "ProductName";
-                        worksheet.Cells[1, 7].Value = "Unit";
-                        worksheet.Cells[1, 8].Value = "EFF-STD";
-
-                        worksheet.Cells[1, 9].Value = "ชม. งาน STD";
-                        worksheet.Cells[1, 10].Value = "ชม. งาน  ACT";
-                        worksheet.Cells[1, 11].Value = "ชิ้นรับเข้า";
-
-                        worksheet.Cells[1, 12].Value = "ชั่วโมงจริง";  // EFF1
-                        worksheet.Cells[1, 13].Value = "บริการแยกได้";
-                        worksheet.Cells[1, 14].Value = "บริการแยกไม่ได้";
-
-                        worksheet.Cells[1, 15].Value = "ชม.จริง+บริการแยกได้"; //EFF2
-                        worksheet.Cells[1, 16].Value = "ชม.จริง+บริการแยกได้+บริการแยกไม่ได้"; //EFF3
-                        worksheet.Cells[1, 17].Value = "EFF ชม.1";
-
-                        worksheet.Cells[1, 18].Value = "EFF ชม.2";
-                        worksheet.Cells[1, 19].Value = "EFF ชม.3";
-                        worksheet.Cells[1, 20].Value = "KPI อัตราส่วน";
-
-                        worksheet.Cells[1, 21].Value = "ค่ากลาง ชม.3";
-                        worksheet.Cells[1, 22].Value = "ค่าที่ได้";
-                        worksheet.Cells[1, 23].Value = "KPI อัตราส่วน";
-
-                        worksheet.Cells[1, 24].Value = "ค่ากลาง ชม.1";
-                        worksheet.Cells[1, 25].Value = "ค่าที่ได้";
-
-                        for (int i = 1; i < 25; i++)
-                        {
-                            worksheet.Cells[1, i].Style.Font.Bold = true;
-                        }
-
-
-                        int row = 2;
-                        decimal sumWorkinghourSTD = 0;
-                        decimal sumWorkinghourACT = 0;
-                        decimal sumFinishGood = 0;
-                        decimal sumEFF1 = 0;
-                        decimal sumServicehour = 0;
-                        decimal sumSupporthour = 0;
-                        decimal sumEFF2 = 0;
-                        decimal sumEFF3 = 0;
-                        decimal sumEFFhr1 = 0;
-                        decimal sumEFFhr2 = 0;
-                        decimal sumEFFhr3 = 0;
-                        decimal sumKPIh3 = 0;
-                        decimal sumMEDh3 = 0;
-                        decimal sumValEffh3 = 0;
-                        decimal sumKPIh1 = 0;
-                        decimal sumMEDh1 = 0;
-                        decimal sumValEffh1 = 0;
-
-                        foreach (var item in collection)
-                        {
-
-                            worksheet.Cells[row, 1].Value = item.TransactionDate;
-                            worksheet.Cells[row, 2].Value = item.Prefix;
-                            worksheet.Cells[row, 3].Value = item.LineID + " : " + item.LineName;
-                            worksheet.Cells[row, 4].Value = item.SectionID + " : " + item.SectionName;
-                            worksheet.Cells[row, 5].Value = item.ProductID;
-
-                            worksheet.Cells[row, 6].Value = item.ProductName;
-                            worksheet.Cells[row, 7].Value = item.Unit;
-                            worksheet.Cells[row, 8].Value = item.EFFSTD;
-
-                            worksheet.Cells[row, 9].Value = item.WorkinghourSTD.ToString("#,###.00");
-                            sumWorkinghourSTD += item.WorkinghourSTD;
-
-                            worksheet.Cells[row, 10].Value = item.WorkinghourACT.ToString("#,###.00");
-                            sumWorkinghourACT += item.WorkinghourACT;
-
-                            worksheet.Cells[row, 11].Value = item.FinishGood.ToString("#,###.00");
-                            sumFinishGood += item.FinishGood;
-
-                            worksheet.Cells[row, 12].Value = item.EFF1.ToString("#,###.00"); ;
-                            sumEFF1 += item.EFF1;
-
-                            worksheet.Cells[row, 13].Value = item.Servicehour.ToString("#,###.00"); ;
-                            sumServicehour += item.Servicehour;
-
-                            worksheet.Cells[row, 14].Value = item.Supporthour.ToString("#,###.00"); ;
-                            sumSupporthour += item.Supporthour;
-
-                            worksheet.Cells[row, 15].Value = item.EFF2.ToString("#,###.00");
-                            sumEFF2 += item.EFF2;
-
-                            worksheet.Cells[row, 16].Value = item.EFF3.ToString("#,###.00");
-                            sumEFF3 += item.EFF3;
-
-                            worksheet.Cells[row, 17].Value = item.EFFhr1.ToString("#,###.00");
-                            sumEFFhr1 += item.EFFhr1;
-
-                            worksheet.Cells[row, 18].Value = item.EFFhr2.ToString("#,###.00");
-                            sumEFFhr2 += item.EFFhr2;
-
-                            worksheet.Cells[row, 19].Value = item.EFFhr3.ToString("#,###.00");
-                            sumEFFhr3 += item.EFFhr3;
-
-                            worksheet.Cells[row, 20].Value = item.KPIh3.ToString("#,###.00");
-                            sumKPIh3 += item.KPIh3;
-
-                            worksheet.Cells[row, 21].Value = item.MEDh3.ToString("#,###.00");
-                            sumMEDh3 += item.MEDh3;
-
-                            worksheet.Cells[row, 22].Value = item.ValueEFF3.ToString("#,###.00");
-                            sumValEffh3 += item.ValueEFF3;
-
-                            worksheet.Cells[row, 23].Value = item.KPIh1.ToString("#,###.00");
-                            sumKPIh1 += item.KPIh1;
-
-                            worksheet.Cells[row, 24].Value = item.MEDh1.ToString("#,###.00");
-                            sumMEDh1 += item.MEDh1;
-
-                            worksheet.Cells[row, 25].Value = item.ValueEFF1.ToString("#,###.00");
-                            sumValEffh1 += item.ValueEFF1;
-                            row++;
-                        }
-
-                        worksheet.Cells[row, 8].Value = "Total";
-                        worksheet.Cells[row, 9].Value = sumWorkinghourSTD;
-                        worksheet.Cells[row, 10].Value = sumWorkinghourACT;
-                        worksheet.Cells[row, 11].Value = sumFinishGood;
-                        worksheet.Cells[row, 12].Value = sumEFF1;
-                        worksheet.Cells[row, 13].Value = sumServicehour;
-                        worksheet.Cells[row, 14].Value = sumSupporthour;
-                        worksheet.Cells[row, 15].Value = sumEFF2;
-                        worksheet.Cells[row, 16].Value = sumEFF3;
-                        worksheet.Cells[row, 17].Value = sumEFFhr1;
-                        worksheet.Cells[row, 18].Value = sumEFFhr2;
-                        worksheet.Cells[row, 19].Value = sumEFFhr3;
-                        worksheet.Cells[row, 20].Value = sumKPIh3;
-                        worksheet.Cells[row, 21].Value = sumMEDh3;
-                        worksheet.Cells[row, 22].Value = sumValEffh3;
-                        worksheet.Cells[row, 23].Value = sumKPIh1;
-                        worksheet.Cells[row, 24].Value = sumMEDh1;
-                        worksheet.Cells[row, 25].Value = sumValEffh1;
-
-                        for (int i = 8; i < 25; i++)
-                        {
-                            worksheet.Cells[row, i].Style.Font.Bold = true;
-                            worksheet.Cells[row, i].Style.Numberformat.Format = "0.00";
-                        }
-
-
-
-                        // Auto fit columns
-                        worksheet.Cells.AutoFitColumns();
-
-                        var stream = new MemoryStream();
-                        package.SaveAs(stream);
-                        var content = stream.ToArray();
-
-                        return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "EFFReport.xlsx");
-
-                    }
-
-
-
-                }
-
-
+                return View("EFFReport", mymodel);
             }
-
             catch
             {
                 TempData["AlertMessage"] = "System Some has Problem in Line, Plese contact IT!";
                 return RedirectToAction("Login", "Home");
-
             }
-
-
-
         }
-
-
-
 
         [HttpGet]
         public ActionResult ProductionPlan(View_ProductionPlan obj)

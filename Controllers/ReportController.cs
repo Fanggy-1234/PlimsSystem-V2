@@ -179,7 +179,7 @@ namespace Plims.Controllers
                                             ProductName = grouped.Key.ProductName,
                                             SectionName = grouped.Key.SectionName,
                                             STD = Convert.ToDouble(grouped.Key.STD),
-                                            Actual = Convert.ToDouble(grouped.Sum(x => x.PcsPerHr)),
+                                            Actual = Convert.ToDouble(grouped.Sum(x => x.FGQty) / grouped.Sum(x => x.DiffHours)),
                                             Diff = Convert.ToDouble((grouped.Sum(x => x.PcsPerHr) * 100) / grouped.Key.STD)
                                         }).ToList();
 
@@ -220,10 +220,13 @@ namespace Plims.Controllers
                                           Grade = grouped.Key,
                                           //PcsPerHr = 0,                      
                                           Cnt = grouped.Count(),
-                                          PcsPerHr = Math.Round(grouped.Sum(g => g.PcsPerHr), 2),  
+                                          FGQty = grouped.Sum(x => x.FGQty),
+                                          DiffHours = grouped.Sum(x => x.DiffHours),
+                                          PcsPerHr = grouped.Sum(x => x.FGQty) / grouped.Sum(x => x.DiffHours),
+                                          //PcsPerHr = Math.Round(grouped.Sum(g => g.PcsPerHr), 2),
                                           //PcsPerHr = grouped.Count() != 0 ? (grouped.Sum(g => g.FGQty) / sumEmployeeDict.Count() ) : 0,
                                           Percent = Math.Round((grouped.Count() / (double)sumOfCounts) * 100.00, 2)
-                                      }).ToList();
+                                      }).OrderBy(x => x.Grade).ToList();
 
 
                 /////////////////// 4 Show Chart Pie
@@ -675,10 +678,10 @@ namespace Plims.Controllers
                                                     //Display Box
                                                     SumEmp = grouped.Sum(x => x.CountQRCode),
                                                     SumFG = grouped.Sum(x => x.FinishGood),
-                                                    CapHr = grouped.Sum(x => x.EFF1) != 0 ? grouped.Sum(x => x.FinishGood) / grouped.Sum(x => x.EFF1) : 0,
-                                                    EFFhr1 = grouped.Average(x => x.EFFhr1),
-                                                    EFFhr2 = grouped.Average(x => x.EFFhr2),
-                                                    EFFhr3 = grouped.Average(x => x.EFFhr3),
+                                                    CapHr = grouped.Sum(x => x.EFF3) != 0 ? (grouped.Sum(x => x.FinishGood) - grouped.Sum(x => x.TotalDefect)) / grouped.Sum(x => x.EFF3) : 0,
+                                                    EFFhr1 = grouped.Sum(x => x.EFFhr1),
+                                                    EFFhr2 = grouped.Sum(x => x.EFFhr2),
+                                                    EFFhr3 = grouped.Sum(x => x.EFFhr3),
                                                     TotalDefect = grouped.Sum(x => x.TotalDefect),
 
                                                     //1st Graph
@@ -742,9 +745,8 @@ namespace Plims.Controllers
                 //                                    }).ToList();
 
 
-                if (resultGrpProductOverview.Count() == 0)
+                if (resultGrpProductOverview.Count == 0)
                 {
-
                     //ViewBag.SumEmployee = 0;
                     //ViewBag.AvgCapHr = 0;
                     //ViewBag.AvgEFFhr1 = 0;
@@ -768,13 +770,12 @@ namespace Plims.Controllers
                     //ViewBag.AvgEFFhr3 = resultGrpProductOverview.Average(x => x.EFFhr3);
                     //ViewBag.DefectAll = resultGrpProductOverview.Average(x => x.TotalDefect);
 
-                   // ViewBag.SumEmployee = resultGrpProductOverview.Sum(x => x.SumEmp);
+                    // ViewBag.SumEmployee = resultGrpProductOverview.Sum(x => x.SumEmp);
                     ViewBag.SumCapHr = resultGrpProductOverview.Sum(x => x.CapHr);
                     ViewBag.SumEFFhr1 = resultGrpProductOverview.Sum(x => x.EFFhr1);
                     ViewBag.SumEFFhr2 = resultGrpProductOverview.Sum(x => x.EFFhr2);
                     ViewBag.SumEFFhr3 = resultGrpProductOverview.Sum(x => x.EFFhr3);
                     ViewBag.DefectAll = resultGrpProductOverview.Sum(x => x.TotalDefect);
-
 
                     //ViewBag.SumEmployee = resultGrpProductOverview.Sum(x => x.SumEmp);
                     //ViewBag.AvgCapHr = resultGrpProductOverview.Average(x => x.CapHr);
@@ -782,8 +783,8 @@ namespace Plims.Controllers
                     //ViewBag.AvgEFFhr2 = resultGrpProductOverview.Average(x => x.EFFhr2);
                     //ViewBag.AvgEFFhr3 = resultGrpProductOverview.Average(x => x.EFFhr3);
                     //ViewBag.DefectAll = resultGrpProductOverview.Average(x => x.TotalDefect);
-
                 }
+
                 /////////////////// 2 Group Bar Chart Line Overview
                 var resultGrpLineOverview = (from summary in mymodel.view_EFFReport
                                              where (model.FilterYear == 0 || summary.TransactionDate.Year == model.FilterYear) &&
@@ -803,7 +804,7 @@ namespace Plims.Controllers
 
                                                  //1st Graph
                                                  EffSTD = grouped.Average(x => x.EFFSTD),
-                                                 EffLine = grouped.Sum(x => x.WorkinghourACT),
+                                                 EffLine = grouped.Sum(x => x.EFFhr1),
 
                                                  //2nd Graph
                                                  YieldSTD = grouped.Average(x => x.PercentYield),
@@ -815,6 +816,16 @@ namespace Plims.Controllers
                 List<string> lineNameEff = resultGrpLineOverview.Select(x => x.LineName).ToList();
                 List<decimal> effSTD = resultGrpLineOverview.Select(x => x.EffSTD).ToList();
                 List<decimal> effLine = resultGrpLineOverview.Select(x => x.EffLine).ToList();
+
+                if (lineNameEff.Count == 1 && resultGrpProductOverview.Count > 0)
+                {
+                    lineNameEff = resultGrpProductOverview.Select(x => x.SectionName).ToList();
+                    effSTD = resultGrpProductOverview.Select(x => x.EffTarget).ToList();
+                    effLine = resultGrpProductOverview.Select(x => x.EFFhr1).ToList();
+
+                    ViewBag.xAxisTitle = "Section";
+                }
+                else ViewBag.xAxisTitle = "Line";
 
                 //Set data bar 1
                 List<object[]> chartDataEff = new List<object[]>();

@@ -284,31 +284,25 @@
         </tbody>
     </table>
 
-    <div style="height:20px">
-    </div>
-
-
+    <div style="height:20px"></div>
 
     @* /////////////////////////// Export / Import /////////////////////// *@
-    <div class="row" style="height:40px">
-
-        <div class="col-10">
+    @if (Model.view_EFFReport != null && Model.view_EFFReport.Count() > 0)
+    {
+        <div class="row" style="height:40px">
+            <div class="col-10"></div>
+            <div class="col">
+                @if (ViewBag.VBRoleEfficiency == "Full")
+                {
+                    <button class="search-button" id="btnExportreport" type="submit" asp-action="EFFReportExport" value="export" name="submit">Export</button>
+                }
+                else
+                {
+                    <button type="button" class="search-button">Exports</button>
+                }
+            </div>
         </div>
-        <div class="col">
-            @if (ViewBag.VBRoleEfficiency == "Full")
-            {
-                <button class="search-button" id="btnExportreport" type="submit" asp-action="EFFReportExport" value="export" name="submit">Export</button>
-
-            }
-            else
-            {
-                <button type="button" class="search-button">Exports</button>
-            }
-        </div>
-    </div>
-
-
-
+    }
 </form>
 
 <div style="height:30px"></div>
