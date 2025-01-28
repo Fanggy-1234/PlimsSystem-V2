@@ -3602,13 +3602,13 @@ namespace Plims.Controllers
 
             var mymodel = new ViewModelAll
             {
-                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID) && x.UserEmpID.Equals(EmpID) && x.PageID.Equals(25)).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 view_EFFReport = view_EFFReport
             };
 
-            ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster.Select(x => x.RoleAction).FirstOrDefault();
+            ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 25).Select(x => x.RoleAction).FirstOrDefault();
 
             HttpContext.Session.SetString("EFFReport", JsonConvert.SerializeObject(mymodel));
 
