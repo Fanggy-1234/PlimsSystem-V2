@@ -27,20 +27,13 @@ namespace Plims.Controllers
             return View();
         }
 
-
-        /// <summary>
-        // Working Fuction [ Scan And Key ] 
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         [HttpGet]
-        public ActionResult WorkingFunction(TbProductionTransaction obj)
+        public ActionResult WorkingFunction()
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-
-            if (EmpID == null)
+            if (string.IsNullOrEmpty(EmpID))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -50,31 +43,29 @@ namespace Plims.Controllers
                 var mymodel = new ViewModelAll
                 {
                     view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                    view_Employee = db.View_Employee.ToList(),
                     tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                     tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                     tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                     tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                    view_Employee = db.View_Employee.ToList(),
                     tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList()
                 };
                 return View(mymodel);
             }
-            catch (Exception ex)
+            catch
             {
                 TempData["AlertMessage"] = "Working page had problem! please contact IT";
                 return RedirectToAction("Login", "Home");
             }
-
         }
 
         [HttpGet]
-        public ActionResult WorkingFunctionV2(TbProductionTransaction obj)
+        public ActionResult WorkingFunctionFixedScan()
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-
-            if (EmpID == null)
+            if (string.IsNullOrEmpty(EmpID))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -84,23 +75,21 @@ namespace Plims.Controllers
                 var mymodel = new ViewModelAll
                 {
                     view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                    view_Employee = db.View_Employee.ToList(),
                     tbPlants = db.TbPlant.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                     tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                     tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
                     tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.Status).ToList(),
-                    view_Employee = db.View_Employee.ToList(),
                     tbReason = db.TbReason.Where(x => x.PlantID.Equals(PlantID)).ToList()
                 };
                 return View(mymodel);
             }
-            catch (Exception ex)
+            catch
             {
                 TempData["AlertMessage"] = "Working page had problem! please contact IT";
                 return RedirectToAction("Login", "Home");
             }
-
         }
-
 
         public ActionResult WorkingFunctionCreateWithRef(string employeeId, string productId)
         {
@@ -1903,299 +1892,6 @@ namespace Plims.Controllers
 
         }
 
-        [HttpGet]
-        [Route("Working/WorkingFunctionCreateAsync")]
-        public async Task<ActionResult> WorkingFunctionCreateAsync(string employeeId, string productId)
-        {
-            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
-            string EmpID = HttpContext.Session.GetString("UserEmpID");
-
-            var alert = new { message = "Login", status = false };
-
-            if (string.IsNullOrEmpty(EmpID))
-                return Json(new { message = "Login", status = false });
-
-
-            var tbEmployeeMaster = await db.TbEmployeeMaster.AnyAsync(x => x.PlantID == PlantID && x.EmployeeID == employeeId);
-            var tbEmployeeGroupQR = await db.TbEmployeeGroupQR.Where(x => x.PlantID == PlantID && x.GroupID == employeeId).ToListAsync();
-            if (tbEmployeeMaster || tbEmployeeGroupQR.Count ==0)
-            {
-                return Json(new { message = "QR Code is not available in the system!", status = false });
-            }
-
-
-            var permission = await db.View_PermissionMaster
-                .Where(x => x.PlantID == PlantID && x.UserEmpID == EmpID && x.PageID == 22)
-                .Select(x => x.RoleAction)
-                .SingleOrDefaultAsync();
-
-            if (permission != "Full")
-                return Json(new { message = "Permission Denied", status = false });
-
-            var currentDateTime = DateTime.Now;
-            var currentDate = currentDateTime.Date;
-            var currentTime = currentDateTime.TimeOfDay;
-            var currentDatebefore = currentDateTime.Date.AddDays(-1);
-
-            try
-            {
-                //check employee or Group
-                if (employeeId.Length > 5) // (db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)).Count() != 0) // case Employee
-                {
-                    //Check EmployeeClockin  change adjust clockout                   
-                    var objEmpcount = db.View_ClockTime.Where(x => x.PlantID.Equals(PlantID) && x.EmployeeID.Equals(employeeId) && x.Type != "Service" && x.WorkingStatus == "Working" && x.TransactionDate != DateTime.MinValue && !string.IsNullOrWhiteSpace(x.ClockIn) && x.ClockOut == string.Empty).ToList();
-                    if (objEmpcount.Count > 1) return Json(new { message = "Please check clock-out.", status = false }); //alert = new { message = "Please check clock-out.", status = false };
-                    else
-                    {
-                        var objEmp = objEmpcount.FirstOrDefault();
-                        if (objEmp != null)
-                        {
-                            var objPLPS = await db.View_PLPS
-                                .AsNoTracking()
-                            .FirstOrDefaultAsync(x => x.PlantID.Equals(PlantID) &&
-                                        x.LineID.Equals(objEmp.LineID.ToString()) &&
-                                        x.ProductID.Equals(productId) &&
-                                        x.SectionID.Equals(objEmp.SectionID.ToString()));
-
-                            // check formular for insert or return to enter Employee
-                            if (objPLPS == null) return Json(new { message = "Please check PLPS.", status = false }); //alert = new { message = "Please check PLPS.", status = false };
-                            else
-                            {
-                                var LastTransactionTime = await db.TbProductionTransaction
-                                    .AsNoTracking()
-                               .Where(x => x.PlantID.Equals(PlantID) && x.QRCode.Equals(employeeId) && x.CreateDate.Date == currentDate)
-                               .OrderByDescending(x => x.CreateDate)
-                               .Select(x => x.CreateDate.TimeOfDay)
-                               .FirstOrDefaultAsync();
-
-                                // //Check last count                                      
-                                // int LastTransactionCount = mymodel.view_ProductionTransaction
-                                //    .Where(x => x.QRCode.Equals(employeeId) && x.SectionID.Equals(objEmp.SectionID) && x.TransactionDate.Date == objEmp.TransactionDate && x.DataType.Equals("Count")).Count();
-                                // LastTransactionCount += 1;
-
-                                //Check last count                                      
-                                //int LastTransactionCount = db.TbProductionTransaction
-                                //   .Where(x => x.PlantID.Equals(PlantID) && x.QRCode.Equals(employeeId) && x.SectionID.Equals(objEmp.SectionID) && x.TransactionDate.Date == objEmp.TransactionDate && x.DataType.Equals("Count"))
-                                //   .Count() + 1;
-
-                                var startOfDay = objEmp.TransactionDate.Date;
-                                var endOfDay = startOfDay.AddDays(1);
-                                int LastTransactionCount = await db.TbProductionTransaction
-                                .AsNoTracking()
-                                .Where(x => x.PlantID == PlantID &&
-                                            x.QRCode == employeeId &&
-                                            x.SectionID == objEmp.SectionID &&
-                                            x.TransactionDate >= startOfDay &&
-                                            x.TransactionDate < endOfDay &&
-                                            x.DataType == "Count")
-                                .CountAsync() + 1;
-
-
-                                // Convert TimeSpan to total seconds
-                                double lastTransactionSeconds = LastTransactionTime.TotalSeconds;
-                                double delayTimeSeconds = Convert.ToDouble(objPLPS.Delaytime);
-                                double difftime = ((lastTransactionSeconds + delayTimeSeconds) - currentTime.TotalSeconds);
-                                double roundedDifftime = Math.Round(difftime, 2);
-
-                                if (lastTransactionSeconds + delayTimeSeconds < currentTime.TotalSeconds)
-                                {
-                                    // Perform actions if LastTransactionTime is greater than or equal to objPLPS.Delaytime                  
-                                    db.TbProductionTransaction.Add(new TbProductionTransaction()
-                                    {
-                                        // TransactionNo = db.TbProductionTransaction.Count() + 1,
-                                        TransactionDate = objEmp.TransactionDate,//DateTime.Now,
-                                        PlantID = Convert.ToInt32(objEmp.PlantID),
-                                        LineID = objEmp.LineID,
-                                        LineName = objEmp.LineName,
-                                        SectionID = objEmp.SectionID,
-                                        SectionName = objEmp.SectionName,
-                                        ProductID = productId,
-                                        ProductName = objPLPS.ProductName,
-                                        Prefix = objEmp.Prefix,
-                                        FormularID = objPLPS.FormularID,
-                                        QRCode = employeeId,
-                                        Qty = 1,
-                                        QtyPerQR = objPLPS.QTYPerQRCode,//Get from PLPS
-                                                                        // QtyPerQR = Convert.ToInt16(objPLPS.QTYPerQRCode),//Get from PLPS
-                                        DataType = "Count",
-                                        Reason = "",
-                                        Note = "",
-                                        PackageRef = 0,
-                                        EmployeeRef = objEmp.ClockIn,// string.IsNullOrEmpty(EmployeeRef) ? "" : EmployeeRef,
-                                        GroupRef = "",
-                                        CreateDate = DateTime.Now,
-                                        CreateBy = EmpID,
-                                        UpdateDate = DateTime.Now,
-                                        UpdateBy = EmpID
-                                    });
-
-                                    await db.SaveChangesAsync();
-                                    return Json(new { message = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString() + "  =>  " + LastTransactionCount, status = true });
-
-                                }
-                                else
-                                    return Json(new { message = "check time : " + roundedDifftime + " Sec.", status = false });
-                            }
-                        }
-                        else
-                        {
-                            if (!tbEmployeeMaster) return Json(new { message = "Employee Mistake!", status = false }); 
-                            else return Json(new { message = "Please check Clock-in.", status = false }); 
-                        }
-                    }
-                    //End case employee
-                }
-                else  // case group
-                {
-                    //select group
-                    var objgroup = tbEmployeeGroupQR.Where(x => x.Status.Equals(1)).ToList();
-                    foreach (var item in objgroup)
-                    {
-                        //Select EmployeeTransaction
-                        var objEmpcount = await db.View_ClockTime
-                            .AsNoTracking()
-                        .Where(x => x.PlantID.Equals(PlantID) && x.EmployeeID.Equals(item.EmployeeID) && x.Type != "Service" && x.WorkingStatus != "Leave" &&
-                                     (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) && x.ClockOut == string.Empty)
-                        .ToListAsync();
-
-                        if (objEmpcount.Count == 0)
-                        {
-                            alert = new { message = "Please check Clock-in.", status = false };
-                            return Json(alert);
-                        }
-
-                        var startOfDay = objEmpcount.First().TransactionDate.Date;
-                        var endOfDay = startOfDay.AddDays(1);
-                        int LastTransactionCount = await db.TbProductionTransaction
-                        .AsNoTracking()
-                        .Where(x => x.PlantID == PlantID &&
-                                    x.QRCode == employeeId &&
-                                    x.SectionID == objEmpcount.First().SectionID &&
-                                    x.TransactionDate >= startOfDay &&
-                                    x.TransactionDate < endOfDay &&
-                                    x.DataType == "Count")
-                        .CountAsync() + 1;
-
-                        //int LastTransactionCount = db.TbProductionTransaction
-                        //    .Where(x => x.PlantID.Equals(PlantID) && x.QRCode.Equals(objEmpcount.First().EmployeeID) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.TransactionDate.Date == objEmpcount.First().TransactionDate && x.DataType.Equals("Count"))
-                        //    .Count() + 1;
-
-                        var newTransactions = new List<TbProductionTransaction>();
-
-                        double roundedDifftime = 0.0;
-
-                        var objEmp = await db.View_EmployeeGroupWorking
-                            .AsNoTracking()
-                            .Where(x => x.PlantID.Equals(PlantID) && x.GroupID.Equals(item.GroupID)).ToListAsync();
-                        foreach (var items in objEmp)
-                        {
-                            if (objEmp != null)
-                            {
-                                var objPLPS = await db.View_PLPS
-                                    .AsNoTracking()
-                                .Where(x => x.PlantID.Equals(PlantID) &&
-                                            x.LineID.Equals(items.Line.ToString()) &&
-                                            x.ProductID.Equals(productId) &&
-                                            x.SectionID.Equals(items.Section.ToString()))
-                                .FirstOrDefaultAsync();
-
-                                if (objPLPS != null)
-                                {
-                                    var LastTransactionTime = await db.TbProductionTransaction
-                                        .AsNoTracking()
-                                   .Where(x => x.PlantID.Equals(PlantID) && x.QRCode.Equals(items.EmployeeID) && x.CreateDate.Date == currentDate)
-                                   .OrderByDescending(x => x.CreateDate)
-                                   .Select(x => x.CreateDate.TimeOfDay)
-                                   .FirstOrDefaultAsync();
-
-                                    // Convert TimeSpan to total seconds
-                                    double lastTransactionSeconds = LastTransactionTime.TotalSeconds;
-                                    double delayTimeSeconds = Convert.ToDouble(objPLPS.Delaytime);
-                                    double difftime = ((lastTransactionSeconds + delayTimeSeconds) - currentTime.TotalSeconds);
-                                    roundedDifftime = Math.Round(difftime, 2);
-
-                                    if (lastTransactionSeconds + delayTimeSeconds < currentTime.TotalSeconds)
-                                    {
-                                        // Perform actions if LastTransactionTime is greater than or equal to objPLPS.Delaytime                  
-                                        newTransactions.Add(new TbProductionTransaction()
-                                        {
-                                            // TransactionNo = db.TbProductionTransaction.Count() + 1,
-                                            TransactionDate = items.TransactionDate,//DateTime.Now,
-                                            PlantID = Convert.ToInt32(items.PlantID),
-                                            LineID = items.Line,
-                                            LineName = items.LineName,
-                                            SectionID = items.Section,
-                                            SectionName = items.SectionName,
-                                            ProductID = productId,
-                                            ProductName = objPLPS.ProductName,
-                                            FormularID = objPLPS.FormularID,
-                                            Prefix = items.Prefix,
-                                            QRCode = items.EmployeeID,
-                                            Qty = 1,
-                                            QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
-                                            DataType = "Count",
-                                            Reason = "",
-                                            Note = "",
-                                            PackageRef = 0,
-                                            EmployeeRef = items.ClockIn,//string.IsNullOrEmpty(EmployeeRef) ? "" : EmployeeRef,
-                                            GroupRef = employeeId,
-                                            CreateDate = DateTime.Now,
-                                            CreateBy = EmpID,
-                                            UpdateDate = DateTime.Now,
-                                            UpdateBy = EmpID
-                                        });
-
-                                        alert = new
-                                        {
-                                            message = items.Section.ToString() + " : " + objPLPS.SectionName.ToString() + "  =>  " + LastTransactionCount,
-                                            status = true
-                                        };
-                                    }
-                                    else
-                                    {
-                                        alert = new { message = "check time :" + roundedDifftime + " sec.", status = false };
-                                        return Json(alert);
-                                    }
-                                }
-                                else
-                                {
-                                    // sectionvalalert = new
-                                    //{
-                                    //    message = "check PLPS ",
-                                    //    status = false
-                                    //};
-                                    //return Json(sectionvalalert);
-
-                                    alert = new { message = "Please check Line and Section of EMP ID : " + item.EmployeeID, status = false };
-                                    return Json(alert);
-                                }
-                            }
-                        }
-
-                        db.TbProductionTransaction.AddRange(newTransactions);
-                        await db.SaveChangesAsync();
-
-                        return Json(alert);
-                    }
-                    //End case group
-                }
-
-
-                return Json(alert);
-            }
-            catch (Exception ex)
-            {
-                // Log exception
-                alert = new { message = "An error occurred: " + ex.Message, status = false };
-            }
-            finally
-            {
-                db.Dispose();
-            }
-            return Json(alert);
-        }
-
-
         public ActionResult WorkingFunctionCreate(string employeeId, string productId)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -2443,7 +2139,7 @@ namespace Plims.Controllers
                         //End case group
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     alert = new { message = "Please check Connection loss! : " + ex.Message, status = false };
                 }
@@ -2452,6 +2148,296 @@ namespace Plims.Controllers
                     db.Dispose();
                 }
             }
+
+            return Json(alert);
+        }
+
+        public ActionResult WorkingFunctionFixedScanCreate(string employeeId, string productId)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            if (string.IsNullOrEmpty(EmpID)) return Json(new { message = "Login", status = false });
+
+            string alertMessage = string.Empty;
+            string alertMessageSuccess = string.Empty;
+
+            if (db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID) && x.UserEmpID.Equals(EmpID) && x.PageID.Equals(22)).Select(x => x.RoleAction).SingleOrDefault() == "Full")
+            {
+                try
+                {
+                    string multiQRCode = employeeId;
+                    int chunkSize = 10;
+
+                    // check employee or group
+                    if (int.TryParse(multiQRCode, out _)) chunkSize = 5;
+
+                    for (int i = 0; i < multiQRCode.Length; i += chunkSize)
+                    {
+                        employeeId = multiQRCode.Substring(i, Math.Min(chunkSize, multiQRCode.Length - i));
+
+                        // check QRcode in system
+                        var tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.EmployeeID.Equals(employeeId));
+                        var tbEmployeeGroupQR = db.TbEmployeeGroupQR.Where(x => x.PlantID.Equals(PlantID) && x.GroupID.Equals(employeeId));
+                        if (tbEmployeeMaster == null || tbEmployeeGroupQR == null)
+                        {
+                            if (!string.IsNullOrWhiteSpace(alertMessage)) alertMessage += ", ";
+                            alertMessage += "QR Code is not available in the system!: " + employeeId;
+                        }
+                        else
+                        {
+                            var currentDateTime = DateTime.Now;
+                            var currentDate = currentDateTime.Date;
+                            var currentTime = currentDateTime.TimeOfDay;
+                            var currentDatebefore = currentDateTime.Date.AddDays(-1);
+
+                            // check employee or group
+                            if (employeeId.Length > 5) // (db.TbEmployeeMaster.Where(x => x.EmployeeID.Equals(employeeId)).Count() != 0) // case Employee
+                            {
+                                //Check EmployeeClockin  change adjust clockout                   
+                                var objEmpcount = db.View_ClockTime.Where(x => x.PlantID.Equals(PlantID) && x.EmployeeID.Equals(employeeId) && x.Type != "Service" && x.WorkingStatus == "Working" && x.TransactionDate != DateTime.MinValue && !string.IsNullOrWhiteSpace(x.ClockIn) && x.ClockOut == string.Empty).ToList();
+                                if (objEmpcount.Count > 1)
+                                {
+                                    if (multiQRCode == employeeId) alertMessage = "Please check clock-out.";
+                                    else
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(alertMessage)) alertMessage += ", ";
+                                        alertMessage += "Please check clock-out: " + employeeId;
+                                    }
+                                }
+                                else
+                                {
+                                    var objEmp = objEmpcount.FirstOrDefault();
+                                    if (objEmp != null)
+                                    {
+                                        var objPLPS = db.View_PLPS
+                                        .Where(x => x.PlantID.Equals(PlantID) &&
+                                                    x.LineID.Equals(objEmp.LineID.ToString()) &&
+                                                    x.ProductID.Equals(productId) &&
+                                                    x.SectionID.Equals(objEmp.SectionID.ToString()))
+                                        .FirstOrDefault();
+
+                                        // check formular for insert or return to enter Employee
+                                        if (objPLPS == null)
+                                        {
+                                            if (multiQRCode == employeeId) alertMessage = "Please check PLPS.";
+                                            else
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(alertMessage)) alertMessage += ", ";
+                                                alertMessage += "Please check PLPS: " + employeeId;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var LastTransactionTime = db.TbProductionTransaction
+                                           .Where(x => x.PlantID.Equals(PlantID) && x.QRCode.Equals(employeeId) && x.CreateDate.Date == currentDate)
+                                           .OrderByDescending(x => x.CreateDate)
+                                           .Select(x => x.CreateDate.TimeOfDay)
+                                           .FirstOrDefault();
+
+                                            //Check last count                                      
+                                            int LastTransactionCount = db.TbProductionTransaction
+                                               .Where(x => x.PlantID.Equals(PlantID) && x.QRCode.Equals(employeeId) && x.SectionID.Equals(objEmp.SectionID) && x.TransactionDate.Date == objEmp.TransactionDate && x.DataType.Equals("Count"))
+                                               .Count() + 1;
+
+                                            // Convert TimeSpan to total seconds
+                                            double lastTransactionSeconds = LastTransactionTime.TotalSeconds;
+                                            double delayTimeSeconds = Convert.ToDouble(objPLPS.Delaytime);
+                                            double difftime = ((lastTransactionSeconds + delayTimeSeconds) - currentTime.TotalSeconds);
+                                            double roundedDifftime = Math.Round(difftime, 2);
+
+                                            if (lastTransactionSeconds + delayTimeSeconds < currentTime.TotalSeconds)
+                                            {
+                                                // Perform actions if LastTransactionTime is greater than or equal to objPLPS.Delaytime                  
+                                                db.TbProductionTransaction.Add(new TbProductionTransaction()
+                                                {
+                                                    TransactionDate = objEmp.TransactionDate,//DateTime.Now,
+                                                    PlantID = Convert.ToInt32(objEmp.PlantID),
+                                                    LineID = objEmp.LineID,
+                                                    LineName = objEmp.LineName,
+                                                    SectionID = objEmp.SectionID,
+                                                    SectionName = objEmp.SectionName,
+                                                    ProductID = productId,
+                                                    ProductName = objPLPS.ProductName,
+                                                    Prefix = objEmp.Prefix,
+                                                    FormularID = objPLPS.FormularID,
+                                                    QRCode = employeeId,
+                                                    Qty = 1,
+                                                    QtyPerQR = objPLPS.QTYPerQRCode,//Get from PLPS
+                                                                                    // QtyPerQR = Convert.ToInt16(objPLPS.QTYPerQRCode),//Get from PLPS
+                                                    DataType = "Count",
+                                                    Reason = "",
+                                                    Note = "",
+                                                    PackageRef = 0,
+                                                    EmployeeRef = objEmp.ClockIn,// string.IsNullOrEmpty(EmployeeRef) ? "" : EmployeeRef,
+                                                    GroupRef = "",
+                                                    CreateDate = DateTime.Now,
+                                                    CreateBy = EmpID,
+                                                    UpdateDate = DateTime.Now,
+                                                    UpdateBy = EmpID
+                                                });
+
+                                                db.SaveChanges();
+
+                                                alertMessageSuccess = objEmp.SectionID.ToString() + " : " + objPLPS.SectionName.ToString() + "  =>  " + LastTransactionCount;
+                                            }
+                                            else
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(alertMessage)) alertMessage += ", ";
+                                                alertMessage += "check time: " + roundedDifftime + " sec. - " + employeeId;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (tbEmployeeMaster.ToList().Count == 0)
+                                        {
+                                            if (!string.IsNullOrWhiteSpace(alertMessage)) alertMessage += ", ";
+                                            alertMessage += "Employee Mistake!: " + employeeId;
+                                        }
+                                        else
+                                        {
+                                            if (multiQRCode == employeeId) alertMessage = "Please check Clock-in.";
+                                            else
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(alertMessage)) alertMessage += ", ";
+                                                alertMessage += "Please check Clock-in: " + employeeId;
+                                            }
+                                        }
+                                    }
+                                }
+                                //End case employee
+                            }
+                            else  // case group
+                            {
+                                //select group
+                                var objgroup = tbEmployeeGroupQR.Where(x => x.Status.Equals(1)).ToList();
+                                foreach (var item in objgroup)
+                                {
+                                    //Select EmployeeTransaction
+                                    var objEmpcount = db.View_ClockTime
+                                    .Where(x => x.PlantID.Equals(PlantID) && x.EmployeeID.Equals(item.EmployeeID) && x.Type != "Service" && x.WorkingStatus != "Leave" &&
+                                                 (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDatebefore) && x.ClockOut == string.Empty)
+                                    .ToList();
+
+                                    if (objEmpcount.Count == 0)
+                                    {
+                                        if (multiQRCode == employeeId) alertMessage = "Please check Clock-in.";
+                                        else
+                                        {
+                                            if (!string.IsNullOrWhiteSpace(alertMessage)) alertMessage += ", ";
+                                            alertMessage += "Please check Clock-in: " + employeeId;
+                                        }
+
+                                        break;
+                                    }
+
+                                    int LastTransactionCount = db.TbProductionTransaction
+                                        .Where(x => x.PlantID.Equals(PlantID) && x.QRCode.Equals(objEmpcount.First().EmployeeID) && x.GroupRef.Equals(employeeId) && x.SectionID.Equals(objEmpcount.First().SectionID) && x.TransactionDate.Date == objEmpcount.First().TransactionDate && x.DataType.Equals("Count"))
+                                        .Count() + 1;
+
+                                    double roundedDifftime = 0.0;
+
+                                    var objEmp = db.View_EmployeeGroupWorking.Where(x => x.PlantID.Equals(PlantID) && x.GroupID.Equals(item.GroupID)).ToList();
+                                    bool breakLoop = false;
+                                    foreach (var items in objEmp)
+                                    {
+                                        if (objEmp != null)
+                                        {
+                                            var objPLPS = db.View_PLPS
+                                            .Where(x => x.PlantID.Equals(PlantID) &&
+                                                        x.LineID.Equals(items.Line.ToString()) &&
+                                                        x.ProductID.Equals(productId) &&
+                                                        x.SectionID.Equals(items.Section.ToString()))
+                                            .FirstOrDefault();
+
+                                            if (objPLPS != null)
+                                            {
+                                                var LastTransactionTime = db.TbProductionTransaction
+                                               .Where(x => x.PlantID.Equals(PlantID) && x.QRCode.Equals(items.EmployeeID) && x.CreateDate.Date == currentDate)
+                                               .OrderByDescending(x => x.CreateDate)
+                                               .Select(x => x.CreateDate.TimeOfDay)
+                                               .FirstOrDefault();
+
+                                                // Convert TimeSpan to total seconds
+                                                double lastTransactionSeconds = LastTransactionTime.TotalSeconds;
+                                                double delayTimeSeconds = Convert.ToDouble(objPLPS.Delaytime);
+                                                double difftime = ((lastTransactionSeconds + delayTimeSeconds) - currentTime.TotalSeconds);
+                                                roundedDifftime = Math.Round(difftime, 2);
+
+                                                if (lastTransactionSeconds + delayTimeSeconds < currentTime.TotalSeconds)
+                                                {
+                                                    // Perform actions if LastTransactionTime is greater than or equal to objPLPS.Delaytime                  
+                                                    db.TbProductionTransaction.Add(new TbProductionTransaction()
+                                                    {
+                                                        TransactionDate = items.TransactionDate,//DateTime.Now,
+                                                        PlantID = Convert.ToInt32(items.PlantID),
+                                                        LineID = items.Line,
+                                                        LineName = items.LineName,
+                                                        SectionID = items.Section,
+                                                        SectionName = items.SectionName,
+                                                        ProductID = productId,
+                                                        ProductName = objPLPS.ProductName,
+                                                        FormularID = objPLPS.FormularID,
+                                                        Prefix = items.Prefix,
+                                                        QRCode = items.EmployeeID,
+                                                        Qty = 1,
+                                                        QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
+                                                        DataType = "Count",
+                                                        Reason = "",
+                                                        Note = "",
+                                                        PackageRef = 0,
+                                                        EmployeeRef = items.ClockIn,//string.IsNullOrEmpty(EmployeeRef) ? "" : EmployeeRef,
+                                                        GroupRef = employeeId,
+                                                        CreateDate = DateTime.Now,
+                                                        CreateBy = EmpID,
+                                                        UpdateDate = DateTime.Now,
+                                                        UpdateBy = EmpID
+                                                    });
+
+                                                    alertMessageSuccess = items.Section.ToString() + " : " + objPLPS.SectionName.ToString() + "  =>  " + LastTransactionCount;
+                                                }
+                                                else
+                                                {
+                                                    if (!string.IsNullOrWhiteSpace(alertMessage)) alertMessage += ", ";
+                                                    alertMessage += "check time: " + roundedDifftime + " sec. - " + employeeId;
+                                                    breakLoop = true;
+
+                                                    break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(alertMessage)) alertMessage += ", ";
+                                                alertMessage += "Please check Line and Section of EMP ID : " + item.EmployeeID;
+                                                breakLoop = true;
+
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if (!breakLoop) db.SaveChanges();
+
+                                    break;
+                                }
+                                //End case group
+                            }
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    alertMessage += "Please check Connection loss! : " + ex.Message;
+                }
+                finally
+                {
+                    db.Dispose();
+                }
+            }
+
+            var alert = new { message = alertMessageSuccess, status = true };
+            if (!string.IsNullOrEmpty(alertMessage)) alert = new { message = alertMessage, status = false };
 
             return Json(alert);
         }
