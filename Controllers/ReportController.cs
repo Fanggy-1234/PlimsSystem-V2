@@ -180,7 +180,8 @@ namespace Plims.Controllers
                                             SectionName = grouped.Key.SectionName,
                                             STD = Convert.ToDouble(grouped.Key.STD),
                                             Actual = Convert.ToDouble(grouped.Sum(x => x.FGQty) / grouped.Sum(x => x.DiffHours)),
-                                            Diff = Convert.ToDouble((grouped.Sum(x => x.PcsPerHr) * 100) / grouped.Key.STD)
+                                            //Diff = Convert.ToDouble((grouped.Sum(x => x.PcsPerHr) * 100) / grouped.Key.STD)
+                                            Diff = Convert.ToDouble(((grouped.Sum(x => x.FGQty) / grouped.Sum(x => x.DiffHours)) - grouped.Key.STD) / grouped.Key.STD * 100)
                                         }).ToList();
 
                 /////////////////// 3 Group Grad 
@@ -679,9 +680,12 @@ namespace Plims.Controllers
                                                     SumEmp = grouped.Sum(x => x.CountQRCode),
                                                     SumFG = grouped.Sum(x => x.FinishGood),
                                                     CapHr = grouped.Sum(x => x.EFF3) != 0 ? (grouped.Sum(x => x.FinishGood) - grouped.Sum(x => x.TotalDefect)) / grouped.Sum(x => x.EFF3) : 0,
-                                                    EFFhr1 = grouped.Sum(x => x.EFFhr1),
-                                                    EFFhr2 = grouped.Sum(x => x.EFFhr2),
-                                                    EFFhr3 = grouped.Sum(x => x.EFFhr3),
+                                                    //EFFhr1 = grouped.Sum(x => x.EFFhr1),
+                                                    //EFFhr2 = grouped.Sum(x => x.EFFhr2),
+                                                    //EFFhr3 = grouped.Sum(x => x.EFFhr3),
+                                                    EFFhr1 = grouped.Sum(x => x.FinishGood) / grouped.Sum(x => x.EFF1),
+                                                    EFFhr2 = grouped.Sum(x => x.FinishGood) / grouped.Sum(x => x.EFF2),
+                                                    EFFhr3 = grouped.Sum(x => x.FinishGood) / grouped.Sum(x => x.EFF3),
                                                     TotalDefect = grouped.Sum(x => x.TotalDefect),
 
                                                     //1st Graph
@@ -697,10 +701,11 @@ namespace Plims.Controllers
                                                     SectionName = grouped.Key.SectionName,
                                                     EffTarget = grouped.Max(x => x.EFFSTD),
                                                     EffAct = grouped.Max(x => x.WorkinghourACT),
-                                                    DiffEff = (grouped.Sum(x => x.WorkinghourACT) - grouped.Max(x => x.EFFSTD)) / grouped.Max(x => x.EFFSTD) * 100,
+                                                    //DiffEff = (grouped.Sum(x => x.WorkinghourACT) - grouped.Max(x => x.EFFSTD)) / grouped.Max(x => x.EFFSTD) * 100,
+                                                    DiffEff = ((grouped.Sum(x => x.FinishGood) / grouped.Sum(x => x.EFF1)) - grouped.Max(x => x.EFFSTD)) / grouped.Max(x => x.EFFSTD) * 100,
                                                     YieldTarget = grouped.Max(x => x.PercentYield),
                                                     YieldActual = grouped.Sum(x => x.YieldDefect),
-                                                    DiffYield = grouped.Sum(x => x.YieldDefect) - grouped.Max(x => x.PercentYield) //YieldActual - YieldTarget
+                                                    DiffYield = grouped.Max(x => x.PercentYield) - grouped.Sum(x => x.YieldDefect) //YieldTarget - YieldActual
                                                 }).ToList();
 
 
