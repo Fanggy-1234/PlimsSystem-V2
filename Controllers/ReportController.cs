@@ -694,7 +694,8 @@ namespace Plims.Controllers
 
                                                     //2nd Graph
                                                     YieldSTD = grouped.Average(x => x.PercentYield),
-                                                    YieldDefect = grouped.Max(x => x.YieldDefect),
+                                                    //YieldDefect = grouped.Max(x => x.YieldDefect),
+                                                    YieldDefect = (grouped.Sum(x => x.FinishGood) - grouped.Sum(x => x.TotalDefect)) / grouped.Sum(x => x.FinishGood) * 100,
 
                                                     //Table
                                                     ProductName = grouped.Key.ProductName,
@@ -704,8 +705,9 @@ namespace Plims.Controllers
                                                     //DiffEff = (grouped.Sum(x => x.WorkinghourACT) - grouped.Max(x => x.EFFSTD)) / grouped.Max(x => x.EFFSTD) * 100,
                                                     DiffEff = ((grouped.Sum(x => x.FinishGood) / grouped.Sum(x => x.EFF1)) - grouped.Max(x => x.EFFSTD)) / grouped.Max(x => x.EFFSTD) * 100,
                                                     YieldTarget = grouped.Max(x => x.PercentYield),
-                                                    YieldActual = grouped.Sum(x => x.YieldDefect),
-                                                    DiffYield = grouped.Max(x => x.PercentYield) - grouped.Sum(x => x.YieldDefect) //YieldTarget - YieldActual
+                                                    //YieldActual = grouped.Sum(x => x.YieldDefect),
+                                                    YieldActual = (grouped.Sum(x => x.FinishGood) - grouped.Sum(x => x.TotalDefect)) / grouped.Sum(x => x.FinishGood) * 100,
+                                                    DiffYield = grouped.Max(x => x.PercentYield) - ((grouped.Sum(x => x.FinishGood) - grouped.Sum(x => x.TotalDefect)) / grouped.Sum(x => x.FinishGood) * 100) //YieldTarget - YieldActual
                                                 }).ToList();
 
 
@@ -813,8 +815,7 @@ namespace Plims.Controllers
 
                                                  //2nd Graph
                                                  YieldSTD = grouped.Average(x => x.PercentYield),
-                                                 YieldDefect = grouped.Average(x => x.YieldDefect)
-
+                                                 YieldDefect = (grouped.Sum(x => x.FinishGood) - grouped.Sum(x => x.TotalDefect)) / grouped.Sum(x => x.FinishGood) * 100
                                              }).ToList();
 
                 //Create separate lists Bar 1
