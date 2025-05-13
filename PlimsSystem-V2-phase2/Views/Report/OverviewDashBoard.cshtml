@@ -1,0 +1,477 @@
+﻿@model Plims.ViewModel.ViewModelReport
+@{
+    ViewData["Title"] = "Overview Dashboard";
+    Layout = null;
+    DateTime currentDateTime = DateTime.Now;
+    string formattedDate = currentDateTime.ToString("dd-MM-yyyy HH:mm");
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="~/assets/login/images/thai_union_icon.ico" type="image/x-icon">
+    <title>PLIMS: @ViewData["Title"] </title>
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="~/dashboard/css/bootstrap.min.css" />
+    <!-- site css -->
+    <link rel="stylesheet" href="~/dashboard/style.css" />
+    <!-- responsive css -->
+    <link rel="stylesheet" href="~/dashboard/css/responsive.css" />
+    <!-- color css -->
+    <link rel="stylesheet" href="~/dashboard/css/colors.css" />
+    <!-- select bootstrap -->
+    <link rel="stylesheet" href="~/dashboard/css/bootstrap-select.css" />
+    <!-- scrollbar css -->
+    <link rel="stylesheet" href="~/dashboard/css/perfect-scrollbar.css" />
+    <!-- custom css -->
+    <link rel="stylesheet" href="~/dashboard/css/custom.css" />
+    <!-- calendar file css -->
+    <link rel="stylesheet" href="~/dashboard/js/semantic.min.css" />
+
+    <link rel="stylesheet" href="~/dashboard/css/flaticon.css" />
+
+    <!-- data tables -->
+    <link href="~/dashboard/datatable-new/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/dashboard/datatable-new/dataTables.dateTime.min.css" rel="stylesheet" />
+    <link href="~/dashboard/datatable-new/responsive.dataTables.min.css" rel="stylesheet" />
+
+    <link href="~/dashboard/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-md-1">
+            <div class="table_section" style="font-weight:bold;text-align: center;">
+                <img src="~/Picture/Thai-union-logo.png" width="100px" height="70px" />
+            </div>
+        </div>
+        <div class="col-md-11">
+            <div class="table_section">
+                <div class="table-responsive-sm">
+                    <table class="table" style="color: black">
+                        <thead>
+                            <tr>
+                                <th style="font-weight:bold;text-align: center;"></th>
+                                <th style="font-weight:bold;text-align: center;">Starting Date:</th>
+                                <th style="font-weight:bold;text-align: center;">Ending Date:</th>
+                                <th style="font-weight:bold;text-align: center;">Year:</th>
+                                <th style="font-weight:bold;text-align: center;">Month:</th>
+                                <th style="font-weight:bold;text-align: center;">Line:</th>
+                                <th style="font-weight:bold;text-align: center;">Product:</th>
+                                <th style="font-weight:bold;text-align: center;">Section:</th>
+                                <th style="font-weight:bold;text-align: center;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <form asp-action="FilterOverview" asp-controller="Report" method="post" id="filterForm">
+                            <tr>
+                                <td style="font-weight:bold;text-align: center;"><h3></h3></td>
+                                <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;" } })</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;" } })</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterYear, (IEnumerable<SelectListItem>)ViewBag.varYear as SelectList, ":: All Year ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterMonth, (IEnumerable<SelectListItem>)ViewBag.varMonth as SelectList, ":: All Month ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterLine, (IEnumerable<SelectListItem>)ViewBag.varLine as SelectList, ":: All Line ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterProduct, (IEnumerable<SelectListItem>)ViewBag.varProduct as SelectList, ":: All Product ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterPoint, (IEnumerable<SelectListItem>)ViewBag.varPoint as SelectList, ":: All Point ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
+                                <td style="font-weight:bold;text-align: center;">
+                       
+                                    <button type="submit" name="submit" asp-action="FilterOverview" class="btn cur-p btn-primary" id="fetchDataButton">&nbsp;&nbsp;  Filter  &nbsp;&nbsp;</button>
+                                </td>
+                            </tr>
+                            </form>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row" id="dataContainer">
+        <div class="col-md-2">
+            <div class="table-responsive">
+           
+
+                  <table class="table  table-bordered" style="color: black;font-size:28px ; height:100%">
+                <tbody>
+                    <tr>
+                        <td style="background-color:aquamarine;text-align: center;"><h3 style="font-size:40px;font-weight:bold"><i class="fa fa-user blue2_color"></i> @ViewBag.SumEmployee</h3> จำนวนพนักงาน</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:lightgreen;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.SumCapHr.ToString("#,##0.00") </h3>Cap./Hr.</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:coral;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.SumEFFhr1.ToString("#,##0.00") </h3>Eff.hr 1</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:lightpink;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.SumEFFhr2.ToString("#,##0.00") </h3>Eff.hr 2</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:cornflowerblue;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.SumEFFhr3.ToString("#,##0.00") </h3>Eff.hr 3</td>
+                    </tr>
+                        <tr>
+                        <td style="background-color:red;text-align: center;"><h3 style="font-size:40px;font-weight:bold"> @ViewBag.DefectAll.ToString("#,##0.00") </h3>Defect All</td>
+                    </tr>
+                </tbody>
+                </table> 
+
+
+            </div>
+        </div>
+        <div class="col-md-10">
+            <div class="row">
+                <div class="col-md-6">
+                   <div id="container_eff" style="width: 90%; height: 250%;"></div>
+                </div>
+                <div class="col-md-6">
+                    <div id="container_yield" style="width: 90%; height: 250%;"></div>
+                </div>
+            </div>
+            <div class="row" style="height:35%;">
+                <br />&nbsp;<br /> <br />&nbsp;<br />
+            </div>
+            <div class="row">
+                
+                <div class="col-md-12">
+                    <table class="table table-striped  table-bordered" style="color: black; background-color:gainsboro">
+                        <thead>
+                            <tr class="table-Primary" style="font-weight:bold;text-align: center;font-size:28px">
+                                <th style="font-weight:bold;text-align: center;">Product</th>
+                                <th style="font-weight:bold;text-align: center;">Section</th>
+                                <th style="font-weight:bold;text-align: center;">Target/STD</th>
+                                <th style="font-weight:bold;text-align: center;">Actual</th>
+                                <th style="font-weight:bold;text-align: center;">% Diff</th>
+                                <th></th>
+                                <th style="font-weight:bold;text-align: center;">% Yield (Target)</th>
+                                <th style="font-weight:bold;text-align: center;">% Actual</th>
+                                <th style="font-weight:bold;text-align: center;">% Diff</th>
+                                <th style="font-weight:bold;text-align: center;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @{
+                            decimal totalStd = 0;
+                            decimal totalActual = 0;
+                            decimal totalDiff = 0;
+                            decimal totalYieldStd = 0;
+                            decimal totalYieldActual = 0;
+                            decimal totalYieldDiff = 0;
+
+                            decimal totalAvgDiff = 0;
+                            decimal totalAvgYieldDiff = 0;
+                            decimal totalScan = 0 ;
+                            decimal totaldefect = 0;
+                            decimal totalactYield = 0;
+
+                            int itemCount = Model.ResultGrpProductOverviewModel.Count; // Get the count of items
+                        }
+                        @foreach (var item in Model.ResultGrpProductOverviewModel)
+                        {
+                            <tr style="text-align: center;font-size:28px"> 
+                                <td>@item.ProductName</td>
+                                <td>@item.SectionName</td>
+                                <td style="text-align: right;">@item.EffTarget.ToString("#,##0.00")</td>
+                                <td style="text-align: right;">@item.EFFhr1.ToString("#,##0.00")</td>
+                                @if (@item.DiffEff >= 0) {
+                                    <td style="background-color:limegreen;text-align: right;">@item.DiffEff.ToString("#,##0.00")</td>
+                                } else {
+                                    <td style="background-color:indianred; text-align: right;">@item.DiffEff.ToString("#,##0.00")</td>
+                                }
+                                <td></td>
+                                <td style="text-align: right;">@item.YieldTarget.ToString("#,##0.00")</td>
+                                <td style="text-align: right;">@item.YieldActual.ToString("#,##0.00")</td>
+                                @if (@item.YieldActual >= 100) {
+                                    <td style="background-color:limegreen;text-align: right;">@item.DiffYield.ToString("#,##0.00")</td>
+                                } else {
+                                    <td style="background-color:indianred; text-align: right;">@item.DiffYield.ToString("#,##0.00")</td>
+                                }
+                            </tr>
+
+                            totalActual += item.EFFhr1;
+                            totalDiff += item.DiffEff;
+                            totalYieldStd += item.YieldTarget;
+                            totalYieldActual += item.YieldActual;
+                            totalYieldDiff += item.DiffYield;
+                            totalScan += item.SumFG;
+                            totaldefect += item.TotalDefect;
+                        }
+                        @if (totalScan != 0)
+                        {
+                            totalactYield = (totalScan - totaldefect) / totalScan * 100;
+                        }
+                        @{
+                            // Calculate averages
+                            totalAvgDiff = itemCount > 0 ? totalDiff / itemCount : 0;
+                            totalAvgYieldDiff = itemCount > 0 ? totalYieldDiff / itemCount : 0;
+                        }
+                            <tr style="font-size:28px">
+                                <td colspan="2" style="font-weight:bold;text-align: center;">Total</td>
+                                <td style="font-weight:bold;text-align: right;"></td>
+                                <td style="font-weight:bold;text-align: right;">@totalActual.ToString("#,##0.00")</td>
+                                <td style="font-weight:bold;text-align: right;">@totalAvgDiff.ToString("#,##0.00")</td>
+                                <td></td>
+                                @* <td style="font-weight:bold;text-align: right;">@totalYieldStd.ToString("#,##0.00")</td> *@
+                                <td style="font-weight:bold;text-align: center;"></td>
+                                @* <td style="font-weight:bold;text-align: right;">@totalYieldActual.ToString("#,##0.00")</td> *@
+                                <td style="font-weight:bold;text-align: right;">@totalactYield.ToString("#,##0.00")</td>
+                                <td style="font-weight:bold;text-align: right;">@totalAvgYieldDiff.ToString("#,##0.00")</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <label style="font-size:16px;color:black">Data of @formattedDate</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- end dashboard filter -->
+    <!-- jQuery -->
+    <script src="~/dashboard/js/jquery.min.js"></script>
+    <script src="~/dashboard/js/popper.min.js"></script>
+    <script src="~/dashboard/js/bootstrap.min.js"></script>
+    <!-- Add your scripts at the end of the body -->
+    <!-- Add your other scripts -->
+    <!-- wow animation -->
+    <script src="~/dashboard/js/animate.js"></script>
+    <!-- select country -->
+    <script src="~/dashboard/js/bootstrap-select.js"></script>
+    <!-- owl carousel -->
+    <script src="~/dashboard/js/owl.carousel.js"></script>
+    <!-- nice scrollbar -->
+    <script src="~/dashboard/js/perfect-scrollbar.min.js"></script>
+    <!-- sidebar -->
+    <script>
+        var ps = new PerfectScrollbar('#sidebar');
+    </script>
+    <!-- data tables -->
+    <script src="~/dashboard/datatable-new/jquery-3.5.1.js"></script>
+    <script src="~/dashboard/datatable-new/jquery.dataTables.min.js"></script>
+    <script src="~/dashboard/datatable-new/moment.min.js"></script>
+    <script src="~/dashboard/datatable-new/dataTables.dateTime.min.js"></script>
+    <script src="~/dashboard/datatable-new/dataTables.responsive.min.js"></script>
+    <!-- anychart pie chart -->
+    <script src="~/dashboard/database-new/anychart/anychart-core.min.js"></script>
+    <script src="~/dashboard/database-new/anychart/anychart-pie.min.js"></script>
+
+    <!-- anychart bar chart -->
+    <script src="~/dashboard/database-new/barchart/js/anychart-base.min.js"></script>
+    <script src="~/dashboard/database-new/barchart/js/anychart-exports.min.js"></script>
+    <script src="~/dashboard/database-new/barchart/js/anychart-ui.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#datepicker-group").datepicker({
+                format: "dd-M-yyyy",
+                todayHighlight: true,
+                autoclose: true,
+                clearBtn: true
+            });
+        });
+    </script>
+
+    <script>
+        // Function to fetch data
+        function fetchData() {
+            console.log('Fetching data...'); // Log a message to verify if fetchData() is called
+            // Place your code here to fetch data
+            var newData = "Example data fetched at " + new Date().toLocaleTimeString();
+            document.getElementById("dataContainer").innerText = newData;
+        }
+
+        // Start triggering button click event after page load
+        window.addEventListener("load", function () {
+            //var interval = parseInt(document.getElementById("intervalInput").value); // Get the interval value from the input field
+            var interval = @ViewBag.SetTime
+                triggerButtonClick(interval); // Start triggering button click event with the specified interval
+        });
+
+        // Function to trigger button click event periodically
+        function triggerButtonClick(interval) {
+            console.log('Triggering button click event with interval:', interval); // Log the interval value
+
+            // Trigger button click event periodically
+            var intervalId = setInterval(function () {
+                document.getElementById("fetchDataButton").click(); // Automatically click the button
+            }, interval);
+        }
+
+    </script>
+
+    <script>
+        anychart.onDocumentReady(function () {
+
+            var chartData = @Html.Raw(ViewBag.ChartDataJsonEff);
+            //var chartData = "[[\"Line01\",92.758620,519.330],[\"Line02\",88.000000,5.980]]";
+            //ChartDataJsonEff = "[[\"Line01\",92.758620,519.330,\"#4CAF50\",\"#4CAF50\",\"\",\"\"],
+            //                     [\"Line02\",88.000000,5.980,\"#F44336\",\"#F44336\",\"\",\"\"]]"
+            var data = anychart.data.set(chartData);
+
+            // map the data
+             var seriesData_1 = data.mapAs({ x: 0, value: 1, fill: 3, stroke: 5, label: 6 });
+             var seriesData_2 = data.mapAs({ x: 0, value: 2, fill: 4, stroke: 5, label: 6 });
+
+
+            // create a chart
+            var chart = anychart.column();;
+
+            // create the first series, set the data and name
+            var series1 = chart.column(seriesData_1);
+            series1.name("Eff. Target/STD");
+            series1.labels()
+                .enabled(true)
+                .position("center-top")
+                .anchor("center-bottom")
+                .fontSize(10)  // set font size
+                .fontColor("#000000")  // set font color
+                .useHtml(true)  // enable HTML in labels
+                .format(function () {
+                    return "Target:" + this.value.toFixed(2);
+                    // return "Target: <br/>" + this.value.toFixed(2);
+                });
+
+
+            // create the second series, set the data and name
+            var series2 = chart.column(seriesData_2);
+            series2.name("Eff. Actual");
+            series2.labels()
+                .enabled(true)
+                .position("center-top")
+                .anchor("center-bottom")
+                .fontSize(10)  // set font size
+                .fontColor("#000000")  // set font color
+                .useHtml(true)  // enable HTML in labels
+                .format(function () {
+                    return "Actual:" + this.value.toFixed(2);
+                });
+
+            // set the chart title
+            chart.title("Efficiency");
+            chart.title().fontSize(28);  // set font size for the title
+            chart.title().fontColor("#333333");  // set font color for the title
+
+            // // Apply conditional color based on the condition
+            // chart.listen("container_eff", function () {
+            //     var series1Max = seriesData_1.mapAs().getMax("value");
+            //     var series2Max = seriesData_2.mapAs().getMax("value");
+
+            //     if (series2Max >= series1Max) {
+            //         chart.fill("#4CAF50");  // Green color for chart
+            //     } else {
+            //         chart.fill("#F44336");  // Red color for chart
+            //     }
+            // });
+  
+
+            // set the titles of the axes
+            var xAxis = chart.xAxis();
+            xAxis.title("@ViewBag.xAxisTitle");
+            xAxis.title().fontSize(26);  // set font size for the x-axis title
+            xAxis.title().fontColor("#333333");  // set font color for the x-axis title
+
+            var yAxis = chart.yAxis();
+            yAxis.title("Percent");
+            yAxis.title().fontSize(26);  // set font size for the y-axis title
+            yAxis.title().fontColor("#333333");  // set font color for the y-axis title
+
+
+        
+
+            // set the container id
+            chart.container("container_eff");
+
+            // initiate drawing the chart
+            chart.draw();
+        });
+    </script>
+    <script>
+        anychart.onDocumentReady(function () {
+
+            var chartData_y = @Html.Raw(ViewBag.ChartDataJsonYield);
+
+            var data_y = anychart.data.set(chartData_y);
+
+            // map the data
+            var seriesData_1_y = data_y.mapAs({ x: 0, value: 1, fill: 3, stroke: 5, label: 6 });
+            var seriesData_2_y = data_y.mapAs({ x: 0, value: 2, fill: 4, stroke: 5, label: 6 });
+
+            // create a chart
+            var chart_y = anychart.column();
+
+            // create the first series, set the data and name
+            var series1_y = chart_y.column(seriesData_1_y);
+            series1_y.name("%Yield Target");
+            series1_y.labels()
+                .enabled(true)
+                .position("center-top")
+                .anchor("center-bottom")
+                .fontSize(10)  // set font size
+                .fontColor("#000000")  // set font color
+                .useHtml(true)  // enable HTML in labels
+                .format(function () {
+                    return "Target:" + this.value.toFixed(2);
+                    // return "Target: <br/>" + this.value.toFixed(2);
+                });
+           
+            // enable and configure labels
+            //series1_y.labels().position("outside");
+
+            // create the second series, set the data and name
+            var series2_y = chart_y.column(seriesData_2_y);
+            series2_y.name("%Yield Yield");
+            // enable and configure labels
+            //series2_y.labels().position("outside");
+            series2_y.labels()
+                .enabled(true)
+                .position("center-top")
+                .anchor("center-bottom")
+                .fontSize(10)  // set font size
+                .fontColor("#000000")  // set font color
+                .useHtml(true)  // enable HTML in labels
+                .format(function () {
+                    return "Actual:" + this.value.toFixed(2);
+                });
+
+            // set the chart title
+            chart_y.title("Yield");
+            chart_y.title().fontSize(28);  // set font size for the title
+            chart_y.title().fontColor("#333333");  // set font color for the title
+
+            // set the titles of the axes
+            var xAxis_y = chart_y.xAxis();
+            xAxis_y.title("Line");
+            xAxis_y.title().fontSize(26);  // set font size for the x-axis title
+            xAxis_y.title().fontColor("#333333");  // set font color for the x-axis title
+
+
+            var yAxis_y = chart_y.yAxis();
+            yAxis_y.title("Percent");
+            yAxis_y.title().fontSize(26);  // set font size for the y-axis title
+            yAxis_y.title().fontColor("#333333");  // set font color for the y-axis title
+
+            // set the container id
+            chart_y.container("container_yield");
+
+            // apply conditional color based on the value
+            // chart_y.listen("pointDraw", function (e) {
+            //     var actualValue = e.point.get("value");
+            //     if (actualValue > 80) {  // example condition
+            //         e.point.fill("#4CAF50");  // green
+            //     } else if (actualValue > 50) {
+            //         e.point.fill("#FFC107");  // yellow
+            //     } else {
+            //         e.point.fill("#F44336");  // red
+            //     }
+            // });
+
+            // initiate drawing the chart
+            chart_y.draw();
+        });
+    </script>
+
+
+</body>
+
