@@ -1342,7 +1342,7 @@ namespace Plims.Controllers
                         Sheet.Cells["G1"].Value = "Employee Name";
                         Sheet.Cells["H1"].Value = "Section";
                         Sheet.Cells["I1"].Value = "Total Count";
-                        Sheet.Cells["J1"].Value = "Total Peice Real Time Employee";
+                        Sheet.Cells["J1"].Value = "Total Price Real Time Employee";
                         Sheet.Cells["K1"].Value = "Total Defect Real Time Employee";
                         Sheet.Cells["L1"].Value = "Total Defect Adjust";
                         Sheet.Cells["M1"].Value = "Actual FG ";
@@ -1573,7 +1573,7 @@ namespace Plims.Controllers
                     Sheet.Cells["H1"].Value = "Section";
                     Sheet.Cells["I1"].Value = "Total Count";
 
-                    Sheet.Cells["J1"].Value = "Total Peice Real Time Employee";
+                    Sheet.Cells["J1"].Value = "Total Price Real Time Employee";
                     Sheet.Cells["K1"].Value = "Total Defect Real Time Employee";
                     Sheet.Cells["L1"].Value = "Total Defect Adjust";
                     Sheet.Cells["M1"].Value = "Actual FG ";
@@ -1714,7 +1714,7 @@ namespace Plims.Controllers
                         Sheet.Cells["H1"].Value = "Section";
                         Sheet.Cells["I1"].Value = "Total Count";
 
-                        Sheet.Cells["J1"].Value = "Total Peice Real Time Employee";
+                        Sheet.Cells["J1"].Value = "Total Price Real Time Employee";
                         Sheet.Cells["K1"].Value = "Total Defect Real Time Employee";
                         Sheet.Cells["L1"].Value = "Total Defect Adjust";
                         Sheet.Cells["M1"].Value = "Actual FG ";

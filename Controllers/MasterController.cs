@@ -3646,33 +3646,47 @@ namespace Plims.Controllers
                     Mymodel.view_Service = Mymodel.view_Service.Where(x => x.SectionName.Equals(obj.SectionName)).ToList();
                     ViewBag.SelectedSectionName = obj.SectionName;
                 }
-                if (inactivestatus == true)
-                {
-                    Mymodel.view_Service = Mymodel.view_Service.ToList();
-                    ViewBag.InactiveStatus = true;
-                }
-                else
-                {
-                    Mymodel.view_Service = Mymodel.view_Service.Where(x => x.ServicesStatus == 1).ToList();
-                    ViewBag.InactiveStatus = false;
-                }
+                // if (inactivestatus == true)
+                // {
+                //     Mymodel.view_Service = Mymodel.view_Service.ToList();
+                //     ViewBag.InactiveStatus = true;
+                // }
+                // else
+                // {
+                //     Mymodel.view_Service = Mymodel.view_Service.Where(x => x.ServicesStatus == 1).ToList();
+                //     ViewBag.InactiveStatus = false;
+                // }
 
 
 
 
                 // Mymodel.view_Service = db.View_Service.Where(x => x.ServicesID.Equals(obj.ServicesID) || x.ServicesName.Equals(obj.ServicesName) || x.PlantName.Equals(obj.PlantName) || x.LineName.Equals(obj.LineName)).ToList();
 
-                return View(Mymodel);
+                // return View(Mymodel);
 
 
             }
-            else
+            // else
+            // {
+            //     ViewBag.InactiveStatus = true;
+            //     return View(Mymodel);
+
+
+            // }
+            if (inactivestatus == false)
             {
+                // แสดงเฉพาะ Active
+                Mymodel.view_Service = Mymodel.view_Service.Where(x => x.ServicesStatus == 1).ToList();
+                ViewBag.InactiveStatus = false;
+            }else{   
+                /* 
+                    จะเข้าตอนกดครั้งแรก 
+                    กรณี inactivestatus == true หรือ null แสดง Inactive
+                */
+                Mymodel.view_Service = Mymodel.view_Service.Where(x => x.ServicesStatus == 0).ToList();
                 ViewBag.InactiveStatus = true;
-                return View(Mymodel);
-
-
             }
+            return View(Mymodel);
 
         }
 
@@ -4325,25 +4339,40 @@ namespace Plims.Controllers
                     reason.view_Reason = reason.view_Reason.Where(p => p.SectionName.Equals(obj.SectionName));
                     ViewBag.SelectedSectionName = obj.SectionName;
                 }
-                if (inactivestatus == true)
-                {
-                    reason.view_Reason = reason.view_Reason.ToList();
-                    ViewBag.InactiveStatus = true;
-                }
-                else
-                {
-                    reason.view_Reason = reason.view_Reason.Where(x => x.Status == 1).ToList();
-                    ViewBag.InactiveStatus = false;
-                }
-                    return View(reason);
+                // if (inactivestatus == true)
+                // {
+                //     reason.view_Reason = reason.view_Reason.ToList();
+                //     ViewBag.InactiveStatus = true;
+                // }
+                // else
+                // {
+                //     reason.view_Reason = reason.view_Reason.Where(x => x.Status == 1).ToList();
+                //     ViewBag.InactiveStatus = false;
+                // }
+                //     return View(reason);
+            }
+            // else
+            // {
+
+            //     ViewBag.InactiveStatus = true;
+            //     return View(reason);
+
+            // }
+            if (inactivestatus == false)
+            {
+                // แสดงเฉพาะ Active
+                reason.view_Reason = reason.view_Reason.Where(x => x.Status == 1).ToList();
+                ViewBag.InactiveStatus = false;
             }
             else
-            {
-
+            {   /* 
+                    จะเข้าตอนกดครั้งแรก 
+                    กรณี inactivestatus == true หรือ null แสดง Inactive
+                */
+                reason.view_Reason = reason.view_Reason.Where(x => x.Status == 0).ToList();
                 ViewBag.InactiveStatus = true;
-                return View(reason);
-
             }
+            return View(reason);
 
         }
 
@@ -6060,28 +6089,44 @@ namespace Plims.Controllers
                 }
 
 
-                if (inactivestatus == true || inactivestatus == null)
-                {
-                    mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.ToList();
-                    ViewBag.InactiveStatus = true;
-                }
-                else
-                {
-                    mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.Where(x => x.Status == 1).ToList();
-                    ViewBag.InactiveStatus = false;
-                }
+                // if (inactivestatus == true || inactivestatus == null)
+                // {
+                //     mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.ToList();
+                //     ViewBag.InactiveStatus = true;
+                // }
+                // else
+                // {
+                //     mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.Where(x => x.Status == 1).ToList();
+                //     ViewBag.InactiveStatus = false;
+                // }
 
 
                 //mymodel.view_EmployeeMaster = db.View_EmployeeMaster.Where(p => p.EmployeeName.Equals(obj.EmployeeName) || p.EmployeeID.Equals(obj.EmployeeID)).OrderByDescending(x => x.Status);
-                return View(mymodel);
+                // return View(mymodel);
+            }
+            // else
+            // {
+
+            //     ViewBag.InactiveStatus = true;
+            //     return View(mymodel);
+            // }
+            
+            if (inactivestatus == false)
+            {
+                // แสดงเฉพาะ Active
+                mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.Where(x => x.Status == 1).ToList();
+                ViewBag.InactiveStatus = false;
             }
             else
-            {
-
+            {   /* 
+                    จะเข้าตอนกดครั้งแรก 
+                    กรณี inactivestatus == true หรือ null แสดง Inactive
+                */
+                mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.Where(x => x.Status == 0).ToList();
                 ViewBag.InactiveStatus = true;
-                return View(mymodel);
             }
 
+            return View(mymodel);
         }
 
 

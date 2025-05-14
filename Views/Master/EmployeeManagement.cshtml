@@ -244,15 +244,18 @@
                 string checkedAttribute = (ViewBag.InactiveStatus ?? false) ? "checked" : "";
             }
 
-            <div class="form-check form-switch">
+            @* <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="inactivestatus" name="inactivestatus" @checkedAttribute>
                 <label class="form-check-label" for="inactivestatus">Inactive Status</label>
                 <input type="hidden" id="inactivestatus-hidden" name="inactivestatus" value="@((ViewBag.InactiveStatus ?? false).ToString().ToLower())">
+            </div> *@
+            <div class="form-check form-switch">
+               
+                <input class="form-check-input" type="checkbox" id="inactivestatus" name="inactivestatus"
+                    value="true" @checkedAttribute>
+                <label class="form-check-label" for="inactivestatus">Inactive Status</label>
+                <input type="hidden" name="inactivestatus" value="false" />
             </div>
-
-
-        
-
 
         </div>
         <div class="col-6"></div>
