@@ -166,7 +166,13 @@
 
 
         // ********************************** Add check employee clockin *****************////
+        var createButton = $('button[name="action"][value="Save"]');
+        if (createButton.is(':disabled')) {
+            return;
+        }
         if (confirm('Are you sure?')) {
+            createButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+            showLoader();
             var ClockIn = $('#ClockIn').val();
             var TransactionDate = $('#TransactionDate').val();
             var EmployeeIDchk = [];
@@ -174,8 +180,6 @@
             $("input[name='EmployeeIDchk']:checked").each(function () {
                 EmployeeIDchk.push(this.value);
             });
-
-            showLoader();
 
             $.ajax({
                 type: "POST",
@@ -190,6 +194,7 @@
                         hideLoader();
 
                         alert(data.message);
+                        createButton.prop('disabled', false).html('Create');
                     } else {
                         // == ย้าย EmployeeClockInSave เข้าไปใน EmployeeClockInCheck
                         // window.location.href = "/Employee/EmployeeClockInSave?ClockIn=" + ClockIn + "&TransactionDate=" + TransactionDate + "&EmployeeIDchk=" + EmployeeIDchk.join(',');
@@ -201,6 +206,7 @@
                     hideLoader();
 
                     console.log("Error processing request: " + error);
+                    createButton.prop('disabled', false).html('Create');
                 }
             });
         }
@@ -468,7 +474,7 @@
                     } //asp-action=" EmployeeClockInsave" onclick="return checkTime()"
                     else
                     {
-                        <button type="button" class="clear-button">Create</button>
+                        <button type="button" class="clear-button disable-on-submit">Create</button>
                     }
                 </div>
             </div>
