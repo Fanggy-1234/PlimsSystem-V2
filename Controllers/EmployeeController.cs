@@ -1823,8 +1823,20 @@ namespace Plims.Controllers
             {
                 foreach (var itmservice in tableRows)
                 {
+                    // if (string.IsNullOrEmpty(itmservice.Service) || itmservice.Service.Equals("All", StringComparison.OrdinalIgnoreCase))
+                    // {
+                    //     continue;
+                    // }
                     var servicesplit = itmservice.Service.Split(":");
-                    var servicerate = db.TbService.Where(x => x.PlantID.Equals(PlantID) && x.LineID.Equals(LineID) && x.ServicesName.Equals(servicesplit[1])).Select(x => x.ServicesRate).SingleOrDefault();
+                    // if (servicesplit.Length < 2)
+                    // {
+                    //     continue;
+                    // }
+                    string serviceName = servicesplit[1];
+                    var servicerate = db.TbService.Where(x => x.PlantID.Equals(PlantID)
+                    && x.LineID.Equals(LineID)
+                    && x.ServicesName.Equals(serviceName)
+                    ).Select(x => x.ServicesRate).SingleOrDefault();
                     decimal rate = Convert.ToDecimal(servicerate);
                     if (servicesplit.Length > 0)
                     {
@@ -1835,9 +1847,9 @@ namespace Plims.Controllers
                     j++;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Json(new { success = false, message = "Service is incorrect!" });
+                return Json(new { success = false, message = "Service is incorrect! - " + ex.Message });
             }
 
             if (distinctServices.Count > 1)
