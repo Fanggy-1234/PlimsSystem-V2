@@ -1429,7 +1429,7 @@ namespace Plims.Controllers
             }
             var Employee = new ViewModelAll
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals("1")).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID) && x.ServicesStatus.Equals(1)).ToList(),
@@ -1628,7 +1628,7 @@ namespace Plims.Controllers
             }
             var Employee = new ViewModelAll
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals("1")).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID) && x.ServicesStatus.Equals(1)).ToList(),
@@ -2074,7 +2074,7 @@ namespace Plims.Controllers
             }
             var Employee = new ViewModelAll
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals("1")).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID) && x.ServicesStatus.Equals(1)).ToList(),
@@ -2409,7 +2409,7 @@ namespace Plims.Controllers
             }
             var Employee = new ViewModelAll
             {
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals("1")).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID) && x.ServicesStatus.Equals(1)).ToList(),
