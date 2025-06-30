@@ -3673,19 +3673,30 @@ namespace Plims.Controllers
 
 
             // }
-            if (inactivestatus == false)
+            // if (inactivestatus == false)
+            // {
+            //     // แสดงเฉพาะ Active
+            //     Mymodel.view_Service = Mymodel.view_Service.Where(x => x.ServicesStatus == 1).ToList();
+            //     ViewBag.InactiveStatus = false;
+            // }else{   
+            //     /* 
+            //         จะเข้าตอนกดครั้งแรก 
+            //         กรณี inactivestatus == true หรือ null แสดง Inactive
+            //     */
+            //     Mymodel.view_Service = Mymodel.view_Service.Where(x => x.ServicesStatus == 0).ToList();
+            //     ViewBag.InactiveStatus = true;
+            // }
+            if (inactivestatus == true)
             {
-                // แสดงเฉพาะ Active
-                Mymodel.view_Service = Mymodel.view_Service.Where(x => x.ServicesStatus == 1).ToList();
-                ViewBag.InactiveStatus = false;
-            }else{   
-                /* 
-                    จะเข้าตอนกดครั้งแรก 
-                    กรณี inactivestatus == true หรือ null แสดง Inactive
-                */
                 Mymodel.view_Service = Mymodel.view_Service.Where(x => x.ServicesStatus == 0).ToList();
                 ViewBag.InactiveStatus = true;
             }
+            else
+            {   
+                Mymodel.view_Service = Mymodel.view_Service.Where(x => x.ServicesStatus == 1).ToList();
+                ViewBag.InactiveStatus = false;
+            }
+
             return View(Mymodel);
 
         }
@@ -4358,19 +4369,29 @@ namespace Plims.Controllers
             //     return View(reason);
 
             // }
-            if (inactivestatus == false)
+            // if (inactivestatus == false)
+            // {
+            //     // แสดงเฉพาะ Active
+            //     reason.view_Reason = reason.view_Reason.Where(x => x.Status == 1).ToList();
+            //     ViewBag.InactiveStatus = false;
+            // }
+            // else
+            // {   /* 
+            //         จะเข้าตอนกดครั้งแรก 
+            //         กรณี inactivestatus == true หรือ null แสดง Inactive
+            //     */
+            //     reason.view_Reason = reason.view_Reason.Where(x => x.Status == 0).ToList();
+            //     ViewBag.InactiveStatus = true;
+            // }
+            if (inactivestatus == true)
             {
-                // แสดงเฉพาะ Active
-                reason.view_Reason = reason.view_Reason.Where(x => x.Status == 1).ToList();
-                ViewBag.InactiveStatus = false;
-            }
-            else
-            {   /* 
-                    จะเข้าตอนกดครั้งแรก 
-                    กรณี inactivestatus == true หรือ null แสดง Inactive
-                */
                 reason.view_Reason = reason.view_Reason.Where(x => x.Status == 0).ToList();
                 ViewBag.InactiveStatus = true;
+            }
+            else
+            {   
+                reason.view_Reason = reason.view_Reason.Where(x => x.Status == 1).ToList();
+                ViewBag.InactiveStatus = false;
             }
             return View(reason);
 
@@ -6110,20 +6131,31 @@ namespace Plims.Controllers
             //     ViewBag.InactiveStatus = true;
             //     return View(mymodel);
             // }
+
+            // if (inactivestatus == false)
+            // {
+            //     // แสดงเฉพาะ Active
+            //     mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.Where(x => x.Status == 1).ToList();
+            //     ViewBag.InactiveStatus = false;
+            // }
+            // else
+            // {   /* 
+            //         จะเข้าตอนกดครั้งแรก 
+            //         กรณี inactivestatus == true หรือ null แสดง Inactive
+            //     */
+            //     mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.Where(x => x.Status == 0).ToList();
+            //     ViewBag.InactiveStatus = true;
+            // }
             
-            if (inactivestatus == false)
+            if (inactivestatus == true)
             {
-                // แสดงเฉพาะ Active
-                mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.Where(x => x.Status == 1).ToList();
-                ViewBag.InactiveStatus = false;
-            }
-            else
-            {   /* 
-                    จะเข้าตอนกดครั้งแรก 
-                    กรณี inactivestatus == true หรือ null แสดง Inactive
-                */
                 mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.Where(x => x.Status == 0).ToList();
                 ViewBag.InactiveStatus = true;
+            }
+            else
+            {   
+                mymodel.view_EmployeeMaster = mymodel.view_EmployeeMaster.Where(x => x.Status == 1).ToList();
+                ViewBag.InactiveStatus = false;
             }
 
             return View(mymodel);
@@ -7167,7 +7199,7 @@ namespace Plims.Controllers
         /// Employee Group QRCode
         /// </summary>
         /// <returns></returns>
-        public ActionResult EmployeeGroupQRCode(TbEmployeeGroupQR obj, bool? inactivestatus = true)
+        public ActionResult EmployeeGroupQRCode(TbEmployeeGroupQR obj, bool? inactivestatus)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -7204,30 +7236,36 @@ namespace Plims.Controllers
 
                     return View(mymodel);
                 }
-                if (inactivestatus == true)
-                {
-                    mymodel.view_EmployeeGroupList = mymodel.view_EmployeeGroupList.ToList();
-                    ViewBag.InactiveStatus = true;
-                }
-                else
-                {
-                    mymodel.view_EmployeeGroupList = mymodel.view_EmployeeGroupList.Where(x => x.Status == 1).ToList();
-                    ViewBag.InactiveStatus = false;
-                }
+                // if (inactivestatus == true)
+                // {
+                //     mymodel.view_EmployeeGroupList = mymodel.view_EmployeeGroupList.ToList();
+                //     ViewBag.InactiveStatus = true;
+                // }
+                // else
+                // {
+                //     mymodel.view_EmployeeGroupList = mymodel.view_EmployeeGroupList.Where(x => x.Status == 1).ToList();
+                //     ViewBag.InactiveStatus = false;
+                // }
+            }
+            // else
+            // {
+            //     ViewBag.InactiveStatus = true;
+            //     return View(mymodel);
 
 
-
-                return View(mymodel);
-
-
+            // }
+            if (inactivestatus == true)
+            {
+                mymodel.view_EmployeeGroupList = mymodel.view_EmployeeGroupList.Where(x => x.Status == 0).ToList();
+                ViewBag.InactiveStatus = true;
             }
             else
             {
-                ViewBag.InactiveStatus = true;
-                return View(mymodel);
-
-
+                mymodel.view_EmployeeGroupList = mymodel.view_EmployeeGroupList.Where(x => x.Status == 1).ToList();
+                ViewBag.InactiveStatus = false;
             }
+             return View(mymodel);
+
         }
 
 

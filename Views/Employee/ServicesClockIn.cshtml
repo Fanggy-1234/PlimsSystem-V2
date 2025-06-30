@@ -460,7 +460,42 @@
         $("#SectionSelect").val(selectedSection.val());
 
         if (selectedService.val() !== "") {
-            if (selectedSection.val() === "All") {
+            
+            if (selectedSection.val() === "All" && selectedService.val() === "All") {
+                var addedAny = false;
+                $("#SectionID option").each(function () {
+                    var section = $(this);
+                    if (section.val() !== "All" && section.val() !== "") {
+                        $("#ServicesID option").each(function () {
+                            var service = $(this);
+                            if (service.val() !== "All" && service.val() !== "") {
+                                var combinationExists = false;
+                                $("#tablecreate_id tbody tr").each(function () {
+                                    var existingSection = $(this).find("td:eq(0)").text().trim();
+                                    var existingService = $(this).find("td:eq(1)").text().trim();
+                                    if (existingSection === section.text().trim() && existingService === service.text().trim()) {
+                                        combinationExists = true;
+                                        return false;
+                                    }
+                                });
+                                if (!combinationExists) {
+                                    var newRow = $("<tr>");
+                                    newRow.append("<td>" + section.text() + "</td>");
+                                    newRow.append("<td>" + service.text() + "</td>");
+                                    newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
+                                    tableBody.append(newRow);
+                                    addedAny = true;
+                                }
+                            }
+                        });
+                    }
+                });
+                if (!addedAny) {
+                    alert("All section-service combinations are already added.");
+                }
+            }
+
+            else if (selectedSection.val() === "All") {
                 var addedInSection = false;
                 $("#SectionID option").each(function () {
                     var section = $(this);
@@ -487,7 +522,35 @@
                 if (!addedInSection) {
                     alert("The selected service is already added in all sections or sections are already added.");
                 }
-            } else if (selectedSection.val() !== "") {
+            } else if (selectedService.val() === "All") {
+                var addedInService = false;
+                $("#ServicesID option").each(function () {
+                    var service = $(this);
+                    if (service.val() !== "All" && service.val() !== "") {
+                        var serviceExistsInSection = false;
+                        $("#tablecreate_id tbody tr").each(function () {
+                            var existingSection = $(this).find("td:eq(0)").text().trim();
+                            var existingService = $(this).find("td:eq(1)").text().trim();
+                            if (existingSection === selectedSection.text().trim() && existingService === service.text().trim()) {
+                                serviceExistsInSection = true;
+                                return false;
+                            }
+                        });
+                        if (!serviceExistsInSection) {
+                            var newRow = $("<tr>");
+                            newRow.append("<td>" + selectedSection.text() + "</td>");
+                            newRow.append("<td>" + service.text() + "</td>");
+                            newRow.append("<td><a href='javascript:void(0);' onclick='RemoveRow(this)'>Remove</a></td>");
+                            tableBody.append(newRow);
+                            addedInService = true;
+                        }
+                    }
+                });
+                if (!addedInService) {
+                    alert("The selected section already has all services or services are already added.");
+                }
+            }
+            else if (selectedSection.val() !== "") {
                 $("#tablecreate_id tbody tr").each(function () {
                     var existingSection = $(this).find("td:eq(0)").text().trim();
                     var existingService = $(this).find("td:eq(1)").text().trim();
