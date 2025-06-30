@@ -6386,7 +6386,8 @@ namespace Plims.Controllers
 
 
             ViewBag.VBRoleEmployee = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(3)).Select(x => x.RoleAction).FirstOrDefault();
-            TempData["AlertMessage"] = "Qrcode regenerate susscessful!";
+            TempData["SuccessMessage"] = "Qrcode regenerate susscessful!";
+            
             return View("EmployeeManagement", mymodel);
 
 
