@@ -290,7 +290,14 @@
 
     <div class="row" style="height:20px"></div>
 
+    @* /* Add Function 12/04/2025 */ *@
+    @if (TempData["AlertMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Html.Raw(TempData["AlertMessage"].ToString())
+        </div>
 
+    }
 
     <div class="row" style="height:10px"></div>
     <div class="row" style="height:35px">
@@ -480,13 +487,13 @@
 </div>
 
 @* /* Add Function 12/04/2025 */ *@
-@if (TempData["AlertMessage"] != null)
+@* @if (TempData["AlertMessage"] != null)
 {
     <div class="alert alert-danger" role="alert">
         @Html.Raw(TempData["AlertMessage"].ToString())
     </div>
 
-}
+} *@
 @* /* ********************** */ *@
 
 

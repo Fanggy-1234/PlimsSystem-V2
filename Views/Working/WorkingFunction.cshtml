@@ -455,6 +455,23 @@
 
 
     $(document).ready(function () {
+        $('#FGModal').on('hidden.bs.modal', function () {
+            $('#EmployeeIDFG').val('');
+            $('#ProductIDFG').val('').trigger('change');
+            $('#SectionNameFG').val('').css('background-color', 'gainsboro');
+            $('#QTYFG').val('');
+            $('#UnitFG').val('PCS');
+        });
+
+        $('#DefectModal').on('hidden.bs.modal', function () {
+            $('#EmployeeIDDefect').val('');
+            $('#ProductIDDefect').val('').trigger('change');
+            $('#SectionNameDefect').val('').css('background-color', 'gainsboro');
+            $('#ReasonDefect').val('').trigger('change');
+            $('#QTYDefect').val('');
+            $('#UnitDefect').val('PCS');
+        });
+
         var initialVal = $('#ProductID').val();
         $('#ProductID').data('original-value', initialVal);
 
