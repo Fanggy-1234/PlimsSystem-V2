@@ -4863,11 +4863,28 @@ namespace Plims.Controllers
             else
             {
                 //Adjust Employee
+                var longTransactionIDs = TransactionID.Select(x => (long)x).ToList();
+                var selectedTransactions = mymodel.view_ProductionTransactionAdjust
+                    .Where(x => longTransactionIDs.Contains(x.TransactionID))
+                    .Select(x => new { 
+                        TransactionID = x.TransactionID, 
+                        QRCode = x.QRCode, 
+                        QTY = x.CountQty
+                    })
+                    .ToList();
+
+                decimal totalQTY = selectedTransactions.Sum(x => x.QTY);
+                decimal ratio = totalQTY > 0 ? DefectQTY / totalQTY : 0;                
 
                 foreach (int item in TransactionID)
                 {
                     //selectEmployeeID
-                    string EmployeeNo = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionID.Equals(item)).Select(x => x.QRCode).SingleOrDefault();
+                    // string EmployeeNo = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionID.Equals(item)).Select(x => x.QRCode).SingleOrDefault();
+                    var transaction = selectedTransactions.FirstOrDefault(x => x.TransactionID == (long)item);
+                    if (transaction == null) continue;
+                    
+                    string EmployeeNo = transaction.QRCode;
+                    decimal employeeDefectQTY = transaction.QTY * ratio;
 
                     //Check Duplicate
                     int checkDuplicate = mymodel.tbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(DefectPlanDate.Date) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect") && x.Remark.Equals(EmployeeNo)).ToList().Count();
@@ -4876,7 +4893,7 @@ namespace Plims.Controllers
 
                         //Update  Table : TbProductionTransactionAdjust       
                         var TranDefectAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(DefectPlanDate.Date) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect") && x.Remark.Equals(EmployeeNo)).SingleOrDefault();
-                        TranDefectAdjust.QTY = DefectQTY;
+                        TranDefectAdjust.QTY = employeeDefectQTY;
                         db.SaveChanges();
                     }
                     else
@@ -4891,7 +4908,8 @@ namespace Plims.Controllers
                             SectionID = DefectSectionID[0].Trim(),
                             Prefix = DefectShift,
                             Type = "Defect",
-                            QTY = DefectQTY,
+                            QTY = employeeDefectQTY,
+                            // QTY = DefectQTY,
                             Remark = EmployeeNo,
                             CreateDate = DateTime.Now,
                             CreateBy = EmpID
