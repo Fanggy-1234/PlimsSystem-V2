@@ -557,6 +557,14 @@
 
 
     function submitModalForm() {
+        var form = document.getElementById('modalForm');
+        var fgQty = document.getElementById('FGQTY').value.trim();
+        if (!form.checkValidity() || !fgQty) {
+            form.reportValidity();
+            $('#FGQTY').val('').focus();
+            document.getElementById('FGQTY').focus();
+            return;
+        }
         var adjustButton = document.getElementById('fgAdjustButton');
         var selectedCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]:checked');
         var modalForm = document.getElementById('modalForm');
@@ -775,6 +783,14 @@
 
 
     function submitModalFormDefect() {
+        var form = document.getElementById('modalFormdefect');
+        var defectQty = document.getElementById('DefectQTY').value.trim();
+        if (!form.checkValidity() || !defectQty) {
+            form.reportValidity();
+            $('#DefectQTY').val('').focus();
+            document.getElementById('DefectQTY').focus();
+            return;
+        }
         var defectAdjustButton = document.getElementById('defectAdjustButton');
         var selectedCheckboxes = document.querySelectorAll('#tableForm input[name="TransactionID"]:checked');
         var modalForm = document.getElementById('modalFormdefect');
