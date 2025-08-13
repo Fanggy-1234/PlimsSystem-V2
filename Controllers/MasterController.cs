@@ -2760,7 +2760,9 @@ namespace Plims.Controllers
                     SectionID = x.SectionID,
                     SectionName = x.SectionName
 
-                }).ToList();
+                })
+                .Distinct()
+                .ToList();
             return Json(filteredProducts);
         }
 
@@ -6532,7 +6534,7 @@ namespace Plims.Controllers
 
 
                 //Check Duplicate
-                var plantdb = db.View_Employee.Where(p => p.EmployeeID.Equals(obj.EmployeeID));
+                var plantdb = db.View_Employee.Where(p => p.EmployeeID.Equals(obj.EmployeeID) && p.Status == 1);
                 string[] EmpName = obj.EmployeeName.Split(" ");
                 //  var userdb = db.TbUsers.Where(x => x.ID.Equals(1)).SingleOrDefault();
                 if (plantdb.Count() == 0)
