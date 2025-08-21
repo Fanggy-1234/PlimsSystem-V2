@@ -5777,11 +5777,10 @@ namespace Plims.Controllers
                     if (list.Count > 0) buffer.AddRange(list);
                 }
 
-                // กันข้อมูลซ้ำข้าม chunk และจัดเรียงให้เสถียร
                 var dedup = buffer
-                    .GroupBy(x => new { x.TransactionDate, x.PlantID, x.LineID, x.SectionID, x.ProductID })
+                    .GroupBy(x => new { x.TransactionDate, x.PlantID, x.LineID, x.SectionID, x.ProductID, x.Prefix })
                     .Select(g => g.First())
-                    .OrderBy(x => x.TransactionDate).ThenBy(x => x.LineID).ThenBy(x => x.SectionID).ThenBy(x => x.ProductID)
+                    .OrderBy(x => x.TransactionDate).ThenBy(x => x.LineID).ThenBy(x => x.SectionID).ThenBy(x => x.ProductID).ThenBy(x => x.Prefix)
                     .ToList();
 
                 return dedup;
