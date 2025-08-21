@@ -1796,11 +1796,23 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
             //Check Duplicate
-            var cntsection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).Select(x => x.SectionID).Max();
+            var sections = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).Select(x => x.SectionID).ToList();
+            var cntsection = sections.DefaultIfEmpty("0").Max();
+            // var cntsection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).Select(x => x.SectionID).Max();
             string cntsectionString = cntsection.ToString();
-            string sectiononly = cntsectionString.Substring(cntsectionString.Length - 5);
+            // string sectiononly = cntsectionString.Substring(cntsectionString.Length - 5);
             // int nextcntsection = Convert.ToInt32(sectiononly) + 1;
-            int nextcntsection = Convert.ToInt32(CntDbnext) + 1;
+            // int nextcntsection = Convert.ToInt32(CntDbnext) + 1;
+            int nextcntsection;
+            if (cntsectionString == "0")
+            {
+                nextcntsection = 1;
+            }
+            else
+            {
+                string sectiononly = cntsectionString.Substring(cntsectionString.Length - 5);
+                nextcntsection = Convert.ToInt32(sectiononly) + 1;
+            }
 
             var Sectiondb = db.TbSection.Where(p => p.SectionName.Equals(obj.SectionName) && p.PlantID.Equals(PlantID) && p.Status.Equals(1));
             if (Sectiondb.Count() == 0)
