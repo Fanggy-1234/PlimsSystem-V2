@@ -59,36 +59,8 @@ namespace Plims.Controllers
 
                 if (model.filter == 0)
                 {
-                    // model.StartDate = DateTime.Today;
-                    // model.EndDate = DateTime.Today;
-                    var hasDataToday = await db.View_DailyReportSummary
-                              .AnyAsync(x => x.PlantID == PlantID && 
-                                           x.TransactionDate.Date == DateTime.Today);
-    
-                    if (hasDataToday)
-                    {
-                        model.StartDate = DateTime.Today;
-                        model.EndDate = DateTime.Today;
-                    }
-                    else
-                    {
-                        var latestDate = await db.View_DailyReportSummary
-                                                .Where(x => x.PlantID == PlantID)
-                                                .OrderByDescending(x => x.TransactionDate)
-                                                .Select(x => x.TransactionDate)
-                                                .FirstOrDefaultAsync();
-                        
-                        if (latestDate != default(DateTime))
-                        {
-                            model.StartDate = latestDate.Date;
-                            model.EndDate = latestDate.Date;
-                        }
-                        else
-                        {
-                            model.StartDate = DateTime.Today.AddDays(-7);
-                            model.EndDate = DateTime.Today;
-                        }
-                    }
+                    model.StartDate = DateTime.Today;
+                    model.EndDate = DateTime.Today;
                 }
 
                 List<View_DailyReportSummary> view_DailyReportSummaryData = new List<View_DailyReportSummary>();

@@ -81,7 +81,7 @@
                     <tbody>
                         <form asp-action="Filter" asp-controller="Report" method="post">
                         <tr>
-                            <td style="font-weight:bold;text-align: center;"><h3>Efficiency</h3></td>
+                            <td style="font-weight:bold;text-align: center;"></td>
                             <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;color: black" } })</td>
                             <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;" } })</td>
                             <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterYear, (IEnumerable<SelectListItem>)ViewBag.varYear as SelectList, ":: All Year ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
