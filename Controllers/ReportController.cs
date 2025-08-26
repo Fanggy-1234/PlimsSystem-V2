@@ -82,69 +82,78 @@ namespace Plims.Controllers
                     view_DailyReportSummary = view_DailyReportSummaryData,
                 };
 
-                var currentYear = DateTime.Now.Year;
-                var yearList = new List<SelectListItem>
-                {
-                    new SelectListItem { Value = currentYear.ToString(), Text = currentYear.ToString() },
-                    new SelectListItem { Value = (currentYear - 1).ToString(), Text = (currentYear - 1).ToString() }
-                };
-                ViewBag.varYear = new SelectList(yearList, "Value", "Text");
+                var (yearDropdown, monthDropdown, lineDropdown, productDropdown, pointDropdown, plantData) = 
+                            await CreateEmployeeDropdownListsAsync(PlantID, model.FilterLine, model.FilterProduct);
 
-                var monthList = new List<SelectListItem>
-                {
-                    new SelectListItem { Value = "1", Text = "January" },
-                    new SelectListItem { Value = "2", Text = "February" },
-                    new SelectListItem { Value = "3", Text = "March" },
-                    new SelectListItem { Value = "4", Text = "April" },
-                    new SelectListItem { Value = "5", Text = "May" },
-                    new SelectListItem { Value = "6", Text = "June" },
-                    new SelectListItem { Value = "7", Text = "July" },
-                    new SelectListItem { Value = "8", Text = "August" },
-                    new SelectListItem { Value = "9", Text = "September" },
-                    new SelectListItem { Value = "10", Text = "October" },
-                    new SelectListItem { Value = "11", Text = "November" },
-                    new SelectListItem { Value = "12", Text = "December" }
-                };
-                ViewBag.varMonth = new SelectList(monthList, "Value", "Text");
+                ViewBag.varYear = yearDropdown;
+                ViewBag.varMonth = monthDropdown;
+                ViewBag.varLine = lineDropdown;
+                ViewBag.varProduct = productDropdown;
+                ViewBag.varPoint = pointDropdown;
+                ViewBag.PlantDataJson = JsonConvert.SerializeObject(plantData);
+                // var currentYear = DateTime.Now.Year;
+                // var yearList = new List<SelectListItem>
+                // {
+                //     new SelectListItem { Value = currentYear.ToString(), Text = currentYear.ToString() },
+                //     new SelectListItem { Value = (currentYear - 1).ToString(), Text = (currentYear - 1).ToString() }
+                // };
+                // ViewBag.varYear = new SelectList(yearList, "Value", "Text");
 
-                var lineList = await db.TbLine
-                                    .Where(x => x.PlantID == PlantID && x.Status == 1)
-                                    .Select(x => new SelectListItem 
-                                    { 
-                                        Value = x.LineID, 
-                                        Text = x.LineName 
-                                    })
-                                    .Distinct()
-                                    .OrderBy(x => x.Text)
-                                    .AsNoTracking()
-                                    .ToListAsync();
-                ViewBag.varLine = new SelectList(lineList, "Value", "Text");
+                // var monthList = new List<SelectListItem>
+                // {
+                //     new SelectListItem { Value = "1", Text = "January" },
+                //     new SelectListItem { Value = "2", Text = "February" },
+                //     new SelectListItem { Value = "3", Text = "March" },
+                //     new SelectListItem { Value = "4", Text = "April" },
+                //     new SelectListItem { Value = "5", Text = "May" },
+                //     new SelectListItem { Value = "6", Text = "June" },
+                //     new SelectListItem { Value = "7", Text = "July" },
+                //     new SelectListItem { Value = "8", Text = "August" },
+                //     new SelectListItem { Value = "9", Text = "September" },
+                //     new SelectListItem { Value = "10", Text = "October" },
+                //     new SelectListItem { Value = "11", Text = "November" },
+                //     new SelectListItem { Value = "12", Text = "December" }
+                // };
+                // ViewBag.varMonth = new SelectList(monthList, "Value", "Text");
 
-                var productList = await db.TbProduct
-                                        .Where(x => x.PlantID == PlantID && x.Status == 1)
-                                        .Select(x => new SelectListItem 
-                                        { 
-                                            Value = x.ProductID, 
-                                            Text = x.ProductName 
-                                        })
-                                        .Distinct()
-                                        .OrderBy(x => x.Text)
-                                        .AsNoTracking()
-                                        .ToListAsync();
-                ViewBag.varProduct = new SelectList(productList, "Value", "Text");
+                // var lineList = await db.TbLine
+                //                     .Where(x => x.PlantID == PlantID && x.Status == 1)
+                //                     .Select(x => new SelectListItem 
+                //                     { 
+                //                         Value = x.LineID, 
+                //                         Text = x.LineName 
+                //                     })
+                //                     .Distinct()
+                //                     .OrderBy(x => x.Text)
+                //                     .AsNoTracking()
+                //                     .ToListAsync();
+                // ViewBag.varLine = new SelectList(lineList, "Value", "Text");
 
-                var sectionList = await db.TbSection
-                                        .Where(x => x.PlantID == PlantID && x.Status == 1)
-                                        .Select(x => new SelectListItem 
-                                        { 
-                                            Value = x.SectionID, 
-                                            Text = x.SectionName 
-                                        })
-                                        .Distinct()
-                                        .OrderBy(x => x.Text)
-                                        .AsNoTracking()
-                                        .ToListAsync();
-                ViewBag.varPoint = new SelectList(sectionList, "Value", "Text");
+                // var productList = await db.TbProduct
+                //                         .Where(x => x.PlantID == PlantID && x.Status == 1)
+                //                         .Select(x => new SelectListItem 
+                //                         { 
+                //                             Value = x.ProductID, 
+                //                             Text = x.ProductName 
+                //                         })
+                //                         .Distinct()
+                //                         .OrderBy(x => x.Text)
+                //                         .AsNoTracking()
+                //                         .ToListAsync();
+                // ViewBag.varProduct = new SelectList(productList, "Value", "Text");
+
+                // var sectionList = await db.TbSection
+                //                         .Where(x => x.PlantID == PlantID && x.Status == 1)
+                //                         .Select(x => new SelectListItem 
+                //                         { 
+                //                             Value = x.SectionID, 
+                //                             Text = x.SectionName 
+                //                         })
+                //                         .Distinct()
+                //                         .OrderBy(x => x.Text)
+                //                         .AsNoTracking()
+                //                         .ToListAsync();
+                // ViewBag.varPoint = new SelectList(sectionList, "Value", "Text");
 
                 var sumGrpEmp = from count in mymodel.view_DailyReportSummary
                                 where (model.FilterYear == 0 || count.TransactionDate.Year == model.FilterYear) &&
@@ -574,19 +583,106 @@ namespace Plims.Controllers
 
 
         }
+        
+        private async Task<(SelectList Year, SelectList Month, SelectList Line, SelectList Product, SelectList Point, List<PlantDataItem> PlantData)>
+            CreateEmployeeDropdownListsAsync(int plantId, string selectedLineId = null, string selectedProductId = null)
+        {
+            var currentYear = DateTime.Now.Year;
+            var yearList = new List<SelectListItem>
+            {
+                new SelectListItem { Value = currentYear.ToString(), Text = currentYear.ToString() },
+                new SelectListItem { Value = (currentYear - 1).ToString(), Text = (currentYear - 1).ToString() }
+            };
 
-        private async Task<(SelectList Year, SelectList Month, SelectList Line, SelectList Product, SelectList Point)>CreateDropdownListsAsync(int plantId)
+            var monthList = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "1", Text = "January" },
+                new SelectListItem { Value = "2", Text = "February" },
+                new SelectListItem { Value = "3", Text = "March" },
+                new SelectListItem { Value = "4", Text = "April" },
+                new SelectListItem { Value = "5", Text = "May" },
+                new SelectListItem { Value = "6", Text = "June" },
+                new SelectListItem { Value = "7", Text = "July" },
+                new SelectListItem { Value = "8", Text = "August" },
+                new SelectListItem { Value = "9", Text = "September" },
+                new SelectListItem { Value = "10", Text = "October" },
+                new SelectListItem { Value = "11", Text = "November" },
+                new SelectListItem { Value = "12", Text = "December" }
+            };
+
+            var relationshipQuery = from plps in db.TbPLPS
+                                join line in db.TbLine on plps.LineID equals line.LineID
+                                join product in db.TbProduct on plps.ProductID equals product.ProductID
+                                join section in db.TbSection on plps.SectionID equals section.SectionID
+                                where plps.PlantID == plantId && plps.Status == 1 
+                                        && line.Status == 1 && product.Status == 1 && section.Status == 1
+                                select new PlantDataItem
+                                {
+                                    LineID = line.LineID,
+                                    LineName = line.LineName,
+                                    ProductID = product.ProductID,
+                                    ProductName = product.ProductName,
+                                    SectionID = section.SectionID,
+                                    SectionName = section.SectionName
+                                };
+
+            var plantData = await relationshipQuery.Distinct().AsNoTracking().ToListAsync();
+
+            var lineList = plantData
+                        .GroupBy(x => new { x.LineID, x.LineName })
+                        .Select(g => new SelectListItem { Value = g.Key.LineID, Text = g.Key.LineName })
+                        .OrderBy(x => x.Text)
+                        .ToList();
+
+            var productData = plantData.AsEnumerable();
+            if (!string.IsNullOrEmpty(selectedLineId))
+            {
+                productData = productData.Where(x => x.LineID == selectedLineId);
+            }
+            var productList = productData
+                            .GroupBy(x => new { x.ProductID, x.ProductName })
+                            .Select(g => new SelectListItem { Value = g.Key.ProductID, Text = g.Key.ProductName })
+                            .OrderBy(x => x.Text)
+                            .ToList();
+
+            var sectionData = plantData.AsEnumerable();
+            if (!string.IsNullOrEmpty(selectedProductId))
+            {
+                sectionData = sectionData.Where(x => x.ProductID == selectedProductId);
+            }
+            else if (!string.IsNullOrEmpty(selectedLineId))
+            {
+                sectionData = sectionData.Where(x => x.LineID == selectedLineId);
+            }
+            var sectionList = sectionData
+                            .GroupBy(x => new { x.SectionID, x.SectionName })
+                            .Select(g => new SelectListItem { Value = g.Key.SectionID, Text = g.Key.SectionName })
+                            .OrderBy(x => x.Text)
+                            .ToList();
+
+            return (
+                new SelectList(yearList, "Value", "Text"),
+                new SelectList(monthList, "Value", "Text"),
+                new SelectList(lineList, "Value", "Text"),
+                new SelectList(productList, "Value", "Text"),
+                new SelectList(sectionList, "Value", "Text"),
+                plantData
+            );
+        }
+
+        private async Task<(SelectList Year, SelectList Month, SelectList Line, SelectList Product, SelectList Point, List<PlantDataItem> PlantData)> CreateDropdownListsAsync(int plantId, string selectedLineId = null, string selectedProductId = null)
         {
             var plantData = await db.View_EFFReport
                                 .Where(x => x.PlantID == plantId && x.TransactionDate.Year > 2000)
-                                .Select(x => new { 
-                                    x.TransactionDate, 
-                                    x.LineID, 
-                                    x.LineName, 
-                                    x.ProductID, 
-                                    x.ProductName, 
-                                    x.SectionID, 
-                                    x.SectionName 
+                                .Select(x => new PlantDataItem
+                                {
+                                    TransactionDate = x.TransactionDate,
+                                    LineID = x.LineID,
+                                    LineName = x.LineName,
+                                    ProductID = x.ProductID,
+                                    ProductName = x.ProductName,
+                                    SectionID = x.SectionID,
+                                    SectionName = x.SectionName
                                 })
                                 .AsNoTracking()
                                 .ToListAsync();
@@ -604,9 +700,18 @@ namespace Plims.Controllers
                             Value = $"{g.Key}",
                             Text = g.Key switch
                             {
-                                1 => "January", 2 => "February", 3 => "March", 4 => "April",
-                                5 => "May", 6 => "June", 7 => "July", 8 => "August",
-                                9 => "September", 10 => "October", 11 => "November", 12 => "December",
+                                1 => "January",
+                                2 => "February",
+                                3 => "March",
+                                4 => "April",
+                                5 => "May",
+                                6 => "June",
+                                7 => "July",
+                                8 => "August",
+                                9 => "September",
+                                10 => "October",
+                                11 => "November",
+                                12 => "December",
                                 _ => $"{g.Key}"
                             }
                         })
@@ -619,13 +724,27 @@ namespace Plims.Controllers
                         .OrderBy(x => x.Text)
                         .ToList();
 
-            var productList = plantData
+            var productData = plantData.AsEnumerable();
+            if (!string.IsNullOrEmpty(selectedLineId))
+            {
+                productData = productData.Where(x => x.LineID == selectedLineId);
+            }
+            var productList = productData
                             .GroupBy(a => new { a.ProductID, a.ProductName })
                             .Select(g => new SelectListItem { Value = g.Key.ProductID, Text = g.Key.ProductName })
                             .OrderBy(x => x.Text)
                             .ToList();
 
-            var pointList = plantData
+            var pointData = plantData.AsEnumerable();
+            if (!string.IsNullOrEmpty(selectedProductId))
+            {
+                pointData = pointData.Where(x => x.ProductID == selectedProductId);
+            }
+            else if (!string.IsNullOrEmpty(selectedLineId))
+            {
+                pointData = pointData.Where(x => x.LineID == selectedLineId);
+            }
+            var pointList = pointData
                         .GroupBy(a => new { a.SectionID, a.SectionName })
                         .Select(g => new SelectListItem { Value = g.Key.SectionID, Text = g.Key.SectionName })
                         .OrderBy(x => x.Text)
@@ -636,8 +755,90 @@ namespace Plims.Controllers
                 new SelectList(monthList, "Value", "Text"),
                 new SelectList(lineList, "Value", "Text"),
                 new SelectList(productList, "Value", "Text"),
-                new SelectList(pointList, "Value", "Text")
+                new SelectList(pointList, "Value", "Text"),
+                plantData
             );
+        }
+
+        private List<SelectListItem> GetProductsByLineFromData(List<PlantDataItem> plantData, string lineId)
+        {
+            return plantData
+                    .Where(x => x.LineID == lineId)
+                    .GroupBy(x => new { x.ProductID, x.ProductName })
+                    .Select(g => new SelectListItem { Value = g.Key.ProductID, Text = g.Key.ProductName })
+                    .OrderBy(x => x.Text)
+                    .ToList();
+        }
+
+        private List<SelectListItem> GetPointsByProductFromData(List<PlantDataItem> plantData, string productId)
+        {
+            return plantData
+                    .Where(x => x.ProductID == productId)
+                    .GroupBy(x => new { x.SectionID, x.SectionName })
+                    .Select(g => new SelectListItem { Value = g.Key.SectionID, Text = g.Key.SectionName })
+                    .OrderBy(x => x.Text)
+                    .ToList();
+        }
+
+        private List<SelectListItem> GetPointsByLineFromData(List<PlantDataItem> plantData, string lineId)
+        {
+            return plantData
+                    .Where(x => x.LineID == lineId)
+                    .GroupBy(x => new { x.SectionID, x.SectionName })
+                    .Select(g => new SelectListItem { Value = g.Key.SectionID, Text = g.Key.SectionName })
+                    .OrderBy(x => x.Text)
+                    .ToList();
+        }
+
+        [HttpGet]
+        public JsonResult GetProductsByLineClient(string lineId, string plantDataJson)
+        {
+            try
+            {
+                var plantData = JsonConvert.DeserializeObject<List<PlantDataItem>>(plantDataJson);
+                var products = GetProductsByLineFromData(plantData, lineId)
+                                .Select(x => new { Value = x.Value, Text = x.Text })
+                                .ToList();
+                return Json(products);
+            }
+            catch
+            {
+                return Json(new List<object>());
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetPointsByProductClient(string productId, string plantDataJson)
+        {
+            try
+            {
+                var plantData = JsonConvert.DeserializeObject<List<PlantDataItem>>(plantDataJson);
+                var points = GetPointsByProductFromData(plantData, productId)
+                            .Select(x => new { Value = x.Value, Text = x.Text })
+                            .ToList();
+                return Json(points);
+            }
+            catch
+            {
+                return Json(new List<object>());
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetPointsByLineClient(string lineId, string plantDataJson)
+        {
+            try
+            {
+                var plantData = JsonConvert.DeserializeObject<List<PlantDataItem>>(plantDataJson);
+                var points = GetPointsByLineFromData(plantData, lineId)
+                            .Select(x => new { Value = x.Value, Text = x.Text })
+                            .ToList();
+                return Json(points);
+            }
+            catch
+            {
+                return Json(new List<object>());
+            }
         }
 
         [HttpGet]
@@ -682,13 +883,14 @@ namespace Plims.Controllers
                     view_DailyReportSummary = view_DailyReportSummaryData,
                 };
 
-                var (yearDropdown, monthDropdown, lineDropdown, productDropdown, pointDropdown) = await CreateDropdownListsAsync(PlantID);
+                var (yearDropdown, monthDropdown, lineDropdown, productDropdown, pointDropdown, plantData) = await CreateDropdownListsAsync(PlantID, model.FilterLine, model.FilterProduct);
 
                 ViewBag.varYear = yearDropdown;
                 ViewBag.varMonth = monthDropdown;
                 ViewBag.varLine = lineDropdown;
                 ViewBag.varProduct = productDropdown;
                 ViewBag.varPoint = pointDropdown;
+                ViewBag.PlantDataJson = JsonConvert.SerializeObject(plantData);
                 // var varYear = from a in db.View_EFFReport
                 //             where a.PlantID == PlantID
                 //             group a by new { a.TransactionDate.Year } into g

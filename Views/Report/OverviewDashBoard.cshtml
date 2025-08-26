@@ -74,9 +74,14 @@
                                 <td style="font-weight:bold;text-align: center;">@Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", type = "date", style = "text-align:center;" } })</td>
                                 <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterYear, (IEnumerable<SelectListItem>)ViewBag.varYear as SelectList, ":: All Year ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
                                 <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterMonth, (IEnumerable<SelectListItem>)ViewBag.varMonth as SelectList, ":: All Month ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
-                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterLine, (IEnumerable<SelectListItem>)ViewBag.varLine as SelectList, ":: All Line ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
+                                @* <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterLine, (IEnumerable<SelectListItem>)ViewBag.varLine as SelectList, ":: All Line ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
                                 <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterProduct, (IEnumerable<SelectListItem>)ViewBag.varProduct as SelectList, ":: All Product ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
-                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterPoint, (IEnumerable<SelectListItem>)ViewBag.varPoint as SelectList, ":: All Point ::", new { @class = "btn form-select", style = "text-align:center;" })</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterPoint, (IEnumerable<SelectListItem>)ViewBag.varPoint as SelectList, ":: All Point ::", new { @class = "btn form-select", style = "text-align:center;" })</td> *@
+
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterLine, (IEnumerable<SelectListItem>)ViewBag.varLine as SelectList, ":: All Line ::", new { @class = "btn form-select", style = "text-align:center;", @id = "FilterLine" })</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterProduct, (IEnumerable<SelectListItem>)ViewBag.varProduct as SelectList, ":: All Product ::", new { @class = "btn form-select", style = "text-align:center;", @id = "FilterProduct" })</td>
+                                <td style="font-weight:bold;text-align: center;">@Html.DropDownListFor(model => model.FilterPoint, (IEnumerable<SelectListItem>)ViewBag.varPoint as SelectList, ":: All Point ::", new { @class = "btn form-select", style = "text-align:center;", @id = "FilterPoint" })</td>
+
                                 <td style="font-weight:bold;text-align: center;">
                        
                                     <button type="submit" name="submit" asp-action="FilterOverview" class="btn cur-p btn-primary" id="fetchDataButton">&nbsp;&nbsp;  Filter  &nbsp;&nbsp;</button>
@@ -469,6 +474,126 @@
 
             // initiate drawing the chart
             chart_y.draw();
+        });
+    </script>
+
+    <script>
+        var plantData = @Html.Raw(ViewBag.PlantDataJson ?? "[]");
+
+        $(document).ready(function() {
+            $('#FilterLine').change(function() {
+                var selectedLineId = $(this).val();
+                var productDropdown = $('#FilterProduct');
+                var pointDropdown = $('#FilterPoint');
+                
+                productDropdown.empty().append('<option value="">:: All Product ::</option>');
+                pointDropdown.empty().append('<option value="">:: All Point ::</option>');
+                
+                if (selectedLineId) {
+                    // กรองตาม Line ที่เลือก
+                    var products = plantData
+                        .filter(function(item) { return item.LineID === selectedLineId; })
+                        .reduce(function(acc, item) {
+                            if (!acc.some(function(p) { return p.ProductID === item.ProductID; })) {
+                                acc.push({ ProductID: item.ProductID, ProductName: item.ProductName });
+                            }
+                            return acc;
+                        }, [])
+                        .sort(function(a, b) { return a.ProductName.localeCompare(b.ProductName); });
+                        
+                    $.each(products, function(index, item) {
+                        productDropdown.append($('<option></option>').val(item.ProductID).html(item.ProductName));
+                    });
+                    
+                    var points = plantData
+                        .filter(function(item) { return item.LineID === selectedLineId; })
+                        .reduce(function(acc, item) {
+                            if (!acc.some(function(p) { return p.SectionID === item.SectionID; })) {
+                                acc.push({ SectionID: item.SectionID, SectionName: item.SectionName });
+                            }
+                            return acc;
+                        }, [])
+                        .sort(function(a, b) { return a.SectionName.localeCompare(b.SectionName); });
+                        
+                    $.each(points, function(index, item) {
+                        pointDropdown.append($('<option></option>').val(item.SectionID).html(item.SectionName));
+                    });
+                } else {
+                    // เมื่อเลือก "All Line" แสดงข้อมูลทั้งหมด
+                    var allProducts = plantData
+                        .reduce(function(acc, item) {
+                            if (!acc.some(function(p) { return p.ProductID === item.ProductID; })) {
+                                acc.push({ ProductID: item.ProductID, ProductName: item.ProductName });
+                            }
+                            return acc;
+                        }, [])
+                        .sort(function(a, b) { return a.ProductName.localeCompare(b.ProductName); });
+                        
+                    $.each(allProducts, function(index, item) {
+                        productDropdown.append($('<option></option>').val(item.ProductID).html(item.ProductName));
+                    });
+                    
+                    var allPoints = plantData
+                        .reduce(function(acc, item) {
+                            if (!acc.some(function(p) { return p.SectionID === item.SectionID; })) {
+                                acc.push({ SectionID: item.SectionID, SectionName: item.SectionName });
+                            }
+                            return acc;
+                        }, [])
+                        .sort(function(a, b) { return a.SectionName.localeCompare(b.SectionName); });
+                        
+                    $.each(allPoints, function(index, item) {
+                        pointDropdown.append($('<option></option>').val(item.SectionID).html(item.SectionName));
+                    });
+                }
+            });
+            
+            // เมื่อเลือก Product
+            $('#FilterProduct').change(function() {
+                var selectedProductId = $(this).val();
+                var pointDropdown = $('#FilterPoint');
+                
+                pointDropdown.empty().append('<option value="">:: All Point ::</option>');
+                
+                if (selectedProductId) {
+                    var points = plantData
+                        .filter(function(item) { return item.ProductID === selectedProductId; })
+                        .reduce(function(acc, item) {
+                            if (!acc.some(function(p) { return p.SectionID === item.SectionID; })) {
+                                acc.push({ SectionID: item.SectionID, SectionName: item.SectionName });
+                            }
+                            return acc;
+                        }, [])
+                        .sort(function(a, b) { return a.SectionName.localeCompare(b.SectionName); });
+                        
+                    $.each(points, function(index, item) {
+                        pointDropdown.append($('<option></option>').val(item.SectionID).html(item.SectionName));
+                    });
+                } else {
+                    // เมื่อเลือก "All Product" ให้แสดงตาม Line หรือทั้งหมด
+                    var selectedLineId = $('#FilterLine').val();
+                    var pointsToShow;
+                    
+                    if (selectedLineId) {
+                        pointsToShow = plantData.filter(function(item) { return item.LineID === selectedLineId; });
+                    } else {
+                        pointsToShow = plantData;
+                    }
+                    
+                    var points = pointsToShow
+                        .reduce(function(acc, item) {
+                            if (!acc.some(function(p) { return p.SectionID === item.SectionID; })) {
+                                acc.push({ SectionID: item.SectionID, SectionName: item.SectionName });
+                            }
+                            return acc;
+                        }, [])
+                        .sort(function(a, b) { return a.SectionName.localeCompare(b.SectionName); });
+                        
+                    $.each(points, function(index, item) {
+                        pointDropdown.append($('<option></option>').val(item.SectionID).html(item.SectionName));
+                    });
+                }
+            });
         });
     </script>
 
