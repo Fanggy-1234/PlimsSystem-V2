@@ -5502,7 +5502,7 @@ namespace Plims.Controllers
                     SectionID = obj.SectionName,
                     ProductID = obj.ProductName,
                     Size = "0",
-                    QTYPerQRCode = Convert.ToInt32(obj.QTYPerQRCode),
+                    QTYPerQRCode = Convert.ToDecimal(obj.QTYPerQRCode),
                     Unit = obj.Unit,
                     FormularID = obj.FormularID,
                     Status = Convert.ToInt32(obj.Status),
@@ -5667,7 +5667,7 @@ namespace Plims.Controllers
             }
             if (obj.QTYPerQRCode != null)
             {
-                PLPSdb.QTYPerQRCode = Convert.ToInt32(obj.QTYPerQRCode);
+                PLPSdb.QTYPerQRCode = Convert.ToDecimal(obj.QTYPerQRCode);
             }
 
             if (obj.Status == 1)
@@ -6553,11 +6553,11 @@ namespace Plims.Controllers
                 {
 
 
-                    if (obj.EmployeeID.Length > 20 || obj.EmployeeName.Length > 20 || obj.EmployeeLastName.Length > 20)
+                    if (obj.EmployeeID.Length > 20 || obj.EmployeeName.Length > 255 || obj.EmployeeLastName.Length >255)
                     {
                         TempData["AlertMessage"] = "- EmployeeID ต้องน้อยกว่าหรือเท่ากับ 20 ตัวอักษร <br/>" +
-                                       "- Employee name ต้องน้อยกว่าหรือเท่ากับ 50 ตัวอักษร <br/>" +
-                                       "- Employee Lastname ต้องน้อยกว่าหรือเท่ากับ 50 ตัวอักษร";
+                                       "- Employee name ต้องน้อยกว่าหรือเท่ากับ 255 ตัวอักษร <br/>" +
+                                       "- Employee Lastname ต้องน้อยกว่าหรือเท่ากับ 255 ตัวอักษร";
                         return RedirectToAction("EmployeeManagement");
                     }
                     // Insert new Plant               

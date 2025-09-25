@@ -106,6 +106,7 @@ namespace Plims.Data
         public DbSet<View_EmployeeGroupWorking> View_EmployeeGroupWorking { get; set; }
         public DbSet<TbRateTransaction> tbRateTransaction { get; set; }
 
+        public DbSet<FinanceReportRow> FinanceReportRows { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -226,6 +227,12 @@ namespace Plims.Data
             // Other configurations if needed
 
             base.OnModelCreating(modelBuilder);
+
+
+
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<FinanceReportRow>().HasNoKey(); // ถ้าเป็นผลจาก SP
+
         }
 
     }

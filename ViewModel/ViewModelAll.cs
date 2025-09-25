@@ -118,6 +118,29 @@ namespace Plims.ViewModel
 
         public List<GroupedFinancialData> groupedData { get; set; }
 
+
+
+
+        // ฟิลเตอร์
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string LineID { get; set; }
+        public string SectionID { get; set; }
+        public string Prefix { get; set; }
+
+        // ✅ paging
+        public int TotalRecords { get; set; }
+        public int CurrentPage { get; set; }
+        public int PageSize { get; set; }
+        public bool HasMore { get; set; }
+        // ✅ role
+        public string RoleDailyReport { get; set; }
+           public string VBRoleDailyReport { get; set; }
+        public List<View_PermissionMaster> view_PermissionMasterdaily { get; set; }
+
+
+
+
     }
 
     //// Define the structure of each group

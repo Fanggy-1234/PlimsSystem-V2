@@ -121,14 +121,19 @@
             <div class="row" style="height:10px"></div>
             <div class="row">
                 <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  Start Date:</label></div>
-                <div class="col-3" style="align-items:center; display:flex">
-                    <input class="form-control StartDate" type="Date" name="StartDate" id="StartDate" value="@ViewBag.SelectedStartDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%">
+               <div class="col-3" style="align-items:center; display:flex">
+                    @* <input  class="form-control StartDate" type="Date" name="StartDate" id="StartDate" value="@ViewBag.SelectedStartDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%"> *@
+                    <input asp-for="StartDate" class="form-control" type="date"
+                           max="@DateTime.Now.ToString("yyyy-MM-dd")" />
                 </div>
 
                 <div class="col-1"></div>
                 <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  End Date:</label></div>
                 <div class="col-3">
-                    <input class="form-control EndDate" type="Date" name="EndDate" id="EndDate" value="@ViewBag.SelectedEndDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%">
+                    @* <input class="form-control EndDate" type="Date" name="EndDate" id="EndDate" value="@ViewBag.SelectedEndDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" style="width:100%">  *@
+                    <input asp-for="EndDate" class="form-control" type="date"
+                           max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+
                 </div>
 
             </div>
@@ -136,7 +141,7 @@
             <div class="row">
                 <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  Employee ID:</label></div>
                 <div class="col-3" style="align-items:center; display:flex">
-                    <select class="selectfillter form-control" list="EmployeeID" style="width:100%" name="EmployeeID" id="EmployeeID">
+                    <select asp-for="EmployeeID" class="selectfillter form-control" list="EmployeeID" style="width:100%" name="EmployeeID" id="EmployeeID">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbEmployeeMaster)
                         {
@@ -154,7 +159,7 @@
                 <div class="col-1"></div>
                 <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel"> Line  :</label></div>
                 <div class="col-3" style="align-items:center; display:flex">
-                    <select class="selectfillter form-control" style="width:100%" name="LineID" id="LineName">
+                    <select asp-for="LineID" class="selectfillter form-control" style="width:100%" name="LineID" id="LineName">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbLine)
                         {
@@ -174,7 +179,7 @@
             <div class="row">
                 <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  Section:</label></div>
                 <div class="col-3" style="align-items:center; display:flex">
-                    <select class="selectfillter form-control" style="width:100%" name="SectionID" id="SectionID">
+                    <select asp-for="SectionID" class="selectfillter form-control" style="width:100%" name="SectionID" id="SectionID">
                         <option value="" default selected></option>
                         @foreach (var item in Model.tbSection)
                         {
@@ -192,7 +197,7 @@
                 <div class="col-1"></div>
                 <div class="col-2" style="align-items:center; display:flex"><label class="FillterLabel">  Prefix:</label></div>
                 <div class="col-3" style="align-items:center; display:flex">
-                    <select class="selectfillter form-control" style="width:100%" name="Prefix" id="Prefix">
+                    <select asp-for="Prefix" class="selectfillter form-control" style="width:100%" name="Prefix" id="Prefix">
                         <option value="" default selected></option>
                         @foreach (var Prefixgroup in Model.tbShift.GroupBy(x => x.Prefix))
                         {
@@ -402,7 +407,16 @@
             <div class="col-10">
             </div>
             <div class="col">
+
+                <input type="hidden" name="StartDate" value="@ViewBag.SelectedStartDate" />
+            <input type="hidden" name="EndDate" value="@ViewBag.SelectedEndDate" />
+            <input type="hidden" name="EmployeeID" value="@ViewBag.SelectedEmpID" />
+            <input type="hidden" name="LineID" value="@ViewBag.SelectedLineID" />
+            <input type="hidden" name="SectionID" value="@ViewBag.SelectedSectionID" />
+            <input type="hidden" name="Prefix" value="@ViewBag.SelectedPrefix" />
+
                 @if (ViewBag.VBRoleDailyReport == "Full")
+
                 {
                     <button class="search-button" id="btnExportreport" type="submit" asp-action="DailyReportExport" value="export" name="submit">Export</button>
                 }

@@ -11,6 +11,9 @@ using System.Globalization;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using System.Web.WebPages;
 using Newtonsoft.Json;
+using Microsoft.Data.SqlClient;
+using Polly;
+using Polly.Retry;
 
 namespace Plims.Controllers
 {
@@ -21,6 +24,7 @@ namespace Plims.Controllers
         public WorkingController(AppDbContext _db)
         {
             db = _db;
+            db.Database.SetCommandTimeout(180);
         }
         public IActionResult Index()
         {
@@ -1084,26 +1088,6 @@ namespace Plims.Controllers
                         string dateString = worksheet.Cells[row, 1].Text;
                         DateTime TransactionDateVar;
 
-                        //string[] formats = { "MM/dd/yyyy", "dd/MM/yyyy", "yyyy-MM-dd" }; // Add the formats you expect
-
-                        //bool isValidFormat = DateTime.TryParseExact(dateString, formats,
-                        //                                            CultureInfo.InvariantCulture,
-                        //                                            DateTimeStyles.None,
-                        //                                            out TransactionDateVar);
-
-                        //if (isValidFormat)
-                        //{
-
-                        //    TransactionDateVar = Convert.ToDateTime(worksheet.Cells[row, 1].Text);
-
-                        //}
-                        //else
-                        //{
-                        //    ViewBag.VBRoleManualImport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(32)).Select(x => x.RoleAction).FirstOrDefault();
-
-                        //    TempData["AlertMessage"] = "Please check format date.";
-                        //    return View("ImportManualData", mymodel);
-                        //}
                         if (worksheet.Cells[row, 2].Value != null)
                         {
                             TransactionDateVar = Convert.ToDateTime(worksheet.Cells[row, 1].Text);
@@ -1113,16 +1097,6 @@ namespace Plims.Controllers
                             string Prefixvar = worksheet.Cells[row, 6].Text;
                             string EmployeeVar = worksheet.Cells[row, 7].Text;
                             string EmployeeRefVar = worksheet.Cells[row, 10].Text;
-
-                            //Check Employee Clockin
-                            //var ClockinDb = db.View_ClockTime.Where(x => x.TransactionDate == TransactionDateVar && x.EmployeeID.Equals(EmployeeVar) && x.ClockIn != null ).ToList();
-
-                            //if (ClockinDb.Count == 0)
-                            //{
-                            //    int rowerror = row - 1;
-                            //    TempData["AlertMessage"] = "Data Row : " + rowerror + " =>  Please Clockin or Format date Incorrect";
-                            //    return RedirectToAction("ImportManualData");
-                            //}
 
                             var LineIDDb = mymodel.tbLine.Where(x => x.LineID.Equals(LineVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.LineID, x.LineName }).SingleOrDefault();
                             var ProductIDDb = mymodel.tbProduct.Where(x => x.ProductID.Equals(ProductVar) && PlantID.Equals(PlantID) && x.Status.Equals(1)).Select(x => new { x.ProductID, x.ProductName }).SingleOrDefault();
@@ -1160,8 +1134,7 @@ namespace Plims.Controllers
                             }
                             else
                             {
-                                //int CntDb = db.TbProductSTD.ToList().Count;
-                                //int CntDbnext = CntDb + 1;
+                             
 
                                 // Insert new record
                                 var newData = new TbProductionTransaction
@@ -1208,7 +1181,7 @@ namespace Plims.Controllers
 
         //DateTime startDate, DateTime endDate,
         [HttpGet]
-        public async Task<IActionResult> DailyReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, string SectionID, string Prefix)
+        public async Task<IActionResult> DailyReport_origianal(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, string SectionID, string Prefix)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -1226,15 +1199,7 @@ namespace Plims.Controllers
             {
                 try
                 {
-                    // view_DailyReportSummary = await db.View_DailyReportSummary.Where(
-                    //     x => x.PlantID.Equals(PlantID)
-                    //     && (StartDate == DateTime.MinValue || x.TransactionDate >= StartDate)
-                    //     && (EndDate == DateTime.MinValue || x.TransactionDate <= EndDate)
-                    //     && (string.IsNullOrEmpty(EmployeeID) || x.QRCode.Equals(EmployeeID))
-                    //     && (string.IsNullOrEmpty(LineID) || x.LineID.Equals(LineID))
-                    //     && (string.IsNullOrEmpty(SectionID) || x.SectionID.Equals(SectionID))
-                    //     && (string.IsNullOrEmpty(Prefix) || x.Prefix.Equals(Prefix))
-                    //     ).Distinct().ToListAsync();
+                   
                     view_DailyReportSummary = await GetDailyReportDataAsync(
                             PlantID, EmployeeID, StartDate, EndDate, LineID, SectionID, Prefix);
                 }
@@ -1314,7 +1279,7 @@ namespace Plims.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> DailyReportExport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, string SectionID, string Prefix)
+        public async Task<IActionResult> DailyReportExport_original(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, string SectionID, string Prefix)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -1334,16 +1299,7 @@ namespace Plims.Controllers
 
             try
             {
-                // var mymodel = new ViewModelAll();
-                // var sessionDailyReport = HttpContext.Session.GetString("DailyReport");
-                // if (sessionDailyReport != null) mymodel = JsonConvert.DeserializeObject<ViewModelAll>(sessionDailyReport);
-
-                // if (mymodel != null)
-                // {
-                // if (mymodel.view_DailyReportSummary != null && mymodel.view_DailyReportSummary.Count() > 0)
-                // {
-                // ExcelPackage Ep = new ExcelPackage();
-                // ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Dailyreport");
+              
                 using var package = new OfficeOpenXml.ExcelPackage();
                 var Sheet = package.Workbook.Worksheets.Add("Dailyreport");
                 Sheet.Cells["A1"].Value = "Plant";
@@ -1443,25 +1399,10 @@ namespace Plims.Controllers
                 }
 
                 Sheet.Cells["A:AZ"].AutoFitColumns();
-                // Response.Clear();
-                // Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                // Response.Headers.Add("content-disposition", "attachment; filename=DailyReport.xlsx");
-                // Response.Body.WriteAsync(Ep.GetAsByteArray());
+               
                 var bytes = package.GetAsByteArray();
                 const string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                // }
-
-                // ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
-                // }
-
-                // if (!string.IsNullOrEmpty(EmployeeID)) ViewBag.SelectedEmpID = EmployeeID;
-                // if (!string.IsNullOrEmpty(LineID)) ViewBag.SelectedLineID = LineID;
-                // if (!string.IsNullOrEmpty(SectionID)) ViewBag.SelectedSectionID = SectionID;
-                // if (!string.IsNullOrEmpty(Prefix)) ViewBag.SelectedPrefix = Prefix;
-                // if (StartDate != DateTime.MinValue) ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                // if (EndDate != DateTime.MinValue) ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-
-                // return View("DailyReport", mymodel);
+               
                 return File(bytes, contentType, "DailyReport.xlsx");
             }
             catch
@@ -1470,6 +1411,178 @@ namespace Plims.Controllers
                 return RedirectToAction("Login", "Home");
             }
         }
+
+
+
+        private async Task<List<View_DailyReportSummary>> GetDailyReportDataAsync(
+    int plantId, string employeeId, DateTime startDate, DateTime endDate,
+    string lineId, string sectionId, string prefix)
+        {
+            return await db.View_DailyReportSummary
+                .FromSqlInterpolated($@"
+            EXEC sp_GetDailyReport 
+                @PlantID={plantId},
+                @EmployeeID={(string.IsNullOrEmpty(employeeId) ? (object)DBNull.Value : employeeId)},
+                @StartDate={(startDate == DateTime.MinValue ? (object)DBNull.Value : startDate)},
+                @EndDate={(endDate == DateTime.MinValue ? (object)DBNull.Value : endDate)},
+                @LineID={(string.IsNullOrEmpty(lineId) ? (object)DBNull.Value : lineId)},
+                @SectionID={(string.IsNullOrEmpty(sectionId) ? (object)DBNull.Value : sectionId)},
+                @Prefix={(string.IsNullOrEmpty(prefix) ? (object)DBNull.Value : prefix)}
+        ")
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> DailyReport(
+   string EmployeeID, DateTime? StartDate, DateTime? EndDate,
+   string LineID, string SectionID, string Prefix,
+   int page = 1, int pageSize = 5000)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            if (string.IsNullOrEmpty(EmpID))
+                return RedirectToAction("Login", "Home");
+
+            // ✅ ถ้าไม่เลือกวันที่ ใช้วันนี้เป็น default
+            if (!StartDate.HasValue && !EndDate.HasValue)
+            {
+                StartDate = DateTime.Today;
+                EndDate = DateTime.Today;
+            }
+                       
+                 
+            // ✅ เรียก Stored Procedure ด้วย FromSqlRaw
+            var dailyReportList = await db.View_DailyReportSummary
+                .FromSqlRaw(
+                    @"EXEC sp_GetDailyReport 
+                @PlantID = {0}, 
+                @EmployeeID = {1}, 
+                @LineID = {2}, 
+                @SectionID = {3}, 
+                @Prefix = {4}, 
+                @StartDate = {5}, 
+                @EndDate = {6}",
+                    PlantID,
+                    string.IsNullOrEmpty(EmployeeID) ? (object)DBNull.Value : EmployeeID,
+                    string.IsNullOrEmpty(LineID) ? (object)DBNull.Value : LineID,
+                    string.IsNullOrEmpty(SectionID) ? (object)DBNull.Value : SectionID,
+                    string.IsNullOrEmpty(Prefix) ? (object)DBNull.Value : Prefix,
+                    StartDate.HasValue ? (object)StartDate.Value : DBNull.Value,
+                    EndDate.HasValue ? (object)EndDate.Value : DBNull.Value
+                )
+                .AsNoTracking()
+                .ToListAsync();
+
+            // ✅ ทำ paging ฝั่ง C#
+            bool hasMore = dailyReportList.Count > pageSize;
+            dailyReportList = dailyReportList
+                                .OrderBy(x => x.TransactionDate)
+                                .Skip((page - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+
+            var model = new ViewModelAll
+            {
+                StartDate = StartDate,
+                EndDate = EndDate,
+                EmployeeID = EmployeeID,
+                LineID = LineID,
+                SectionID = SectionID,
+                Prefix = Prefix,
+
+                CurrentPage = page,
+                PageSize = pageSize,
+                HasMore = hasMore,
+
+                tbEmployeeMaster = await db.TbEmployeeMaster.AsNoTracking().Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbLine = await db.TbLine.AsNoTracking().Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbSection = await db.TbSection.AsNoTracking().Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbShift = await db.TbShift.AsNoTracking().Where(x => x.PlantID == PlantID).ToListAsync(),
+                view_PermissionMaster = await db.View_PermissionMaster.AsNoTracking().Where(x => x.PlantID == PlantID).ToListAsync(),
+                view_DailyReportSummary = dailyReportList
+            };
+
+            // ✅ Role
+            model.RoleDailyReport = model.view_PermissionMaster
+                .Where(x => x.UserEmpID == EmpID && x.PageID == 23)
+                .Select(x => x.RoleAction)
+                .FirstOrDefault();
+
+            ViewBag.VBRoleDailyReport = model.RoleDailyReport;
+            ViewBag.SelectedStartDate = StartDate;
+            ViewBag.SelectedEndDate = EndDate;
+            ViewBag.SelectedEmpID = EmployeeID;
+            ViewBag.SelectedLineID = LineID;
+            ViewBag.SelectedSectionID = SectionID;
+            ViewBag.SelectedPrefix = Prefix;
+
+            return View(model);
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> DailyReportExport(
+    string EmployeeID, DateTime? StartDate, DateTime? EndDate,
+    string LineID, string SectionID, string Prefix)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            if (string.IsNullOrEmpty(EmpID))
+                return RedirectToAction("Login", "Home");
+
+            // ✅ Default Date = Today
+            if (!StartDate.HasValue && !EndDate.HasValue)
+            {
+                StartDate = DateTime.Today;
+                EndDate = DateTime.Today.AddDays(1).AddTicks(-1); // ครอบทั้งวัน
+            }
+
+            // ✅ ดึงข้อมูลจาก SP
+            var dailyReportList = await db.View_DailyReportSummary
+                .FromSqlInterpolated($@"
+            EXEC sp_GetDailyReport 
+                @PlantID={PlantID}, 
+                @EmployeeID={(string.IsNullOrEmpty(EmployeeID) ? (object)DBNull.Value : EmployeeID)}, 
+                @LineID={(string.IsNullOrEmpty(LineID) ? (object)DBNull.Value : LineID)}, 
+                @SectionID={(string.IsNullOrEmpty(SectionID) ? (object)DBNull.Value : SectionID)}, 
+                @Prefix={(string.IsNullOrEmpty(Prefix) ? (object)DBNull.Value : Prefix)}, 
+                @StartDate={(StartDate ?? (object)DBNull.Value)}, 
+                @EndDate={(EndDate ?? (object)DBNull.Value)}
+        ")
+                .AsNoTracking()
+                .ToListAsync();
+
+            dailyReportList = dailyReportList
+        .OrderBy(r => r.TransactionDate)
+        .ThenBy(r => r.LineID)
+        .ThenBy(r => r.SectionID)
+        .ThenBy(r => r.QRCode)
+        .ToList();
+
+            // ✅ แปลงเป็น CSV (หรือ Excel ถ้าต้องการ)
+            var csv = new StringBuilder();
+            csv.AppendLine("TransactionDate,LineName,QRCode,EmployeeName,ProductName,SectionName,CountQty,DefectQty,MinusQty,FG_Count_Qty,STD,FGQty,DiffHours,FGAdjust,DefectAdjust,TotalDefect,ActualFG,YieldDefect,PcsPerHr,EffManPerSTD,EFFSTD,Rate,Grade,Wage");
+
+            foreach (var r in dailyReportList)
+            {
+                csv.AppendLine($"{r.TransactionDate:yyyy-MM-dd},{r.LineName},{r.QRCode},{r.EmployeeName} {r.EmployeeLastName},{r.ProductName},{r.SectionName},{r.CountQty},{r.DefectQty},{r.MinusQty},{r.FG_Count_Qty},{r.STD},{r.FGQty},{r.DiffHours},{r.FGAdjust},{r.DefectQty},{r.TotalDefect},{r.ActualFG},{r.YieldDefect},{r.PcsPerHr},{r.EffManPerSTD},{r.EFFSTD},{r.Rate},{r.Grade},{r.wage}");
+            }
+
+            // ✅ return file download
+            var utf8Bom = new UTF8Encoding(true); // true = add BOM
+            var bytes = utf8Bom.GetBytes(csv.ToString());
+
+            return File(bytes, "text/csv", $"DailyReport_{DateTime.Now:yyyyMMddHHmmss}.csv");
+
+
+        }
+
+
 
         [HttpGet]
         public ActionResult DailyReportExport_OLD(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, string SectionID, string Prefix)
@@ -1909,7 +2022,242 @@ namespace Plims.Controllers
 
         }
 
-        public ActionResult WorkingFunctionCreate(string employeeId, string productId)
+
+        public ActionResult WorkingFunctionCreate(string employeeId, string productId, string EmployeeRef)
+        {
+            if (!int.TryParse(HttpContext.Session.GetString("PlantID"), out var plantId))
+                return RedirectToAction("Login", "Home");
+
+            var empId = HttpContext.Session.GetString("UserEmpID");
+            if (string.IsNullOrEmpty(empId))
+                return RedirectToAction("Login", "Home");
+
+            bool isEmployeeQr = db.TbEmployeeMaster.AsNoTracking().Any(x => x.EmployeeID == employeeId);
+            bool isGroupQr = db.TbEmployeeGroupQR.AsNoTracking().Any(x => x.GroupID == employeeId);
+
+            if (!isEmployeeQr && !isGroupQr)
+                return Json(new { message = "QR Code is not available in the system!", status = false });
+
+            var role = db.View_PermissionMaster.AsNoTracking()
+                .Where(x => x.UserEmpID == empId && x.PageID == 22)
+                .Select(x => x.RoleAction)
+                .FirstOrDefault();
+
+            if (!string.Equals(role, "Full", StringComparison.OrdinalIgnoreCase))
+                return Json(new { message = "Permission denied.", status = false });
+
+            var now = DateTime.Now;
+            var todayStart = now.Date;
+            var tomorrowStart = todayStart.AddDays(1);
+
+            try
+            {
+                // ======================= case Employee =======================
+                if (employeeId.Length > 5)
+                {
+                    var objEmp = db.View_ClockTime.AsNoTracking()
+                        .FirstOrDefault(x => x.PlantID == plantId
+                                          && x.EmployeeID == employeeId
+                                          && x.Type != "Service"
+                                          && x.WorkingStatus == "Working"
+                                          && !string.IsNullOrEmpty(x.ClockIn)
+                                          && string.IsNullOrEmpty(x.ClockOut));
+
+                    if (objEmp == null)
+                    {
+                        bool exists = db.TbEmployeeMaster.AsNoTracking()
+                            .Any(x => x.PlantID == plantId && x.EmployeeID == employeeId);
+
+                        return Json(new
+                        {
+                            message = exists ? "Please check Clock-in." : "Employee Mistake!",
+                            status = false
+                        });
+                    }
+
+                    var objPLPS = db.View_PLPS.AsNoTracking()
+                        .FirstOrDefault(x => x.PlantID == plantId
+                                          && x.LineID == objEmp.LineID
+                                          && x.ProductID == productId
+                                          && x.SectionID == objEmp.SectionID);
+                    if (objPLPS == null)
+                        return Json(new { message = "Please check PLPS.", status = false });
+
+                    var lastTime = db.TbProductionTransaction.AsNoTracking()
+                        .Where(x => x.PlantID == plantId
+                                 && x.QRCode == employeeId
+                                 && x.CreateDate >= todayStart && x.CreateDate < tomorrowStart)
+                        .OrderByDescending(x => x.CreateDate)
+                        .Select(x => (TimeSpan?)x.CreateDate.TimeOfDay)
+                        .FirstOrDefault();
+
+                    int lastCount = db.TbProductionTransaction.AsNoTracking()
+                        .Count(x => x.PlantID == plantId
+                                 && x.QRCode == employeeId
+                                 && x.SectionID == objEmp.SectionID
+                                 && x.TransactionDate == objEmp.TransactionDate
+                                 && x.DataType == "Count") + 1;
+
+                    double lastSeconds = (lastTime ?? TimeSpan.Zero).TotalSeconds;
+                    double delaySeconds = Convert.ToDouble(objPLPS.Delaytime);
+                    double nowSeconds = now.TimeOfDay.TotalSeconds;
+
+                    if (lastSeconds + delaySeconds < nowSeconds)
+                    {
+                        db.TbProductionTransaction.Add(new TbProductionTransaction
+                        {
+                            TransactionDate = objEmp.TransactionDate,
+                            PlantID = plantId,
+                            LineID = objEmp.LineID,
+                            LineName = objEmp.LineName,
+                            SectionID = objEmp.SectionID,
+                            SectionName = objEmp.SectionName,
+                            ProductID = productId,
+                            ProductName = objPLPS.ProductName,
+                            Prefix = objEmp.Prefix,
+                            FormularID = objPLPS.FormularID,
+                            QRCode = employeeId,
+                            Qty = 1,
+                            QtyPerQR = objPLPS.QTYPerQRCode,
+                            DataType = "Count",
+                            EmployeeRef = objEmp.ClockIn,
+                            GroupRef = "",
+                            CreateDate = now,
+                            CreateBy = empId,
+                            UpdateDate = now,
+                            UpdateBy = empId
+                        });
+                        db.SaveChanges();
+
+                        return Json(new
+                        {
+                            message = $"{objEmp.SectionID} : {objPLPS.SectionName}  =>  {lastCount}",
+                            status = true
+                        });
+                    }
+                    else
+                    {
+                        var diff = Math.Round((lastSeconds + delaySeconds) - nowSeconds, 2);
+                        return Json(new { message = $"check time : {diff} Sec.", status = false });
+                    }
+                }
+
+                // ======================= case Group =======================
+                var groupMembers = db.TbEmployeeGroupQR.AsNoTracking()
+                    .Where(x => x.GroupID == employeeId && x.PlantID == plantId && x.Status == 1)
+                    .Select(x => x.EmployeeID)
+                    .Distinct()
+                    .ToList();
+
+                // ✅ บันทึก transaction ของทุกคน แต่แสดง message เดียว
+                bool overallStatus = true;
+                string groupMessage = "";
+
+                foreach (var emp in groupMembers)
+                {
+                    var empClock = db.View_ClockTime.AsNoTracking()
+                        .FirstOrDefault(x => x.EmployeeID == emp
+                                          && x.PlantID == plantId
+                                          && x.Type != "Service"
+                                          && x.WorkingStatus == "Working"
+                                          && !string.IsNullOrEmpty(x.ClockIn)
+                                          && string.IsNullOrEmpty(x.ClockOut));
+
+                    if (empClock == null)
+                    {
+                        overallStatus = false;
+                        groupMessage = "Please check Clock-in.";
+                        continue;
+                    }
+
+                    var objPLPS = db.View_PLPS.AsNoTracking()
+                        .FirstOrDefault(x => x.PlantID == plantId
+                                          && x.LineID == empClock.LineID
+                                          && x.ProductID == productId
+                                          && x.SectionID == empClock.SectionID);
+                    if (objPLPS == null)
+                    {
+                        overallStatus = false;
+                        groupMessage = "check PLPS";
+                        continue;
+                    }
+
+                    var lastTime = db.TbProductionTransaction.AsNoTracking()
+                        .Where(x => x.PlantID == plantId
+                                 && x.QRCode == emp
+                                 && x.CreateDate >= todayStart && x.CreateDate < tomorrowStart)
+                        .OrderByDescending(x => x.CreateDate)
+                        .Select(x => (TimeSpan?)x.CreateDate.TimeOfDay)
+                        .FirstOrDefault();
+
+                    int lastCount = db.TbProductionTransaction.AsNoTracking()
+                        .Count(x => x.PlantID == plantId
+                                 && x.QRCode == emp
+                                 && x.GroupRef == employeeId
+                                 && x.SectionID == empClock.SectionID
+                                 && x.TransactionDate == empClock.TransactionDate
+                                 && x.DataType == "Count") + 1;
+
+                    double lastSeconds = (lastTime ?? TimeSpan.Zero).TotalSeconds;
+                    double delaySeconds = Convert.ToDouble(objPLPS.Delaytime);
+                    double nowSeconds = now.TimeOfDay.TotalSeconds;
+
+                    if (lastSeconds + delaySeconds < nowSeconds)
+                    {
+                        db.TbProductionTransaction.Add(new TbProductionTransaction
+                        {
+                            TransactionDate = empClock.TransactionDate,
+                            PlantID = plantId,
+                            LineID = empClock.LineID,
+                            LineName = empClock.LineName,
+                            SectionID = empClock.SectionID,
+                            SectionName = empClock.SectionName,
+                            ProductID = productId,
+                            ProductName = objPLPS.ProductName,
+                            FormularID = objPLPS.FormularID,
+                            Prefix = empClock.Prefix,
+                            QRCode = emp,
+                            Qty = 1,
+                            QtyPerQR = objPLPS.QTYPerQRCode,
+                            DataType = "Count",
+                            EmployeeRef = empClock.ClockIn,
+                            GroupRef = employeeId,
+                            CreateDate = now,
+                            CreateBy = empId,
+                            UpdateDate = now,
+                            UpdateBy = empId
+                        });
+
+                        // ✅ แสดงข้อความเดียวสำหรับทั้ง Group
+                        if (string.IsNullOrEmpty(groupMessage))
+                            groupMessage = $"{empClock.SectionID} : {objPLPS.SectionName}  =>  {lastCount}";
+                    }
+                    else
+                    {
+                        var diff = Math.Round((lastSeconds + delaySeconds) - nowSeconds, 2);
+                        groupMessage = $"check time : {diff} Sec.";
+                        overallStatus = false;
+                    }
+                }
+
+                db.SaveChanges();
+
+                return Json(new
+                {
+                    message = groupMessage,
+                    status = overallStatus
+                });
+            }
+            catch
+            {
+                return Json(new { message = "Please check Connection loss!", status = false });
+            }
+        }
+
+
+
+
+        public ActionResult WorkingFunctionCreate_original(string employeeId, string productId)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -3188,8 +3536,273 @@ namespace Plims.Controllers
             }
         }
 
+
         [HttpGet]
-        public IActionResult FinancialReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
+        public async Task<IActionResult> FinancialReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            // ถ้ายังไม่ได้ล็อกอิน
+            if (string.IsNullOrEmpty(EmpID))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // Default date
+            if (StartDate == DateTime.MinValue) StartDate = DateTime.Today.AddDays(-7);
+            if (EndDate == DateTime.MinValue) EndDate = DateTime.Today;
+
+            // ✅ Date range สำหรับหัวตาราง
+            var dateRange = Enumerable.Range(0, 1 + (EndDate - StartDate).Days)
+                                      .Select(offset => StartDate.AddDays(offset))
+                                      .ToList();
+            ViewBag.DateRange = dateRange;
+            ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+            ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
+            ViewBag.SelectedEmpID = EmployeeID;
+            ViewBag.SelectedLineID = LineID;
+
+            // ✅ เรียก Stored Procedure (เวอร์ชันรับ @StartDate, @EndDate)
+            //   ถ้า SP ของคุณรับ 5 พารามิเตอร์ ให้เพิ่มเข้าไปได้ (ตัวอย่างคอมเมนต์ไว้ด้านล่าง)
+            var pStart = new SqlParameter("@StartDate", StartDate);
+            var pEnd = new SqlParameter("@EndDate", EndDate);
+            var pPlant = new SqlParameter("@Plant", PlantID);
+
+
+            var spRows = await db.FinanceReportRows
+                .FromSqlRaw("EXEC sp_GetProductionFinance @StartDate, @EndDate,@Plant", pStart, pEnd, pPlant)
+                .AsNoTracking()
+                .ToListAsync();
+
+            // 👉 ถ้า SP ของคุณมีพารามิเตอร์ PlantID/LineID/EmployeeID อยู่แล้ว
+            // var pPlant = new SqlParameter("@PlantID", PlantID);
+            // var pLine  = new SqlParameter("@LineID",  (object)LineID ?? DBNull.Value);
+            // var pEmp   = new SqlParameter("@EmployeeID", (object)EmployeeID ?? DBNull.Value);
+            // var spRows = await db.FinanceReportRows
+            //     .FromSqlRaw("EXEC sp_GetProductionFinance @PlantID, @EmployeeID, @LineID, @StartDate, @EndDate",
+            //                 pPlant, pEmp, pLine, pStart, pEnd)
+            //     .AsNoTracking()
+            //     .ToListAsync();
+
+            // ✅ Filter เพิ่มฝั่ง C# (ถ้าไม่ได้ filter ใน SP)
+            //    ให้คงพฤติกรรมเหมือนโค้ดเดิมของคุณ
+            if (!string.IsNullOrEmpty(EmployeeID))
+                spRows = spRows.Where(x => x.QRCode == EmployeeID).ToList();
+
+            if (!string.IsNullOrEmpty(LineID))
+                spRows = spRows.Where(x => x.LineID == LineID).ToList();
+
+            // (ถ้าต้องใช้ PlantID ให้ uncomment ถ้า type ตรงกัน)
+            // spRows = spRows.Where(x => x.PlantID == PlantID).ToList();
+
+            // ✅ Group ให้ตรงกับ groupedData ของ ViewModelAll
+            var groupedData = spRows
+                .GroupBy(x => new { Date = x.TransactionDate.Date, x.QRCode, x.SectionName })
+                .Select(g => new GroupedFinancialData
+                {
+                    TransactionDate = g.Key.Date,
+                    QRCode = g.Key.QRCode,
+                    EmployeeName = g.Max(x => x.EmployeeName),
+                    TotalIncentive = g.Sum(x => x.Incentive ?? 0m),   // กัน null
+                    SectionName = g.Key.SectionName
+                })
+                .OrderBy(x => x.QRCode)
+                .ThenBy(x => x.SectionName)
+                .ThenBy(x => x.TransactionDate)
+                .ToList();
+
+            // ✅ เตรียม model ข้อมูล dropdown + permission + groupedData
+            var mymodel = new ViewModelAll
+            {
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                groupedData = groupedData
+            };
+
+            ViewBag.VBRoleFinancial = mymodel.view_PermissionMaster
+                .Where(x => x.UserEmpID == EmpID && x.PageID == 24)
+                .Select(x => x.RoleAction)
+                .FirstOrDefault();
+
+            return View(mymodel);
+        }
+
+        public IActionResult FinancialReportClear()
+        {
+            // เคลียร์ filter -> กลับไป 7 วันล่าสุด
+            return RedirectToAction(nameof(FinancialReport), new
+            {
+                StartDate = DateTime.Today.AddDays(-7),
+                EndDate = DateTime.Today
+            });
+        }
+
+
+        public async Task<IActionResult> FinanceReportExport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            if (string.IsNullOrEmpty(EmpID))
+                return RedirectToAction("Login", "Home");
+
+            // ✅ Default date กรณีไม่ส่งมา
+            if (StartDate == DateTime.MinValue) StartDate = DateTime.Today.AddDays(-7);
+            if (EndDate == DateTime.MinValue) EndDate = DateTime.Today;
+
+            // ✅ เตรียมช่วงวันสำหรับหัวตาราง
+            var dateRange = Enumerable.Range(0, 1 + (EndDate - StartDate).Days)
+                                      .Select(d => StartDate.AddDays(d))
+                                      .ToList();
+
+            // ✅ เรียก Stored Procedure (ใช้ Set<T> ก็ได้ ไม่ต้องมี DbSet property)
+            var pStart = new SqlParameter("@StartDate", StartDate);
+            var pEnd = new SqlParameter("@EndDate", EndDate);
+            var pPlant = new SqlParameter("@PlantID", PlantID);
+            var pLine = new SqlParameter("@LineID", (object?)LineID ?? DBNull.Value);
+            var pEmp = new SqlParameter("@EmployeeID", (object?)EmployeeID ?? DBNull.Value);
+
+            var rows = await db.Set<FinanceReportRow>()
+                .FromSqlRaw("EXEC dbo.sp_GetProductionFinance @StartDate, @EndDate, @PlantID, @LineID, @EmployeeID",
+                            pStart, pEnd, pPlant, pLine, pEmp)
+                .AsNoTracking()
+                .ToListAsync();
+
+            // ✅ ป้องกัน null - filter ตามพารามิเตอร์ (เผื่อ SP ไม่กรอง)
+            if (!string.IsNullOrEmpty(EmployeeID))
+                rows = rows.Where(x => x.QRCode == EmployeeID).ToList();
+            if (!string.IsNullOrEmpty(LineID))
+                rows = rows.Where(x => x.LineID == LineID).ToList();
+            // ไม่ต้อง filter HasValue
+            // rows = rows.Where(x => x.TransactionDate.HasValue).ToList();  // ลบออก
+
+            var groupedData = rows
+                .GroupBy(x => new { Date = x.TransactionDate.Date, x.QRCode, SectionName = x.SectionName ?? "" })
+                .Select(g => new GroupedFinancialData
+                {
+                    TransactionDate = g.Key.Date,
+                    QRCode = g.Key.QRCode,
+                    EmployeeName = g.Max(x => x.EmployeeName) ?? "",
+                    TotalIncentive = g.Sum(x => x.Incentive ?? 0m),
+                    SectionName = g.Key.SectionName
+                })
+                .OrderBy(x => x.QRCode)
+                .ThenBy(x => x.SectionName)
+                .ThenBy(x => x.TransactionDate)
+                .ToList();
+
+            // ✅ สร้าง Excel ด้วย EPPlus
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // หรือ LicenseContext.Commercial หากมีไลเซนส์
+            using var package = new ExcelPackage();
+            var ws = package.Workbook.Worksheets.Add("Finance Report");
+
+            int row = 1;
+            int col = 1;
+
+            // Header แถวบนสุด (กลุ่ม “สิทธิเงินพิเศษ”)
+            ws.Cells[row, col].Value = ""; // Employee ID (จะ merge ทีหลัง)
+            ws.Cells[row, col + 1].Value = ""; // Employee Name
+            int dateStartColumn = col + 2;
+            if (dateRange.Count > 0)
+            {
+                ws.Cells[row, dateStartColumn, row, dateStartColumn + dateRange.Count - 1].Merge = true;
+                ws.Cells[row, dateStartColumn].Value = "สิทธิเงินพิเศษ";
+                ws.Cells[row, dateStartColumn].Style.Font.Bold = true;
+            }
+            ws.Cells[row, dateStartColumn + dateRange.Count].Value = ""; // จำนวนเงิน
+            ws.Cells[row, dateStartColumn + dateRange.Count + 1].Value = ""; // จุดงาน
+
+            // Header แถวที่สอง
+            row++;
+            ws.Cells[row, col].Value = "Employee ID";
+            ws.Cells[row, col + 1].Value = "Employee Name";
+            ws.Cells[row, col].Style.Font.Bold = true;
+            ws.Cells[row, col + 1].Style.Font.Bold = true;
+
+            for (int i = 0; i < dateRange.Count; i++)
+            {
+                ws.Cells[row, dateStartColumn + i].Value = dateRange[i].ToString("dd/MM/yy");
+                ws.Cells[row, dateStartColumn + i].Style.Font.Bold = true;
+                ws.Cells[row, dateStartColumn + i].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+            }
+
+            ws.Cells[row, dateStartColumn + dateRange.Count].Value = "จำนวนเงิน";
+            ws.Cells[row, dateStartColumn + dateRange.Count + 1].Value = "จุดงาน";
+            ws.Cells[row, dateStartColumn + dateRange.Count].Style.Font.Bold = true;
+            ws.Cells[row, dateStartColumn + dateRange.Count + 1].Style.Font.Bold = true;
+
+            // ✅ เขียนข้อมูล
+            row++;
+            decimal[] sumByDate = new decimal[dateRange.Count];
+            decimal grandTotal = 0m;
+
+            if (groupedData.Any())
+            {
+                var groupedByEmpSection = groupedData.GroupBy(x => new { x.QRCode, x.SectionName });
+
+                foreach (var group in groupedByEmpSection)
+                {
+                    ws.Cells[row, col].Value = group.Key.QRCode;
+                    ws.Cells[row, col + 1].Value = group.Max(x => x.EmployeeName);
+
+                    decimal totalIncentive = 0m;
+
+                    for (int i = 0; i < dateRange.Count; i++)
+                    {
+                        var d = dateRange[i].Date;
+                        var match = group.FirstOrDefault(x => x.TransactionDate.Date == d);
+                        var inc = match?.TotalIncentive ?? 0m;
+
+                        ws.Cells[row, dateStartColumn + i].Value = (inc == 0m) ? "" : inc.ToString("0.00");
+                        totalIncentive += inc;
+                        sumByDate[i] += inc;
+                        grandTotal += inc;
+                    }
+
+                    ws.Cells[row, dateStartColumn + dateRange.Count].Value = totalIncentive.ToString("0.00");
+                    ws.Cells[row, dateStartColumn + dateRange.Count + 1].Value = group.Key.SectionName;
+
+                    row++;
+                }
+
+                // ✅ แถวรวม (Total)
+                ws.Cells[row, col + 1].Value = "Total";
+                ws.Cells[row, col + 1].Style.Font.Bold = true;
+
+                for (int i = 0; i < dateRange.Count; i++)
+                {
+                    ws.Cells[row, dateStartColumn + i].Value = sumByDate[i].ToString("0.00");
+                    ws.Cells[row, dateStartColumn + i].Style.Font.Bold = true;
+                }
+
+                ws.Cells[row, dateStartColumn + dateRange.Count].Value = grandTotal.ToString("0.00");
+                ws.Cells[row, dateStartColumn + dateRange.Count].Style.Font.Bold = true;
+            }
+            else
+            {
+                ws.Cells[row, col].Value = "No data available.";
+            }
+
+            // ✅ จัดรูปแบบ
+            ws.Cells.AutoFitColumns();
+            ws.View.FreezePanes(3, 3); // freeze header 2 แถว + 2 คอลัมน์แรก
+
+            // ✅ ส่งไฟล์
+            var stream = new MemoryStream();
+            package.SaveAs(stream);
+            var content = stream.ToArray();
+
+            return File(content,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"FinanceReport_{StartDate:yyyyMMdd}-{EndDate:yyyyMMdd}.xlsx");
+        }
+
+
+
+        [HttpGet]
+        public IActionResult FinancialReport_original(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -3267,7 +3880,7 @@ namespace Plims.Controllers
             return View(mymodel);
         }
 
-        public ActionResult FinanceReportExport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
+        public ActionResult FinanceReportExport_original(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -3552,10 +4165,71 @@ namespace Plims.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> EFFReport(string EmployeeID, DateTime? StartDate, DateTime? EndDate, string LineID, string SectionID)
+        {
+            if (!int.TryParse(HttpContext.Session.GetString("PlantID"), out int PlantID))
+                return RedirectToAction("Login", "Home");
+
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            if (string.IsNullOrEmpty(EmpID))
+                return RedirectToAction("Login", "Home");
+
+            if (!StartDate.HasValue) StartDate = DateTime.Today;
+            if (!EndDate.HasValue) EndDate = DateTime.Today;
+
+            // ✅ Retry กัน deadlock
+            AsyncRetryPolicy retryPolicy = Policy
+                .Handle<SqlException>(ex => ex.Number == 1205) // deadlock
+                .WaitAndRetryAsync(3, attempt => TimeSpan.FromSeconds(2 * attempt));
+
+            List<View_EFFReport> effReportList = new();
+
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                effReportList = await db.View_EFFReport
+                    .FromSqlInterpolated($@"
+                EXEC sp_GetEFFReport 
+                    @PlantID={PlantID}, 
+                    @StartDate={StartDate}, 
+                    @EndDate={EndDate}, 
+                    @LineID={LineID}, 
+                    @SectionID={SectionID}
+            ")
+                    .AsNoTracking()
+                    .ToListAsync();
+            });
+
+            // ✅ ห่อเข้า ViewModelAll
+            var mymodel = new ViewModelAll
+            {
+                view_EFFReport = effReportList,
+                tbEmployeeMaster = await db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbLine = await db.TbLine.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbSection = await db.TbSection.Where(x => x.PlantID == PlantID).ToListAsync(),
+                view_PermissionMaster = await db.View_PermissionMaster.ToListAsync()
+            };
+
+            // สำหรับ filter กลับไปเติมค่าใน form
+            ViewBag.SelectedStartDate = StartDate?.ToString("yyyy-MM-dd");
+            ViewBag.SelectedEndDate = EndDate?.ToString("yyyy-MM-dd");
+            ViewBag.SelectedLineID = LineID;
+            ViewBag.SelectedSectionName = SectionID;
+
+            ViewBag.VBRoleEfficiency = mymodel.view_PermissionMaster
+                .Where(x => x.UserEmpID == EmpID && x.PageID.Equals(25)) // 👈 ใส่ PageID ของ Report นี้
+                .Select(x => x.RoleAction)
+                .FirstOrDefault();
+
+         
+            return View(mymodel);
+        }
+
+
 
         //DateTime startDate, DateTime endDate,
         [HttpGet]
-        public async Task<IActionResult> EFFReport(DateTime StartDate, DateTime EndDate, string LineID, string SectionName)
+        public async Task<IActionResult> EFFReport_original(DateTime StartDate, DateTime EndDate, string LineID, string SectionName)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -3632,7 +4306,141 @@ namespace Plims.Controllers
             return RedirectToAction("EFFReport");
         }
 
+        [HttpGet]
         public async Task<IActionResult> EFFReportExport(DateTime StartDate, DateTime EndDate, string LineID, string SectionName)
+        {
+            if (!int.TryParse(HttpContext.Session.GetString("PlantID"), out int PlantID))
+                return RedirectToAction("Login", "Home");
+
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            if (string.IsNullOrEmpty(EmpID))
+                return RedirectToAction("Login", "Home");
+
+            try
+            {
+                // ✅ ดึงข้อมูลจาก SP/DB
+                var rows = await GetEfficiencyDataAsync(PlantID, StartDate, EndDate, LineID, SectionName);
+                if (rows == null || rows.Count == 0)
+                {
+                    TempData["AlertMessage"] = "No data found for export.";
+                    return RedirectToAction("EFFReport", new { StartDate, EndDate, LineID, SectionName });
+                }
+
+                using var package = new OfficeOpenXml.ExcelPackage();
+                var worksheet = package.Workbook.Worksheets.Add("EFF Report");
+
+                // ✅ Header
+                string[] headers = new[]
+                {
+            "TransactionDate","Shift","Line","Section","ProductID","ProductName","Unit","EFF-STD",
+            "ชม. งาน STD","ชม. งาน ACT","ชิ้นรับเข้า","ชั่วโมงจริง","บริการแยกได้","บริการแยกไม่ได้",
+            "ชม.จริง+บริการแยกได้","ชม.จริง+บริการแยกได้+บริการแยกไม่ได้",
+            "EFF ชม.1","EFF ชม.2","EFF ชม.3",
+            "KPI (ชม.3)","ค่ากลาง ชม.3","ค่าที่ได้ (ชม.3)",
+            "KPI (ชม.1)","ค่ากลาง ชม.1","ค่าที่ได้ (ชม.1)"
+        };
+
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    worksheet.Cells[1, i + 1].Value = headers[i];
+                    worksheet.Cells[1, i + 1].Style.Font.Bold = true;
+                }
+
+                // ✅ Rows
+                int row = 2;
+                decimal sumWorkinghourSTD = 0, sumWorkinghourACT = 0, sumFinishGood = 0;
+                decimal sumEFF1 = 0, sumServicehour = 0, sumSupporthour = 0;
+                decimal sumEFF2 = 0, sumEFF3 = 0, sumEFFhr1 = 0, sumEFFhr2 = 0, sumEFFhr3 = 0;
+                decimal sumKPIh3 = 0, sumMEDh3 = 0, sumValEffh3 = 0;
+                decimal sumKPIh1 = 0, sumMEDh1 = 0, sumValEffh1 = 0;
+
+                foreach (var item in rows)
+                {
+                    worksheet.Cells[row, 1].Value = item.TransactionDate.ToString("yyyy-MM-dd");
+                    worksheet.Cells[row, 2].Value = item.Prefix;
+                    worksheet.Cells[row, 3].Value = $"{item.LineID} : {item.LineName}";
+                    worksheet.Cells[row, 4].Value = $"{item.SectionID} : {item.SectionName}";
+                    worksheet.Cells[row, 5].Value = item.ProductID;
+                    worksheet.Cells[row, 6].Value = item.ProductName;
+                    worksheet.Cells[row, 7].Value = item.Unit;
+                    worksheet.Cells[row, 8].Value = item.EFFSTD;
+
+                    worksheet.Cells[row, 9].Value = item.WorkinghourSTD; sumWorkinghourSTD += item.WorkinghourSTD;
+                    worksheet.Cells[row, 10].Value = item.WorkinghourACT; sumWorkinghourACT += item.WorkinghourACT;
+                    worksheet.Cells[row, 11].Value = item.FinishGood; sumFinishGood += item.FinishGood;
+                    worksheet.Cells[row, 12].Value = item.EFF1; sumEFF1 += item.EFF1;
+                    worksheet.Cells[row, 13].Value = item.Servicehour; sumServicehour += item.Servicehour;
+                    worksheet.Cells[row, 14].Value = item.Supporthour; sumSupporthour += item.Supporthour;
+                    worksheet.Cells[row, 15].Value = item.EFF2; sumEFF2 += item.EFF2;
+                    worksheet.Cells[row, 16].Value = item.EFF3; sumEFF3 += item.EFF3;
+                    worksheet.Cells[row, 17].Value = item.EFFhr1; sumEFFhr1 += item.EFFhr1;
+                    worksheet.Cells[row, 18].Value = item.EFFhr2; sumEFFhr2 += item.EFFhr2;
+                    worksheet.Cells[row, 19].Value = item.EFFhr3; sumEFFhr3 += item.EFFhr3;
+                    worksheet.Cells[row, 20].Value = item.KPIh3; sumKPIh3 += item.KPIh3;
+                    worksheet.Cells[row, 21].Value = item.MEDh3; sumMEDh3 += item.MEDh3;
+                    worksheet.Cells[row, 22].Value = item.ValueEFF3; sumValEffh3 += item.ValueEFF3;
+                    worksheet.Cells[row, 23].Value = item.KPIh1; sumKPIh1 += item.KPIh1;
+                    worksheet.Cells[row, 24].Value = item.MEDh1; sumMEDh1 += item.MEDh1;
+                    worksheet.Cells[row, 25].Value = item.ValueEFF1; sumValEffh1 += item.ValueEFF1;
+
+                    row++;
+                }
+
+                // ✅ Footer Total
+                worksheet.Cells[row, 8].Value = "Total";
+                worksheet.Cells[row, 9].Value = sumWorkinghourSTD;
+                worksheet.Cells[row, 10].Value = sumWorkinghourACT;
+                worksheet.Cells[row, 11].Value = sumFinishGood;
+                worksheet.Cells[row, 12].Value = sumEFF1;
+                worksheet.Cells[row, 13].Value = sumServicehour;
+                worksheet.Cells[row, 14].Value = sumSupporthour;
+                worksheet.Cells[row, 15].Value = sumEFF2;
+                worksheet.Cells[row, 16].Value = sumEFF3;
+                worksheet.Cells[row, 17].Value = sumEFFhr1;
+                worksheet.Cells[row, 18].Value = sumEFFhr2;
+                worksheet.Cells[row, 19].Value = sumEFFhr3;
+                worksheet.Cells[row, 20].Value = sumKPIh3;
+                worksheet.Cells[row, 21].Value = sumMEDh3;
+                worksheet.Cells[row, 22].Value = sumValEffh3;
+                worksheet.Cells[row, 23].Value = sumKPIh1;
+                worksheet.Cells[row, 24].Value = sumMEDh1;
+                worksheet.Cells[row, 25].Value = sumValEffh1;
+
+                worksheet.Cells[row, 8, row, 25].Style.Font.Bold = true;
+                worksheet.Cells.AutoFitColumns();
+
+                // ✅ ส่งไฟล์
+                var fileBytes = package.GetAsByteArray();
+                const string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                return File(fileBytes, contentType, $"EFFReport_{DateTime.Now:yyyyMMddHHmmss}.xlsx");
+            }
+            catch (Exception ex)
+            {
+                TempData["AlertMessage"] = "System error, please contact IT: " + ex.Message;
+                return RedirectToAction("EFFReport", new { StartDate, EndDate, LineID, SectionName });
+            }
+        }
+
+        private async Task<List<View_EFFReport>> GetEfficiencyDataAsync(
+    int plantId, DateTime startDate, DateTime endDate, string lineId, string sectionId)
+        {
+            return await db.View_EFFReport
+                .FromSqlInterpolated($@"
+            EXEC sp_GetEFFReport 
+                @PlantID={plantId}, 
+                @StartDate={startDate}, 
+                @EndDate={endDate}, 
+                @LineID={(string.IsNullOrEmpty(lineId) ? (object)DBNull.Value : lineId)}, 
+                @SectionID={(string.IsNullOrEmpty(sectionId) ? (object)DBNull.Value : sectionId)}
+        ")
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+
+
+
+        public async Task<IActionResult> EFFReportExport_origianl(DateTime StartDate, DateTime EndDate, string LineID, string SectionName)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -4584,10 +5392,106 @@ namespace Plims.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ProductionTransactionAdjustFG(string FGPlanDate, string FGLine, string FGSection, string FGShift, int FGQTY, string[] TransactionID)
+        {
+            string empId = HttpContext.Session.GetString("UserEmpID");
+            int plantId = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+
+            if (empId == null)
+                return RedirectToAction("Login", "Home");
+
+            DateTime planDate = Convert.ToDateTime(FGPlanDate);
+
+            // ✅ เช็ค duplicate โดยไม่ ToList()
+            var existingAdjust = await db.TbProductionTransactionAdjust
+                .FirstOrDefaultAsync(x =>
+                    x.TransactionDate.Date == planDate &&
+                    x.PlantID == plantId &&
+                    x.LineID == FGLine &&
+                    x.SectionID == FGSection &&
+                    x.Prefix == FGShift &&
+                    x.Type == "FG");
+
+            if (existingAdjust != null)
+            {
+                // update
+                existingAdjust.QTY = FGQTY;
+            }
+            else
+            {
+                // insert
+                db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust
+                {
+                    TransactionDate = planDate,
+                    PlantID = plantId,
+                    LineID = FGLine,
+                    SectionID = FGSection,
+                    Prefix = FGShift,
+                    Type = "FG",
+                    QTY = FGQTY,
+                    CreateDate = DateTime.Now,
+                    CreateBy = empId
+                });
+            }
+
+            // ✅ นับจำนวน transaction (Count โดยตรง)
+            int productionCount = await db.TbProductionTransaction.CountAsync(x =>
+                x.TransactionDate.Date == planDate &&
+                x.PlantID == plantId &&
+                x.LineID == FGLine &&
+                x.SectionID == FGSection &&
+                x.Prefix == FGShift &&
+                x.DataType == "Count");
+
+            if (productionCount == 0)
+            {
+                TempData["AlertMessage"] = "Adjust Mistake!";
+                return RedirectToAction("ProductionTransactionAdjustByEmployee");
+            }
+
+            // ✅ รวม FG QTY โดยตรง (Sum โดยตรง)
+            decimal inputQty = await db.TbProductionTransaction
+                .Where(x =>
+                    x.TransactionDate.Date == planDate &&
+                    x.PlantID == plantId &&
+                    x.LineID == FGLine &&
+                    x.SectionID == FGSection &&
+                    x.Prefix == FGShift &&
+                    x.DataType == "FG")
+                .SumAsync(x => (decimal?)x.Qty) ?? 0;
+
+            decimal qtyPerQr = (FGQTY - inputQty) / productionCount;
+
+            // ✅ ดึงรายการมาครั้งเดียว
+            var transactions = await db.TbProductionTransaction
+                .Where(x =>
+                    x.TransactionDate.Date == planDate &&
+                    x.PlantID == plantId &&
+                    x.LineID == FGLine &&
+                    x.SectionID == FGSection &&
+                    x.Prefix == FGShift &&
+                    x.DataType == "Count")
+                .ToListAsync();
+
+            foreach (var t in transactions)
+            {
+                t.QtyPerQR = qtyPerQr;
+                t.Note = $"Replace : {t.QtyPerQR}";
+                t.UpdateBy = empId;
+                t.UpdateDate = DateTime.Now;
+            }
+
+            // ✅ save changes ครั้งเดียว
+            await db.SaveChangesAsync();
+
+            TempData["AlertMessage"] = "Adjust successful!";
+            return RedirectToAction("ProductionTransactionAdjustByEmployee");
+        }
 
 
         [HttpPost]
-        public IActionResult ProductionTransactionAdjustFG(string FGPlanDate, String FGLine, String FGSection, String FGShift, int FGQTY, string[] TransactionID)
+        public IActionResult ProductionTransactionAdjustFG_original(string FGPlanDate, String FGLine, String FGSection, String FGShift, int FGQTY, string[] TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -4843,6 +5747,127 @@ namespace Plims.Controllers
             string[] DefectSectionID = DefectSection.Split(":");
 
             //Check ALL , Employee , Employee > 1
+            int checkPrdAdjust = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(DefectPlanDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift)).ToList().Count();
+            if (checkPrdAdjust == TransactionID.Count())
+            {
+                //Adjust All
+                //Check Duplicate
+                int checkDuplicate = mymodel.tbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(DefectPlanDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect")).ToList().Count();
+                if (checkDuplicate > 0)
+                {
+
+                    //Update  Table : TbProductionTransactionAdjust       
+                    var TranDefectAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(DefectPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect") && x.Remark.Equals("")).SingleOrDefault();
+                    TranDefectAdjust.QTY = DefectQTY;
+                    db.SaveChanges();
+                }
+                else
+                {
+
+                    //Create Table : TbProductionTransactionAdjust  
+                    db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                    {
+                        TransactionDate = Convert.ToDateTime(DefectPlanDate),
+                        PlantID = PlantID,
+                        LineID = DefectLineID[0].Trim(),
+                        SectionID = DefectSectionID[0].Trim(),
+
+                        Prefix = DefectShift,
+                        Type = "Defect",
+                        QTY = DefectQTY,
+                        Remark = "",
+                        CreateDate = DateTime.Now,
+                        CreateBy = EmpID
+                    });
+                    db.SaveChanges();
+
+                }
+
+
+            }
+            else
+            {
+                //Adjust Employee
+
+                foreach (int item in TransactionID)
+                {
+                    //selectEmployeeID
+                    string EmployeeNo = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionID.Equals(item)).Select(x => x.QRCode).SingleOrDefault();
+
+                    //Check Duplicate
+                    int checkDuplicate = mymodel.tbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(DefectPlanDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect") && x.Remark.Equals(EmployeeNo)).ToList().Count();
+                    if (checkDuplicate > 0)
+                    {
+
+                        //Update  Table : TbProductionTransactionAdjust       
+                        var TranDefectAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(DefectPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(DefectLineID[0].Trim()) && x.SectionID.Equals(DefectSectionID[0].Trim()) && x.Prefix.Equals(DefectShift) && x.Type.Equals("Defect") && x.Remark.Equals(EmployeeNo)).SingleOrDefault();
+                        TranDefectAdjust.QTY = DefectQTY;
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+
+                        //Create Table : TbProductionTransactionAdjust  
+                        db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                        {
+                            TransactionDate = Convert.ToDateTime(DefectPlanDate),
+                            PlantID = PlantID,
+                            LineID = DefectLineID[0].Trim(),
+                            SectionID = DefectSectionID[0].Trim(),
+                            Prefix = DefectShift,
+                            Type = "Defect",
+                            QTY = DefectQTY,
+                            Remark = EmployeeNo,
+                            CreateDate = DateTime.Now,
+                            CreateBy = EmpID
+                        });
+                        db.SaveChanges();
+
+                    }
+
+                }
+
+
+
+            }
+
+
+            ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+            mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+            ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+            return View("ProductionTransactionAdjustByEmployee", mymodel);
+
+
+        }
+
+
+        [HttpPost]
+        public IActionResult ProductionTransactionAdjustDefectByEmployee_original(DateTime DefectPlanDate, String DefectLine, String DefectSection, String DefectShift, decimal DefectQTY, List<int> TransactionID)
+        {
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var mymodel = new ViewModelAll
+            {
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
+                tbProductionTransactionAdjust = db.TbProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
+
+            };
+
+            string[] DefectLineID = DefectLine.Split(":");
+            string[] DefectSectionID = DefectSection.Split(":");
+
+            //Check ALL , Employee , Employee > 1
             int checkPrdAdjust = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(DefectPlanDate.Date)
                             && x.PlantID.Equals(PlantID)
                             && x.LineID.Equals(DefectLineID[0].Trim())
@@ -5030,11 +6055,96 @@ namespace Plims.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult ProductionTransactionAdjustByEmployee(
+    View_ProductionTransactionAdjust obj,
+    string FGPlanDate,
+    string FGLine,
+    string FGSection,
+    string FGShift,
+    int FGQTY,
+    string[] TransactionID,
+    string checkthis,
+    string checkall)
+        {
+            if (!int.TryParse(HttpContext.Session.GetString("PlantID"), out var PlantID))
+                return RedirectToAction("Login", "Home");
+
+            var EmpID = HttpContext.Session.GetString("UserEmpID");
+            if (string.IsNullOrEmpty(EmpID))
+                return RedirectToAction("Login", "Home");
+
+            // โหลดข้อมูล master (AsNoTracking จะเร็วขึ้นถ้าไม่แก้ไขข้อมูล)
+            var mymodel = new ViewModelAll
+            {
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList()
+            };
+
+            // ✅ Base Query (ยังไม่ Execute)
+            var baseQuery = db.View_ProductionTransactionAdjust
+                              .Where(x => x.PlantID == PlantID);
+
+            // 🔹 Apply Filters (EF จะ generate SQL รวม)
+            if (obj.TransactionDate != DateTime.MinValue)
+            {
+                baseQuery = baseQuery.Where(x => x.TransactionDate == obj.TransactionDate);
+                ViewBag.SelectedTransactionDate = obj.TransactionDate.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                baseQuery = baseQuery.Where(x => x.TransactionDate == DateTime.Today);
+                ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+            }
+
+            if (!string.IsNullOrEmpty(obj.SectionName))
+            {
+                baseQuery = baseQuery.Where(x => x.SectionID == obj.SectionName);
+                ViewBag.SelectedSectionName = obj.SectionName;
+            }
+
+            if (!string.IsNullOrEmpty(obj.LineName))
+            {
+                baseQuery = baseQuery.Where(x => x.LineID == obj.LineName);
+                ViewBag.SelectedLineName = obj.LineName;
+            }
+
+            if (!string.IsNullOrEmpty(obj.Prefix))
+            {
+                baseQuery = baseQuery.Where(x => x.Prefix == obj.Prefix);
+                ViewBag.SelectedPrefix = obj.Prefix;
+            }
+
+            if (!string.IsNullOrEmpty(obj.QRCode))
+            {
+                baseQuery = baseQuery.Where(x => x.QRCode == obj.QRCode);
+                ViewBag.SelectedEmployee = obj.QRCode;
+            }
+
+            // ✅ Execute (ยิง SQL ครั้งเดียว)
+            mymodel.view_ProductionTransactionAdjust = baseQuery
+                                                       .OrderByDescending(x => x.TransactionDate)
+                                                       .ThenBy(x => x.LineID)
+                                                       .ThenBy(x => x.SectionID)
+                                                       .ToList();
+
+            // Role
+            ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster
+                .Where(x => x.UserEmpID == EmpID && x.PageID == 33)
+                .Select(x => x.RoleAction)
+                .FirstOrDefault();
+
+            return View(mymodel);
+        }
+
 
 
 
         [HttpGet]
-        public IActionResult ProductionTransactionAdjustByEmployee(View_ProductionTransactionAdjust obj, string FGPlanDate, String FGLine, String FGSection, String FGShift, int FGQTY, string[] TransactionID, string checkthis, string checkall)
+        public IActionResult ProductionTransactionAdjustByEmployee_origianl(View_ProductionTransactionAdjust obj, string FGPlanDate, String FGLine, String FGSection, String FGShift, int FGQTY, string[] TransactionID, string checkthis, string checkall)
         {
 
 
@@ -5133,7 +6243,6 @@ namespace Plims.Controllers
             return View("ProductionTransactionAdjustByEmployee", mymodel);
 
         }
-
 
 
 
@@ -5665,6 +6774,540 @@ namespace Plims.Controllers
             }
 
         }
+
+
+        public IActionResult ProductionTransactionAdjustFGByEmployee_old(DateTime FGPlanDate, string FGEmployeeID, string FGLine, string FGSection, string FGShift, decimal FGQTY, List<int> TransactionID)
+        {
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var mymodel = new ViewModelAll
+            {
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_ProductionTransactionAdjust = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList(),
+                view_ProductionTransactionAj = db.View_ProductionTransactionAj.Where(x => x.PlantID == PlantID).ToList()
+
+
+            };
+            var startDate = FGPlanDate.Date;
+            var endDate = startDate.AddDays(1);
+            DateTime mindate;
+            DateTime maxdate;
+
+            string[] FGLineID = FGLine.Split(":");
+            string[] FGSectionID = FGSection.Split(":");
+            //fang edit 30/07/2024
+            //Check ALL , Employee , Employee > 1
+            int checkPrdAdjust = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(FGPlanDate) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).ToList().Count();
+            if (checkPrdAdjust == TransactionID.Count())
+            {
+                // All FG Adjust
+
+                //Check Duplicate
+                int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).ToList().Count();
+                if (checkDuplicate > 0)
+                {
+                    //Update  TbProductionTransactionAdjust      
+
+                    var TranFGAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.Type.Equals("FG")).SingleOrDefault();
+                    TranFGAdjust.QTY = FGQTY;
+                    db.SaveChanges();
+
+
+                    decimal ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).Select(x => x.Qty).ToList().Sum();
+                    decimal inputqty = 0;
+                    decimal QRPerAdjustinsert = 0;
+                    //Count = 0 or FG = 0 
+                    if (ProductionTrand == 0)
+                    {
+                        int FGcount = mymodel.view_ProductionTransactionAj.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.DataType.Equals("FG")).ToList().Count();
+                        QRPerAdjustinsert = Math.Round(((decimal)FGQTY / FGcount), 8);
+
+
+
+                    }
+                    else
+                    {
+
+                        //Check Qty FG
+                        inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList().Sum();
+                        // Calculate FG/Count for QTYPerQR
+                        QRPerAdjustinsert = Math.Round(((decimal)FGQTY - inputqty) / ProductionTrand, 8);
+
+                    }
+
+
+
+                    string[] note;
+                    if (ProductionTrand != 0)
+                    {
+                        //Check Clockout
+                        var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                        var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.TransactionDate >= startDate && x.TransactionDate < endDate && x.ClockOut == "").ToList();
+
+                        if (checkClockout.Count() >= 1)
+                        {
+
+                            TempData["AlertMessage"] = "Please Clock-out First!";
+                            return View("ProductionTransactionAdjustByEmployee", mymodel);
+                        }
+
+                        foreach (string item in EmpIDtrancheck)
+                        {
+                            // Update Table : TbProductionTransaction column QTYPerQR
+                            var ProdUpdate = db.TbProductionTransaction
+                                 .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                                             x.PlantID.Equals(PlantID) &&
+                                             x.LineID.Equals(FGLineID[0].Trim()) &&
+                                             x.SectionID.Equals(FGSectionID[0].Trim()) &&
+                                             x.Prefix.Equals(FGShift) &&
+                                             x.QRCode.Equals(item) &&
+                                             x.DataType.Equals("Count"))
+                                 .ToList();
+
+                            foreach (var transaction in ProdUpdate)
+                            {
+
+                                transaction.QtyPerQR = QRPerAdjustinsert;
+
+                                note = transaction.Note.Split(":");
+                                if (note.Length > 1)
+                                {
+                                    transaction.Note = "Replace : " + note[1] + "," + transaction.QtyPerQR;
+                                }
+                                else
+                                {
+                                    transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                }
+                                transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                transaction.UpdateDate = DateTime.Now;
+                            }
+                        }
+                        db.SaveChanges();
+
+
+
+                    }
+
+                    else
+                    {
+                        //Check Clockout
+                        var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                        var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.TransactionDate >= startDate && x.TransactionDate < endDate && x.ClockOut == "").ToList();
+
+                        if (checkClockout.Count() >= 1)
+                        {
+
+                            TempData["AlertMessage"] = "Please Clock-out First!";
+                            return View("ProductionTransactionAdjustByEmployee", mymodel);
+                        }
+
+                        foreach (string item in EmpIDtrancheck)
+                        {
+                            // Update Table : TbProductionTransaction column QTYPerQR
+                            var ProdUpdate = db.TbProductionTransaction
+                                 .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                                             x.PlantID.Equals(PlantID) &&
+                                             x.LineID.Equals(FGLineID[0].Trim()) &&
+                                             x.SectionID.Equals(FGSectionID[0].Trim()) &&
+                                             x.Prefix.Equals(FGShift) &&
+                                             x.QRCode.Equals(item) &&
+                                             x.DataType.Equals("FG"))
+                                 .ToList();
+
+                            foreach (var transaction in ProdUpdate)
+                            {
+
+                                transaction.QtyPerQR = Convert.ToInt32(QRPerAdjustinsert);
+
+                                note = transaction.Note.Split(":");
+                                if (note.Length > 0)
+                                {
+                                    transaction.Note = "Replace : " + note[1] + "," + transaction.QtyPerQR;
+                                }
+                                else
+                                {
+                                    transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                }
+                                transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                transaction.UpdateDate = DateTime.Now;
+                            }
+                        }
+                        db.SaveChanges();
+
+                    }
+                }
+                else
+                { // Insert New Adjust Transaction
+
+                    //Check Clockout
+                    var EmpIDtrancheck = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim().Trim()) && x.SectionID.Equals(FGSectionID[0].Trim().Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                    var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.TransactionDate >= startDate && x.TransactionDate < endDate && x.ClockOut == "" & x.WorkingStatus == "Working").ToList();
+
+                    if (checkClockout.Count() >= 1)
+                    {
+
+                        TempData["AlertMessage"] = "Please Clock-out First!";
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+                    }
+
+
+                    // Table : TbProductionTransactionAdjust  Create
+                    db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                    {
+                        TransactionDate = Convert.ToDateTime(FGPlanDate),
+                        PlantID = PlantID,
+                        LineID = FGLineID[0].Trim(),
+                        SectionID = FGSectionID[0].Trim(),
+                        Prefix = FGShift,
+                        Type = "FG",
+                        Remark = "",
+                        QTY = FGQTY,
+                        CreateDate = DateTime.Now,
+                        CreateBy = EmpID
+                    });
+                    //  db.SaveChanges();
+
+
+                    //// Count Employee base on plant, line ,section, productiondate ,prefix
+                    // int ProductionTrandinsert = mymodel.view_ProductionTransactionAj.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).ToList().Count();
+                    decimal ProductionTrandinsert = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.DataType.Equals("Count")).Select(x => x.Qty).ToList().Sum();
+
+
+                    decimal inputqty = 0;
+                    decimal QRPerAdjustinsert = 0;
+                    //Count = 0 or FG = 0 
+                    if (ProductionTrandinsert == 0)
+                    {
+                        int FGcount = mymodel.view_ProductionTransactionAj.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.DataType.Equals("FG")).ToList().Count();
+                        QRPerAdjustinsert = Math.Round(((decimal)FGQTY / FGcount), 8);
+
+                    }
+                    else
+                    {
+                        //Check Qty FG
+                        inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList().Sum();
+                        // Calculate FG/Count for QTYPerQR
+                        QRPerAdjustinsert = Math.Round(((decimal)FGQTY - inputqty) / ProductionTrandinsert, 8);
+
+                    }
+
+
+                    if (ProductionTrandinsert != 0)
+                    {
+                        var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+
+                        foreach (string item in EmpIDtran)
+                        {
+                            // Update Table : TbProductionTransaction column QTYPerQR
+                            var ProdUpdate = db.TbProductionTransaction
+                                 .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                                             x.PlantID.Equals(PlantID) &&
+                                             x.LineID.Equals(FGLineID[0].Trim().Trim()) &&
+                                             x.SectionID.Equals(FGSectionID[0].Trim()) &&
+                                             x.Prefix.Equals(FGShift) &&
+                                             x.QRCode.Equals(item) &&
+                                             x.DataType.Equals("Count"))
+                                 .ToList();
+
+                            foreach (var transaction in ProdUpdate)
+                            {
+                                transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                transaction.QtyPerQR = QRPerAdjustinsert;
+                                transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                transaction.UpdateDate = DateTime.Now;
+                            }
+                        }
+                        db.SaveChanges();
+
+                    }
+                    else
+                    {
+
+                        var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+
+                        foreach (string item in EmpIDtran)
+                        {
+                            // Update Table : TbProductionTransaction column QTYPerQR
+                            var ProdUpdate = db.TbProductionTransaction
+                                 .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                                             x.PlantID.Equals(PlantID) &&
+                                             x.LineID.Equals(FGLineID[0].Trim()) &&
+                                             x.SectionID.Equals(FGSectionID[0].Trim()) &&
+                                             x.Prefix.Equals(FGShift) &&
+                                             x.QRCode.Equals(item) &&
+                                             x.DataType.Equals("FG"))
+                                 .ToList();
+
+                            foreach (var transaction in ProdUpdate)
+                            {
+                                transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                transaction.Qty = Convert.ToInt32(QRPerAdjustinsert);
+                                transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                transaction.UpdateDate = DateTime.Now;
+                            }
+                        }
+
+                        db.SaveChanges();
+
+
+
+                    }
+
+
+                }
+
+                ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                TempData["AlertMessage"] = "Adjust susscessful!";
+                return RedirectToAction("ProductionTransactionAdjustByEmployee");
+                // return View("ProductionTransactionAdjustByEmployee", mymodel);
+
+
+                // END All FG Adjust
+            }
+            else
+            {
+                // Employee Adjust
+
+                //Check for Update
+                int checkDuplicate = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.Type.Equals("Employee") && x.Remark.Equals(FGEmployeeID)).ToList().Count();
+                if (checkDuplicate > 0)
+                {
+
+                    //Update  TbProductionTransactionAdjust      
+                    var TranFGAdjust = db.TbProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.Remark.Equals(FGEmployeeID) && x.Type.Equals("Employee")).SingleOrDefault();
+                    TranFGAdjust.QTY = FGQTY;
+                    db.SaveChanges();
+
+                    //CountQRCode
+                    decimal sumQRCodeEmp = 0;
+                    string EmployeeIDvar = "";
+
+                    //Check Clockout
+                    var EmpIDtrancheck = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift)).Select(x => x.QRCode).ToList();
+                    var checkClockout = db.TbEmployeeTransaction.Where(x => EmpIDtrancheck.Contains(x.EmployeeID) && x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && x.ClockOut == "").ToList();
+
+                    if (checkClockout.Count() >= 1)
+                    {
+
+                        TempData["AlertMessage"] = "Please Clockout First!";
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+                    }
+
+                    foreach (int item in TransactionID)
+                    {
+                        var QREmp = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.TransactionID.Equals(item)).Select(x => x.QRCode).SingleOrDefault();
+                        EmployeeIDvar = QREmp;
+
+                        int ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp) && x.DataType.Equals("Count")).Count();
+                        sumQRCodeEmp += ProductionTrand;
+
+                    }
+                    if (sumQRCodeEmp == 0)
+                    {
+
+                        ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                        mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                        ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                        TempData["AlertMessage"] = "Adjust fail!";
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+
+                    }
+
+                    decimal inputqty = 0;
+                    inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(EmployeeIDvar) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList().Sum();
+
+                    // Calculate FG/Count for QTYPerQR
+                    decimal QRPerAdjust = 0;
+                    //  QRPerAdjust =  FGQTY / sumQRCodeEmp;
+                    QRPerAdjust = Math.Round(((decimal)FGQTY - inputqty) / sumQRCodeEmp, 8);
+                    string[] note;
+                    if (sumQRCodeEmp != 0)
+                    {
+                        var EmpIDtran = db.View_ProductionTransactionAdjust.Where(x => x.TransactionDate.Equals(Convert.ToDateTime(FGPlanDate)) && PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.TransactionID.Equals(TransactionID[0])).Select(x => x.QRCode).ToList();
+
+                        foreach (string item in EmpIDtran)
+                        {
+                            // Update Table : TbProductionTransaction column QTYPerQR
+                            var ProdUpdate = db.TbProductionTransaction
+                                 .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                                             x.PlantID.Equals(PlantID) &&
+                                             x.LineID.Equals(FGLineID[0].Trim()) &&
+                                             x.SectionID.Equals(FGSectionID[0].Trim()) &&
+                                             x.Prefix.Equals(FGShift) &&
+                                             x.QRCode.Equals(item) &&
+                                             x.DataType.Equals("Count"))
+                                 .ToList();
+
+                            foreach (var transaction in ProdUpdate)
+                            {
+
+
+
+                                note = transaction.Note.Split(":");
+                                if (note.Length > 0)
+                                {
+                                    transaction.Note = "Replace : " + note[1] + "," + transaction.QtyPerQR;
+                                }
+                                else
+                                {
+                                    transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                }
+                                transaction.QtyPerQR = QRPerAdjust;
+                                transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                transaction.UpdateDate = DateTime.Now;
+                            }
+                        }
+                        db.SaveChanges();
+
+
+
+                    }
+                }
+
+                else
+                {
+
+                    //Check Clockout Employee
+                    var checkClockout = db.TbEmployeeTransaction.Where(x => x.EmployeeID.Equals(FGEmployeeID) && x.TransactionDate.Date.Equals(Convert.ToDateTime(FGPlanDate)) && x.ClockOut == "").ToList();
+
+
+                    if (checkClockout.Count() >= 1)
+                    {
+                        mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                        ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+
+                        TempData["AlertMessage"] = "Please Clockout First ,Some Employee in this section not Clock out!";
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+                    }
+
+
+                    //  db.SaveChanges();
+
+
+                    //// Count Employee base on plant, line ,section, productiondate ,prefix
+                    //CountQRCode
+                    int sumQRCodeEmp = 0;
+                    string employeeIDvar = "";
+                    string proid = "";
+                    decimal inputqty = 0;
+                    foreach (int item in TransactionID)
+                    {
+                        // test fang
+                        var QREmp = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionID.Equals(item))
+                             .Select(x => new { x.QRCode, x.TransactionDate, x.ProductID }).SingleOrDefault();
+                        employeeIDvar = QREmp.QRCode;
+                        proid = QREmp.ProductID;
+
+                        startDate = QREmp.TransactionDate;
+                        endDate = QREmp.TransactionDate.AddDays(1);
+
+                        var ProductionTrand = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.ProductID.Equals(proid) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(QREmp.QRCode) && x.DataType.Equals("Count")).ToList();
+
+                        int cntProductionTrand = ProductionTrand.Count();
+                        sumQRCodeEmp += cntProductionTrand;
+
+                        // Table : TbProductionTransactionAdjust  Create
+                        db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust()
+                        {
+                            TransactionDate = Convert.ToDateTime(startDate),
+                            PlantID = PlantID,
+                            LineID = FGLineID[0].Trim(),
+                            SectionID = FGSectionID[0].Trim(),
+
+                            Prefix = FGShift,
+                            Type = "Employee",
+                            Remark = QREmp.QRCode,
+                            QTY = FGQTY,
+                            CreateDate = DateTime.Now,
+                            CreateBy = EmpID
+                        });
+
+
+                        inputqty = db.TbProductionTransaction.Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate && x.PlantID.Equals(PlantID) && x.LineID.Equals(FGLineID[0].Trim()) && x.SectionID.Equals(FGSectionID[0].Trim()) && x.Prefix.Equals(FGShift) && x.QRCode.Equals(employeeIDvar) && x.DataType.Equals("FG")).Select(x => x.Qty).ToList().Sum();
+
+                    }
+                    //Test now //
+                    if (sumQRCodeEmp == 0)
+                    {
+
+                        ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                        mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+                        ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                        TempData["AlertMessage"] = "Adjust fail!";
+                        return View("ProductionTransactionAdjustByEmployee", mymodel);
+
+                    }
+
+                    // Calculate FG/Count for QTYPerQR
+                    decimal QRPerAdjustinsert = Math.Round(((decimal)FGQTY - inputqty) / sumQRCodeEmp, 8);
+                    if (sumQRCodeEmp != 0)
+                    {
+
+                        int datacnt = TransactionID.Count();
+                        for (int i = 0; i < datacnt; ++i)
+                        {
+                            //Test now //
+                            int empid = TransactionID[i];
+                            var EmpIDtran = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionID.Equals(empid)).Select(x => x.QRCode).ToList();
+
+                            foreach (string item in EmpIDtran)
+                            {
+                                // Update Table : TbProductionTransaction column QTYPerQR
+                                var ProdUpdate = db.TbProductionTransaction
+                                     .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                                                 x.PlantID.Equals(PlantID) &&
+                                                 x.LineID.Equals(FGLineID[0].Trim()) &&
+                                                 x.SectionID.Equals(FGSectionID[0].Trim()) &&
+                                                 x.ProductID.Equals(proid) &&
+                                                 x.Prefix.Equals(FGShift) &&
+                                                 x.QRCode.Equals(item) &&
+                                                 x.DataType.Equals("Count"))
+                                     .ToList();
+
+                                foreach (var transaction in ProdUpdate)
+                                {
+                                    transaction.Note = "Replace : " + transaction.QtyPerQR;
+                                    transaction.QtyPerQR = QRPerAdjustinsert;
+                                    transaction.UpdateBy = EmpID; // User.Identity.Name;
+                                    transaction.UpdateDate = DateTime.Now;
+                                }
+                            }
+
+
+                        }
+                        db.SaveChanges();
+
+                    }
+
+
+                }
+                ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
+                mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+
+                TempData["AlertMessage"] = "Adjust susscessful!";
+                return RedirectToAction("ProductionTransactionAdjustByEmployee");
+
+                // END Employee Adjust
+
+            }
+
+        }
+
+
+
+
 
         private const int DAILY_REPORT_CHUNK_DAYS = 7;
         private const int EFFICIENCY_CHUNK_DAYS = 7;
