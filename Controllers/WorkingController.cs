@@ -6444,14 +6444,13 @@ namespace Plims.Controllers
 
 
         }
-
         [HttpPost]
         public async Task<IActionResult> ProductionTransactionAdjustDefectByEmployee(
     DateTime DefectPlanDate,
     string DefectLine,
     string DefectSection,
     string DefectShift,
-    decimal DefectQTY,
+    decimal DefectQTY,string DefectEmployeeID,
     List<int> TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -6462,9 +6461,24 @@ namespace Plims.Controllers
 
             string lineId = DefectLine.Split(":")[0].Trim();
             string sectionId = DefectSection.Split(":")[0].Trim();
+            var mymodel = new ViewModelAll
+            {
+                tbLine = await db.TbLine.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbSection = await db.TbSection.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbShift = await db.TbShift.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbEmployeeMaster = await db.TbEmployeeMaster
+                               .Where(x => x.PlantID == PlantID && x.Status == 1)
+                               .ToListAsync(),
+                view_PermissionMaster = await db.View_PermissionMaster
+                                    .Where(x => x.PlantID == PlantID)
+                                    .ToListAsync(),
 
-            // ✅ ดึงข้อมูลจาก Stored Procedure
-            var adjustResults = await db.ProductionTransactionAdjustResults
+                // ✅ ใส่ default ไม่ให้เป็น null
+                view_ProductionTransactionAdjustlist = new List<ProductionTransactionAdjustResult>()
+            };
+
+            // ✅ ดึงข้อมูลจาก SP
+            var result = await db.ProductionTransactionAdjustResults
                 .FromSqlInterpolated($@"
             EXEC sp_GetProductionTransactionAdjust 
                 @PlantID={PlantID}, 
@@ -6476,53 +6490,37 @@ namespace Plims.Controllers
                 .AsNoTracking()
                 .ToListAsync();
 
-            // โหลด model ที่จำเป็น (ใช้ ToList แค่ที่ต้องใช้จริง ๆ)
-            var mymodel = new ViewModelAll
-            {
-                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                view_ProductionTransactionAdjusts = adjustResults // db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList()
-            };
 
-            // นับจำนวน transaction ว่าเลือกมาครบทุก employee หรือไม่
-            int checkPrdAdjust = db.View_ProductionTransactionAdjust.Count(x =>
-                x.TransactionDate.Date == DefectPlanDate.Date &&
+            mymodel.view_ProductionTransactionAdjustlist  = result;
+            // ✅ เช็คว่าครอบคลุมทุก Transaction หรือไม่
+            int checkPrdAdjust = await db.View_ProductionTransactionAdjust.CountAsync(x =>
+                EF.Functions.DateDiffDay(x.TransactionDate, DefectPlanDate) == 0 &&
                 x.PlantID == PlantID &&
                 x.LineID == lineId &&
                 x.SectionID == sectionId &&
-                x.Prefix == DefectShift);
+                x.Prefix == DefectShift
+            );
 
+            // === CASE 1 : Adjust ทั้งกะ ===
             if (checkPrdAdjust == TransactionID.Count)
             {
-                // === Adjust All ===
-                bool hasDuplicate = db.TbProductionTransactionAdjust.Any(x =>
-                    x.TransactionDate.Date == DefectPlanDate.Date &&
+                var tran = await db.TbProductionTransactionAdjust.FirstOrDefaultAsync(x =>
+                    EF.Functions.DateDiffDay(x.TransactionDate, DefectPlanDate) == 0 &&
                     x.PlantID == PlantID &&
                     x.LineID == lineId &&
                     x.SectionID == sectionId &&
                     x.Prefix == DefectShift &&
                     x.Type == "Defect" &&
-                    x.Remark == "");
+                    x.Remark == ""
+                );
 
-                if (hasDuplicate)
+                if (tran != null)
                 {
-                    var tran = db.TbProductionTransactionAdjust.FirstOrDefault(x =>
-                        x.TransactionDate.Date == DefectPlanDate.Date &&
-                        x.PlantID == PlantID &&
-                        x.LineID == lineId &&
-                        x.SectionID == sectionId &&
-                        x.Prefix == DefectShift &&
-                        x.Type == "Defect" &&
-                        x.Remark == "");
-                    if (tran != null)
-                        tran.QTY = DefectQTY;
+                    tran.QTY = DefectQTY;
                 }
                 else
                 {
-                    db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust
+                    await db.TbProductionTransactionAdjust.AddAsync(new TbProductionTransactionAdjust
                     {
                         TransactionDate = DefectPlanDate,
                         PlantID = PlantID,
@@ -6536,34 +6534,41 @@ namespace Plims.Controllers
                         CreateBy = EmpID
                     });
                 }
-                db.SaveChanges();
             }
+            // === CASE 2 : Adjust ราย Employee ===
             else
             {
-                // === Adjust per Employee ===
-                var selectedEmployees = mymodel.view_ProductionTransactionAdjust
+                // ✅ ดึงข้อมูลเฉพาะ Transaction ที่เลือก
+                var selectedTransactions = result
                     .Where(x => TransactionID.Contains((int)x.TransactionID))
-                    .Select(x => x.QRCode)
+                    .Select(x => new { x.TransactionID, x.QRCode, QTY = x.CountQty ?? 0 })
                     .ToList();
 
-                foreach (var empNo in selectedEmployees)
+                decimal totalQTY = selectedTransactions.Sum(x => x.QTY);
+                decimal ratio = totalQTY > 0 ? DefectQTY / totalQTY : 0;
+
+                foreach (var t in selectedTransactions)
                 {
-                    var tran = db.TbProductionTransactionAdjust.FirstOrDefault(x =>
-                        x.TransactionDate.Date == DefectPlanDate.Date &&
+                    decimal employeeDefectQTY = t.QTY * ratio;
+                    string empNo = t.QRCode;
+
+                    var tran = await db.TbProductionTransactionAdjust.FirstOrDefaultAsync(x =>
+                        EF.Functions.DateDiffDay(x.TransactionDate, DefectPlanDate) == 0 &&
                         x.PlantID == PlantID &&
                         x.LineID == lineId &&
                         x.SectionID == sectionId &&
                         x.Prefix == DefectShift &&
                         x.Type == "Defect" &&
-                        x.Remark == empNo);
+                        x.Remark == DefectEmployeeID
+                    );
 
                     if (tran != null)
                     {
-                        tran.QTY = DefectQTY;
+                        tran.QTY = employeeDefectQTY;
                     }
                     else
                     {
-                        db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust
+                        await db.TbProductionTransactionAdjust.AddAsync(new TbProductionTransactionAdjust
                         {
                             TransactionDate = DefectPlanDate,
                             PlantID = PlantID,
@@ -6571,32 +6576,206 @@ namespace Plims.Controllers
                             SectionID = sectionId,
                             Prefix = DefectShift,
                             Type = "Defect",
-                            QTY = DefectQTY,
-                            Remark = empNo,
+                            QTY = employeeDefectQTY,
+                            Remark = DefectEmployeeID,
                             CreateDate = DateTime.Now,
                             CreateBy = EmpID
                         });
                     }
                 }
-                db.SaveChanges();
             }
 
-            // ✅ เตรียม View Model คืน
+            // ✅ SaveChanges แค่ครั้งเดียว
+            await db.SaveChangesAsync();
+
+            // เตรียม ViewBag และ Model คืน
             ViewBag.VBRoleProducttionTransactionAjust =
                 mymodel.view_PermissionMaster
                        .Where(x => x.UserEmpID == EmpID && x.PageID == 33)
                        .Select(x => x.RoleAction)
                        .FirstOrDefault();
 
-            mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust
-                .Where(x => x.TransactionDate.Date == DateTime.Today)
-                .ToList();
+            // ✅ reload เฉพาะของวันนี้จาก SP อีกครั้ง
+            mymodel.view_ProductionTransactionAdjustlist = await db.ProductionTransactionAdjustResults
+                .FromSqlInterpolated($@"
+            EXEC sp_GetProductionTransactionAdjust 
+                @PlantID={PlantID}, 
+                @StartDate={DateTime.Today}, 
+                @LineID={DBNull.Value}, 
+                @SectionID={DBNull.Value}, 
+                @Prefix={DBNull.Value}, 
+                @QRCode={DBNull.Value}")
+                .AsNoTracking()
+                .ToListAsync();
+
+           
 
             ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
 
             return View("ProductionTransactionAdjustByEmployee", mymodel);
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> ProductionTransactionAdjustDefectByEmployee_test(
+       DateTime DefectPlanDate,
+       string DefectLine,
+       string DefectSection,
+       string DefectShift,
+       decimal DefectQTY,
+       List<int> TransactionID)
+        {
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+
+            if (string.IsNullOrEmpty(EmpID))
+                return RedirectToAction("Login", "Home");
+
+            string lineId = DefectLine.Split(":")[0].Trim();
+            string sectionId = DefectSection.Split(":")[0].Trim();
+            string prefix = "";
+            string qrCode = "";
+
+            var result = await db.ProductionTransactionAdjustResults
+               .FromSqlInterpolated($@"
+            EXEC sp_GetProductionTransactionAdjust 
+                @PlantID={PlantID}, 
+                @StartDate={DefectPlanDate}, 
+                @LineID={(string.IsNullOrEmpty(DefectLine) ? (object)DBNull.Value : DefectLine)}, 
+                @SectionID={(string.IsNullOrEmpty(DefectSection) ? (object)DBNull.Value : DefectSection)}, 
+                @Prefix={(string.IsNullOrEmpty(prefix) ? (object)DBNull.Value : prefix)}, 
+                @QRCode={(string.IsNullOrEmpty(qrCode) ? (object)DBNull.Value : qrCode)}")
+               .AsNoTracking()
+               .ToListAsync();
+
+            // ✅ โหลดข้อมูลที่จำเป็น
+            var mymodel = new ViewModelAll
+            {
+                tbLine = await db.TbLine.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbSection = await db.TbSection.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbShift = await db.TbShift.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbEmployeeMaster = await db.TbEmployeeMaster
+                                           .Where(x => x.PlantID == PlantID && x.Status == 1)
+                                           .ToListAsync(),
+                view_PermissionMaster = await db.View_PermissionMaster
+                                                .Where(x => x.PlantID == PlantID)
+                                                .ToListAsync(),
+                                                view_ProductionTransactionAdjusts = result
+
+            };
+
+            // ✅ เช็คว่าครอบคลุมทุก Transaction หรือไม่
+            int checkPrdAdjust = await db.TbProductionTransaction.CountAsync(x =>
+                EF.Functions.DateDiffDay(x.TransactionDate, DefectPlanDate) == 0 &&
+                x.PlantID == PlantID &&
+                x.LineID == lineId &&
+                x.SectionID == sectionId &&
+                x.Prefix == DefectShift
+            );
+
+            // === CASE 1 : Adjust ทั้งกะ ===
+            if (checkPrdAdjust == TransactionID.Count)
+            {
+                var tran = await db.TbProductionTransactionAdjust.FirstOrDefaultAsync(x =>
+                    EF.Functions.DateDiffDay(x.TransactionDate, DefectPlanDate) == 0 &&
+                    x.PlantID == PlantID &&
+                    x.LineID == lineId &&
+                    x.SectionID == sectionId &&
+                    x.Prefix == DefectShift &&
+                    x.Type == "Defect" &&
+                    x.Remark == ""
+                );
+
+                if (tran != null)
+                {
+                    tran.QTY = DefectQTY;
+                }
+                else
+                {
+                    await db.TbProductionTransactionAdjust.AddAsync(new TbProductionTransactionAdjust
+                    {
+                        TransactionDate = DefectPlanDate,
+                        PlantID = PlantID,
+                        LineID = lineId,
+                        SectionID = sectionId,
+                        Prefix = DefectShift,
+                        Type = "Defect",
+                        QTY = DefectQTY,
+                        Remark = "",
+                        CreateDate = DateTime.Now,
+                        CreateBy = EmpID
+                    });
+                }
+            }
+            // === CASE 2 : Adjust ราย Employee ===
+            else
+            {
+                // ✅ ดึงข้อมูลเฉพาะ Transaction ที่เลือก
+                var selectedTransactions = await db.ProductionTransactionAdjustResults
+                    .Where(x => TransactionID.Contains((int)x.TransactionID))
+                    .Select(x => new { x.TransactionID, x.QRCode, QTY = x.CountQty })
+                    .ToListAsync();
+
+                decimal totalQTY = selectedTransactions.Sum(x => x.QTY ?? 0);
+                decimal ratio = totalQTY > 0 ? DefectQTY / totalQTY : 0;
+
+                foreach (var t in selectedTransactions)
+                {
+                    decimal employeeDefectQTY = (t.QTY ?? 0) * ratio;
+                    string empNo = t.QRCode;
+
+                    var tran = await db.TbProductionTransactionAdjust.FirstOrDefaultAsync(x =>
+                        EF.Functions.DateDiffDay(x.TransactionDate, DefectPlanDate) == 0 &&
+                        x.PlantID == PlantID &&
+                        x.LineID == lineId &&
+                        x.SectionID == sectionId &&
+                        x.Prefix == DefectShift &&
+                        x.Type == "Defect" &&
+                        x.Remark == empNo
+                    );
+
+                    if (tran != null)
+                    {
+                        tran.QTY = employeeDefectQTY;
+                    }
+                    else
+                    {
+                        await db.TbProductionTransactionAdjust.AddAsync(new TbProductionTransactionAdjust
+                        {
+                            TransactionDate = DefectPlanDate,
+                            PlantID = PlantID,
+                            LineID = lineId,
+                            SectionID = sectionId,
+                            Prefix = DefectShift,
+                            Type = "Defect",
+                            QTY = employeeDefectQTY,
+                            Remark = empNo,
+                            CreateDate = DateTime.Now,
+                            CreateBy = EmpID
+                        });
+                    }
+                }
+            }
+
+            // ✅ SaveChanges แค่ครั้งเดียว
+            await db.SaveChangesAsync();
+
+            // เตรียม ViewBag และ Model คืน
+            ViewBag.VBRoleProducttionTransactionAjust =
+                mymodel.view_PermissionMaster
+                       .Where(x => x.UserEmpID == EmpID && x.PageID == 33)
+                       .Select(x => x.RoleAction)
+                       .FirstOrDefault();
+
+
+            mymodel.view_ProductionTransactionAdjust = await db.View_ProductionTransactionAdjust
+       .Where(x => EF.Functions.DateDiffDay(x.TransactionDate, DateTime.Today) == 0)
+       .ToListAsync();
+
+            ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+
+            return View("ProductionTransactionAdjustByEmployee", mymodel);
+        }
 
         [HttpGet]
         public async Task<IActionResult> ProductionTransactionAdjustByEmployee(
@@ -6639,7 +6818,7 @@ namespace Plims.Controllers
                 tbShift = await db.TbShift.Where(x => x.PlantID == plantId).ToListAsync(),
                 tbEmployeeMaster = await db.TbEmployeeMaster.Where(x => x.PlantID == plantId).ToListAsync(),
                 view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == plantId).ToList(),
-                view_ProductionTransactionAdjusts = result  // ⭐ ใส่ list ของ SP ลงไป
+                view_ProductionTransactionAdjustlist = result  // ⭐ ใส่ list ของ SP ลงไป
             };
             ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == empId && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
 

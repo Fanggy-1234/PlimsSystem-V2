@@ -85,6 +85,7 @@ namespace Plims.ViewModel
         public IEnumerable<View_EmployeeClockTimeTest> view_EmployeeClockTimeTest { get; set; }
 
         public IEnumerable<View_ProductionTransactionAdjust> view_ProductionTransactionAdjust { get; set; }
+        public List<ProductionTransactionAdjustResult> view_ProductionTransactionAdjustlist { get; set; }
 
         public IEnumerable<TbProductionTransactionAdjust> tbProductionTransactionAdjust { get; set; }
 
@@ -95,6 +96,7 @@ namespace Plims.ViewModel
 
         public  IEnumerable<ProductionTransactionAdjustResult> ProductionTransactionAdjustResults { get; set; }
         public List<ProductionTransactionAdjustResult> view_ProductionTransactionAdjusts { get; set; }
+       
         public List<ViewModelAll> Permissions { get; set; }
         public string PageName { get; set; }
         public string PermissionValue { get; set; }
