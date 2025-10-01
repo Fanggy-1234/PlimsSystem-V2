@@ -6930,6 +6930,201 @@ namespace Plims.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> ProductionTransactionAdjustFGByEmployee(
+       DateTime FGPlanDate,
+       string FGEmployeeID,
+       string FGLine,
+       string FGSection,
+       string FGShift,
+       decimal FGQTY,
+       List<int> TransactionID)
+        {
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+
+            if (string.IsNullOrEmpty(EmpID))
+                return RedirectToAction("Login", "Home");
+
+            string lineId = FGLine.Split(":")[0].Trim();
+            string sectionId = FGSection.Split(":")[0].Trim();
+            DateTime startDate = FGPlanDate.Date;
+            DateTime endDate = startDate.AddDays(1);
+
+            // ✅ ตรวจสอบจำนวน Transaction (ว่าปรับทั้งกะหรือรายพนักงาน)
+            int checkPrdAdjust = await db.View_ProductionTransactionAdjust.CountAsync(x =>
+                x.TransactionDate.Date == FGPlanDate &&
+                x.PlantID == PlantID &&
+                x.LineID == lineId &&
+                x.SectionID == sectionId &&
+                x.Prefix == FGShift);
+
+            // ---------------- CASE 1 : Adjust ทั้งกะ ----------------
+            if (checkPrdAdjust == TransactionID.Count)
+            {
+                var tranAdjust = await db.TbProductionTransactionAdjust.FirstOrDefaultAsync(x =>
+                    x.TransactionDate.Date == FGPlanDate &&
+                    x.PlantID == PlantID &&
+                    x.LineID == lineId &&
+                    x.SectionID == sectionId &&
+                    x.Prefix == FGShift &&
+                    x.Type == "FG");
+
+                if (tranAdjust != null)
+                {
+                    tranAdjust.QTY = FGQTY;
+                    //tranAdjust.UpdateBy = EmpID;
+                   // tranAdjust.UpdateDate = DateTime.Now;
+                }
+                else
+                {
+                    await db.TbProductionTransactionAdjust.AddAsync(new TbProductionTransactionAdjust
+                    {
+                        TransactionDate = FGPlanDate,
+                        PlantID = PlantID,
+                        LineID = lineId,
+                        SectionID = sectionId,
+                        Prefix = FGShift,
+                        Type = "FG",
+                        Remark = "",
+                        QTY = FGQTY,
+                        CreateDate = DateTime.Now,
+                        CreateBy = EmpID
+                    });
+                }
+
+                // ✅ คำนวณ QRPerAdjust
+                decimal productionCount = await db.TbProductionTransaction
+                    .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate
+                             && x.PlantID == PlantID && x.LineID == lineId
+                             && x.SectionID == sectionId && x.Prefix == FGShift
+                             && x.DataType == "Count")
+                    .SumAsync(x => (decimal?)x.Qty) ?? 0;
+
+                decimal inputQty = await db.TbProductionTransaction
+                    .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate
+                             && x.PlantID == PlantID && x.LineID == lineId
+                             && x.SectionID == sectionId && x.Prefix == FGShift
+                             && x.DataType == "FG")
+                    .SumAsync(x => (decimal?)x.Qty) ?? 0;
+
+                decimal QRPerAdjust;
+                if (productionCount == 0)
+                {
+                    int fgCount = await db.TbProductionTransaction.CountAsync(x =>
+                        x.TransactionDate >= startDate && x.TransactionDate < endDate
+                        && x.LineID == lineId && x.SectionID == sectionId
+                        && x.Prefix == FGShift && x.DataType == "FG");
+
+                    QRPerAdjust = fgCount == 0 ? 0 : FGQTY / fgCount;
+                }
+                else
+                {
+                    QRPerAdjust = (FGQTY - inputQty) / productionCount;
+                }
+
+                var prodList = await db.TbProductionTransaction
+                    .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate
+                             && x.PlantID == PlantID && x.LineID == lineId
+                             && x.SectionID == sectionId && x.Prefix == FGShift
+                             && x.DataType == (productionCount == 0 ? "FG" : "Count"))
+                    .ToListAsync();
+
+                foreach (var p in prodList)
+                {
+                    p.QtyPerQR = QRPerAdjust;
+                    p.Note = $"Replace : {QRPerAdjust}";
+                    p.UpdateBy = EmpID;
+                    p.UpdateDate = DateTime.Now;
+                }
+            }
+            // ---------------- CASE 2 : Adjust เฉพาะ Employee ----------------
+            else
+            {
+                // ✅ ดึง QRCode จาก TransactionID ทีเดียว
+                var empQRCodes = await db.View_ProductionTransactionAdjust
+                    .Where(x => TransactionID.Contains((int)x.TransactionID))
+                    .Select(x => x.QRCode)
+                    .Distinct()
+                    .ToListAsync();
+
+                foreach (var empQRCode in empQRCodes)
+                {
+                    var tranAdjust = await db.TbProductionTransactionAdjust.FirstOrDefaultAsync(x =>
+                        x.TransactionDate.Date == FGPlanDate &&
+                        x.PlantID == PlantID &&
+                        x.LineID == lineId &&
+                        x.SectionID == sectionId &&
+                        x.Prefix == FGShift &&
+                        x.Type == "Employee" &&
+                        x.Remark == FGEmployeeID);
+
+                    if (tranAdjust != null)
+                    {
+                        tranAdjust.QTY = FGQTY;
+                        //tranAdjust.UpdateBy = EmpID;
+                      //  tranAdjust.UpdateDate = DateTime.Now;
+                    }
+                    else
+                    {
+                        await db.TbProductionTransactionAdjust.AddAsync(new TbProductionTransactionAdjust
+                        {
+                            TransactionDate = FGPlanDate,
+                            PlantID = PlantID,
+                            LineID = lineId,
+                            SectionID = sectionId,
+                            Prefix = FGShift,
+                            Type = "Employee",
+                            Remark = FGEmployeeID,
+                            QTY = FGQTY,
+                            CreateDate = DateTime.Now,
+                            CreateBy = EmpID
+                        });
+                    }
+
+                    // ✅ คำนวณ QRPerAdjust ต่อ Employee
+                    decimal sumQRCodeEmp = await db.TbProductionTransaction.CountAsync(x =>
+                        x.TransactionDate >= startDate && x.TransactionDate < endDate
+                        && x.PlantID == PlantID && x.LineID == lineId
+                        && x.SectionID == sectionId && x.Prefix == FGShift
+                        && x.QRCode == empQRCode && x.DataType == "Count");
+
+                    if (sumQRCodeEmp > 0)
+                    {
+                        decimal inputQtyEmp = await db.TbProductionTransaction
+                            .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate
+                                     && x.PlantID == PlantID && x.LineID == lineId
+                                     && x.SectionID == sectionId && x.Prefix == FGShift
+                                     && x.QRCode == FGEmployeeID && x.DataType == "FG")
+                            .SumAsync(x => (decimal?)x.Qty) ?? 0;
+
+                        decimal QRPerAdjustEmp = (FGQTY - inputQtyEmp) / sumQRCodeEmp;
+
+                        var prodList = await db.TbProductionTransaction
+                            .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate
+                                     && x.PlantID == PlantID && x.LineID == lineId
+                                     && x.SectionID == sectionId && x.Prefix == FGShift
+                                     && x.QRCode == FGEmployeeID && x.DataType == "Count")
+                            .ToListAsync();
+
+                        foreach (var p in prodList)
+                        {
+                            p.QtyPerQR = QRPerAdjustEmp;
+                            p.Note = $"Replace : {QRPerAdjustEmp}";
+                            p.UpdateBy = EmpID;
+                            p.UpdateDate = DateTime.Now;
+                        }
+                    }
+                }
+            }
+
+            // ✅ SaveChanges แค่ครั้งเดียว
+            await db.SaveChangesAsync();
+
+            TempData["AlertMessage"] = "Adjust successful!";
+            return RedirectToAction("ProductionTransactionAdjustByEmployee");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> ProductionTransactionAdjustFGByEmployee_test(
       DateTime FGPlanDate,
       string FGEmployeeID,

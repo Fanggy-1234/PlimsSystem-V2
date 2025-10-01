@@ -271,7 +271,9 @@
                     data-shift="@item.Prefix">
 
                     <td>
-                        <input type="checkbox" value="@item.TransactionID" class="checkthis" name="TransactionID" />
+                        <input type="checkbox" value="@item.TransactionID" class="checkthis" name="TransactionID" id="TransactionID" />
+
+                       @*  <input type="checkbox" value="@item.TransactionID" class="checkthis" name="TransactionID" /> *@
                     </td>
                     <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td> @* ใช้แสดงแบบสวยๆ *@
                     <td>@item.PlantName</td>
@@ -297,8 +299,6 @@
     </div>
 
 </form>
-
-
 
 
 
@@ -561,6 +561,13 @@
         var modalForm = document.getElementById('modalForm');
         adjustButton.disabled = true;
         adjustButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+        // เคลียร์ hidden inputs เก่าออกก่อน
+        var oldInputs = modalForm.querySelectorAll('input[name="TransactionID"]');
+        oldInputs.forEach(function (input) {
+            input.remove();
+        });
+
+        // เพิ่มใหม่
         selectedCheckboxes.forEach(function (checkbox) {
             var hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
@@ -800,6 +807,14 @@
         var modalForm = document.getElementById('modalFormdefect');
         defectAdjustButton.disabled = true;
         defectAdjustButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+        
+        // เคลียร์ hidden inputs เก่าออกก่อน
+        var oldInputs = modalForm.querySelectorAll('input[name="TransactionID"]');
+        oldInputs.forEach(function (input) {
+            input.remove();
+        });
+
+        // เพิ่มใหม่
         selectedCheckboxes.forEach(function (checkbox) {
             var hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
@@ -807,6 +822,14 @@
             hiddenInput.value = checkbox.value;
             modalForm.appendChild(hiddenInput);
         });
+       
+        // selectedCheckboxes.forEach(function (checkbox) {
+        //     var hiddenInput = document.createElement('input');
+        //     hiddenInput.type = 'hidden';
+        //     hiddenInput.name = 'TransactionID';
+        //     hiddenInput.value = checkbox.value;
+        //     modalForm.appendChild(hiddenInput);
+        // });
         
         // modalForm.submit();
         // location.reload();
