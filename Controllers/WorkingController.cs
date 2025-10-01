@@ -6930,7 +6930,7 @@ namespace Plims.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ProductionTransactionAdjustFGByEmployee(
+        public async Task<IActionResult> ProductionTransactionAdjustFGByEmployee_test(
       DateTime FGPlanDate,
       string FGEmployeeID,
       string FGLine,
