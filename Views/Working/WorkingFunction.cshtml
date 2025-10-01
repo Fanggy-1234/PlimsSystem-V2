@@ -200,7 +200,7 @@
                 <div class="col-9">
                     <select class="selectfillter form-select" style="border-color:black; border-radius:0; font-size:22px; width:100%; height:100%" name="productId" id="ProductID">
                         <option value="" default selected></option>
-                        @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
+                        @foreach (var item in Model.tbProduct.OrderBy(x=>x.ProductID).Where(x => x.Status.Equals(1)))
                         {
                             <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
                                 @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
@@ -274,7 +274,7 @@
                         <label class="FillterLabel">Product ID:</label>
                         <select class="selectfillter form-control" style="width:100%"  name="productId" id="ProductIDFG" onchange="filterSectionsByProductEditFG()">
                             <option value="" default selected>Select Value ...</option>
-                            @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
+                        @foreach (var item in Model.tbProduct.OrderBy(x => x.ProductID).Where(x => x.Status.Equals(1)))
                             {
                                 <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
                                     @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
@@ -331,7 +331,7 @@
                         <label class="FillterLabel">Product ID:</label>
                         <select class="selectfillter form-control" style="width:100%" list="ProductID" name="productId" id="ProductIDDefect" onchange="filterSectionsByProductEditDefect()">
                             <option value="" default selected>Select Value ...</option>
-                            @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
+                        @foreach (var item in Model.tbProduct.OrderBy(x => x.ProductID).Where(x => x.Status.Equals(1)))
                             {
                                 <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
                                     @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
@@ -402,7 +402,7 @@
                         <label class="FillterLabel">Product ID:</label>
                         <select class="selectfillter form-control" style="width:100%" list="ProductID" name="productId" id="ProductIDMinus">
                             <option value="" default selected>Select Value ...</option>
-                            @foreach (var item in Model.tbProduct.Where(x => x.Status.Equals(1)))
+                            @foreach (var item in Model.tbProduct.OrderBy(x => x.ProductID).Where(x => x.Status.Equals(1)))
                             {
 
                                 <option value="@item.ProductID" selected="@(item.ProductID == ViewBag.SelectedProductID ? "selected" : null)">
@@ -476,7 +476,7 @@
         $('#ProductID').data('original-value', initialVal);
 
         var typingTimer;                // Timer identifier
-        var doneTypingInterval = 50;   
+        var doneTypingInterval = 500;   
 
         // Listen for input changes to handle typing or pasting
         $('#EmployeeID').on('input', function () {
@@ -485,20 +485,14 @@
         });
 
 
-
-        // // Listen for input changes to handle typing or pasting
-        // $('#EmployeeID').on('input', function () {
-        //     processInput(); // Trigger AJAX request
+        // // Listen for 'keypress' to handle "Enter" or "Tab"
+        // $('#EmployeeID').on('keyup', function (event) {
+        //     var key = event.which || event.keyCode;
+        //     if (key === 13 || key === 9 || key === 7) { // 13 for "Enter", 9 for "Tab"
+        //         event.preventDefault();
+        //         processInput(); // Trigger AJAX request
+        //     }
         // });
-
-        // Listen for 'keypress' to handle "Enter" or "Tab"
-        $('#EmployeeID').on('keyup', function (event) {
-            var key = event.which || event.keyCode;
-            if (key === 13 || key === 9 || key === 7) { // 13 for "Enter", 9 for "Tab"
-                event.preventDefault();
-                processInput(); // Trigger AJAX request
-            }
-        });
 
         //select able to search when modal shown
         $('#DefectModal').on('shown.bs.modal', function () {

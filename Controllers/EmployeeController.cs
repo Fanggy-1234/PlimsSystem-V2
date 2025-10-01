@@ -335,7 +335,7 @@ namespace Plims.Controllers
             else
             {
                 // Default = Today
-                ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                //ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
                 baseQuery = baseQuery.Where(p => p.TransactionDate.Date == DateTime.Today || p.TransactionDate.Date == DateTime.MinValue);
             }
 

@@ -93,8 +93,8 @@ namespace Plims.ViewModel
 
         public IEnumerable<TbRateTransaction> tbRateTransaction { get; set; }
 
-
-
+        public  IEnumerable<ProductionTransactionAdjustResult> ProductionTransactionAdjustResults { get; set; }
+        public List<ProductionTransactionAdjustResult> view_ProductionTransactionAdjusts { get; set; }
         public List<ViewModelAll> Permissions { get; set; }
         public string PageName { get; set; }
         public string PermissionValue { get; set; }

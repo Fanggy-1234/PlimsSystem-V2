@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Microsoft.Data.SqlClient;
 using Polly;
 using Polly.Retry;
+using ClosedXML.Excel;
 
 namespace Plims.Controllers
 {
@@ -24,7 +25,7 @@ namespace Plims.Controllers
         public WorkingController(AppDbContext _db)
         {
             db = _db;
-            db.Database.SetCommandTimeout(180);
+          //  db.Database.SetCommandTimeout(180);
         }
         public IActionResult Index()
         {
@@ -902,7 +903,63 @@ namespace Plims.Controllers
         }
 
         [HttpPost]
-        public ActionResult ImportManualExport()
+        public IActionResult ImportManualExport_original_1()
+        {
+            int plantId = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string empId = HttpContext.Session.GetString("UserEmpID");
+
+            if (string.IsNullOrEmpty(empId))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var extrans = db.TbProductionTransaction
+                .Where(x => x.PlantID == plantId)
+                .OrderByDescending(x => x.TransactionNo)
+                .FirstOrDefault();
+
+            if (extrans == null)
+            {
+                // fallback sample row if no data exists
+                return BadRequest("No transaction data found for this PlantID.");
+            }
+
+            using var ep = new ExcelPackage();
+            ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("ImportManualData");
+
+            // headers
+            string[] headers = { "TransactionDate", "PlantID", "LineID", "SectionID",
+                         "ProductID", "Prefix", "QRCode", "Qty", "QtyPerQR",
+                         "EmployeeRef", "DataType", "Reason", "GroupRef", "Note" };
+
+            for (int i = 0; i < headers.Length; i++)
+                sheet.Cells[1, i + 1].Value = headers[i];
+
+            int row = 2;
+            sheet.Cells[row, 1].Value = "yyyy-MM-dd";
+            sheet.Cells[row, 2].Value = plantId;
+            sheet.Cells[row, 3].Value = extrans.LineID ?? "";
+            sheet.Cells[row, 4].Value = extrans.SectionID ?? "";
+            sheet.Cells[row, 5].Value = extrans.ProductID ?? "";
+            sheet.Cells[row, 6].Value = extrans.Prefix ?? "";
+            sheet.Cells[row, 7].Value = extrans.QRCode ?? "";
+            sheet.Cells[row, 8].Value = 1;
+            sheet.Cells[row, 9].Value = 50;
+            sheet.Cells[row, 10].Value = "";
+            sheet.Cells[row, 11].Value = "Count";
+            // etc … fill the rest as needed
+
+            sheet.Cells["A:AZ"].AutoFitColumns();
+
+            var fileBytes = ep.GetAsByteArray();
+            return File(fileBytes,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "ImportManualData.xlsx");
+        }
+
+
+        [HttpPost]
+        public ActionResult ImportManualExport_original()
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -911,8 +968,14 @@ namespace Plims.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
+            var mymodel = new ViewModelAll
+            {
+                tbProductionTransaction = db.TbProductionTransaction.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+            };
 
-            var extrans = db.TbProductionTransaction.Where(x => x.PlantID.Equals(PlantID)).OrderByDescending(x => x.TransactionNo).FirstOrDefault();
+            var extrans =  mymodel.tbProductionTransaction.OrderByDescending(x => x.TransactionNo).FirstOrDefault();
+            //   var extrans = db.TbProductionTransaction.Where(x => x.PlantID == PlantID && x.TransactionDate.Date== DateTime.Today.AddDays(-1)).OrderByDescending(x => x.TransactionNo).FirstOrDefault();
+
 
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("ImportManualData");
@@ -1048,6 +1111,62 @@ namespace Plims.Controllers
 
             return RedirectToAction("ImportManualData");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ImportManualExport()
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            if (string.IsNullOrEmpty(EmpID))
+                return RedirectToAction("Login", "Home");
+
+            var extrans = db.View_DailyReportSummary
+                .FromSqlInterpolated($"EXEC sp_GetLastTransactionByPlant @PlantID={PlantID}")
+                .AsEnumerable() // ✅ ตัด compose ออกไปทำบน client
+                .FirstOrDefault();
+
+
+            if (extrans == null)
+                return NotFound("ไม่พบ Transaction");
+
+
+          
+
+            using var Ep = new ExcelPackage();
+            var Sheet = Ep.Workbook.Worksheets.Add("ImportManualData");
+
+            // ✅ Header
+            string[] headers = { "TransactionDate","PlantID","LineID","SectionID",
+                         "ProductID","Prefix","QRCode","Qty","QtyPerQR",
+                         "EmployeeRef","DataType","Reason","GroupRef","Note" };
+
+            for (int i = 0; i < headers.Length; i++)
+                Sheet.Cells[1, i + 1].Value = headers[i];
+
+            // ✅ เตรียม row ตัวอย่าง
+            var rows = new List<object[]>
+    {
+        new object[] { "yyyy-MM-dd", PlantID, extrans.LineID, extrans.SectionID, extrans.ProductID, extrans.Prefix, extrans.QRCode, 1,    50, "", "Count", "", "", "" },
+        new object[] { "yyyy-MM-dd", PlantID, extrans.LineID, extrans.SectionID, extrans.ProductID, extrans.Prefix, extrans.QRCode, 1000, 1, "", "FG",    "", "", "" },
+        new object[] { "yyyy-MM-dd", PlantID, extrans.LineID, extrans.SectionID, extrans.ProductID, extrans.Prefix, "xxxxxxx",      50,   1, "", "Defect","00001","", "" },
+        new object[] { "yyyy-MM-dd", PlantID, extrans.LineID, extrans.SectionID, extrans.ProductID, extrans.Prefix, extrans.QRCode, 50,   1, "", "Defect","00001","", "" },
+        new object[] { "yyyy-MM-dd", PlantID, extrans.LineID, extrans.SectionID, extrans.ProductID, extrans.Prefix, extrans.QRCode, 1,    50, "", "Count", "", "GroupID","" }
+    };
+
+            // ✅ เขียน row ลง Excel
+            for (int r = 0; r < rows.Count; r++)
+                for (int c = 0; c < rows[r].Length; c++)
+                    Sheet.Cells[r + 2, c + 1].Value = rows[r][c];
+
+            Sheet.Cells["A:AZ"].AutoFitColumns();
+
+            var fileBytes = await Ep.GetAsByteArrayAsync();
+            return File(fileBytes,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "ImportManualData.xlsx");
+        }
+
 
         [HttpPost]
         public IActionResult ImportManualUpload(IFormFile FileUpload)
@@ -1414,28 +1533,356 @@ namespace Plims.Controllers
 
 
 
+
         private async Task<List<View_DailyReportSummary>> GetDailyReportDataAsync(
-    int plantId, string employeeId, DateTime startDate, DateTime endDate,
-    string lineId, string sectionId, string prefix)
+            int plantId, string employeeId, DateTime startDate, DateTime endDate,
+            string lineId, string sectionId, string prefix,
+            CancellationToken ct = default)
         {
-            return await db.View_DailyReportSummary
-                .FromSqlInterpolated($@"
-            EXEC sp_GetDailyReport 
-                @PlantID={plantId},
-                @EmployeeID={(string.IsNullOrEmpty(employeeId) ? (object)DBNull.Value : employeeId)},
-                @StartDate={(startDate == DateTime.MinValue ? (object)DBNull.Value : startDate)},
-                @EndDate={(endDate == DateTime.MinValue ? (object)DBNull.Value : endDate)},
-                @LineID={(string.IsNullOrEmpty(lineId) ? (object)DBNull.Value : lineId)},
-                @SectionID={(string.IsNullOrEmpty(sectionId) ? (object)DBNull.Value : sectionId)},
-                @Prefix={(string.IsNullOrEmpty(prefix) ? (object)DBNull.Value : prefix)}
-        ")
-                .AsNoTracking()
-                .ToListAsync();
+            var chunks = BuildDateChunks(startDate, endDate, DAILY_REPORT_CHUNK_DAYS);
+
+            var prevTimeout = db.Database.GetCommandTimeout();
+            db.Database.SetCommandTimeout(TimeSpan.FromSeconds(180));
+
+            try
+            {
+                var buffer = new List<View_DailyReportSummary>(capacity: 4096);
+                foreach (var (cs, ce) in chunks)
+                {
+                    var list = await BuildDailyReportQuery(cs, ce, plantId, employeeId, lineId, sectionId, prefix)
+                        .ToListAsync(ct);
+                    if (list.Count > 0) buffer.AddRange(list);
+                }
+
+                var dedup = buffer
+                    .GroupBy(x => new { x.TransactionDate, x.PlantID, x.LineID, x.SectionID, x.ProductID, x.QRCode, x.Prefix })
+                    .Select(g => g.First())
+                    .OrderBy(x => x.TransactionDate).ThenBy(x => x.LineID).ThenBy(x => x.SectionID).ThenBy(x => x.ProductID).ThenBy(x => x.QRCode)
+                    .ToList();
+
+                return dedup;
+            }
+            finally
+            {
+                db.Database.SetCommandTimeout(prevTimeout);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DailyReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, string SectionID, string Prefix)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            // Check if user is logged in
+            if (string.IsNullOrEmpty(EmpID))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // var view_DailyReportSummary = new List<View_DailyReportSummary>();
+            List<View_DailyReportSummary> view_DailyReportSummary = new List<View_DailyReportSummary>();
+
+            if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionID) || !string.IsNullOrEmpty(Prefix) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
+            {
+                try
+                {
+                    view_DailyReportSummary = await GetDailyReportDataAsync(
+                            PlantID, EmployeeID, StartDate, EndDate, LineID, SectionID, Prefix);
+                }
+                catch
+                {
+                    view_DailyReportSummary = new List<View_DailyReportSummary>();
+                    TempData["AlertMessage"] = "Working function is currently in use. Please try again later.";
+                }
+
+                if (!string.IsNullOrEmpty(EmployeeID)) ViewBag.SelectedEmpID = EmployeeID;
+                if (!string.IsNullOrEmpty(LineID)) ViewBag.SelectedLineID = LineID;
+                if (!string.IsNullOrEmpty(SectionID)) ViewBag.SelectedSectionID = SectionID;
+                if (!string.IsNullOrEmpty(Prefix)) ViewBag.SelectedPrefix = Prefix;
+                if (StartDate != DateTime.MinValue) ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+                if (EndDate != DateTime.MinValue) ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                string today = DateTime.Today.ToString("yyyy-MM-dd");
+                ViewBag.SelectedStartDate = today;
+                ViewBag.SelectedEndDate = today;
+            }
+
+            var mymodel = new ViewModelAll
+            {
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
+                view_DailyReportSummary = view_DailyReportSummary
+            };
+
+            db.Dispose();
+
+            ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
+
+            HttpContext.Session.SetString("DailyReport", JsonConvert.SerializeObject(mymodel));
+
+            return View(mymodel);
         }
 
 
+        private IQueryable<View_EFFReport> BuildEfficiencyQuery(
+            DateTime chunkStart, DateTime chunkEnd,
+            int plantId, string lineId, string sectionName)
+        {
+            var q = db.View_EFFReport
+                .AsNoTracking()
+                .Where(x => x.PlantID == plantId
+                            && x.TransactionDate >= chunkStart
+                            && x.TransactionDate <= chunkEnd);
+
+            if (!string.IsNullOrEmpty(lineId)) q = q.Where(x => x.LineID == lineId);
+            if (!string.IsNullOrEmpty(sectionName)) q = q.Where(x => x.SectionID == sectionName);
+
+            return q;
+        }
+
+        private async Task<List<View_EFFReport>> GetEfficiencyDataAsync(
+            int plantId, DateTime startDate, DateTime endDate,
+            string lineId, string sectionName,
+            CancellationToken ct = default)
+        {
+            var chunks = BuildDateChunks(startDate, endDate, EFFICIENCY_CHUNK_DAYS);
+
+            var prevTimeout = db.Database.GetCommandTimeout();
+            db.Database.SetCommandTimeout(TimeSpan.FromSeconds(180));
+
+            try
+            {
+                var buffer = new List<View_EFFReport>(capacity: 4096);
+                foreach (var (cs, ce) in chunks)
+                {
+                    var list = await BuildEfficiencyQuery(cs, ce, plantId, lineId, sectionName)
+                        .ToListAsync(ct);
+                    if (list.Count > 0) buffer.AddRange(list);
+                }
+
+                var dedup = buffer
+                    .GroupBy(x => new { x.TransactionDate, x.PlantID, x.LineID, x.SectionID, x.ProductID, x.Prefix })
+                    .Select(g => g.First())
+                    .OrderBy(x => x.TransactionDate).ThenBy(x => x.LineID).ThenBy(x => x.SectionID).ThenBy(x => x.ProductID).ThenBy(x => x.Prefix)
+                    .ToList();
+
+                return dedup;
+            }
+            finally
+            {
+                db.Database.SetCommandTimeout(prevTimeout);
+            }
+        }
+
+        private static object GetPropValueSafe(object obj, string propName)
+        {
+            if (obj == null || string.IsNullOrEmpty(propName)) return null;
+            var t = obj.GetType();
+            var p = t.GetProperty(propName);
+            return p == null ? null : p.GetValue(obj);
+        }
+
+        //DateTime startDateString;
+        //DateTime endDateString;
+
+        public ActionResult DailyReportClear_sp()
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var mymodel = new ViewModelAll();
+            var sessionDailyReport = HttpContext.Session.GetString("DailyReport");
+            if (sessionDailyReport != null) mymodel = JsonConvert.DeserializeObject<ViewModelAll>(sessionDailyReport);
+            else
+            {
+                mymodel = new ViewModelAll
+                {
+                    tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
+                    tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                    tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                    tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                    view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList()
+                };
+            }
+
+            mymodel.view_DailyReportSummary = new List<View_DailyReportSummary>();
+            ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
+            ViewBag.SelectedStartDate = DateTime.Today.ToString("yyyy-MM-dd");
+            ViewBag.SelectedEndDate = DateTime.Today.ToString("yyyy-MM-dd");
+
+            return View("DailyReport", mymodel);
+        }
+
         [HttpGet]
-        public async Task<IActionResult> DailyReport(
+        public async Task<IActionResult> DailyReportExport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, string SectionID, string Prefix)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var rows = await GetDailyReportDataAsync(PlantID, EmployeeID, StartDate, EndDate, LineID, SectionID, Prefix);
+            if (rows == null || rows.Count == 0)
+            {
+                TempData["AlertMessage"] = "No data found for export.";
+                return RedirectToAction("DailyReport", new { EmployeeID, StartDate, EndDate, LineID, SectionID, Prefix });
+            }
+
+
+            try
+            {
+                // var mymodel = new ViewModelAll();
+                // var sessionDailyReport = HttpContext.Session.GetString("DailyReport");
+                // if (sessionDailyReport != null) mymodel = JsonConvert.DeserializeObject<ViewModelAll>(sessionDailyReport);
+
+                // if (mymodel != null)
+                // {
+                // if (mymodel.view_DailyReportSummary != null && mymodel.view_DailyReportSummary.Count() > 0)
+                // {
+                // ExcelPackage Ep = new ExcelPackage();
+                // ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Dailyreport");
+                using var package = new OfficeOpenXml.ExcelPackage();
+                var Sheet = package.Workbook.Worksheets.Add("Dailyreport");
+                Sheet.Cells["A1"].Value = "Plant";
+                Sheet.Cells["B1"].Value = "Line";
+                Sheet.Cells["C1"].Value = "Date";
+                Sheet.Cells["D1"].Value = "Shift";
+                Sheet.Cells["E1"].Value = "Product";
+                Sheet.Cells["F1"].Value = "Employee ID";
+                Sheet.Cells["G1"].Value = "Employee Name";
+                Sheet.Cells["H1"].Value = "Section";
+                Sheet.Cells["I1"].Value = "Total Count";
+                Sheet.Cells["J1"].Value = "Total Price Real Time Employee";
+                Sheet.Cells["K1"].Value = "Total Defect Real Time Employee";
+                Sheet.Cells["L1"].Value = "Total Defect Adjust";
+                Sheet.Cells["M1"].Value = "Actual FG ";
+                Sheet.Cells["N1"].Value = "TotalPiece Adjust";
+                Sheet.Cells["O1"].Value = "Work Hours";
+                Sheet.Cells["P1"].Value = " % Yield";
+                Sheet.Cells["Q1"].Value = " Piece Per Hr.";
+                Sheet.Cells["R1"].Value = " EFF.-M/STD";
+                Sheet.Cells["S1"].Value = "Grade Eff. Real Time";
+                Sheet.Cells["T1"].Value = "wage Real Time Per Employee";
+
+                for (char col = 'A'; col <= 'T'; col++)
+                {
+                    Sheet.Cells[$"{col}1"].Style.Font.Bold = true;
+                }
+
+                int row = 2;
+                decimal sumTotalCount = 0;
+                decimal sumTotalPeice = 0;
+                decimal sumTotalDefect = 0;
+                decimal sumTotalDefectAll = 0;
+                decimal sumTotalActualFG = 0;
+                decimal sumTotalHr = 0;
+                decimal sumTotalWage = 0;
+                decimal sumTotalFGAdjust = 0;
+
+                // foreach (var item in mymodel.view_DailyReportSummary)
+                foreach (var item in rows)
+                {
+                    Sheet.Cells[string.Format("A{0}", row)].Value = item.PlantID;
+                    Sheet.Cells[string.Format("B{0}", row)].Value = item.LineID + " : " + item.LineName;
+                    Sheet.Cells[string.Format("C{0}", row)].Value = "" + item.TransactionDate;
+                    Sheet.Cells[string.Format("D{0}", row)].Value = item.ShiftName;
+                    Sheet.Cells[string.Format("E{0}", row)].Value = item.ProductID + " : " + item.ProductName;
+                    Sheet.Cells[string.Format("F{0}", row)].Value = item.QRCode;
+                    Sheet.Cells[string.Format("G{0}", row)].Value = item.EmployeeName;
+                    Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionID + " : " + item.SectionName;
+                    Sheet.Cells[string.Format("I{0}", row)].Value = item.CountQty;
+                    sumTotalCount = sumTotalCount + item.CountQty;
+
+                    Sheet.Cells[string.Format("J{0}", row)].Value = item.FGQty.ToString("#,###.00");
+                    sumTotalPeice = sumTotalPeice + item.FGQty;
+
+                    Sheet.Cells[string.Format("K{0}", row)].Value = item.DefectQty;
+                    sumTotalDefect = sumTotalDefect + item.DefectQty;
+
+                    Sheet.Cells[string.Format("L{0}", row)].Value = item.TotalDefect;  //Total defect adjust
+                    sumTotalDefectAll = sumTotalDefectAll + item.TotalDefect;
+
+                    Sheet.Cells[string.Format("M{0}", row)].Value = item.ActualFG.ToString("#,###.00");   //Actual FG
+                    sumTotalActualFG = sumTotalActualFG + item.ActualFG;
+
+                    Sheet.Cells[string.Format("N{0}", row)].Value = item.FGAdjust.ToString("#,###.00");   //Total Piece
+                    sumTotalFGAdjust = sumTotalFGAdjust + item.FGAdjust;
+
+                    Sheet.Cells[string.Format("O{0}", row)].Value = item.DiffHours;
+                    sumTotalHr = sumTotalHr + item.DiffHours;
+
+                    Sheet.Cells[string.Format("P{0}", row)].Value = item.YieldDefect;
+                    Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr.ToString("#,###.00");
+                    Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD.ToString("#,###.00");
+                    Sheet.Cells[string.Format("S{0}", row)].Value = item.Grade;
+                    Sheet.Cells[string.Format("T{0}", row)].Value = item.wage;
+                    sumTotalWage = sumTotalWage + item.wage;
+
+                    row++;
+                }
+
+                Sheet.Cells[string.Format("H{0}", row)].Value = "Total";
+                Sheet.Cells[string.Format("I{0}", row)].Value = sumTotalCount.ToString("#,###.00");
+                Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice.ToString("#,###.00");
+                Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect.ToString("#,###.00");
+                Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll.ToString("#,###.00");
+                Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG.ToString("#,###.00");
+                Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust.ToString("#,###.00");
+
+                Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr.ToString("#,###.00"); ;//DiffHours
+                Sheet.Cells[string.Format("P{0}", row)].Value = (sumTotalPeice - sumTotalDefect) / sumTotalPeice * 100; //YieldDefect
+                Sheet.Cells[string.Format("Q{0}", row)].Value = (sumTotalPeice / sumTotalHr).ToString("#,###.00"); // PiecePerHr
+                Sheet.Cells[string.Format("T{0}", row)].Value = sumTotalWage;//WAGE
+
+                for (char col = 'H'; col <= 'T'; col++)
+                {
+                    Sheet.Cells[$"{col}{row}"].Style.Font.Bold = true;
+                }
+
+                Sheet.Cells["A:AZ"].AutoFitColumns();
+                // Response.Clear();
+                // Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                // Response.Headers.Add("content-disposition", "attachment; filename=DailyReport.xlsx");
+                // Response.Body.WriteAsync(Ep.GetAsByteArray());
+                var bytes = package.GetAsByteArray();
+                const string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                // }
+
+                // ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == EmpID && x.PageID == 23).Select(x => x.RoleAction).FirstOrDefault();
+                // }
+
+                // if (!string.IsNullOrEmpty(EmployeeID)) ViewBag.SelectedEmpID = EmployeeID;
+                // if (!string.IsNullOrEmpty(LineID)) ViewBag.SelectedLineID = LineID;
+                // if (!string.IsNullOrEmpty(SectionID)) ViewBag.SelectedSectionID = SectionID;
+                // if (!string.IsNullOrEmpty(Prefix)) ViewBag.SelectedPrefix = Prefix;
+                // if (StartDate != DateTime.MinValue) ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
+                // if (EndDate != DateTime.MinValue) ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
+
+                // return View("DailyReport", mymodel);
+                return File(bytes, contentType, "DailyReport.xlsx");
+            }
+            catch
+            {
+                TempData["AlertMessage"] = "Connection loss, Please contact IT!";
+                return RedirectToAction("Login", "Home");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> DailyReport_sp(
    string EmployeeID, DateTime? StartDate, DateTime? EndDate,
    string LineID, string SectionID, string Prefix,
    int page = 1, int pageSize = 5000)
@@ -1524,10 +1971,11 @@ namespace Plims.Controllers
 
 
 
+       
         [HttpGet]
-        public async Task<IActionResult> DailyReportExport(
-    string EmployeeID, DateTime? StartDate, DateTime? EndDate,
-    string LineID, string SectionID, string Prefix)
+        public async Task<IActionResult> DailyReportExport_sp(
+     string EmployeeID, DateTime StartDate, DateTime EndDate,
+     string LineID, string SectionID, string Prefix)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -1535,457 +1983,137 @@ namespace Plims.Controllers
             if (string.IsNullOrEmpty(EmpID))
                 return RedirectToAction("Login", "Home");
 
-            // ✅ Default Date = Today
-            if (!StartDate.HasValue && !EndDate.HasValue)
-            {
-                StartDate = DateTime.Today;
-                EndDate = DateTime.Today.AddDays(1).AddTicks(-1); // ครอบทั้งวัน
-            }
-
-            // ✅ ดึงข้อมูลจาก SP
-            var dailyReportList = await db.View_DailyReportSummary
-                .FromSqlInterpolated($@"
-            EXEC sp_GetDailyReport 
-                @PlantID={PlantID}, 
-                @EmployeeID={(string.IsNullOrEmpty(EmployeeID) ? (object)DBNull.Value : EmployeeID)}, 
-                @LineID={(string.IsNullOrEmpty(LineID) ? (object)DBNull.Value : LineID)}, 
-                @SectionID={(string.IsNullOrEmpty(SectionID) ? (object)DBNull.Value : SectionID)}, 
-                @Prefix={(string.IsNullOrEmpty(Prefix) ? (object)DBNull.Value : Prefix)}, 
-                @StartDate={(StartDate ?? (object)DBNull.Value)}, 
-                @EndDate={(EndDate ?? (object)DBNull.Value)}
-        ")
-                .AsNoTracking()
-                .ToListAsync();
-
-            dailyReportList = dailyReportList
-        .OrderBy(r => r.TransactionDate)
-        .ThenBy(r => r.LineID)
-        .ThenBy(r => r.SectionID)
-        .ThenBy(r => r.QRCode)
-        .ToList();
-
-            // ✅ แปลงเป็น CSV (หรือ Excel ถ้าต้องการ)
-            var csv = new StringBuilder();
-            csv.AppendLine("TransactionDate,LineName,QRCode,EmployeeName,ProductName,SectionName,CountQty,DefectQty,MinusQty,FG_Count_Qty,STD,FGQty,DiffHours,FGAdjust,DefectAdjust,TotalDefect,ActualFG,YieldDefect,PcsPerHr,EffManPerSTD,EFFSTD,Rate,Grade,Wage");
-
-            foreach (var r in dailyReportList)
-            {
-                csv.AppendLine($"{r.TransactionDate:yyyy-MM-dd},{r.LineName},{r.QRCode},{r.EmployeeName} {r.EmployeeLastName},{r.ProductName},{r.SectionName},{r.CountQty},{r.DefectQty},{r.MinusQty},{r.FG_Count_Qty},{r.STD},{r.FGQty},{r.DiffHours},{r.FGAdjust},{r.DefectQty},{r.TotalDefect},{r.ActualFG},{r.YieldDefect},{r.PcsPerHr},{r.EffManPerSTD},{r.EFFSTD},{r.Rate},{r.Grade},{r.wage}");
-            }
-
-            // ✅ return file download
-            var utf8Bom = new UTF8Encoding(true); // true = add BOM
-            var bytes = utf8Bom.GetBytes(csv.ToString());
-
-            return File(bytes, "text/csv", $"DailyReport_{DateTime.Now:yyyyMMddHHmmss}.csv");
-
-
-        }
-
-
-
-        [HttpGet]
-        public ActionResult DailyReportExport_OLD(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID, string SectionID, string Prefix)
-        {
-            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
-            string EmpID = HttpContext.Session.GetString("UserEmpID");
-
-            if (EmpID == null)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            var mymodel = new ViewModelAll();
-
             try
             {
+                // ✅ สร้าง query หลัก
+                var query = db.View_DailyReportSummary
+                              .Where(x => x.PlantID == PlantID);
 
+                // ✅ Default วันที่ = วันนี้
                 if (StartDate == DateTime.MinValue && EndDate == DateTime.MinValue)
                 {
-                    mymodel = new ViewModelAll
-                    {
-                        // tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                        //tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                        //tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                        // tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                        //view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                        view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate == DateTime.Today).ToList()
-                    };
+                    StartDate = DateTime.Today;
+                    EndDate = DateTime.Today;
                 }
-                else
+
+                if (StartDate != DateTime.MinValue)
+                    query = query.Where(x => x.TransactionDate >= StartDate);
+                if (EndDate != DateTime.MinValue)
+                    query = query.Where(x => x.TransactionDate <= EndDate);
+
+                if (!string.IsNullOrEmpty(EmployeeID))
+                    query = query.Where(x => x.QRCode == EmployeeID);
+                if (!string.IsNullOrEmpty(LineID))
+                    query = query.Where(x => x.LineID == LineID);
+                if (!string.IsNullOrEmpty(SectionID))
+                    query = query.Where(x => x.SectionID == SectionID);
+                if (!string.IsNullOrEmpty(Prefix))
+                    query = query.Where(x => x.Prefix == Prefix);
+
+                var data = await query.AsNoTracking().ToListAsync();
+
+                if (!data.Any())
                 {
-                    mymodel = new ViewModelAll
-                    {
-                        //  tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
-                        //tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
-                        //tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
-                        //tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
-                        //view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
-                        view_DailyReportSummary = db.View_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID)).Distinct().ToList()
-                    };
-
+                    TempData["AlertMessage"] = "ไม่พบข้อมูล";
+                    return RedirectToAction("DailyReport");
                 }
 
+                // ✅ สร้าง Excel
+                using var package = new ExcelPackage();
+                var sheet = package.Workbook.Worksheets.Add("DailyReport");
 
+                string[] headers = {
+            "Plant","Line","Date","Shift","Product","Employee ID","Employee Name",
+            "Section","Total Count","Total Price Real Time Employee","Total Defect Real Time Employee",
+            "Total Defect Adjust","Actual FG","TotalPiece Adjust","Work Hours","% Yield",
+            "Piece Per Hr.","EFF.-M/STD","Grade Eff. Real Time","wage Real Time Per Employee"
+        };
 
-
-
-
-                if (!string.IsNullOrEmpty(EmployeeID) || !string.IsNullOrEmpty(LineID) || !string.IsNullOrEmpty(SectionID) || StartDate != DateTime.MinValue || EndDate != DateTime.MinValue)
+                // Header
+                for (int i = 0; i < headers.Length; i++)
                 {
-
-
-                    if (!string.IsNullOrEmpty(EmployeeID))
-                    {
-                        mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.QRCode == EmployeeID).ToList();
-                        ViewBag.SelectedEmpID = EmployeeID;
-                    }
-
-                    if (!string.IsNullOrEmpty(LineID))
-                    {
-                        mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.LineID == LineID).ToList();
-                        ViewBag.SelectedLineID = LineID;
-                    }
-
-                    if (!string.IsNullOrEmpty(SectionID))
-                    {
-                        mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.SectionID == SectionID).ToList();
-                        ViewBag.SelectedSectionID = SectionID;
-                    }
-                    if (!string.IsNullOrEmpty(Prefix))
-                    {
-                        mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.Prefix == Prefix).ToList();
-                        ViewBag.SelectedPrefix = Prefix;
-                    }
-
-                    if (StartDate != DateTime.MinValue && EndDate != DateTime.MinValue)
-                    {
-                        mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
-                           .Where(x => x.TransactionDate >= StartDate && x.TransactionDate <= EndDate)
-                           .ToList();
-
-                        ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                        ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd"); ;
-
-                    }
-                    else if (StartDate != DateTime.MinValue)
-                    {
-                        mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
-                             .Where(x => x.TransactionDate >= StartDate)
-                             .ToList();
-
-                        ViewBag.SelectedStartDate = StartDate.ToString("yyyy-MM-dd");
-                    }
-                    else if (EndDate != DateTime.MinValue)
-                    {
-                        mymodel.view_DailyReportSummary = mymodel.view_DailyReportSummary
-                         .Where(x => x.TransactionDate <= EndDate)
-                         .ToList();
-
-                        ViewBag.SelectedEndDate = EndDate.ToString("yyyy-MM-dd");
-                    }
-
-
-
-
-
-                    var collection = mymodel.view_DailyReportSummary.ToList();
-                    ExcelPackage Ep = new ExcelPackage();
-                    ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Dailyreport");
-                    Sheet.Cells["A1"].Value = "Plant";
-                    Sheet.Cells["B1"].Value = "Line";
-                    Sheet.Cells["C1"].Value = "Date";
-
-                    Sheet.Cells["D1"].Value = "Shift";
-                    Sheet.Cells["E1"].Value = "Product";
-                    Sheet.Cells["F1"].Value = "Employee ID";
-
-                    Sheet.Cells["G1"].Value = "Employee Name";
-                    Sheet.Cells["H1"].Value = "Section";
-                    Sheet.Cells["I1"].Value = "Total Count";
-
-                    Sheet.Cells["J1"].Value = "Total Price Real Time Employee";
-                    Sheet.Cells["K1"].Value = "Total Defect Real Time Employee";
-                    Sheet.Cells["L1"].Value = "Total Defect Adjust";
-                    Sheet.Cells["M1"].Value = "Actual FG ";
-                    Sheet.Cells["N1"].Value = "TotalPiece Adjust";
-
-                    Sheet.Cells["O1"].Value = "Work Hours";
-                    Sheet.Cells["P1"].Value = " % Yield";
-                    Sheet.Cells["Q1"].Value = " Piece Per Hr.";
-
-                    Sheet.Cells["R1"].Value = " EFF.-M/STD";
-                    Sheet.Cells["S1"].Value = "Grade Eff. Real Time";
-                    Sheet.Cells["T1"].Value = "wage Real Time Per Employee";
-
-                    for (char col = 'A'; col <= 'T'; col++)
-                    {
-                        Sheet.Cells[$"{col}1"].Style.Font.Bold = true;
-                    }
-
-                    int row = 2;
-                    decimal sumTotalCount = 0;
-                    decimal sumTotalPeice = 0;
-                    decimal sumTotalDefect = 0;
-                    decimal sumTotalDefectAll = 0;
-                    decimal sumTotalActualFG = 0;
-
-                    decimal sumTotalHr = 0;
-                    int sumTotalYield = 0;
-                    decimal sumTotalWage = 0;
-                    Decimal sumTotalFGAdjust = 0;
-
-                    foreach (var item in collection)
-                    {
-
-                        Sheet.Cells[string.Format("A{0}", row)].Value = item.PlantID;
-                        Sheet.Cells[string.Format("B{0}", row)].Value = item.LineID + " : " + item.LineName;
-                        Sheet.Cells[string.Format("C{0}", row)].Value = "" + item.TransactionDate;
-
-                        Sheet.Cells[string.Format("D{0}", row)].Value = item.ShiftName;
-                        Sheet.Cells[string.Format("E{0}", row)].Value = item.ProductID + " : " + item.ProductName;
-                        Sheet.Cells[string.Format("F{0}", row)].Value = item.QRCode;
-
-                        Sheet.Cells[string.Format("G{0}", row)].Value = item.EmployeeName;
-                        Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionID + " : " + item.SectionName;
-                        Sheet.Cells[string.Format("I{0}", row)].Value = item.CountQty;
-                        sumTotalCount = sumTotalCount + item.CountQty;
-
-                        Sheet.Cells[string.Format("J{0}", row)].Value = item.FGQty.ToString("#,###.00");
-                        sumTotalPeice = sumTotalPeice + item.FGQty;
-
-                        Sheet.Cells[string.Format("K{0}", row)].Value = item.DefectQty;
-                        sumTotalDefect = sumTotalDefect + item.DefectQty;
-
-                        Sheet.Cells[string.Format("L{0}", row)].Value = item.TotalDefect;  //Total defect adjust
-                        sumTotalDefectAll = sumTotalDefectAll + item.TotalDefect;
-
-                        Sheet.Cells[string.Format("M{0}", row)].Value = item.ActualFG.ToString("#,###.00");   //Actual FG
-                        sumTotalActualFG = sumTotalActualFG + item.ActualFG;
-
-                        Sheet.Cells[string.Format("N{0}", row)].Value = item.FGAdjust.ToString("#,###.00");   //Total Piece
-                        sumTotalFGAdjust = sumTotalFGAdjust + item.FGAdjust;
-
-
-                        Sheet.Cells[string.Format("O{0}", row)].Value = item.DiffHours;
-                        sumTotalHr = sumTotalHr + item.DiffHours;
-
-                        Sheet.Cells[string.Format("P{0}", row)].Value = item.YieldDefect;
-                        Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr.ToString("#,###.00");
-
-                        Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD.ToString("#,###.00");
-                        Sheet.Cells[string.Format("S{0}", row)].Value = item.Grade;
-                        Sheet.Cells[string.Format("T{0}", row)].Value = item.wage;
-                        sumTotalWage = sumTotalWage + item.wage;
-
-                        row++;
-                    }
-
-                    Sheet.Cells[string.Format("H{0}", row)].Value = "Total";
-                    Sheet.Cells[string.Format("I{0}", row)].Value = sumTotalCount.ToString("#,###.00");
-                    Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice.ToString("#,###.00");
-                    Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect.ToString("#,###.00");
-                    Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll.ToString("#,###.00");
-                    Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG.ToString("#,###.00");
-                    Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust.ToString("#,###.00");
-
-                    Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr.ToString("#,###.00"); ;//DiffHours
-                    Sheet.Cells[string.Format("P{0}", row)].Value = (sumTotalPeice - sumTotalDefect) / sumTotalPeice * 100; //YieldDefect
-                    Sheet.Cells[string.Format("Q{0}", row)].Value = (sumTotalPeice / sumTotalHr).ToString("#,###.00"); // PiecePerHr
-                    Sheet.Cells[string.Format("T{0}", row)].Value = sumTotalWage;//WAGE
-
-                    for (char col = 'H'; col <= 'T'; col++)
-                    {
-                        Sheet.Cells[$"{col}{row}"].Style.Font.Bold = true;
-                    }
-
-
-                    Sheet.Cells["A:AZ"].AutoFitColumns();
-                    Response.Clear();
-                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                    Response.Headers.Add("content-disposition", "attachment; filename=DailyReport.xlsx"); // Fix typo ':' should be ';'
-                    Response.Body.WriteAsync(Ep.GetAsByteArray());
-
-                    mymodel = new ViewModelAll
-                    {
-                        tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                        tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                        tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                        tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                        view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                        view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate >= StartDate && x.TransactionDate <= EndDate).Distinct().ToList()
-
-                    };
-
-
-
-                    ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster
-                                              .Where(x => x.UserEmpID == EmpID && x.PageID == 23)
-                                              .Select(x => x.RoleAction)
-                                              .FirstOrDefault();
-                    // mymodel.tbLine = db.TbLine.Where(p => p.LineName.Equals(obj.LineName) || p.LineID.Equals(obj.LineID)).OrderByDescending(x => x.Status);
-                    return View("DailyReport", mymodel);
+                    sheet.Cells[1, i + 1].Value = headers[i];
+                    sheet.Cells[1, i + 1].Style.Font.Bold = true;
                 }
-                else
+
+                // Data
+                int row = 2;
+                decimal sumTotalCount = 0, sumTotalPiece = 0, sumTotalDefect = 0, sumTotalDefectAll = 0,
+                        sumTotalActualFG = 0, sumTotalHr = 0, sumTotalWage = 0, sumTotalFGAdjust = 0;
+
+                foreach (var item in data)
                 {
+                    sheet.Cells[row, 1].Value = item.PlantID;
+                    sheet.Cells[row, 2].Value = $"{item.LineID} : {item.LineName}";
+                    sheet.Cells[row, 3].Value = item.TransactionDate.ToString("yyyy-MM-dd");
+                    sheet.Cells[row, 4].Value = item.ShiftName;
+                    sheet.Cells[row, 5].Value = $"{item.ProductID} : {item.ProductName}";
+                    sheet.Cells[row, 6].Value = item.QRCode;
+                    sheet.Cells[row, 7].Value = item.EmployeeName;
+                    sheet.Cells[row, 8].Value = $"{item.SectionID} : {item.SectionName}";
+                    sheet.Cells[row, 9].Value = item.CountQty;
+                    sumTotalCount += item.CountQty;
 
-                    var collection = mymodel.view_DailyReportSummary.ToList();
-                    using (var Ep = new ExcelPackage())
-                    {
-                        var Sheet = Ep.Workbook.Worksheets.Add("DailyReport");
-                        Sheet.Cells["A1"].Value = "Plant";
-                        Sheet.Cells["B1"].Value = "Line";
-                        Sheet.Cells["C1"].Value = "Date";
+                    sheet.Cells[row, 10].Value = item.FGQty;
+                    sumTotalPiece += item.FGQty;
 
-                        Sheet.Cells["D1"].Value = "Shift";
-                        Sheet.Cells["E1"].Value = "Product";
-                        Sheet.Cells["F1"].Value = "Employee ID";
+                    sheet.Cells[row, 11].Value = item.DefectQty;
+                    sumTotalDefect += item.DefectQty;
 
-                        Sheet.Cells["G1"].Value = "Employee Name";
-                        Sheet.Cells["H1"].Value = "Section";
-                        Sheet.Cells["I1"].Value = "Total Count";
+                    sheet.Cells[row, 12].Value = item.TotalDefect;
+                    sumTotalDefectAll += item.TotalDefect;
 
-                        Sheet.Cells["J1"].Value = "Total Price Real Time Employee";
-                        Sheet.Cells["K1"].Value = "Total Defect Real Time Employee";
-                        Sheet.Cells["L1"].Value = "Total Defect Adjust";
-                        Sheet.Cells["M1"].Value = "Actual FG ";
-                        Sheet.Cells["N1"].Value = "TotalPiece Adjust";
+                    sheet.Cells[row, 13].Value = item.ActualFG;
+                    sumTotalActualFG += item.ActualFG;
 
-                        Sheet.Cells["O1"].Value = "Work Hours";
-                        Sheet.Cells["P1"].Value = " % Yield";
-                        Sheet.Cells["Q1"].Value = " Piece Per Hr.";
+                    sheet.Cells[row, 14].Value = item.FGAdjust;
+                    sumTotalFGAdjust += item.FGAdjust;
 
-                        Sheet.Cells["R1"].Value = " EFF.-M/STD";
-                        Sheet.Cells["S1"].Value = "Grade Eff. Real Time";
-                        Sheet.Cells["T1"].Value = "wage Real Time Per Employee";
+                    sheet.Cells[row, 15].Value = item.DiffHours;
+                    sumTotalHr += item.DiffHours;
 
-                        for (char col = 'A'; col <= 'T'; col++)
-                        {
-                            Sheet.Cells[$"{col}1"].Style.Font.Bold = true;
-                        }
+                    sheet.Cells[row, 16].Value = item.YieldDefect;
+                    sheet.Cells[row, 17].Value = item.PcsPerHr;
+                    sheet.Cells[row, 18].Value = item.EffManPerSTD;
+                    sheet.Cells[row, 19].Value = item.Grade;
+                    sheet.Cells[row, 20].Value = item.wage;
+                    sumTotalWage += item.wage;
 
-
-                        int row = 2;
-
-                        decimal sumTotalCount = 0;
-                        decimal sumTotalPeice = 0;
-                        decimal sumTotalDefect = 0;
-                        decimal sumTotalDefectAll = 0;
-                        decimal sumTotalHr = 0;
-                        int sumTotalYield = 0;
-                        decimal sumTotalWage = 0;
-                        decimal SumPercentYield = 0;
-                        decimal sumTotalActualFG = 0;
-                        decimal sumTotalFGAdjust = 0;
-
-                        foreach (var item in collection)
-                        {
-                            Sheet.Cells[string.Format("A{0}", row)].Value = item.PlantID;
-                            Sheet.Cells[string.Format("B{0}", row)].Value = item.LineID + " : " + item.LineName;
-                            Sheet.Cells[string.Format("C{0}", row)].Value = item.TransactionDate;
-
-                            Sheet.Cells[string.Format("D{0}", row)].Value = item.ProductID + " : " + item.ProductName;
-                            Sheet.Cells[string.Format("F{0}", row)].Value = item.QRCode;
-
-                            Sheet.Cells[string.Format("G{0}", row)].Value = item.EmployeeName;
-                            Sheet.Cells[string.Format("H{0}", row)].Value = item.SectionID + " : " + item.SectionName;
-                            Sheet.Cells[string.Format("I{0}", row)].Value = item.CountQty;
-                            sumTotalCount = sumTotalCount + item.CountQty;
-
-                            Sheet.Cells[string.Format("J{0}", row)].Value = item.FGQty.ToString("#,###.00");
-                            sumTotalPeice = sumTotalPeice + item.FGQty;
-
-                            Sheet.Cells[string.Format("K{0}", row)].Value = item.DefectQty.ToString("#,###.00");
-                            sumTotalDefect = sumTotalDefect + item.DefectQty;
-
-                            Sheet.Cells[string.Format("L{0}", row)].Value = item.TotalDefect.ToString("#,###.00");  //Total defect adjust
-                            sumTotalDefectAll = sumTotalDefectAll + item.TotalDefect;
-
-                            Sheet.Cells[string.Format("M{0}", row)].Value = item.ActualFG.ToString("#,###.00");  //ActualFG
-                            sumTotalActualFG = sumTotalActualFG + item.ActualFG;
-
-                            Sheet.Cells[string.Format("N{0}", row)].Value = item.FGAdjust.ToString("#,###.00");  //Total Piece
-                            sumTotalFGAdjust = sumTotalFGAdjust + item.FGAdjust;
-
-
-                            Sheet.Cells[string.Format("O{0}", row)].Value = item.DiffHours.ToString("#,###.00");
-                            sumTotalHr = sumTotalHr + item.DiffHours;
-
-                            Sheet.Cells[string.Format("P{0}", row)].Value = item.YieldDefect.ToString("#,###.00");
-                            SumPercentYield = SumPercentYield + item.YieldDefect;
-
-                            Sheet.Cells[string.Format("Q{0}", row)].Value = item.PcsPerHr.ToString("#,###.00");
-
-                            Sheet.Cells[string.Format("R{0}", row)].Value = item.EffManPerSTD.ToString("#,###.00");
-                            Sheet.Cells[string.Format("S{0}", row)].Value = item.Grade;
-                            Sheet.Cells[string.Format("T{0}", row)].Value = item.wage;
-                            sumTotalWage = sumTotalWage + item.wage;
-
-
-                            row++;
-                        }
-
-
-
-                        Sheet.Cells[string.Format("H{0}", row)].Value = "Total";
-                        Sheet.Cells[string.Format("I{0}", row)].Value = sumTotalCount.ToString("#,###.00");
-                        Sheet.Cells[string.Format("J{0}", row)].Value = sumTotalPeice.ToString("#,###.00");
-                        Sheet.Cells[string.Format("K{0}", row)].Value = sumTotalDefect.ToString("#,###.00");
-                        Sheet.Cells[string.Format("L{0}", row)].Value = sumTotalDefectAll.ToString("#,###.00");
-                        Sheet.Cells[string.Format("M{0}", row)].Value = sumTotalActualFG.ToString("#,###.00");
-                        Sheet.Cells[string.Format("N{0}", row)].Value = sumTotalFGAdjust.ToString("#,###.00");
-
-                        Sheet.Cells[string.Format("O{0}", row)].Value = sumTotalHr.ToString("#,###.00");//DiffHours
-                        Sheet.Cells[string.Format("P{0}", row)].Value = (sumTotalPeice - sumTotalDefect) / sumTotalPeice * 100; //YieldDefect
-                        Sheet.Cells[string.Format("Q{0}", row)].Value = (sumTotalPeice / sumTotalHr).ToString("#,###.00"); // PiecePerHr
-                        Sheet.Cells[string.Format("T{0}", row)].Value = sumTotalWage;//WAGE
-
-                        for (char col = 'H'; col <= 'T'; col++)
-                        {
-                            Sheet.Cells[$"{col}{row}"].Style.Font.Bold = true;
-                        }
-
-                        Sheet.Cells["A:AZ"].AutoFitColumns();
-                        Response.Clear();
-                        Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                        Response.Headers.Add("content-disposition", "attachment; filename=DailyReport.xlsx"); // Fix typo ':' should be ';'
-                        Response.Body.WriteAsync(Ep.GetAsByteArray());
-
-
-                        // Send the Excel file as the response
-                        //  return File(content, contentType, fileName);
-                    }
-
-                    mymodel = new ViewModelAll
-                    {
-                        tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                        tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                        tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                        tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                        view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                        view_DailyReportSummary = mymodel.view_DailyReportSummary.Where(x => x.PlantID.Equals(PlantID) && x.TransactionDate >= StartDate && x.TransactionDate <= EndDate).Distinct().ToList()
-
-                    };
-
-
-
-                    ViewBag.VBRoleDailyReport = mymodel.view_PermissionMaster
-                                              .Where(x => x.UserEmpID == EmpID && x.PageID == 23)
-                                              .Select(x => x.RoleAction)
-                                              .FirstOrDefault();
-
-
-                    ViewBag.InactiveStatus = true;
-                    return RedirectToAction("DailyReport", mymodel);
-
+                    row++;
                 }
+
+                // ✅ Summary Row
+                sheet.Cells[row, 8].Value = "Total";
+                sheet.Cells[row, 9].Value = sumTotalCount;
+                sheet.Cells[row, 10].Value = sumTotalPiece;
+                sheet.Cells[row, 11].Value = sumTotalDefect;
+                sheet.Cells[row, 12].Value = sumTotalDefectAll;
+                sheet.Cells[row, 13].Value = sumTotalActualFG;
+                sheet.Cells[row, 14].Value = sumTotalFGAdjust;
+                sheet.Cells[row, 15].Value = sumTotalHr;
+                sheet.Cells[row, 16].Value = (sumTotalPiece > 0) ? (sumTotalPiece - sumTotalDefect) / sumTotalPiece * 100 : 0;
+                sheet.Cells[row, 17].Value = (sumTotalHr > 0) ? sumTotalPiece / sumTotalHr : 0;
+                sheet.Cells[row, 20].Value = sumTotalWage;
+
+                sheet.Cells[$"H{row}:T{row}"].Style.Font.Bold = true;
+                sheet.Cells["A:AZ"].AutoFitColumns();
+
+                // ✅ Return File
+                var fileBytes = package.GetAsByteArray();
+                return File(fileBytes,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "DailyReport.xlsx");
             }
-            catch
+            catch (Exception)
             {
                 TempData["AlertMessage"] = "Connection loss, Please contact IT!";
                 return RedirectToAction("Login", "Home");
-
             }
         }
+
+
+
+
 
         [HttpGet]
         public ActionResult WorkingFunctionWithPackage(TbProductionTransaction obj)
@@ -5293,7 +5421,7 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-        public IActionResult ProductionTransactionAdjust(View_ProductionTransactionAdjust obj)
+        public IActionResult ProductionTransactionAdjust_original(View_ProductionTransactionAdjust obj)
         {
 
 
@@ -5392,53 +5520,288 @@ namespace Plims.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ProductionTransactionAdjustFG(string FGPlanDate, string FGLine, string FGSection, string FGShift, int FGQTY, string[] TransactionID)
+        [HttpGet]
+        public async Task<IActionResult> ProductionTransactionAdjust(View_ProductionTransactionAdjust obj)
         {
-            string empId = HttpContext.Session.GetString("UserEmpID");
-            int plantId = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
 
-            if (empId == null)
+            if (string.IsNullOrEmpty(EmpID))
+                return RedirectToAction("Login", "Home");
+
+            var mymodel = new ViewModelAll
+            {
+                tbLine = await db.TbLine.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbSection = await db.TbSection.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbShift = await db.TbShift.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbEmployeeMaster = await db.TbEmployeeMaster
+                                            .Where(x => x.PlantID == PlantID && x.Status == 1)
+                                            .ToListAsync(),
+                view_PermissionMaster = await db.View_PermissionMaster.ToListAsync()
+            };
+
+            // กำหนดค่า Default TransactionDate = วันนี้
+            DateTime? transactionDate = obj.TransactionDate != DateTime.MinValue
+                                        ? obj.TransactionDate
+                                        : DateTime.Today;
+
+            // เรียก SP
+            mymodel.view_ProductionTransactionAdjust = await db.View_ProductionTransactionAdjust
+                .FromSqlInterpolated($@"
+            EXEC sp_GetProductionTransactionAdjust 
+                 @PlantID={PlantID}, 
+                 @TransactionDate={transactionDate}, 
+                 @SectionID={(string.IsNullOrEmpty(obj.SectionName) ? (object)DBNull.Value : obj.SectionName)},
+                 @LineID={(string.IsNullOrEmpty(obj.LineName) ? (object)DBNull.Value : obj.LineName)},
+                 @Prefix={(string.IsNullOrEmpty(obj.Prefix) ? (object)DBNull.Value : obj.Prefix)},
+                 @QRCode={(string.IsNullOrEmpty(obj.QRCode) ? (object)DBNull.Value : obj.QRCode)}
+        ")
+                .ToListAsync();
+
+            // set ค่า viewbag ให้เหมือนเดิม
+            ViewBag.SelectedTransactionDate = transactionDate?.ToString("yyyy-MM-dd");
+            ViewBag.SelectedSectionName = obj.SectionName;
+            ViewBag.SelectedLineName = obj.LineName;
+            ViewBag.SelectedPrefix = obj.Prefix;
+            ViewBag.SelectedEmployeeID = obj.QRCode;
+
+            ViewBag.VBRoleProducttionTransactionAjust =
+                mymodel.view_PermissionMaster
+                       .Where(x => x.UserEmpID == EmpID && x.PageID == 33)
+                       .Select(x => x.RoleAction)
+                       .FirstOrDefault();
+
+            return View(mymodel);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ProductionTransactionAdjust_new(View_ProductionTransactionAdjust obj)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            if (string.IsNullOrEmpty(EmpID))
+                return RedirectToAction("Login", "Home");
+
+            var mymodel = new ViewModelAll
+            {
+                tbLine = await db.TbLine.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbSection = await db.TbSection.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbShift = await db.TbShift.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbEmployeeMaster = await db.TbEmployeeMaster
+                                        .Where(x => x.PlantID == PlantID && x.Status == 1)
+                                        .ToListAsync(),
+                view_PermissionMaster = await db.View_PermissionMaster.ToListAsync()
+            };
+
+            // เริ่มจาก query แบบ IQueryable
+            var query = db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID);
+
+            // Filter เฉพาะที่ผู้ใช้กรอกมา
+            if (obj.TransactionDate != DateTime.MinValue)
+            {
+                query = query.Where(x => x.TransactionDate == obj.TransactionDate);
+                ViewBag.SelectedTransactionDate = obj.TransactionDate.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                // default = วันนี้
+                query = query.Where(x => x.TransactionDate == DateTime.Today);
+                ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+            }
+
+            if (!string.IsNullOrEmpty(obj.SectionName))
+            {
+                query = query.Where(x => x.SectionID == obj.SectionName);
+                ViewBag.SelectedSectionName = obj.SectionName;
+            }
+
+            if (!string.IsNullOrEmpty(obj.LineName))
+            {
+                query = query.Where(x => x.LineID == obj.LineName);
+                ViewBag.SelectedLineName = obj.LineName;
+            }
+
+            if (!string.IsNullOrEmpty(obj.Prefix))
+            {
+                query = query.Where(x => x.Prefix == obj.Prefix);
+                ViewBag.SelectedPrefix = obj.Prefix;
+            }
+
+            if (!string.IsNullOrEmpty(obj.QRCode))
+            {
+                query = query.Where(x => x.QRCode == obj.QRCode);
+                ViewBag.SelectedEmployeeID = obj.QRCode;
+            }
+
+            mymodel.view_ProductionTransactionAdjust = await query.ToListAsync();
+
+            ViewBag.VBRoleProducttionTransactionAjust =
+                mymodel.view_PermissionMaster
+                       .Where(x => x.UserEmpID == EmpID && x.PageID == 33)
+                       .Select(x => x.RoleAction)
+                       .FirstOrDefault();
+
+            return View(mymodel);
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> ProductionTransactionAdjustFG(string FGPlanDate, string FGLine, string FGSection, string FGShift, int FGQTY, string[] TransactionID)
+        //{
+        //    string empId = HttpContext.Session.GetString("UserEmpID");
+        //    int plantId = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+
+        //    if (empId == null)
+        //        return RedirectToAction("Login", "Home");
+
+        //    DateTime planDate = Convert.ToDateTime(FGPlanDate);
+
+        //    // ✅ เช็ค duplicate โดยไม่ ToList()
+        //    var existingAdjust = await db.TbProductionTransactionAdjust
+        //        .FirstOrDefaultAsync(x =>
+        //            x.TransactionDate.Date == planDate &&
+        //            x.PlantID == plantId &&
+        //            x.LineID == FGLine &&
+        //            x.SectionID == FGSection &&
+        //            x.Prefix == FGShift &&
+        //            x.Type == "FG");
+
+        //    if (existingAdjust != null)
+        //    {
+        //        // update
+        //        existingAdjust.QTY = FGQTY;
+        //    }
+        //    else
+        //    {
+        //        // insert
+        //        db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust
+        //        {
+        //            TransactionDate = planDate,
+        //            PlantID = plantId,
+        //            LineID = FGLine,
+        //            SectionID = FGSection,
+        //            Prefix = FGShift,
+        //            Type = "FG",
+        //            QTY = FGQTY,
+        //            CreateDate = DateTime.Now,
+        //            CreateBy = empId
+        //        });
+        //    }
+
+        //    // ✅ นับจำนวน transaction (Count โดยตรง)
+        //    int productionCount = await db.TbProductionTransaction.CountAsync(x =>
+        //        x.TransactionDate.Date == planDate &&
+        //        x.PlantID == plantId &&
+        //        x.LineID == FGLine &&
+        //        x.SectionID == FGSection &&
+        //        x.Prefix == FGShift &&
+        //        x.DataType == "Count");
+
+        //    if (productionCount == 0)
+        //    {
+        //        TempData["AlertMessage"] = "Adjust Mistake!";
+        //        return RedirectToAction("ProductionTransactionAdjustByEmployee");
+        //    }
+
+        //    // ✅ รวม FG QTY โดยตรง (Sum โดยตรง)
+        //    decimal inputQty = await db.TbProductionTransaction
+        //        .Where(x =>
+        //            x.TransactionDate.Date == planDate &&
+        //            x.PlantID == plantId &&
+        //            x.LineID == FGLine &&
+        //            x.SectionID == FGSection &&
+        //            x.Prefix == FGShift &&
+        //            x.DataType == "FG")
+        //        .SumAsync(x => (decimal?)x.Qty) ?? 0;
+
+        //    decimal qtyPerQr = (FGQTY - inputQty) / productionCount;
+
+        //    // ✅ ดึงรายการมาครั้งเดียว
+        //    var transactions = await db.TbProductionTransaction
+        //        .Where(x =>
+        //            x.TransactionDate.Date == planDate &&
+        //            x.PlantID == plantId &&
+        //            x.LineID == FGLine &&
+        //            x.SectionID == FGSection &&
+        //            x.Prefix == FGShift &&
+        //            x.DataType == "Count")
+        //        .ToListAsync();
+
+        //    foreach (var t in transactions)
+        //    {
+        //        t.QtyPerQR = qtyPerQr;
+        //        t.Note = $"Replace : {t.QtyPerQR}";
+        //        t.UpdateBy = empId;
+        //        t.UpdateDate = DateTime.Now;
+        //    }
+
+        //    // ✅ save changes ครั้งเดียว
+        //    await db.SaveChangesAsync();
+
+        //    TempData["AlertMessage"] = "Adjust successful!";
+        //    return RedirectToAction("ProductionTransactionAdjustByEmployee");
+        //}
+
+
+        [HttpPost]
+        public async Task<IActionResult> ProductionTransactionAdjustFG(
+    string FGPlanDate, string FGLine, string FGSection, string FGShift, int FGQTY, string[] TransactionID)
+        {
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            if (EmpID == null)
                 return RedirectToAction("Login", "Home");
 
             DateTime planDate = Convert.ToDateTime(FGPlanDate);
 
-            // ✅ เช็ค duplicate โดยไม่ ToList()
+            var mymodel = new ViewModelAll
+            {
+                tbLine = await db.TbLine.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbSection = await db.TbSection.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbShift = await db.TbShift.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbEmployeeMaster = await db.TbEmployeeMaster
+                    .Where(x => x.PlantID == PlantID && x.Status == 1).ToListAsync(),
+                view_PermissionMaster = await db.View_PermissionMaster.ToListAsync(),
+                view_ProductionTransactionAdjust = await db.View_ProductionTransactionAdjust
+                    .Where(x => x.PlantID == PlantID).ToListAsync()
+            };
+
+            // 🔹 Check Duplicate Adjust
             var existingAdjust = await db.TbProductionTransactionAdjust
-                .FirstOrDefaultAsync(x =>
-                    x.TransactionDate.Date == planDate &&
-                    x.PlantID == plantId &&
-                    x.LineID == FGLine &&
-                    x.SectionID == FGSection &&
-                    x.Prefix == FGShift &&
-                    x.Type == "FG");
+                .FirstOrDefaultAsync(x => x.TransactionDate.Date == planDate.Date
+                                       && x.PlantID == PlantID
+                                       && x.LineID == FGLine
+                                       && x.SectionID == FGSection
+                                       && x.Prefix == FGShift
+                                       && x.Type == "FG");
 
             if (existingAdjust != null)
             {
-                // update
                 existingAdjust.QTY = FGQTY;
+                await db.SaveChangesAsync();
             }
             else
             {
-                // insert
-                db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust
+                await db.TbProductionTransactionAdjust.AddAsync(new TbProductionTransactionAdjust
                 {
                     TransactionDate = planDate,
-                    PlantID = plantId,
+                    PlantID = PlantID,
                     LineID = FGLine,
                     SectionID = FGSection,
                     Prefix = FGShift,
                     Type = "FG",
                     QTY = FGQTY,
                     CreateDate = DateTime.Now,
-                    CreateBy = empId
+                    CreateBy = EmpID
                 });
+                await db.SaveChangesAsync();
             }
 
-            // ✅ นับจำนวน transaction (Count โดยตรง)
+            // 🔹 Count Transactions (Count type)
             int productionCount = await db.TbProductionTransaction.CountAsync(x =>
-                x.TransactionDate.Date == planDate &&
-                x.PlantID == plantId &&
+                x.TransactionDate.Date == planDate.Date &&
+                x.PlantID == PlantID &&
                 x.LineID == FGLine &&
                 x.SectionID == FGSection &&
                 x.Prefix == FGShift &&
@@ -5446,47 +5809,73 @@ namespace Plims.Controllers
 
             if (productionCount == 0)
             {
+                ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster
+                    .Where(x => x.UserEmpID == EmpID && x.PageID == 33)
+                    .Select(x => x.RoleAction)
+                    .FirstOrDefault();
+
+                mymodel.view_ProductionTransactionAdjust =
+                    mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+
+                ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
                 TempData["AlertMessage"] = "Adjust Mistake!";
-                return RedirectToAction("ProductionTransactionAdjustByEmployee");
+                return View("ProductionTransactionAdjustByEmployee", mymodel);
             }
 
-            // ✅ รวม FG QTY โดยตรง (Sum โดยตรง)
+            // 🔹 Sum FG input qty
             decimal inputQty = await db.TbProductionTransaction
-                .Where(x =>
-                    x.TransactionDate.Date == planDate &&
-                    x.PlantID == plantId &&
-                    x.LineID == FGLine &&
-                    x.SectionID == FGSection &&
-                    x.Prefix == FGShift &&
-                    x.DataType == "FG")
+                .Where(x => x.TransactionDate.Date == planDate.Date &&
+                            x.PlantID == PlantID &&
+                            x.LineID == FGLine &&
+                            x.SectionID == FGSection &&
+                            x.Prefix == FGShift &&
+                            x.DataType == "FG")
                 .SumAsync(x => (decimal?)x.Qty) ?? 0;
 
-            decimal qtyPerQr = (FGQTY - inputQty) / productionCount;
+            decimal qtyPerQR = (FGQTY - inputQty) / productionCount;
 
-            // ✅ ดึงรายการมาครั้งเดียว
-            var transactions = await db.TbProductionTransaction
-                .Where(x =>
-                    x.TransactionDate.Date == planDate &&
-                    x.PlantID == plantId &&
-                    x.LineID == FGLine &&
-                    x.SectionID == FGSection &&
-                    x.Prefix == FGShift &&
-                    x.DataType == "Count")
+            // 🔹 Update QtyPerQR
+            var prodUpdateList = await db.TbProductionTransaction
+                .Where(x => x.TransactionDate.Date == planDate.Date &&
+                            x.PlantID == PlantID &&
+                            x.LineID == FGLine &&
+                            x.SectionID == FGSection &&
+                            x.Prefix == FGShift &&
+                            x.DataType == "Count")
                 .ToListAsync();
 
-            foreach (var t in transactions)
+            foreach (var transaction in prodUpdateList)
             {
-                t.QtyPerQR = qtyPerQr;
-                t.Note = $"Replace : {t.QtyPerQR}";
-                t.UpdateBy = empId;
-                t.UpdateDate = DateTime.Now;
+                transaction.QtyPerQR = qtyPerQR;
+
+                if (!string.IsNullOrEmpty(transaction.Note) && transaction.Note.Contains(":"))
+                {
+                    var parts = transaction.Note.Split(":");
+                    transaction.Note = $"Replace : {parts[1]},{transaction.QtyPerQR}";
+                }
+                else
+                {
+                    transaction.Note = $"Replace : {transaction.QtyPerQR}";
+                }
+
+                transaction.UpdateBy = EmpID;
+                transaction.UpdateDate = DateTime.Now;
             }
 
-            // ✅ save changes ครั้งเดียว
             await db.SaveChangesAsync();
 
+            // 🔹 Return View
+            ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster
+                .Where(x => x.UserEmpID == EmpID && x.PageID == 33)
+                .Select(x => x.RoleAction)
+                .FirstOrDefault();
+
+            mymodel.view_ProductionTransactionAdjust =
+                mymodel.view_ProductionTransactionAdjust.Where(x => x.TransactionDate == DateTime.Today).ToList();
+
+            ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
             TempData["AlertMessage"] = "Adjust successful!";
-            return RedirectToAction("ProductionTransactionAdjustByEmployee");
+            return View("ProductionTransactionAdjustByEmployee", mymodel);
         }
 
 
@@ -5657,6 +6046,8 @@ namespace Plims.Controllers
             return View("ProductionTransactionAdjustByEmployee", mymodel);
 
         }
+
+
         [HttpPost]
         public IActionResult ProductionTransactionAdjustDefect(string DefectPlanDate, String DefectLine, String DefectSection, String DefectShift, int DefectQTY, string[] TransactionID)
         {
@@ -5721,7 +6112,7 @@ namespace Plims.Controllers
 
 
         [HttpPost]
-        public IActionResult ProductionTransactionAdjustDefectByEmployee(DateTime DefectPlanDate, String DefectLine, String DefectSection, String DefectShift, decimal DefectQTY, List<int> TransactionID)
+        public IActionResult ProductionTransactionAdjustDefectByEmployee_fang(DateTime DefectPlanDate, String DefectLine, String DefectSection, String DefectShift, decimal DefectQTY, List<int> TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -6054,88 +6445,203 @@ namespace Plims.Controllers
 
         }
 
-
-        [HttpGet]
-        public IActionResult ProductionTransactionAdjustByEmployee(
-    View_ProductionTransactionAdjust obj,
-    string FGPlanDate,
-    string FGLine,
-    string FGSection,
-    string FGShift,
-    int FGQTY,
-    string[] TransactionID,
-    string checkthis,
-    string checkall)
+        [HttpPost]
+        public async Task<IActionResult> ProductionTransactionAdjustDefectByEmployee(
+    DateTime DefectPlanDate,
+    string DefectLine,
+    string DefectSection,
+    string DefectShift,
+    decimal DefectQTY,
+    List<int> TransactionID)
         {
-            if (!int.TryParse(HttpContext.Session.GetString("PlantID"), out var PlantID))
-                return RedirectToAction("Login", "Home");
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
 
-            var EmpID = HttpContext.Session.GetString("UserEmpID");
             if (string.IsNullOrEmpty(EmpID))
                 return RedirectToAction("Login", "Home");
 
-            // โหลดข้อมูล master (AsNoTracking จะเร็วขึ้นถ้าไม่แก้ไขข้อมูล)
+            string lineId = DefectLine.Split(":")[0].Trim();
+            string sectionId = DefectSection.Split(":")[0].Trim();
+
+            // ✅ ดึงข้อมูลจาก Stored Procedure
+            var adjustResults = await db.ProductionTransactionAdjustResults
+                .FromSqlInterpolated($@"
+            EXEC sp_GetProductionTransactionAdjust 
+                @PlantID={PlantID}, 
+                @StartDate={DefectPlanDate}, 
+                @LineID={lineId}, 
+                @SectionID={sectionId}, 
+                @Prefix={DefectShift}, 
+                @QRCode={DBNull.Value}")
+                .AsNoTracking()
+                .ToListAsync();
+
+            // โหลด model ที่จำเป็น (ใช้ ToList แค่ที่ต้องใช้จริง ๆ)
             var mymodel = new ViewModelAll
             {
                 tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
                 tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToList(),
-                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList()
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToList(),
+                view_ProductionTransactionAdjusts = adjustResults // db.View_ProductionTransactionAdjust.Where(x => x.PlantID == PlantID).ToList()
             };
 
-            // ✅ Base Query (ยังไม่ Execute)
-            var baseQuery = db.View_ProductionTransactionAdjust
-                              .Where(x => x.PlantID == PlantID);
+            // นับจำนวน transaction ว่าเลือกมาครบทุก employee หรือไม่
+            int checkPrdAdjust = db.View_ProductionTransactionAdjust.Count(x =>
+                x.TransactionDate.Date == DefectPlanDate.Date &&
+                x.PlantID == PlantID &&
+                x.LineID == lineId &&
+                x.SectionID == sectionId &&
+                x.Prefix == DefectShift);
 
-            // 🔹 Apply Filters (EF จะ generate SQL รวม)
-            if (obj.TransactionDate != DateTime.MinValue)
+            if (checkPrdAdjust == TransactionID.Count)
             {
-                baseQuery = baseQuery.Where(x => x.TransactionDate == obj.TransactionDate);
-                ViewBag.SelectedTransactionDate = obj.TransactionDate.ToString("yyyy-MM-dd");
+                // === Adjust All ===
+                bool hasDuplicate = db.TbProductionTransactionAdjust.Any(x =>
+                    x.TransactionDate.Date == DefectPlanDate.Date &&
+                    x.PlantID == PlantID &&
+                    x.LineID == lineId &&
+                    x.SectionID == sectionId &&
+                    x.Prefix == DefectShift &&
+                    x.Type == "Defect" &&
+                    x.Remark == "");
+
+                if (hasDuplicate)
+                {
+                    var tran = db.TbProductionTransactionAdjust.FirstOrDefault(x =>
+                        x.TransactionDate.Date == DefectPlanDate.Date &&
+                        x.PlantID == PlantID &&
+                        x.LineID == lineId &&
+                        x.SectionID == sectionId &&
+                        x.Prefix == DefectShift &&
+                        x.Type == "Defect" &&
+                        x.Remark == "");
+                    if (tran != null)
+                        tran.QTY = DefectQTY;
+                }
+                else
+                {
+                    db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust
+                    {
+                        TransactionDate = DefectPlanDate,
+                        PlantID = PlantID,
+                        LineID = lineId,
+                        SectionID = sectionId,
+                        Prefix = DefectShift,
+                        Type = "Defect",
+                        QTY = DefectQTY,
+                        Remark = "",
+                        CreateDate = DateTime.Now,
+                        CreateBy = EmpID
+                    });
+                }
+                db.SaveChanges();
             }
             else
             {
-                baseQuery = baseQuery.Where(x => x.TransactionDate == DateTime.Today);
-                ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                // === Adjust per Employee ===
+                var selectedEmployees = mymodel.view_ProductionTransactionAdjust
+                    .Where(x => TransactionID.Contains((int)x.TransactionID))
+                    .Select(x => x.QRCode)
+                    .ToList();
+
+                foreach (var empNo in selectedEmployees)
+                {
+                    var tran = db.TbProductionTransactionAdjust.FirstOrDefault(x =>
+                        x.TransactionDate.Date == DefectPlanDate.Date &&
+                        x.PlantID == PlantID &&
+                        x.LineID == lineId &&
+                        x.SectionID == sectionId &&
+                        x.Prefix == DefectShift &&
+                        x.Type == "Defect" &&
+                        x.Remark == empNo);
+
+                    if (tran != null)
+                    {
+                        tran.QTY = DefectQTY;
+                    }
+                    else
+                    {
+                        db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust
+                        {
+                            TransactionDate = DefectPlanDate,
+                            PlantID = PlantID,
+                            LineID = lineId,
+                            SectionID = sectionId,
+                            Prefix = DefectShift,
+                            Type = "Defect",
+                            QTY = DefectQTY,
+                            Remark = empNo,
+                            CreateDate = DateTime.Now,
+                            CreateBy = EmpID
+                        });
+                    }
+                }
+                db.SaveChanges();
             }
 
-            if (!string.IsNullOrEmpty(obj.SectionName))
+            // ✅ เตรียม View Model คืน
+            ViewBag.VBRoleProducttionTransactionAjust =
+                mymodel.view_PermissionMaster
+                       .Where(x => x.UserEmpID == EmpID && x.PageID == 33)
+                       .Select(x => x.RoleAction)
+                       .FirstOrDefault();
+
+            mymodel.view_ProductionTransactionAdjust = mymodel.view_ProductionTransactionAdjust
+                .Where(x => x.TransactionDate.Date == DateTime.Today)
+                .ToList();
+
+            ViewBag.SelectedTransactionDate = DateTime.Today.ToString("yyyy-MM-dd");
+
+            return View("ProductionTransactionAdjustByEmployee", mymodel);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ProductionTransactionAdjustByEmployee(
+     DateTime? TransactionDate,
+     string LineName,
+     string SectionName,
+     string prefix,
+     string qrCode)
+        {
+            int plantId = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string empId = HttpContext.Session.GetString("UserEmpID");
+
+            if (string.IsNullOrEmpty(empId))
+                return RedirectToAction("Login", "Home");
+
+            // ✅ Default Date = วันนี้
+            if (!TransactionDate.HasValue )
             {
-                baseQuery = baseQuery.Where(x => x.SectionID == obj.SectionName);
-                ViewBag.SelectedSectionName = obj.SectionName;
+                TransactionDate = DateTime.Today;
+               
             }
 
-            if (!string.IsNullOrEmpty(obj.LineName))
+            // ✅ Call Stored Procedure
+            var result = await db.ProductionTransactionAdjustResults
+                .FromSqlInterpolated($@"
+            EXEC sp_GetProductionTransactionAdjust 
+                @PlantID={plantId}, 
+                @StartDate={TransactionDate}, 
+                @LineID={(string.IsNullOrEmpty(LineName) ? (object)DBNull.Value : LineName)}, 
+                @SectionID={(string.IsNullOrEmpty(SectionName) ? (object)DBNull.Value : SectionName)}, 
+                @Prefix={(string.IsNullOrEmpty(prefix) ? (object)DBNull.Value : prefix)}, 
+                @QRCode={(string.IsNullOrEmpty(qrCode) ? (object)DBNull.Value : qrCode)}")
+                .AsNoTracking()
+                .ToListAsync();
+
+            var mymodel = new ViewModelAll
             {
-                baseQuery = baseQuery.Where(x => x.LineID == obj.LineName);
-                ViewBag.SelectedLineName = obj.LineName;
-            }
-
-            if (!string.IsNullOrEmpty(obj.Prefix))
-            {
-                baseQuery = baseQuery.Where(x => x.Prefix == obj.Prefix);
-                ViewBag.SelectedPrefix = obj.Prefix;
-            }
-
-            if (!string.IsNullOrEmpty(obj.QRCode))
-            {
-                baseQuery = baseQuery.Where(x => x.QRCode == obj.QRCode);
-                ViewBag.SelectedEmployee = obj.QRCode;
-            }
-
-            // ✅ Execute (ยิง SQL ครั้งเดียว)
-            mymodel.view_ProductionTransactionAdjust = baseQuery
-                                                       .OrderByDescending(x => x.TransactionDate)
-                                                       .ThenBy(x => x.LineID)
-                                                       .ThenBy(x => x.SectionID)
-                                                       .ToList();
-
-            // Role
-            ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster
-                .Where(x => x.UserEmpID == EmpID && x.PageID == 33)
-                .Select(x => x.RoleAction)
-                .FirstOrDefault();
+                tbLine = await db.TbLine.Where(x => x.PlantID == plantId).ToListAsync(),
+                tbSection = await db.TbSection.Where(x => x.PlantID == plantId).ToListAsync(),
+                tbShift = await db.TbShift.Where(x => x.PlantID == plantId).ToListAsync(),
+                tbEmployeeMaster = await db.TbEmployeeMaster.Where(x => x.PlantID == plantId).ToListAsync(),
+                view_PermissionMaster = db.View_PermissionMaster.Where(x => x.PlantID == plantId).ToList(),
+                view_ProductionTransactionAdjusts = result  // ⭐ ใส่ list ของ SP ลงไป
+            };
+            ViewBag.VBRoleProducttionTransactionAjust = mymodel.view_PermissionMaster.Where(x => x.UserEmpID == empId && x.PageID.Equals(33)).Select(x => x.RoleAction).FirstOrDefault();
 
             return View(mymodel);
         }
@@ -6144,7 +6650,7 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-        public IActionResult ProductionTransactionAdjustByEmployee_origianl(View_ProductionTransactionAdjust obj, string FGPlanDate, String FGLine, String FGSection, String FGShift, int FGQTY, string[] TransactionID, string checkthis, string checkall)
+        public IActionResult ProductionTransactionAdjustByEmployee_suspendorriginal(View_ProductionTransactionAdjust obj, string FGPlanDate, String FGLine, String FGSection, String FGShift, int FGQTY, string[] TransactionID, string checkthis, string checkall)
         {
 
 
@@ -6244,9 +6750,311 @@ namespace Plims.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ProductionTransactionAdjustFGByEmployee(
+      DateTime FGPlanDate,
+      string FGEmployeeID,
+      string FGLine,
+      string FGSection,
+      string FGShift,
+      decimal FGQTY,
+      List<int> TransactionID)
+        {
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            if (string.IsNullOrEmpty(EmpID))
+                return RedirectToAction("Login", "Home");
 
+            var startDate = FGPlanDate.Date;
+            var endDate = startDate.AddDays(1);
 
-        public IActionResult ProductionTransactionAdjustFGByEmployee(DateTime FGPlanDate, string FGEmployeeID, string FGLine, string FGSection, string FGShift, decimal FGQTY, List<int> TransactionID)
+            var lineId = FGLine.Split(":")[0].Trim();
+            var sectionId = FGSection.Split(":")[0].Trim();
+
+            // ✅ โหลด SP มาแทน View
+            var adjustResults = await db.ProductionTransactionAdjustResults
+                .FromSqlInterpolated($@"
+            EXEC sp_GetProductionTransactionAdjust 
+                @PlantID={PlantID}, 
+                @StartDate={startDate}, 
+                @LineID={lineId}, 
+                @SectionID={sectionId}, 
+                @Prefix={FGShift}, 
+                @QRCode={(string.IsNullOrEmpty(FGEmployeeID) ? (object)DBNull.Value : FGEmployeeID)}")
+                .AsNoTracking()
+                .ToListAsync();
+
+            // โหลด model ที่จำเป็น
+            var mymodel = new ViewModelAll
+            {
+                tbLine = await db.TbLine.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbSection = await db.TbSection.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbShift = await db.TbShift.Where(x => x.PlantID == PlantID).ToListAsync(),
+                tbEmployeeMaster = await db.TbEmployeeMaster.Where(x => x.PlantID == PlantID && x.Status == 1).ToListAsync(),
+                view_PermissionMaster = await db.View_PermissionMaster.Where(x => x.PlantID == PlantID).ToListAsync(),
+                view_ProductionTransactionAdjusts = adjustResults
+            };
+
+            // ตรวจสอบว่าเป็น Adjust แบบ All หรือ Employee
+            var countAdjust = await db.View_ProductionTransactionAdjust.CountAsync(x =>
+                x.TransactionDate.Date == startDate &&
+                x.PlantID == PlantID &&
+                x.LineID == lineId &&
+                x.SectionID == sectionId &&
+                x.Prefix == FGShift);
+
+            if (countAdjust == TransactionID.Count)
+            {
+                // === All Adjust ===
+                await HandleAllAdjust(startDate, FGQTY, PlantID, lineId, sectionId, FGShift, EmpID, mymodel, startDate, endDate);
+            }
+            else
+            {
+                // === Employee Adjust ===
+                await HandleEmployeeAdjust(startDate, FGQTY, FGEmployeeID, PlantID, lineId, sectionId, FGShift, EmpID, TransactionID, mymodel, startDate, endDate);
+            }
+
+            TempData["AlertMessage"] = "Adjust successful!";
+            return RedirectToAction("ProductionTransactionAdjustByEmployee");
+        }
+
+        // =================== กรณี All Adjust ===================
+        private async Task HandleAllAdjust(
+            DateTime FGPlanDate, decimal FGQTY, int plantId, string lineId, string sectionId, string prefix,
+            string empId, ViewModelAll mymodel, DateTime startDate, DateTime endDate)
+        {
+            // เช็คว่าเคยมี Adjust FG แล้วหรือยัง
+            var adjustExists = await db.TbProductionTransactionAdjust.AnyAsync(x =>
+                x.TransactionDate.Date == FGPlanDate.Date &&
+                x.PlantID == plantId &&
+                x.LineID == lineId &&
+                x.SectionID == sectionId &&
+                x.Prefix == prefix &&
+                x.Type == "FG");
+
+            if (adjustExists)
+            {
+                var tranAdjust = await db.TbProductionTransactionAdjust
+                    .FirstOrDefaultAsync(x =>
+                        x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                        x.PlantID == plantId &&
+                        x.LineID == lineId &&
+                        x.SectionID == sectionId &&
+                        x.Prefix == prefix &&
+                        x.Type == "FG");
+
+                if (tranAdjust != null)
+                {
+                    tranAdjust.QTY = FGQTY;
+                    await db.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust
+                {
+                    TransactionDate = FGPlanDate,
+                    PlantID = plantId,
+                    LineID = lineId,
+                    SectionID = sectionId,
+                    Prefix = prefix,
+                    Type = "FG",
+                    Remark = "",
+                    QTY = FGQTY,
+                    CreateBy = empId,
+                    CreateDate = DateTime.Now
+                });
+                await db.SaveChangesAsync();
+            }
+
+            // คำนวณ QRPerAdjust
+            var productionCount = await db.TbProductionTransaction
+                .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                            x.PlantID == plantId &&
+                            x.LineID == lineId &&
+                            x.SectionID == sectionId &&
+                            x.Prefix == prefix &&
+                            x.DataType == "Count")
+                .SumAsync(x => (decimal?)x.Qty) ?? 0;
+
+            var inputQty = await db.TbProductionTransaction
+                .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                            x.PlantID == plantId &&
+                            x.LineID == lineId &&
+                            x.SectionID == sectionId &&
+                            x.Prefix == prefix &&
+                            x.DataType == "FG")
+                .SumAsync(x => (decimal?)x.Qty) ?? 0;
+
+            decimal qrPerAdjust = 0;
+            if (productionCount == 0)
+            {
+                var fgCount = await db.View_ProductionTransactionAj
+                    .CountAsync(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                                     x.LineID == lineId && x.SectionID == sectionId &&
+                                     x.Prefix == prefix && x.DataType == "FG");
+                if (fgCount > 0)
+                    qrPerAdjust = Math.Round(FGQTY / fgCount, 8);
+            }
+            else
+            {
+                qrPerAdjust = Math.Round((FGQTY - inputQty) / productionCount, 8);
+            }
+
+            // Update Production Transaction
+            var qrCodes = await db.View_ProductionTransactionAdjust
+                .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                            x.PlantID == plantId &&
+                            x.LineID == lineId &&
+                            x.SectionID == sectionId &&
+                            x.Prefix == prefix)
+                .Select(x => x.QRCode)
+                .ToListAsync();
+
+            foreach (var qr in qrCodes)
+            {
+                var prodUpdate = await db.TbProductionTransaction
+                    .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                                x.PlantID == plantId &&
+                                x.LineID == lineId &&
+                                x.SectionID == sectionId &&
+                                x.Prefix == prefix &&
+                                x.QRCode == qr &&
+                                x.DataType == "Count")
+                    .ToListAsync();
+
+                foreach (var t in prodUpdate)
+                {
+                    t.QtyPerQR = qrPerAdjust;
+                    t.Note = $"Replace : {t.QtyPerQR}";
+                    t.UpdateBy = empId;
+                    t.UpdateDate = DateTime.Now;
+                }
+            }
+
+            await db.SaveChangesAsync();
+        }
+
+        // =================== กรณี Employee Adjust ===================
+        private async Task HandleEmployeeAdjust(
+            DateTime FGPlanDate, decimal FGQTY, string FGEmployeeID, int plantId, string lineId, string sectionId,
+            string prefix, string empId, List<int> transactionIds, ViewModelAll mymodel,
+            DateTime startDate, DateTime endDate)
+        {
+            // เช็คว่ามี Adjust ของพนักงานนี้แล้วหรือยัง
+            var empAdjustExists = await db.TbProductionTransactionAdjust.AnyAsync(x =>
+                x.TransactionDate.Date == FGPlanDate.Date &&
+                x.PlantID == plantId &&
+                x.LineID == lineId &&
+                x.SectionID == sectionId &&
+                x.Prefix == prefix &&
+                x.Type == "Employee" &&
+                x.Remark == FGEmployeeID);
+
+            if (empAdjustExists)
+            {
+                var tranAdjust = await db.TbProductionTransactionAdjust
+                    .FirstOrDefaultAsync(x =>
+                        x.TransactionDate.Date == FGPlanDate.Date &&
+                        x.PlantID == plantId &&
+                        x.LineID == lineId &&
+                        x.SectionID == sectionId &&
+                        x.Prefix == prefix &&
+                        x.Type == "Employee" &&
+                        x.Remark == FGEmployeeID);
+
+                if (tranAdjust != null)
+                {
+                    tranAdjust.QTY = FGQTY;
+                    await db.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                db.TbProductionTransactionAdjust.Add(new TbProductionTransactionAdjust
+                {
+                    TransactionDate = FGPlanDate,
+                    PlantID = plantId,
+                    LineID = lineId,
+                    SectionID = sectionId,
+                    Prefix = prefix,
+                    Type = "Employee",
+                    Remark = FGEmployeeID,
+                    QTY = FGQTY,
+                    CreateBy = empId,
+                    CreateDate = DateTime.Now
+                });
+                await db.SaveChangesAsync();
+            }
+
+            // คำนวณ QRPerAdjust
+            decimal sumCount = 0;
+            string empQRCode = "";
+
+            foreach (var tid in transactionIds)
+            {
+                //empQRCode = await db.View_ProductionTransactionAdjust
+                //    .Where(x => x.TransactionID == tid)
+                //    .Select(x => x.QRCode)
+                //    .FirstOrDefaultAsync();
+
+                var productionCount = await db.TbProductionTransaction
+                    .CountAsync(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                                     x.PlantID == plantId &&
+                                     x.LineID == lineId &&
+                                     x.SectionID == sectionId &&
+                                     x.Prefix == prefix &&
+                                     x.QRCode == FGEmployeeID && //empQRCode
+                                     x.DataType == "Count");
+
+                sumCount += productionCount;
+            }
+
+            if (sumCount == 0) return; // ไม่มีข้อมูล Count
+
+            var inputQty = await db.TbProductionTransaction
+                .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                            x.PlantID == plantId &&
+                            x.LineID == lineId &&
+                            x.SectionID == sectionId &&
+                            x.Prefix == prefix &&
+                            x.QRCode == FGEmployeeID && // empQRCode
+                            x.DataType == "FG")
+                .SumAsync(x => (decimal?)x.Qty) ?? 0;
+
+            var qrPerAdjust = Math.Round((FGQTY - inputQty) / sumCount, 8);
+
+            // Update Production Transaction
+            var empQrCodes = await db.View_ProductionTransactionAdjust
+                .Where(x => transactionIds.Contains((int)x.TransactionID))
+                .Select(x => x.QRCode)
+                .ToListAsync();
+
+            foreach (var qr in empQrCodes)
+            {
+                var prodUpdate = await db.TbProductionTransaction
+                    .Where(x => x.TransactionDate >= startDate && x.TransactionDate < endDate &&
+                                x.PlantID == plantId &&
+                                x.LineID == lineId &&
+                                x.SectionID == sectionId &&
+                                x.Prefix == prefix &&
+                                x.QRCode == qr &&
+                                x.DataType == "Count")
+                    .ToListAsync();
+
+                foreach (var t in prodUpdate)
+                {
+                    t.QtyPerQR = qrPerAdjust;
+                    t.Note = $"Replace : {t.QtyPerQR}";
+                    t.UpdateBy = empId;
+                    t.UpdateDate = DateTime.Now;
+                }
+            }
+
+            await db.SaveChangesAsync();
+        }
+
+        public IActionResult ProductionTransactionAdjustFGByEmployee_ori(DateTime FGPlanDate, string FGEmployeeID, string FGLine, string FGSection, string FGShift, decimal FGQTY, List<int> TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -6775,8 +7583,8 @@ namespace Plims.Controllers
 
         }
 
-
-        public IActionResult ProductionTransactionAdjustFGByEmployee_old(DateTime FGPlanDate, string FGEmployeeID, string FGLine, string FGSection, string FGShift, decimal FGQTY, List<int> TransactionID)
+       
+        public IActionResult ProductionTransactionAdjustFGByEmployee_backup(DateTime FGPlanDate, string FGEmployeeID, string FGLine, string FGSection, string FGShift, decimal FGQTY, List<int> TransactionID)
         {
             string EmpID = HttpContext.Session.GetString("UserEmpID");
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -7304,10 +8112,6 @@ namespace Plims.Controllers
             }
 
         }
-
-
-
-
 
         private const int DAILY_REPORT_CHUNK_DAYS = 7;
         private const int EFFICIENCY_CHUNK_DAYS = 7;
@@ -7350,98 +8154,7 @@ namespace Plims.Controllers
             return q;
         }
 
-        private async Task<List<View_DailyReportSummary>> GetDailyReportDataAsync(
-            int plantId, string employeeId, DateTime startDate, DateTime endDate,
-            string lineId, string sectionId, string prefix,
-            CancellationToken ct = default)
-        {
-            var chunks = BuildDateChunks(startDate, endDate, DAILY_REPORT_CHUNK_DAYS);
-
-            var prevTimeout = db.Database.GetCommandTimeout();
-            db.Database.SetCommandTimeout(TimeSpan.FromSeconds(180));
-
-            try
-            {
-                var buffer = new List<View_DailyReportSummary>(capacity: 4096);
-                foreach (var (cs, ce) in chunks)
-                {
-                    var list = await BuildDailyReportQuery(cs, ce, plantId, employeeId, lineId, sectionId, prefix)
-                        .ToListAsync(ct);
-                    if (list.Count > 0) buffer.AddRange(list);
-                }
-
-                var dedup = buffer
-                    .GroupBy(x => new { x.TransactionDate, x.PlantID, x.LineID, x.SectionID, x.ProductID, x.QRCode, x.Prefix })
-                    .Select(g => g.First())
-                    .OrderBy(x => x.TransactionDate).ThenBy(x => x.LineID).ThenBy(x => x.SectionID).ThenBy(x => x.ProductID).ThenBy(x => x.QRCode)
-                    .ToList();
-
-                return dedup;
-            }
-            finally
-            {
-                db.Database.SetCommandTimeout(prevTimeout);
-            }
-        }
-
-        private IQueryable<View_EFFReport> BuildEfficiencyQuery(
-            DateTime chunkStart, DateTime chunkEnd,
-            int plantId, string lineId, string sectionName)
-        {
-            var q = db.View_EFFReport
-                .AsNoTracking()
-                .Where(x => x.PlantID == plantId
-                            && x.TransactionDate >= chunkStart
-                            && x.TransactionDate <= chunkEnd);
-
-            if (!string.IsNullOrEmpty(lineId)) q = q.Where(x => x.LineID == lineId);
-            if (!string.IsNullOrEmpty(sectionName)) q = q.Where(x => x.SectionID == sectionName);
-
-            return q;
-        }
-
-        private async Task<List<View_EFFReport>> GetEfficiencyDataAsync(
-            int plantId, DateTime startDate, DateTime endDate,
-            string lineId, string sectionName,
-            CancellationToken ct = default)
-        {
-            var chunks = BuildDateChunks(startDate, endDate, EFFICIENCY_CHUNK_DAYS);
-
-            var prevTimeout = db.Database.GetCommandTimeout();
-            db.Database.SetCommandTimeout(TimeSpan.FromSeconds(180));
-
-            try
-            {
-                var buffer = new List<View_EFFReport>(capacity: 4096);
-                foreach (var (cs, ce) in chunks)
-                {
-                    var list = await BuildEfficiencyQuery(cs, ce, plantId, lineId, sectionName)
-                        .ToListAsync(ct);
-                    if (list.Count > 0) buffer.AddRange(list);
-                }
-
-                var dedup = buffer
-                    .GroupBy(x => new { x.TransactionDate, x.PlantID, x.LineID, x.SectionID, x.ProductID, x.Prefix })
-                    .Select(g => g.First())
-                    .OrderBy(x => x.TransactionDate).ThenBy(x => x.LineID).ThenBy(x => x.SectionID).ThenBy(x => x.ProductID).ThenBy(x => x.Prefix)
-                    .ToList();
-
-                return dedup;
-            }
-            finally
-            {
-                db.Database.SetCommandTimeout(prevTimeout);
-            }
-        }
-
-        private static object GetPropValueSafe(object obj, string propName)
-        {
-            if (obj == null || string.IsNullOrEmpty(propName)) return null;
-            var t = obj.GetType();
-            var p = t.GetProperty(propName);
-            return p == null ? null : p.GetValue(obj);
-        }
-
+      
 
         /////////////////////////////********************   End Controller *******************///////////////////////////////////////////////
 

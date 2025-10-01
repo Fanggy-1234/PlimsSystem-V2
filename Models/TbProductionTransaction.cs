@@ -24,10 +24,10 @@ namespace Plims.Models
       //  public int QtyPerQR { get; set; }
         public string DataType { get; set; }
         public string Reason { get; set; }
-        public string Note { get; set; }
+        public string? Note { get; set; }
         public int PackageRef { get; set; }
-        public string EmployeeRef { get; set; }
-        public string GroupRef { get; set; }
+        public string? EmployeeRef { get; set; }
+        public string? GroupRef { get; set; }
         public string CreateBy { get; set; }
         public DateTime CreateDate{ get; set; }
         public string UpdateBy { get; set; }

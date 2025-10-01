@@ -5,6 +5,7 @@ namespace Plims.Models
 {
     public class View_ProductionTransaction
     {
+    
 
         [Key]
         public int TransactionNo { get; set; }

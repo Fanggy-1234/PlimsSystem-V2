@@ -1,4 +1,5 @@
-﻿@model Plims.ViewModel.ViewModelAll
+﻿@model Plims.ViewModel.ViewModelAll 
+
 @{
     Layout = "_layout";
      ViewBag.Title = "Production Transaction Adjust";
@@ -260,68 +261,36 @@
             </tr>
         </thead>
         <tbody style="width:100%">
-            @foreach (var item in Model.view_ProductionTransactionAdjust)
+            @foreach (var item in Model.view_ProductionTransactionAdjusts)
             {
-                <tr>
-                    @* @Html.HiddenFor(modelItem => item.ID) *@
-                  
+                <tr data-date="@item.TransactionDate.ToString("yyyy-MM-dd")"
+                    data-line="@item.LineID"
+                    data-section="@item.SectionID"
+                    data-product="@item.ProductName"
+                    data-employee="@item.QRCode"
+                    data-shift="@item.Prefix">
+
                     <td>
                         <input type="checkbox" value="@item.TransactionID" class="checkthis" name="TransactionID" />
                     </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TransactionDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PlantName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LineID) : @Html.DisplayFor(modelItem => item.LineID)
-
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.SectionID) : @Html.DisplayFor(modelItem => item.SectionName)
-                    </td>
-
-                     <td>
-                        @Html.DisplayFor(modelItem => item.ProductID) : @Html.DisplayFor(modelItem => item.ProductName)
-                    </td>
-
-                    <td>
-                        @Html.DisplayFor(modelItem => item.QRCode)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Prefix)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.WorkHr)
-                    </td>
-
-                    <td>
-
-                        @Html.DisplayFor(modelItem => item.TotalPiece)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CountQty)
-                    </td>
-                    <td>
-                        @string.Format("{0:0.000000}", item.QtyPerQR)
-                     @*    @Html.DisplayFor(modelItem => item.QtyPerQR) *@
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FG)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ALLDefect)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Yield)
-
-                    </td>
-
-
+                    <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td> @* ใช้แสดงแบบสวยๆ *@
+                    <td>@item.PlantName</td>
+                    <td>@item.LineID : @item.LineName</td>
+                    <td>@item.SectionID : @item.SectionName</td>
+                    <td>@item.ProductID : @item.ProductName</td>
+                    <td>@item.QRCode</td>
+                    <td>@item.Prefix</td>
+                    <td>@item.WorkHr</td>
+                    <td>@item.TotalPiece</td>
+                    <td>@item.CountQty</td>
+                    <td>@string.Format("{0:0.000000}", item.QtyPerQR)</td>
+                    <td>@item.FG</td>
+                    <td>@item.ALLDefect</td>
+                    <td>@item.Yield</td>
                 </tr>
             }
         </tbody>
+      
     </table>
 
     <div style="height:20px">
@@ -345,7 +314,8 @@
 
                 <div class="modal-body">
                     <div class="mb-3">
-                        <input class="form-control" type="datetime" name="FGPlanDate" id="FGPlanDate" style="background-color:beige" readonly>
+            
+                        <input class="form-control" type="date" name="FGPlanDate" id="FGPlanDate" style="background-color:beige" readonly>
                         <input type="text" name="FGEmployeeID" id="FGEmployeeID" hidden>
                     </div>
 
@@ -402,7 +372,7 @@
 
                     <div class="mb-3">
                         <label class="col-form-label">Production Date:</label>
-                        <input class="form-control" type="datetime" name="DefectPlanDate" id="DefectPlanDate" style="background-color:beige" readonly>
+                        <input class="form-control" type="date" name="DefectPlanDate" id="DefectPlanDate" style="background-color:beige" readonly>
                         <input type="text" name="DefectEmployeeID" id="DefectEmployeeID" hidden>
                     </div>
                     <div class="mb-3">
@@ -477,9 +447,21 @@
 
          function formatDate(dateStr) {
              var dateParts = dateStr.split('/');
-             var formattedDate = dateParts[1] + '/' + dateParts[0] + '/' + dateParts[2];
+             //var formattedDate = dateParts[1] + '/' + dateParts[0] + '/' + dateParts[2];
+            var formattedDate = dateParts[2] + '/' + dateParts[0] + '/' + dateParts[1];
              return formattedDate;
          }
+        function formatDateForInput(dateStr) {
+            // สมมติเป็น dd/MM/yyyy
+            var parts = dateStr.trim().split('/');
+            var day = parts[0].padStart(2, '0');
+            var month = parts[1].padStart(2, '0');
+            var year = parts[2];
+            return `${year}-${month}-${day}`; // ✅ yyyy-MM-dd
+        }
+
+
+
 
          if (selectedCheckboxes.length > 1 && selectedCheckboxes.length < allCheckboxes.length) {
              if (confirm('You have selected more than one item but not all. Do you want to proceed?')) {
@@ -496,13 +478,21 @@
                  var transactionDate = selectedRow.cells[1].innerText;
                  var lineName = selectedRow.cells[3].innerText;
                  var sectionName = selectedRow.cells[4].innerText;
-                 var productName = selectedRow.cells[6].innerText;
+                 var productName = selectedRow.cells[5].innerText;
                  var prefix = selectedRow.cells[7].innerText;
-                 var EmployeeID = selectedRow.cells[5].innerText;
+                 var EmployeeID = selectedRow.cells[6].innerText;
 
-                 //  console.log('1');
-                 console.log(EmployeeID);
-                 document.getElementById('FGPlanDate').value = Date(transactionDate).toString("dd/MM/yyyy");
+                //var transactionDate = selectedRow.cells[1].innerText; // ตัวหนังสือวันที่จากตาราง เช่น 03/10/2025
+               // var parts = transactionDate.split(/[\/\s:]+/); // split ได้ ["03","10","2025",...]
+                // สมมติจาก DB เป็น dd/MM/yyyy
+                //var d = new Date(parts[2], parts[1] - 1, parts[0]);
+
+                // ✅ set ค่าลง input type="date"
+                //document.getElementById('FGPlanDate').value = d.toISOString().split('T')[0]; // yyyy-MM-dd
+
+               // document.getElementById('FGPlanDate').value = formatDateForInput(transactionDate) //Date(transactionDate).ToString("yyyy-MM-dd")
+                document.getElementById('FGPlanDate').value = formatDateForInput(transactionDate);
+               // document.getElementById('FGPlanDate').value = Date(transactionDate).toString("dd/MM/yyyy");
                  document.getElementById('FGEmployeeID').value = EmployeeID;
                  document.getElementById('FGLine').value = lineName;
                  document.getElementById('FGProduct').value = productName;
@@ -532,13 +522,14 @@
              var transactionDate = selectedRow.cells[1].innerText;
              var lineName = selectedRow.cells[3].innerText;
              var sectionName = selectedRow.cells[4].innerText;
-             var ProductName = selectedRow.cells[6].innerText;
+             var ProductName = selectedRow.cells[5].innerText;
              var prefix = selectedRow.cells[7].innerText;
-             var EmployeeID = selectedRow.cells[5].innerText;
+             var EmployeeID = selectedRow.cells[6].innerText;
 
              // console.log('2');
              // console.log(transactionDate);
-             document.getElementById('FGPlanDate').value = formatDate(transactionDate);
+            document.getElementById('FGPlanDate').value = formatDateForInput(transactionDate);
+             //document.getElementById('FGPlanDate').value = formatDate(transactionDate);
              document.getElementById('FGEmployeeID').value = EmployeeID;
              document.getElementById('FGLine').value = lineName;
              document.getElementById('FGSection').value = sectionName;
@@ -708,9 +699,20 @@
 
         function formatDate(dateStr) {
             var dateParts = dateStr.split('/');
-            var formattedDate = dateParts[1] + '/' + dateParts[0] + '/' + dateParts[2];
+           // var formattedDate = dateParts[1] + '/' + dateParts[0] + '/' + dateParts[2];
+            var formattedDate = dateParts[2] + '/' + dateParts[0] + '/' + dateParts[1];
             return formattedDate;
         }
+
+        function formatDateForInput(dateStr) {
+            // สมมติเป็น dd/MM/yyyy
+            var parts = dateStr.trim().split('/');
+            var day = parts[0].padStart(2, '0');
+            var month = parts[1].padStart(2, '0');
+            var year = parts[2];
+            return `${year}-${month}-${day}`; // ✅ yyyy-MM-dd
+        }
+
 
         if (selectedCheckboxes.length > 1 && selectedCheckboxes.length < allCheckboxes.length) {
             if (confirm('You have selected more than one item but not all. Do you want to proceed?')) {
@@ -727,11 +729,11 @@
                 var transactionDate = selectedRow.cells[1].innerText;
                 var lineName = selectedRow.cells[3].innerText;
                 var sectionName = selectedRow.cells[4].innerText;
-                var productName = selectedRow.cells[6].innerText;
+                var productName = selectedRow.cells[5].innerText;
                 var prefix = selectedRow.cells[7].innerText;
-                var EmployeeID = selectedRow.cells[5].innerText;
+                var EmployeeID = selectedRow.cells[6].innerText;
 
-                document.getElementById('DefectPlanDate').value = formatDate(transactionDate);
+                document.getElementById('DefectPlanDate').value = formatDateForInput(transactionDate);
                 document.getElementById('DefectLine').value = lineName;
                 document.getElementById('DefectSection').value = sectionName;
                 document.getElementById('DefectProduct').value = productName;
@@ -760,11 +762,13 @@
             var transactionDate = selectedRow.cells[1].innerText;
             var lineName = selectedRow.cells[3].innerText;
             var sectionName = selectedRow.cells[4].innerText;
-            var productName = selectedRow.cells[6].innerText;
+            var productName = selectedRow.cells[5].innerText;
             var prefix = selectedRow.cells[7].innerText;
-            var EmployeeID = selectedRow.cells[5].innerText;
+            var EmployeeID = selectedRow.cells[6].innerText;
 
-            document.getElementById('DefectPlanDate').value = formatDate(transactionDate);
+
+            document.getElementById('DefectPlanDate').value = formatDateForInput(transactionDate);
+           // document.getElementById('DefectPlanDate').value = formatDate(transactionDate);
             document.getElementById('DefectLine').value = lineName;
             document.getElementById('DefectSection').value = sectionName;
             document.getElementById('DefectProduct').value = productName;

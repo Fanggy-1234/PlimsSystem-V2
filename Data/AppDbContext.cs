@@ -98,6 +98,8 @@ namespace Plims.Data
 
         public DbSet<View_ProductionTransactionAdjust> View_ProductionTransactionAdjust { get; set; }
 
+        
+
         public DbSet<TbProductionTransactionAdjust> TbProductionTransactionAdjust { get; set; }
 
         public DbSet<View_ProductionTransactionAj> View_ProductionTransactionAj { get; set; }
@@ -107,6 +109,8 @@ namespace Plims.Data
         public DbSet<TbRateTransaction> tbRateTransaction { get; set; }
 
         public DbSet<FinanceReportRow> FinanceReportRows { get; set; }
+        public DbSet<ProductionTransactionAdjustResult> ProductionTransactionAdjustResults { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -115,6 +119,7 @@ namespace Plims.Data
       .Property(p => p.QtyPerQR)
       .HasColumnType("decimal(28, 8)");
 
+            modelBuilder.Entity<ProductionTransactionAdjustResult>().HasNoKey();
 
             modelBuilder.Entity<View_PermissionMaster>()
                 .HasKey(v => new { v.PageID, v.UserEmpID });
@@ -220,6 +225,9 @@ namespace Plims.Data
 
             modelBuilder.Entity<TbProductionTransactionAdjust>()
         .HasKey(v => new { v.TransactionID});
+
+            modelBuilder.Entity<TbProductionTransaction>()
+      .HasKey(v => new { v.TransactionNo });
 
 
             modelBuilder.Entity<View_PagePermission>()

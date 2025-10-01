@@ -524,7 +524,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.view_EmployeeClocktime)
+            @foreach (var item in Model.view_EmployeeClocktime.OrderBy(x=>x.ClockOut))
             {
                     <tr>
                     @*   @Html.HiddenFor(modelItem => item.ID) *@
