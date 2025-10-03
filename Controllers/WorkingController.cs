@@ -3666,7 +3666,7 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> FinancialReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
+        public async Task<IActionResult> FinancialReport_new(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -3930,7 +3930,7 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-        public IActionResult FinancialReport_original(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
+        public IActionResult FinancialReport(string EmployeeID, DateTime StartDate, DateTime EndDate, string LineID)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -4294,7 +4294,7 @@ namespace Plims.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> EFFReport(string EmployeeID, DateTime? StartDate, DateTime? EndDate, string LineID, string SectionID)
+        public async Task<IActionResult> EFFReport_New(string EmployeeID, DateTime? StartDate, DateTime? EndDate, string LineID, string SectionID)
         {
             if (!int.TryParse(HttpContext.Session.GetString("PlantID"), out int PlantID))
                 return RedirectToAction("Login", "Home");
@@ -4357,7 +4357,7 @@ namespace Plims.Controllers
 
         //DateTime startDate, DateTime endDate,
         [HttpGet]
-        public async Task<IActionResult> EFFReport_original(DateTime StartDate, DateTime EndDate, string LineID, string SectionName)
+        public async Task<IActionResult> EFFReport(DateTime StartDate, DateTime EndDate, string LineID, string SectionName)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
