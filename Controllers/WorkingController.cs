@@ -732,9 +732,11 @@ namespace Plims.Controllers
 
         }
 
+      
+
 
         [HttpGet]
-        public ActionResult RollBackDataProduction(View_RollBackData obj, string[] Productchk, string ProductTo)
+        public ActionResult RollBackDataProduction_ori(View_RollBackData obj, string[] Productchk, string ProductTo)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
             string EmpID = HttpContext.Session.GetString("UserEmpID");
@@ -753,11 +755,11 @@ namespace Plims.Controllers
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbService = db.TbService.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbShift = db.TbShift.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now),
+               // tbEmployeeTransaction = db.TbEmployeeTransaction.Where(x => x.TransactionDate == DateTime.Now),
                 view_PermissionMaster = db.View_PermissionMaster.ToList(),
                 view_PLPS = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID) && x.Status.Equals(1)).ToList(),
-                tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).ToList(),
-                view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+               // tbProduct = db.TbProduct.Where(x => x.PlantID.Equals(PlantID)).ToList(),
+              //  view_EmployeeClocktime = db.View_EmployeeClocktime.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 View_RollBackData = db.View_RollBackData.Where(x => x.PlantID.Equals(PlantID)).ToList()
             };
 
@@ -845,6 +847,152 @@ namespace Plims.Controllers
 
         }
 
+        [HttpGet]
+        public ActionResult RollBackDataProduction(View_RollBackData obj, string[] Productchk, string ProductTo)
+        {
+            int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
+            string EmpID = HttpContext.Session.GetString("UserEmpID");
+
+            if (EmpID == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var mymodel = new ViewModelAll
+            {
+                tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID == PlantID).ToList(),
+                tbLine = db.TbLine.Where(x => x.PlantID == PlantID).ToList(),
+                tbSection = db.TbSection.Where(x => x.PlantID == PlantID).ToList(),
+                tbService = db.TbService.Where(x => x.PlantID == PlantID).ToList(),
+                tbShift = db.TbShift.Where(x => x.PlantID == PlantID).ToList(),
+                view_PermissionMaster = db.View_PermissionMaster.ToList(),
+                view_PLPS = db.View_PLPS.Where(x => x.PlantID == PlantID && x.Status == 1).ToList()
+            };
+
+            // ✅ เปลี่ยนจาก View เป็น Stored Procedure
+            var paramPlant = new SqlParameter("@PlantID", PlantID);
+            var spResult = db.View_RollBackData
+                .FromSqlRaw("EXEC sp_RollBackData @PlantID", paramPlant)
+                .AsNoTracking()
+                .ToList();
+
+            mymodel.View_RollBackData = spResult;
+
+            // ✅ กำหนด Role Permission
+            ViewBag.VBRoleRollBackDataProduction = mymodel.view_PermissionMaster
+                .Where(x => x.UserEmpID == EmpID && x.PageID == 29)
+                .Select(x => x.RoleAction)
+                .FirstOrDefault();
+
+            // ✅ เงื่อนไขถ้าไม่ได้เลือก Productchk
+            if (Productchk.Length == 0)
+            {
+                if (!string.IsNullOrEmpty(obj.EmployeeID) ||
+                    !string.IsNullOrEmpty(obj.LineName) ||
+                    !string.IsNullOrEmpty(obj.SectionName) ||
+                    obj.ProductionDate != DateTime.MinValue)
+                {
+                    if (!string.IsNullOrEmpty(obj.EmployeeID))
+                    {
+                        ViewBag.SelectedEmployeeID = obj.EmployeeID;
+                        mymodel.View_RollBackData = mymodel.View_RollBackData
+                            .Where(x => x.EmployeeID.Contains(obj.EmployeeID))
+                            .ToList();
+                    }
+
+                    if (!string.IsNullOrEmpty(obj.LineName))
+                    {
+                        ViewBag.SelectedLineID = obj.LineName;
+                        mymodel.View_RollBackData = mymodel.View_RollBackData
+                            .Where(p => p.LineID == obj.LineName)
+                            .ToList();
+                    }
+
+                    if (!string.IsNullOrEmpty(obj.SectionName))
+                    {
+                        ViewBag.SelectedSectionID = obj.SectionName;
+                        mymodel.View_RollBackData = mymodel.View_RollBackData
+                            .Where(p => p.SectionID == obj.SectionName)
+                            .ToList();
+                    }
+
+                    if (obj.ProductionDate != DateTime.MinValue)
+                    {
+                        ViewBag.SelectedProductionDate = obj.ProductionDate.ToString("yyyy-MM-dd");
+                        mymodel.View_RollBackData = mymodel.View_RollBackData
+                            .Where(p => p.ProductionDate == obj.ProductionDate)
+                            .ToList();
+                    }
+
+                    return View(mymodel);
+                }
+
+                ViewBag.SelectedProductionDate = DateTime.Today.ToString("yyyy-MM-dd");
+                mymodel.View_RollBackData = mymodel.View_RollBackData
+                    .Where(x => x.ProductionDate == DateTime.Today)
+                    .ToList();
+
+                return View(mymodel);
+            }
+            else
+            {
+                int datacnt = Productchk.Count();
+
+                for (int i = 0; i < datacnt; ++i)
+                {
+                    long runningno = Convert.ToInt64(Productchk[i]);
+
+                    var selectview = spResult
+                        .Where(x => x.RunningNumber == runningno)
+                        .SingleOrDefault();
+
+                    if (selectview == null)
+                        continue;
+
+                    var TransactiodbUpdate = db.TbProductionTransaction
+                        .Where(p => p.PlantID == PlantID &&
+                                    p.TransactionDate.Date == selectview.ProductionDate &&
+                                    p.LineID == selectview.LineID &&
+                                    p.SectionID == selectview.SectionID &&
+                                    p.ProductID == selectview.ProductID &&
+                                    p.QRCode == selectview.QRCode)
+                        .ToList();
+
+                    // ✅ ตรวจสอบ PLPS
+                    var PLPSdata = db.View_PLPS
+                        .Where(x => x.PlantID == PlantID &&
+                                    x.LineID == selectview.LineID &&
+                                    x.SectionID == selectview.SectionID &&
+                                    x.ProductID == ProductTo)
+                        .ToList();
+
+                    if (PLPSdata.Count == 0)
+                    {
+                        TempData["AlertMessage"] = "Please check PLPS.";
+                        return RedirectToAction("RollBackDataProduction");
+                    }
+
+                    var PLPSdataproduct = PLPSdata
+                        .Select(z => new { z.ProductID, z.ProductName, z.QTYPerQRCode, z.FormularID })
+                        .FirstOrDefault();
+
+                    foreach (var product in TransactiodbUpdate)
+                    {
+                        product.ProductID = ProductTo;
+                        product.ProductName = PLPSdataproduct.ProductName;
+                        product.QtyPerQR = PLPSdataproduct.QTYPerQRCode;
+                        product.FormularID = PLPSdataproduct.FormularID;
+                        product.UpdateDate = DateTime.Now;
+                        product.UpdateBy = EmpID;
+                    }
+
+                    db.SaveChanges();
+                }
+            }
+
+            TempData["SuccessMessage"] = "Data successfully updated.";
+            return RedirectToAction("RollBackDataProduction");
+        }
 
 
         /// <summary>
@@ -863,6 +1011,7 @@ namespace Plims.Controllers
             }
             var mymodel = new ViewModelAll
             {
+               // view_PLPS = db.View_PLPS.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbEmployeeMaster = db.TbEmployeeMaster.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbLine = db.TbLine.Where(x => x.PlantID.Equals(PlantID)).ToList(),
                 tbSection = db.TbSection.Where(x => x.PlantID.Equals(PlantID)).ToList(),
