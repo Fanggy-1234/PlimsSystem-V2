@@ -283,12 +283,12 @@
                     <td>@item.QRCode</td>
                     <td>@item.Prefix</td>
                     <td>@item.WorkHr</td>
-                    <td>@item.TotalPiece</td>
-                    <td>@item.CountQty</td>
-                    <td>@string.Format("{0:0.000000}", item.QtyPerQR)</td>
-                    <td>@item.FG</td>
-                    <td>@item.ALLDefect</td>
-                    <td>@item.Yield</td>
+                    <td>@string.Format("{0:0.000}",@item.TotalPiece)</td>
+                    <td>@string.Format("{0:0.000}",@item.CountQty)</td>
+                    <td>@string.Format("{0:0.000}", item.QtyPerQR)</td>
+                    <td>@string.Format("{0:0.000}",@item.FG)</td>
+                    <td>@string.Format("{0:0.000}",@item.ALLDefect)</td>
+                    <td>@string.Format("{0:0.000}",@item.Yield)</td>
                 </tr>
             }
         </tbody>

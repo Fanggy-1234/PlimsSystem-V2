@@ -31,17 +31,23 @@ namespace Plims.Models
 
         public decimal WorkHr { get; set; }
         //[Column(TypeName = "decimal(28,8)")]
+        [Column(TypeName = "decimal(18,3)")]
         public decimal QtyPerQR { get; set; }
-
+        [Column(TypeName = "decimal(18,3)")]
         public decimal CountQty { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
         public decimal FGInputQty { get; set; }  //int
+        [Column(TypeName = "decimal(18,3)")]
         public decimal DefectQty { get; set; }  //int
+        [Column(TypeName = "decimal(18,3)")]
         public decimal MinusQty { get; set; }  //int
 
         public decimal FG { get; set; }  //int
+        [Column(TypeName = "decimal(18,3)")]
         public decimal TotalPiece { get; set; }
-
+        [Column(TypeName = "decimal(18,3)")]
         public decimal Yield { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
         public decimal ALLDefect { get; set; }
 
     }

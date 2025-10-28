@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace Plims.Models
 {
     [Keyless]
@@ -23,20 +24,31 @@ namespace Plims.Models
         public decimal? QtyPerQR { get; set; }
 
         // SUM() คืน BIGINT → ใช้ long?
+        [Column(TypeName = "decimal(18,3)")]
         public decimal? CountQty { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
         public decimal? FGInputQty { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
         public decimal? DefectQty { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
         public decimal? MinusQty { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
         public decimal? TotalPiece { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
         public decimal? FG { get; set; }
 
         // ✅ แก้เป็น decimal?
+        [Column(TypeName = "decimal(18,3)")]
         public decimal? Yield { get; set; }
+
         public decimal? WorkHr { get; set; }
 
         // SUM() adjust → BIGINT → ใช้ long?
+        [Column(TypeName = "decimal(18,3)")]
         public decimal? FGAdjust { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
         public decimal? DefectAdjust { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
         public decimal? ALLDefect { get; set; }
         
     }
