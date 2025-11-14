@@ -3348,6 +3348,7 @@ namespace Plims.Controllers
             return Json(mymodel);
         }
 
+        //viewview
         [HttpPost]
         public ActionResult GetSectionAndUnitWithRef(string employeeID, string productID)
         {
@@ -3356,6 +3357,9 @@ namespace Plims.Controllers
             var currentDateTime = DateTime.Now;
             var currentDate = currentDateTime.Date;
 
+            string section = "";
+            string unit = "";
+
             if (EmpID == null)
             {
                 return RedirectToAction("Login", "Home");
@@ -3363,31 +3367,84 @@ namespace Plims.Controllers
 
             // Query your database or data source to retrieve section and unit based on employeeID and productID
             // For demonstration purposes, let's assume you have a method to get section and unit
-            var objEmp = db.TbEmployeeTransaction
-                        .Where(x => x.EmployeeID.Equals(employeeID) &&
-                                     x.TransactionDate.Date == currentDate && x.ClockOut == "" && x.Plant.Equals(PlantID))
-                        .OrderByDescending(x => x.TransactionNo)
-                        .FirstOrDefault();
 
-            if (objEmp == null)
+
+            //var objEmp = db.TbEmployeeTransaction
+            //            .Where(x => x.EmployeeID.Equals(employeeID) &&
+            //                         x.TransactionDate.Date == currentDate && x.ClockOut == "" && x.Plant.Equals(PlantID))
+            //            .OrderByDescending(x => x.TransactionNo)
+            //            .FirstOrDefault();
+            if (employeeID.Length > 5)
             {
-                return Json(new { section = "Please clock in.", unit = "" });
+                var objEmp = db.TbEmployeeTransaction.AsNoTracking()
+                .FirstOrDefault(x => x.Plant == PlantID
+                                  && x.EmployeeID == employeeID
+                                  && x.WorkingStatus == "Working"
+                                  && !string.IsNullOrEmpty(x.ClockIn)
+                                  && string.IsNullOrEmpty(x.ClockOut));
+
+
+                if (objEmp == null)
+                {
+                    return Json(new { section = "Please clock in.", unit = "" });
+                }
+
+                var objPLPS = db.View_PLPS
+                           .Where(x => x.PlantID.Equals(PlantID) &&
+                                       x.LineID.Equals(objEmp.Line.ToString()) &&
+                                       x.ProductID.Equals(productID) &&
+                                       x.SectionID.Equals(objEmp.Section.ToString()))
+                           .FirstOrDefault();
+
+                if (objPLPS == null)
+                {
+                    return Json(new { section = "Please check PLPS.", unit = "" });
+                }
+
+                section = objEmp.Section;
+                unit = objPLPS.Unit;
+            }
+            else
+            {
+
+                var groupMembers = db.TbEmployeeGroupQR.AsNoTracking()
+    .Where(x => x.GroupID == employeeID && x.PlantID == PlantID && x.Status == 1) .Select(x => x.EmployeeID).Distinct().ToList();
+
+                foreach (var emp in groupMembers)
+                {
+                    var empClock = db.View_ClockTime.AsNoTracking()
+                            .FirstOrDefault(x => x.EmployeeID == emp
+                          && x.PlantID == PlantID
+                          && x.Type != "Service"
+                          && x.WorkingStatus == "Working"
+                          && !string.IsNullOrEmpty(x.ClockIn)
+                          && string.IsNullOrEmpty(x.ClockOut));
+
+                    if (empClock == null)
+                    {
+                        return Json(new { section = "Please clock in.", unit = "" });
+                    }
+
+                    var objPLPS = db.View_PLPS
+                           .Where(x => x.PlantID.Equals(PlantID) &&
+                                       x.LineID.Equals(empClock.LineID.ToString()) &&
+                                       x.ProductID.Equals(productID) &&
+                                       x.SectionID.Equals(empClock.SectionID.ToString()))
+                           .FirstOrDefault();
+
+                    if (objPLPS == null)
+                    {
+                        return Json(new { section = "Please check PLPS.", unit = "" });
+                    }
+
+                    section = empClock.SectionName;
+                    unit = objPLPS.Unit;
+                }
+
+
             }
 
-            var objPLPS = db.View_PLPS
-                       .Where(x => x.PlantID.Equals(PlantID) &&
-                                   x.LineID.Equals(objEmp.Line.ToString()) &&
-                                   x.ProductID.Equals(productID) &&
-                                   x.SectionID.Equals(objEmp.Section.ToString()))
-                       .FirstOrDefault();
-
-            if (objPLPS == null)
-            {
-                return Json(new { section = "Please check PLPS.", unit = "" });
-            }
-
-            string section = objEmp.Section;
-            string unit = objPLPS.Unit;
+           
 
             // Return section and unit as JSON
             return Json(new { section = section, unit = unit });
@@ -3541,6 +3598,8 @@ namespace Plims.Controllers
             }
         }
 
+
+        //viewview
         public ActionResult ProductQTYPieceWithReffn(string EmployeeID, string ProductID, string SectionID, decimal QTY)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -3554,66 +3613,151 @@ namespace Plims.Controllers
             try
             {
                 var currentDate = DateTime.Now.Date;
-
-                var empsectioncount = db.View_ClockTime
-                 .Where(x => x.EmployeeID.Equals(EmployeeID) &&
-                              (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDate.AddDays(-1)) && x.ClockIn != "" && x.ClockOut == "" && x.WorkingStatus.Equals("Working") &&
-                            x.PlantID.Equals(PlantID)).ToList();
-
-                if (empsectioncount.Count > 1)
+                if (EmployeeID.Length > 5)
                 {
-                    return Json(new { success = false, Message = "Please Clock in. : " + EmployeeID });
+                    var empsectioncount = db.View_ClockTime
+               .Where(x => x.EmployeeID.Equals(EmployeeID) && x.ClockIn != "" && x.ClockOut == "" && x.WorkingStatus.Equals("Working") &&
+                          x.PlantID.Equals(PlantID)).ToList();
+
+                    if (empsectioncount.Count > 1)
+                    {
+                        return Json(new { success = false, Message = "Please Clock in. : " + EmployeeID });
+                    }
+
+
+                    var objEmp = db.View_ClockTime.AsNoTracking()
+                          .FirstOrDefault(x => x.PlantID == PlantID
+                                            && x.EmployeeID == EmployeeID
+                                            && x.Type != "Service"
+                                            && x.WorkingStatus == "Working"
+                                            && !string.IsNullOrEmpty(x.ClockIn)
+                                            && string.IsNullOrEmpty(x.ClockOut));
+
+                
+
+
+
+
+                    if (objEmp == null)
+                    {
+                        return Json(new { success = false, Message = "Please Clock in. : " + EmployeeID });
+                    }
+
+                    var objPLPS = db.View_PLPS
+                               .Where(x => x.PlantID.Equals(PlantID) &&
+                                           x.LineID.Equals(objEmp.LineID.ToString()) &&
+                                           x.ProductID.Equals(ProductID) &&
+                                           x.SectionID.Equals(objEmp.SectionID.ToString()))
+                               .FirstOrDefault();
+
+                    if (objPLPS == null)
+                    {
+                        return Json(new { success = false, Message = "Plese check PLPS" });
+                    }
+
+                    db.TbProductionTransaction.Add(new TbProductionTransaction()
+                    {
+                        // TransactionNo = db.TbProductionTransaction.Count() + 1,
+                        TransactionDate = objEmp.TransactionDate.Date,
+                        PlantID = PlantID,
+                        LineID = objEmp.LineID,
+                        LineName = objEmp.LineName,
+                        SectionID = objEmp.SectionID,
+                        SectionName = objEmp.SectionName,
+                        ProductID = ProductID,
+                        ProductName = objPLPS.ProductName,
+                        FormularID = objPLPS.FormularID,
+                        Prefix = objEmp.Prefix,
+                        QRCode = EmployeeID,
+                        Qty = QTY,
+                        QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
+                        DataType = "FG",
+                        Reason = "",
+                        Note = "",
+                        GroupRef = "",
+                        EmployeeRef = objEmp.ClockIn,
+                        PackageRef = 0,
+                        CreateDate = DateTime.Now,
+                        CreateBy = EmpID,
+                        UpdateDate = DateTime.Now,
+                        UpdateBy = EmpID
+                    });
+
+
+
                 }
-
-                var objEmp = db.View_ClockTime
-                   .Where(x => x.EmployeeID.Equals(EmployeeID) &&
-                                (x.TransactionDate.Date == currentDate || x.TransactionDate.Date == currentDate.AddDays(-1)) && x.ClockOut == "" && x.WorkingStatus.Equals("Working") &&
-                              x.PlantID.Equals(PlantID)).FirstOrDefault();
-
-                if (objEmp == null)
+                else
                 {
-                    return Json(new { success = false, Message = "Please Clock in. : " + EmployeeID });
+                    var groupMembers = db.TbEmployeeGroupQR.AsNoTracking()
+                    .Where(x => x.GroupID == EmployeeID && x.PlantID == PlantID && x.Status == 1).Select(x => x.EmployeeID).Distinct().ToList();
+
+
+
+                    foreach (var emp in groupMembers)
+                    {
+
+                       var empClock = db.View_ClockTime.AsNoTracking()
+                        .FirstOrDefault(x => x.EmployeeID == emp
+                      && x.PlantID == PlantID
+                      && x.Type != "Service"
+                      && x.WorkingStatus == "Working"
+                      && !string.IsNullOrEmpty(x.ClockIn)
+                      && string.IsNullOrEmpty(x.ClockOut));
+
+                        if (empClock == null)
+                        {
+                            return Json(new { section = "Please clock in.", unit = "" });
+                        }
+
+                        var objPLPS = db.View_PLPS
+                             .Where(x => x.PlantID.Equals(PlantID) &&
+                                         x.LineID.Equals(empClock.LineID.ToString()) &&
+                                         x.ProductID.Equals(ProductID) &&
+                                         x.SectionID.Equals(empClock.SectionID.ToString()))
+                             .FirstOrDefault();
+
+                        if (objPLPS == null)
+                        {
+                            return Json(new { success = false, Message = "Plese check PLPS" });
+                        }
+
+                        db.TbProductionTransaction.Add(new TbProductionTransaction()
+                        {
+                            // TransactionNo = db.TbProductionTransaction.Count() + 1,
+                            TransactionDate = empClock.TransactionDate.Date,
+                            PlantID = PlantID,
+                            LineID = empClock.LineID,
+                            LineName = empClock.LineName,
+                            SectionID = empClock.SectionID,
+                            SectionName = empClock.SectionName,
+                            ProductID = ProductID,
+                            ProductName = objPLPS.ProductName,
+                            FormularID = objPLPS.FormularID,
+                            Prefix = empClock.Prefix,
+                            QRCode = empClock.EmployeeID,
+                            Qty = QTY,
+                            QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
+                            DataType = "FG",
+                            Reason = "",
+                            Note = "",
+                            GroupRef = EmployeeID,
+                            EmployeeRef = empClock.ClockIn,
+                            PackageRef = 0,
+                            CreateDate = DateTime.Now,
+                            CreateBy = EmpID,
+                            UpdateDate = DateTime.Now,
+                            UpdateBy = EmpID
+                        });
+
+                    }
+
                 }
+                
+             
+               
 
-                var objPLPS = db.View_PLPS
-                           .Where(x => x.PlantID.Equals(PlantID) &&
-                                       x.LineID.Equals(objEmp.LineID.ToString()) &&
-                                       x.ProductID.Equals(ProductID) &&
-                                       x.SectionID.Equals(objEmp.SectionID.ToString()))
-                           .FirstOrDefault();
 
-                if (objPLPS == null)
-                {
-                    return Json(new { success = false, Message = "Plese check PLPS" });
-                }
-
-                db.TbProductionTransaction.Add(new TbProductionTransaction()
-                {
-                    // TransactionNo = db.TbProductionTransaction.Count() + 1,
-                    TransactionDate = objEmp.TransactionDate.Date,
-                    PlantID = PlantID,
-                    LineID = objEmp.LineID,
-                    LineName = objEmp.LineName,
-                    SectionID = objEmp.SectionID,
-                    SectionName = objEmp.SectionName,
-                    ProductID = ProductID,
-                    ProductName = objPLPS.ProductName,
-                    FormularID = objPLPS.FormularID,
-                    Prefix = objEmp.Prefix,
-                    QRCode = EmployeeID,
-                    Qty = QTY,
-                    QtyPerQR = Convert.ToInt32(objPLPS.QTYPerQRCode),//Get from PLPS
-                    DataType = "FG",
-                    Reason = "",
-                    Note = "",
-                    GroupRef = "",
-                    EmployeeRef = objEmp.ClockIn,
-                    PackageRef = 0,
-                    CreateDate = DateTime.Now,
-                    CreateBy = EmpID,
-                    UpdateDate = DateTime.Now,
-                    UpdateBy = EmpID
-                });
+             
 
                 db.SaveChanges();
 
@@ -3728,6 +3872,7 @@ namespace Plims.Controllers
             }
         }
 
+        //viewview
         public ActionResult ProductQtyDefectWithReffn(string EmployeeID, string ProductID, string SectionID, int QTY, string Reason)
         {
             int PlantID = Convert.ToInt32(HttpContext.Session.GetString("PlantID"));
@@ -5499,7 +5644,7 @@ namespace Plims.Controllers
             var empsection = db.View_EmployeeClocktime
                .Where(x => x.EmployeeID == selectedEmpID
                            && x.PlantID.Equals(PlantID)
-                           && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
+                          // && (x.TransactionDate == DateTime.Today || x.TransactionDate == DateTime.Today.AddDays(-1))
                            && x.ClockIn != ""
                            && x.ClockOut == "" && x.WorkingStatus.Equals("Working"))
                .SingleOrDefault();
